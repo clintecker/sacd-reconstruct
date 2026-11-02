@@ -123,3 +123,13 @@ clean:
 	rm -rf $(BUILD) $(TARGET)
 
 .PHONY: all clean
+
+# Release pipeline (issues #3/#4): build one ELF from tracked sources
+# (direct compilation of tool/install.c + tool/main.c, #line staging for the
+# four __FILE__ TUs, GNU crtbegin + glibc-2.9 wrappers from source, pinned
+# CodeSourcery libgcc_s.so.1) and run every check against that exact file.
+# Host prerequisites are documented in tools/release_build.py.
+verify:
+	../tools/release_verify.sh
+
+.PHONY: verify

@@ -1,0 +1,1791 @@
+Archive member included because of file (symbol)
+
+/home/aftermath/reconstruct/release/libgcc.a(_aeabi_uldivmod.o)
+                              /home/aftermath/reconstruct/release/libsacd_cuesheet.o (__aeabi_uldivmod)
+/home/aftermath/reconstruct/release/libgcc.a(_arm_addsubdf3.o)
+                              /home/aftermath/reconstruct/release/libcommon_timeout.o (__aeabi_dsub)
+/home/aftermath/reconstruct/release/libgcc.a(_arm_addsubsf3.o)
+                              /home/aftermath/reconstruct/release/tool_main.o (__aeabi_i2f)
+/home/aftermath/reconstruct/release/libgcc.a(_arm_cmpdf2.o)
+                              /home/aftermath/reconstruct/release/libcommon_socket.o (__aeabi_dcmpeq)
+/home/aftermath/reconstruct/release/libgcc.a(_arm_fixdfsi.o)
+                              /home/aftermath/reconstruct/release/libcommon_socket.o (__aeabi_d2iz)
+/home/aftermath/reconstruct/release/libgcc.a(_arm_muldivdf3.o)
+                              /home/aftermath/reconstruct/release/libcommon_socket.o (__aeabi_dmul)
+/home/aftermath/reconstruct/release/libgcc.a(_arm_muldivsf3.o)
+                              /home/aftermath/reconstruct/release/tool_main.o (__aeabi_fdiv)
+/home/aftermath/reconstruct/release/libgcc.a(_arm_truncdfsf2.o)
+                              /home/aftermath/reconstruct/release/tool_main.o (__aeabi_d2f)
+/home/aftermath/reconstruct/release/libgcc.a(_divsi3.o)
+                              /home/aftermath/reconstruct/release/libcommon_utils.o (__aeabi_idiv)
+/home/aftermath/reconstruct/release/libgcc.a(_dvmd_lnx.o)
+                              /home/aftermath/reconstruct/release/libgcc.a(_divsi3.o) (__div0)
+/home/aftermath/reconstruct/release/libgcc.a(_udivsi3.o)
+                              /home/aftermath/reconstruct/release/libsacd_dsf.o (__aeabi_uidiv)
+
+Allocating common symbols
+Common symbol       size              file
+
+handle              0x4               /home/aftermath/reconstruct/release/tool_main.o
+category_t          0x4               /home/aftermath/reconstruct/release/libsacd_sacd_input.o
+sacd_input_decrypt  0x4               /home/aftermath/reconstruct/release/libsacd_sacd_input.o
+track_type_t        0x4               /home/aftermath/reconstruct/release/libsacd_sacd_input.o
+character_set_t     0x4               /home/aftermath/reconstruct/release/libsacd_sacd_input.o
+audio_packet_data_type_t
+                    0x4               /home/aftermath/reconstruct/release/libsacd_sacd_input.o
+sacd_input_total_sectors
+                    0x4               /home/aftermath/reconstruct/release/libsacd_sacd_input.o
+sacd_input_read64   0x4               /home/aftermath/reconstruct/release/libsacd_sacd_input.o
+sacd_input_error    0x4               /home/aftermath/reconstruct/release/libsacd_sacd_input.o
+frame_format_t      0x4               /home/aftermath/reconstruct/release/libsacd_sacd_input.o
+genre_t             0x4               /home/aftermath/reconstruct/release/libsacd_sacd_input.o
+sacd_input_authenticate
+                    0x4               /home/aftermath/reconstruct/release/libsacd_sacd_input.o
+output              0x4               /home/aftermath/reconstruct/release/tool_main.o
+sacd_input_open     0x4               /home/aftermath/reconstruct/release/libsacd_sacd_input.o
+sacd_input_read     0x4               /home/aftermath/reconstruct/release/libsacd_sacd_input.o
+sacd_input_close    0x4               /home/aftermath/reconstruct/release/libsacd_sacd_input.o
+
+Discarded input sections
+
+ .note.GNU-stack
+                0x0000000000000000        0x0 /home/aftermath/arm-2009q3/arm-none-linux-gnueabi/libc/usr/lib/crt1.o
+ .note.GNU-stack
+                0x0000000000000000        0x0 /home/aftermath/arm-2009q3/arm-none-linux-gnueabi/libc/usr/lib/crti.o
+ .note.GNU-stack
+                0x0000000000000000        0x0 /home/aftermath/reconstruct/release/crtbegin.o
+ .note.GNU-stack
+                0x0000000000000000        0x0 /home/aftermath/reconstruct/release/libsacd_sacd_reader.o
+ .note.GNU-stack
+                0x0000000000000000        0x0 /home/aftermath/reconstruct/release/libsacd_sacd_input.o
+ .note.GNU-stack
+                0x0000000000000000        0x0 /home/aftermath/reconstruct/release/libsacd_sacd_read.o
+ .note.GNU-stack
+                0x0000000000000000        0x0 /home/aftermath/reconstruct/release/libsacd_scarletbook.o
+ .note.GNU-stack
+                0x0000000000000000        0x0 /home/aftermath/reconstruct/release/libsacd_scarletbook_read.o
+ .note.GNU-stack
+                0x0000000000000000        0x0 /home/aftermath/reconstruct/release/libsacd_scarletbook_print.o
+ .note.GNU-stack
+                0x0000000000000000        0x0 /home/aftermath/reconstruct/release/libsacd_scarletbook_output.o
+ .note.GNU-stack
+                0x0000000000000000        0x0 /home/aftermath/reconstruct/release/libsacd_scarletbook_helpers.o
+ .note.GNU-stack
+                0x0000000000000000        0x0 /home/aftermath/reconstruct/release/libsacd_scarletbook_id3.o
+ .note.GNU-stack
+                0x0000000000000000        0x0 /home/aftermath/reconstruct/release/libsacd_sacd_pb_stream.o
+ .note.GNU-stack
+                0x0000000000000000        0x0 /home/aftermath/reconstruct/release/libsacd_sacd_ripper.pb.o
+ .note.GNU-stack
+                0x0000000000000000        0x0 /home/aftermath/reconstruct/release/libsacd_cuesheet.o
+ .note.GNU-stack
+                0x0000000000000000        0x0 /home/aftermath/reconstruct/release/libsacd_dsf.o
+ .note.GNU-stack
+                0x0000000000000000        0x0 /home/aftermath/reconstruct/release/libsacd_dsdiff.o
+ .note.GNU-stack
+                0x0000000000000000        0x0 /home/aftermath/reconstruct/release/libsacd_iso_writer.o
+ .note.GNU-stack
+                0x0000000000000000        0x0 /home/aftermath/reconstruct/release/libcommon_charset.o
+ .note.GNU-stack
+                0x0000000000000000        0x0 /home/aftermath/reconstruct/release/libcommon_pb_decode.o
+ .note.GNU-stack
+                0x0000000000000000        0x0 /home/aftermath/reconstruct/release/libcommon_timeout.o
+ .note.GNU-stack
+                0x0000000000000000        0x0 /home/aftermath/reconstruct/release/libcommon_fileutils.o
+ .note.GNU-stack
+                0x0000000000000000        0x0 /home/aftermath/reconstruct/release/libcommon_pb_encode.o
+ .note.GNU-stack
+                0x0000000000000000        0x0 /home/aftermath/reconstruct/release/libcommon_usocket.o
+ .note.GNU-stack
+                0x0000000000000000        0x0 /home/aftermath/reconstruct/release/libcommon_socket.o
+ .note.GNU-stack
+                0x0000000000000000        0x0 /home/aftermath/reconstruct/release/libcommon_utils.o
+ .note.GNU-stack
+                0x0000000000000000        0x0 /home/aftermath/reconstruct/release/libcommon_log.o
+ .note.GNU-stack
+                0x0000000000000000        0x0 /home/aftermath/reconstruct/release/libcommon_logging.o
+ .note.GNU-stack
+                0x0000000000000000        0x0 /home/aftermath/reconstruct/release/libdstdec_yarn.o
+ .note.GNU-stack
+                0x0000000000000000        0x0 /home/aftermath/reconstruct/release/libdstdec_buffer_pool.o
+ .note.GNU-stack
+                0x0000000000000000        0x0 /home/aftermath/reconstruct/release/libdstdec_ccp_calc.o
+ .note.GNU-stack
+                0x0000000000000000        0x0 /home/aftermath/reconstruct/release/libdstdec_dst_ac.o
+ .note.GNU-stack
+                0x0000000000000000        0x0 /home/aftermath/reconstruct/release/libdstdec_dst_data.o
+ .note.GNU-stack
+                0x0000000000000000        0x0 /home/aftermath/reconstruct/release/libdstdec_dst_decoder.o
+ .note.GNU-stack
+                0x0000000000000000        0x0 /home/aftermath/reconstruct/release/libdstdec_dst_fram.o
+ .note.GNU-stack
+                0x0000000000000000        0x0 /home/aftermath/reconstruct/release/libdstdec_dst_init.o
+ .note.GNU-stack
+                0x0000000000000000        0x0 /home/aftermath/reconstruct/release/libdstdec_unpack_dst.o
+ .note.GNU-stack
+                0x0000000000000000        0x0 /home/aftermath/reconstruct/release/libid3_id3.o
+ .note.GNU-stack
+                0x0000000000000000        0x0 /home/aftermath/reconstruct/release/libid3_id3_frame.o
+ .note.GNU-stack
+                0x0000000000000000        0x0 /home/aftermath/reconstruct/release/libid3_id3_frame_content.o
+ .note.GNU-stack
+                0x0000000000000000        0x0 /home/aftermath/reconstruct/release/libid3_id3_frame_text.o
+ .note.GNU-stack
+                0x0000000000000000        0x0 /home/aftermath/reconstruct/release/libid3_id3_frame_url.o
+ .note.GNU-stack
+                0x0000000000000000        0x0 /home/aftermath/reconstruct/release/libid3_id3_tag.o
+ .note.GNU-stack
+                0x0000000000000000        0x0 /home/aftermath/reconstruct/release/libid3_unicode.o
+ .note.GNU-stack
+                0x0000000000000000        0x0 /home/aftermath/reconstruct/release/tool_main.o
+ .note.GNU-stack
+                0x0000000000000000        0x0 /home/aftermath/reconstruct/release/tool_install.o
+ .note.GNU-stack
+                0x0000000000000000        0x0 /home/aftermath/reconstruct/release/tool_getopt.o
+ .note.GNU-stack
+                0x0000000000000000        0x0 /home/aftermath/reconstruct/release/tool_getopt1.o
+ .note.GNU-stack
+                0x0000000000000000        0x0 /home/aftermath/reconstruct/release/division/bpabi.o
+ .note.GNU-stack
+                0x0000000000000000        0x0 /home/aftermath/reconstruct/release/division/_divdi3.o
+ .note.GNU-stack
+                0x0000000000000000        0x0 /home/aftermath/reconstruct/release/division/_udivdi3.o
+ .note.GNU-stack
+                0x0000000000000000        0x0 /home/aftermath/reconstruct/release/libgcc.a(_aeabi_uldivmod.o)
+ .note.GNU-stack
+                0x0000000000000000        0x0 /home/aftermath/reconstruct/release/libgcc.a(_arm_addsubdf3.o)
+ .note.GNU-stack
+                0x0000000000000000        0x0 /home/aftermath/reconstruct/release/libgcc.a(_arm_addsubsf3.o)
+ .note.GNU-stack
+                0x0000000000000000        0x0 /home/aftermath/reconstruct/release/libgcc.a(_arm_cmpdf2.o)
+ .note.GNU-stack
+                0x0000000000000000        0x0 /home/aftermath/reconstruct/release/libgcc.a(_arm_fixdfsi.o)
+ .note.GNU-stack
+                0x0000000000000000        0x0 /home/aftermath/reconstruct/release/libgcc.a(_arm_muldivdf3.o)
+ .note.GNU-stack
+                0x0000000000000000        0x0 /home/aftermath/reconstruct/release/libgcc.a(_arm_muldivsf3.o)
+ .note.GNU-stack
+                0x0000000000000000        0x0 /home/aftermath/reconstruct/release/libgcc.a(_arm_truncdfsf2.o)
+ .note.GNU-stack
+                0x0000000000000000        0x0 /home/aftermath/reconstruct/release/libgcc.a(_divsi3.o)
+ .note.GNU-stack
+                0x0000000000000000        0x0 /home/aftermath/reconstruct/release/libgcc.a(_dvmd_lnx.o)
+ .note.GNU-stack
+                0x0000000000000000        0x0 /home/aftermath/reconstruct/release/libgcc.a(_udivsi3.o)
+ .note.GNU-stack
+                0x0000000000000000        0x0 /home/aftermath/reconstruct/release/elf-init.o
+ .note.GNU-stack
+                0x0000000000000000        0x0 /home/aftermath/reconstruct/release/stat64.o
+ .note.GNU-stack
+                0x0000000000000000        0x0 /home/aftermath/reconstruct/release/fstat64.o
+ .note.GNU-stack
+                0x0000000000000000        0x0 /home/aftermath/reconstruct/release/crtend.o
+ .note.GNU-stack
+                0x0000000000000000        0x0 /home/aftermath/arm-2009q3/arm-none-linux-gnueabi/libc/usr/lib/crtn.o
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+*default*        0x0000000000000000 0xffffffffffffffff
+
+Linker script and memory map
+
+LOAD /home/aftermath/arm-2009q3/arm-none-linux-gnueabi/libc/usr/lib/crt1.o
+LOAD /home/aftermath/arm-2009q3/arm-none-linux-gnueabi/libc/usr/lib/crti.o
+LOAD /home/aftermath/reconstruct/release/crtbegin.o
+LOAD /home/aftermath/reconstruct/release/libsacd_sacd_reader.o
+LOAD /home/aftermath/reconstruct/release/libsacd_sacd_input.o
+LOAD /home/aftermath/reconstruct/release/libsacd_sacd_read.o
+LOAD /home/aftermath/reconstruct/release/libsacd_scarletbook.o
+LOAD /home/aftermath/reconstruct/release/libsacd_scarletbook_read.o
+LOAD /home/aftermath/reconstruct/release/libsacd_scarletbook_print.o
+LOAD /home/aftermath/reconstruct/release/libsacd_scarletbook_output.o
+LOAD /home/aftermath/reconstruct/release/libsacd_scarletbook_helpers.o
+LOAD /home/aftermath/reconstruct/release/libsacd_scarletbook_id3.o
+LOAD /home/aftermath/reconstruct/release/libsacd_sacd_pb_stream.o
+LOAD /home/aftermath/reconstruct/release/libsacd_sacd_ripper.pb.o
+LOAD /home/aftermath/reconstruct/release/libsacd_cuesheet.o
+LOAD /home/aftermath/reconstruct/release/libsacd_dsf.o
+LOAD /home/aftermath/reconstruct/release/libsacd_dsdiff.o
+LOAD /home/aftermath/reconstruct/release/libsacd_iso_writer.o
+LOAD /home/aftermath/reconstruct/release/libcommon_charset.o
+LOAD /home/aftermath/reconstruct/release/libcommon_pb_decode.o
+LOAD /home/aftermath/reconstruct/release/libcommon_timeout.o
+LOAD /home/aftermath/reconstruct/release/libcommon_fileutils.o
+LOAD /home/aftermath/reconstruct/release/libcommon_pb_encode.o
+LOAD /home/aftermath/reconstruct/release/libcommon_usocket.o
+LOAD /home/aftermath/reconstruct/release/libcommon_socket.o
+LOAD /home/aftermath/reconstruct/release/libcommon_utils.o
+LOAD /home/aftermath/reconstruct/release/libcommon_log.o
+LOAD /home/aftermath/reconstruct/release/libcommon_logging.o
+LOAD /home/aftermath/reconstruct/release/libdstdec_yarn.o
+LOAD /home/aftermath/reconstruct/release/libdstdec_buffer_pool.o
+LOAD /home/aftermath/reconstruct/release/libdstdec_ccp_calc.o
+LOAD /home/aftermath/reconstruct/release/libdstdec_dst_ac.o
+LOAD /home/aftermath/reconstruct/release/libdstdec_dst_data.o
+LOAD /home/aftermath/reconstruct/release/libdstdec_dst_decoder.o
+LOAD /home/aftermath/reconstruct/release/libdstdec_dst_fram.o
+LOAD /home/aftermath/reconstruct/release/libdstdec_dst_init.o
+LOAD /home/aftermath/reconstruct/release/libdstdec_unpack_dst.o
+LOAD /home/aftermath/reconstruct/release/libid3_id3.o
+LOAD /home/aftermath/reconstruct/release/libid3_id3_frame.o
+LOAD /home/aftermath/reconstruct/release/libid3_id3_frame_content.o
+LOAD /home/aftermath/reconstruct/release/libid3_id3_frame_text.o
+LOAD /home/aftermath/reconstruct/release/libid3_id3_frame_url.o
+LOAD /home/aftermath/reconstruct/release/libid3_id3_tag.o
+LOAD /home/aftermath/reconstruct/release/libid3_unicode.o
+LOAD /home/aftermath/reconstruct/release/tool_main.o
+LOAD /home/aftermath/reconstruct/release/tool_install.o
+LOAD /home/aftermath/reconstruct/release/tool_getopt.o
+LOAD /home/aftermath/reconstruct/release/tool_getopt1.o
+LOAD /home/aftermath/reconstruct/release/sacd_read_ko.o
+LOAD /home/aftermath/reconstruct/release/division/bpabi.o
+LOAD /home/aftermath/reconstruct/release/division/_divdi3.o
+LOAD /home/aftermath/reconstruct/release/division/_udivdi3.o
+START GROUP
+LOAD /home/aftermath/reconstruct/release/libgcc.a
+LOAD /home/aftermath/arm-2009q3/arm-none-linux-gnueabi/libc/lib/libpthread.so.0
+LOAD /home/aftermath/arm-2009q3/arm-none-linux-gnueabi/libc/lib/libgcc_s.so.1
+LOAD /home/aftermath/arm-2009q3/arm-none-linux-gnueabi/libc/lib/libc.so.6
+LOAD /home/aftermath/reconstruct/release/elf-init.o
+LOAD /home/aftermath/reconstruct/release/stat64.o
+LOAD /home/aftermath/reconstruct/release/fstat64.o
+LOAD /home/aftermath/arm-2009q3/arm-none-linux-gnueabi/libc/usr/lib/libc_nonshared.a
+END GROUP
+LOAD /home/aftermath/reconstruct/release/crtend.o
+LOAD /home/aftermath/arm-2009q3/arm-none-linux-gnueabi/libc/usr/lib/crtn.o
+                0x0000000000008000                PROVIDE (__executable_start, 0x8000)
+                0x0000000000008134                . = (0x8000 + SIZEOF_HEADERS)
+
+.interp         0x0000000000008134       0x13
+ *(.interp)
+ .interp        0x0000000000008134       0x13 /home/aftermath/arm-2009q3/arm-none-linux-gnueabi/libc/usr/lib/crti.o
+
+.note.ABI-tag   0x0000000000008148       0x20
+ .note.ABI-tag  0x0000000000008148       0x20 /home/aftermath/arm-2009q3/arm-none-linux-gnueabi/libc/usr/lib/crt1.o
+
+.note.gnu.build-id
+ *(.note.gnu.build-id)
+
+.hash           0x0000000000008168      0xa6c
+ *(.hash)
+ .hash          0x0000000000008168      0xa6c /home/aftermath/arm-2009q3/arm-none-linux-gnueabi/libc/usr/lib/crti.o
+
+.gnu.hash
+ *(.gnu.hash)
+
+.dynsym         0x0000000000008bd4     0x1920
+ *(.dynsym)
+ .dynsym        0x0000000000008bd4     0x1920 /home/aftermath/arm-2009q3/arm-none-linux-gnueabi/libc/usr/lib/crti.o
+
+.dynstr         0x000000000000a4f4     0x1522
+ *(.dynstr)
+ .dynstr        0x000000000000a4f4     0x1522 /home/aftermath/arm-2009q3/arm-none-linux-gnueabi/libc/usr/lib/crti.o
+
+.gnu.version    0x000000000000ba16      0x324
+ *(.gnu.version)
+ .gnu.version   0x000000000000ba16      0x324 /home/aftermath/arm-2009q3/arm-none-linux-gnueabi/libc/usr/lib/crti.o
+
+.gnu.version_d  0x000000000000bd3c        0x0 load address 0x000000000000bd3a
+ *(.gnu.version_d)
+ .gnu.version_d
+                0x0000000000000000        0x0 /home/aftermath/arm-2009q3/arm-none-linux-gnueabi/libc/usr/lib/crti.o
+
+.gnu.version_r  0x000000000000bd3c       0x60
+ *(.gnu.version_r)
+ .gnu.version_r
+                0x000000000000bd3c       0x60 /home/aftermath/arm-2009q3/arm-none-linux-gnueabi/libc/usr/lib/crti.o
+
+.rel.dyn        0x000000000000bd9c       0x28
+ *(.rel.init)
+ *(.rel.text .rel.text.* .rel.gnu.linkonce.t.*)
+ *(.rel.fini)
+ *(.rel.rodata .rel.rodata.* .rel.gnu.linkonce.r.*)
+ *(.rel.data.rel.ro* .rel.gnu.linkonce.d.rel.ro.*)
+ *(.rel.data .rel.data.* .rel.gnu.linkonce.d.*)
+ *(.rel.tdata .rel.tdata.* .rel.gnu.linkonce.td.*)
+ *(.rel.tbss .rel.tbss.* .rel.gnu.linkonce.tb.*)
+ *(.rel.ctors)
+ *(.rel.dtors)
+ *(.rel.got)
+ .rel.got       0x000000000000bd9c        0x8 /home/aftermath/arm-2009q3/arm-none-linux-gnueabi/libc/usr/lib/crti.o
+ *(.rel.bss .rel.bss.* .rel.gnu.linkonce.b.*)
+ .rel.bss       0x000000000000bda4       0x20 /home/aftermath/arm-2009q3/arm-none-linux-gnueabi/libc/usr/lib/crti.o
+
+.rela.dyn
+ *(.rela.init)
+ *(.rela.text .rela.text.* .rela.gnu.linkonce.t.*)
+ *(.rela.fini)
+ *(.rela.rodata .rela.rodata.* .rela.gnu.linkonce.r.*)
+ *(.rela.data .rela.data.* .rela.gnu.linkonce.d.*)
+ *(.rela.tdata .rela.tdata.* .rela.gnu.linkonce.td.*)
+ *(.rela.tbss .rela.tbss.* .rela.gnu.linkonce.tb.*)
+ *(.rela.ctors)
+ *(.rela.dtors)
+ *(.rela.got)
+ *(.rela.bss .rela.bss.* .rela.gnu.linkonce.b.*)
+
+.rel.plt        0x000000000000bdc4      0x408
+ *(.rel.plt)
+ .rel.plt       0x000000000000bdc4      0x408 /home/aftermath/arm-2009q3/arm-none-linux-gnueabi/libc/usr/lib/crti.o
+
+.rela.plt
+ *(.rela.plt)
+
+.init           0x000000000000c1cc        0xc
+ *(.init)
+ .init          0x000000000000c1cc        0x8 /home/aftermath/arm-2009q3/arm-none-linux-gnueabi/libc/usr/lib/crti.o
+                0x000000000000c1cc                _init
+ .init          0x000000000000c1d4        0x4 /home/aftermath/arm-2009q3/arm-none-linux-gnueabi/libc/usr/lib/crtn.o
+
+.plt            0x000000000000c1d8      0x620
+ *(.plt)
+ .plt           0x000000000000c1d8      0x620 /home/aftermath/arm-2009q3/arm-none-linux-gnueabi/libc/usr/lib/crti.o
+                0x000000000000c1ec                getpgrp@@GLIBC_2.4
+                0x000000000000c1f8                strerror@@GLIBC_2.4
+                0x000000000000c204                mkdir@@GLIBC_2.4
+                0x000000000000c210                __sigsetjmp@@GLIBC_2.4
+                0x000000000000c21c                get_nprocs@@GLIBC_2.4
+                0x000000000000c228                abort@@GLIBC_2.4
+                0x000000000000c234                connect@@GLIBC_2.4
+                0x000000000000c240                localtime@@GLIBC_2.4
+                0x000000000000c24c                wcscpy@@GLIBC_2.4
+                0x000000000000c258                memcmp@@GLIBC_2.4
+                0x000000000000c264                pthread_attr_setdetachstate@@GLIBC_2.4
+                0x000000000000c270                pthread_exit@@GLIBC_2.4
+                0x000000000000c27c                __libc_start_main@@GLIBC_2.4
+                0x000000000000c288                fwide@@GLIBC_2.4
+                0x000000000000c294                signal@@GLIBC_2.4
+                0x000000000000c2ac                vsnprintf@@GLIBC_2.4
+                0x000000000000c2b8                strncpy@@GLIBC_2.4
+                0x000000000000c2c4                fclose@@GLIBC_2.4
+                0x000000000000c2d0                vfwprintf@@GLIBC_2.4
+                0x000000000000c2dc                recv@@GLIBC_2.4
+                0x000000000000c2e8                getenv@@GLIBC_2.4
+                0x000000000000c2f4                ftello64@@GLIBC_2.4
+                0x000000000000c300                system@@GLIBC_2.4
+                0x000000000000c30c                strchr@@GLIBC_2.4
+                0x000000000000c318                putchar@@GLIBC_2.4
+                0x000000000000c324                strcasecmp@@GLIBC_2.4
+                0x000000000000c330                listen@@GLIBC_2.4
+                0x000000000000c33c                calloc@@GLIBC_2.4
+                0x000000000000c348                memalign@@GLIBC_2.4
+                0x000000000000c354                pthread_cond_wait@@GLIBC_2.4
+                0x000000000000c360                sendto@@GLIBC_2.4
+                0x000000000000c36c                hstrerror@@GLIBC_2.4
+                0x000000000000c378                htons@@GLIBC_2.4
+                0x000000000000c384                memset@@GLIBC_2.4
+                0x000000000000c390                strrchr@@GLIBC_2.4
+                0x000000000000c39c                perror@@GLIBC_2.4
+                0x000000000000c3a8                iconv@@GLIBC_2.4
+                0x000000000000c3b4                chmod@@GLIBC_2.4
+                0x000000000000c3c0                __assert_fail@@GLIBC_2.4
+                0x000000000000c3cc                tmpnam@@GLIBC_2.4
+                0x000000000000c3d8                pthread_cond_broadcast@@GLIBC_2.4
+                0x000000000000c3e4                __fxstat64@@GLIBC_2.4
+                0x000000000000c3f0                tcgetpgrp@@GLIBC_2.4
+                0x000000000000c3fc                free@@GLIBC_2.4
+                0x000000000000c408                read@@GLIBC_2.4
+                0x000000000000c414                write@@GLIBC_2.4
+                0x000000000000c420                getopt_long@@GLIBC_2.4
+                0x000000000000c42c                wcslen@@GLIBC_2.4
+                0x000000000000c438                gettimeofday@@GLIBC_2.4
+                0x000000000000c444                fseek@@GLIBC_2.4
+                0x000000000000c450                accept@@GLIBC_2.4
+                0x000000000000c45c                pthread_mutex_unlock@@GLIBC_2.4
+                0x000000000000c468                socket@@GLIBC_2.4
+                0x000000000000c474                fflush@@GLIBC_2.4
+                0x000000000000c480                inet_aton@@GLIBC_2.4
+                0x000000000000c48c                ioctl@@GLIBC_2.4
+                0x000000000000c498                posix_memalign@@GLIBC_2.4
+                0x000000000000c4a4                pthread_mutex_lock@@GLIBC_2.4
+                0x000000000000c4b0                iconv_close@@GLIBC_2.4
+                0x000000000000c4bc                strlen@@GLIBC_2.4
+                0x000000000000c4c8                sscanf@@GLIBC_2.4
+                0x000000000000c4d4                unlink@@GLIBC_2.4
+                0x000000000000c4e0                pthread_create@@GLIBC_2.4
+                0x000000000000c4ec                memcpy@@GLIBC_2.4
+                0x000000000000c4f8                setlocale@@GLIBC_2.4
+                0x000000000000c504                __h_errno_location@@GLIBC_2.4
+                0x000000000000c510                fopen64@@GLIBC_2.4
+                0x000000000000c51c                strcpy@@GLIBC_2.4
+                0x000000000000c528                pthread_cond_destroy@@GLIBC_2.4
+                0x000000000000c534                pthread_equal@@GLIBC_2.4
+                0x000000000000c540                pthread_mutex_destroy@@GLIBC_2.4
+                0x000000000000c54c                printf@@GLIBC_2.4
+                0x000000000000c558                open64@@GLIBC_2.4
+                0x000000000000c564                raise@@GLIBC_2.4
+                0x000000000000c570                atoi@@GLIBC_2.4
+                0x000000000000c57c                gethostbyaddr@@GLIBC_2.4
+                0x000000000000c588                pthread_mutex_init@@GLIBC_2.4
+                0x000000000000c594                shutdown@@GLIBC_2.4
+                0x000000000000c5a0                bind@@GLIBC_2.4
+                0x000000000000c5ac                strstr@@GLIBC_2.4
+                0x000000000000c5b8                select@@GLIBC_2.4
+                0x000000000000c5c4                close@@GLIBC_2.4
+                0x000000000000c5d0                fwrite@@GLIBC_2.4
+                0x000000000000c5dc                pthread_attr_setstacksize@@GLIBC_2.4
+                0x000000000000c5e8                remove@@GLIBC_2.4
+                0x000000000000c5f4                time@@GLIBC_2.4
+                0x000000000000c600                setvbuf@@GLIBC_2.4
+                0x000000000000c60c                __ctype_b_loc@@GLIBC_2.4
+                0x000000000000c618                __xstat64@@GLIBC_2.4
+                0x000000000000c624                fprintf@@GLIBC_2.4
+                0x000000000000c630                strdup@@GLIBC_2.4
+                0x000000000000c63c                lseek64@@GLIBC_2.4
+                0x000000000000c648                malloc@@GLIBC_2.4
+                0x000000000000c654                freopen64@@GLIBC_2.4
+                0x000000000000c660                sigaction@@GLIBC_2.4
+                0x000000000000c66c                chdir@@GLIBC_2.4
+                0x000000000000c678                pthread_attr_init@@GLIBC_2.4
+                0x000000000000c684                getmntent@@GLIBC_2.4
+                0x000000000000c690                fputc@@GLIBC_2.4
+                0x000000000000c69c                strtok@@GLIBC_2.4
+                0x000000000000c6a8                getcwd@@GLIBC_2.4
+                0x000000000000c6b4                sleep@@GLIBC_2.4
+                0x000000000000c6c0                send@@GLIBC_2.4
+                0x000000000000c6cc                memmove@@GLIBC_2.4
+                0x000000000000c6d8                fcntl@@GLIBC_2.4
+                0x000000000000c6e4                fwprintf@@GLIBC_2.4
+                0x000000000000c6f0                htonl@@GLIBC_2.4
+                0x000000000000c6fc                pthread_attr_destroy@@GLIBC_2.4
+                0x000000000000c708                __pthread_register_cancel@@GLIBC_2.4
+                0x000000000000c714                __pthread_unregister_cancel@@GLIBC_2.4
+                0x000000000000c720                snprintf@@GLIBC_2.4
+                0x000000000000c72c                fread@@GLIBC_2.4
+                0x000000000000c738                fchdir@@GLIBC_2.4
+                0x000000000000c744                pthread_cond_init@@GLIBC_2.4
+                0x000000000000c750                strncmp@@GLIBC_2.4
+                0x000000000000c75c                gethostbyname@@GLIBC_2.4
+                0x000000000000c768                realloc@@GLIBC_2.4
+                0x000000000000c774                iconv_open@@GLIBC_2.4
+                0x000000000000c780                recvfrom@@GLIBC_2.4
+                0x000000000000c78c                setenv@@GLIBC_2.4
+                0x000000000000c798                strcmp@@GLIBC_2.4
+                0x000000000000c7a4                exit@@GLIBC_2.4
+                0x000000000000c7b0                __pthread_unwind_next@@GLIBC_2.4
+                0x000000000000c7bc                __errno_location@@GLIBC_2.4
+                0x000000000000c7c8                pthread_self@@GLIBC_2.4
+                0x000000000000c7d4                pthread_cancel@@GLIBC_2.4
+                0x000000000000c7e0                sprintf@@GLIBC_2.4
+                0x000000000000c7ec                pthread_join@@GLIBC_2.4
+
+.text           0x000000000000c7f8    0x25180
+ *(.text .stub .text.* .gnu.linkonce.t.*)
+ .text          0x000000000000c7f8       0x3c /home/aftermath/arm-2009q3/arm-none-linux-gnueabi/libc/usr/lib/crt1.o
+                0x000000000000c7f8                _start
+ .text          0x000000000000c834       0x24 /home/aftermath/arm-2009q3/arm-none-linux-gnueabi/libc/usr/lib/crti.o
+ .text          0x000000000000c858       0x4c /home/aftermath/reconstruct/release/crtbegin.o
+ .text          0x000000000000c8a4      0x7ac /home/aftermath/reconstruct/release/libsacd_sacd_reader.o
+                0x000000000000c974                sacd_open
+                0x000000000000ce04                sacd_read_block_raw
+                0x000000000000cea4                sacd_read_block_raw64
+                0x000000000000cf98                sacd_decrypt
+                0x000000000000cdac                sacd_close
+                0x000000000000cf44                sacd_authenticate
+                0x000000000000cffc                sacd_get_total_sectors
+ .text          0x000000000000d050      0xee8 /home/aftermath/reconstruct/release/libsacd_sacd_input.o
+                0x000000000000dce0                sacd_input_setup
+ .text          0x000000000000df38      0x408 /home/aftermath/reconstruct/release/libsacd_sacd_read.o
+                0x000000000000dfc8                auth_sacd
+                0x000000000000e220                disc_sacd
+                0x000000000000e058                read_sacd
+                0x000000000000e10c                uninit_sacd
+                0x000000000000e2b0                sacd_sacd
+                0x000000000000e178                decrypt_sacd
+                0x000000000000df38                init_sacd
+ .text          0x000000000000e340        0x0 /home/aftermath/reconstruct/release/libsacd_scarletbook.o
+ .text          0x000000000000e340     0x4dec /home/aftermath/reconstruct/release/libsacd_scarletbook_read.o
+                0x00000000000128e0                scarletbook_frame_init
+                0x000000000000eb74                scarletbook_close
+                0x0000000000012ae8                scarletbook_process_frames
+                0x000000000000e3a8                scarletbook_open
+ .text          0x000000000001312c     0x1430 /home/aftermath/reconstruct/release/libsacd_scarletbook_print.o
+                0x0000000000014480                scarletbook_print
+ .text          0x000000000001455c     0x16e0 /home/aftermath/reconstruct/release/libsacd_scarletbook_output.o
+                0x0000000000015b88                scarletbook_output_destroy
+                0x0000000000015a14                scarletbook_output_create
+                0x00000000000147c8                scarletbook_output_enqueue_track
+                0x0000000000014cd0                scarletbook_output_enqueue_raw_sectors
+                0x0000000000015b60                scarletbook_output_interrupt
+                0x0000000000015ad4                scarletbook_output_start
+                0x0000000000015aac                scarletbook_output_is_busy
+ .text          0x0000000000015c3c      0x8f0 /home/aftermath/reconstruct/release/libsacd_scarletbook_helpers.o
+                0x0000000000015fd8                get_music_filename
+                0x0000000000015c3c                get_album_dir
+                0x00000000000163ec                get_speaker_config_string
+                0x00000000000164a4                get_frame_format_string
+ .text          0x000000000001652c      0x740 /home/aftermath/reconstruct/release/libsacd_scarletbook_id3.o
+                0x000000000001652c                scarletbook_id3_tag_render
+ .text          0x0000000000016c6c      0x260 /home/aftermath/reconstruct/release/libsacd_sacd_pb_stream.o
+                0x0000000000016e7c                pb_istream_from_socket
+                0x0000000000016e24                pb_ostream_from_socket
+ .text          0x0000000000016ecc        0x0 /home/aftermath/reconstruct/release/libsacd_sacd_ripper.pb.o
+ .text          0x0000000000016ecc      0x92c /home/aftermath/reconstruct/release/libsacd_cuesheet.o
+                0x0000000000016f30                write_cue_sheet
+ .text          0x00000000000177f8      0xc20 /home/aftermath/reconstruct/release/libsacd_dsf.o
+                0x00000000000183f8                dsf_format_fn
+ .text          0x0000000000018418     0x4bd8 /home/aftermath/reconstruct/release/libsacd_dsdiff.o
+                0x000000000001cfb0                dsdiff_format_fn
+                0x000000000001cfd0                dsdiff_edit_master_format_fn
+ .text          0x000000000001cff0       0x64 /home/aftermath/reconstruct/release/libsacd_iso_writer.o
+                0x000000000001d034                iso_format_fn
+ .text          0x000000000001d054      0x330 /home/aftermath/reconstruct/release/libcommon_charset.o
+                0x000000000001d09c                charset_convert
+                0x000000000001d2d4                charset_from_utf8
+                0x000000000001d32c                charset_to_utf8
+                0x000000000001d054                charset_get_current
+ .text          0x000000000001d384     0x1474 /home/aftermath/reconstruct/release/libcommon_pb_decode.o
+                0x000000000001e444                pb_dec_svarint
+                0x000000000001e504                pb_dec_fixed32
+                0x000000000001e714                pb_dec_submessage
+                0x000000000001e648                pb_dec_string
+                0x000000000001e540                pb_dec_fixed64
+                0x000000000001d384                pb_read
+                0x000000000001d600                pb_skip_varint
+                0x000000000001d478                pb_istream_from_buffer
+                0x000000000001e57c                pb_dec_bytes
+                0x000000000001e3c0                pb_dec_varint
+                0x000000000001d660                pb_skip_string
+                0x000000000001d514                pb_decode_varint
+                0x000000000001e17c                pb_decode
+ .text          0x000000000001e7f8      0x7b0 /home/aftermath/reconstruct/release/libcommon_timeout.o
+                0x000000000001eee4                timeout_markstart
+                0x000000000001e7f8                timeout_init
+                0x000000000001ef18                timeout_gettime
+                0x000000000001eb5c                timeout_getretry
+                0x000000000001e830                timeout_get
+                0x000000000001eb30                timeout_getstart
+ .text          0x000000000001efa8     0x11e4 /home/aftermath/reconstruct/release/libcommon_fileutils.o
+                0x000000000001ff08                sanitize_filename
+                0x000000000001f9b8                recursive_mkdir
+                0x000000000001efa8                make_filename
+                0x00000000000200a4                sanitize_filepath
+                0x000000000001f2c0                parse_format
+                0x000000000001fd68                get_unique_dir
+                0x000000000001fb18                recursive_parent_mkdir
+                0x000000000001fbfc                get_unique_filename
+ .text          0x000000000002018c      0xf8c /home/aftermath/reconstruct/release/libcommon_pb_encode.o
+                0x0000000000020ec4                pb_enc_string
+                0x0000000000020dfc                pb_enc_fixed64
+                0x0000000000020b00                pb_encode_string
+                0x00000000000201e4                pb_ostream_from_buffer
+                0x0000000000020634                pb_encode
+                0x0000000000020240                pb_write
+                0x0000000000020a04                pb_encode_tag
+                0x0000000000020e74                pb_enc_bytes
+                0x0000000000020b9c                pb_enc_varint
+                0x0000000000020c1c                pb_enc_svarint
+                0x0000000000020f10                pb_enc_submessage
+                0x0000000000020e38                pb_enc_fixed32
+                0x00000000000208e8                pb_encode_varint
+                0x0000000000020a58                pb_encode_tag_for_field
+ .text          0x0000000000021118        0x0 /home/aftermath/reconstruct/release/libcommon_usocket.o
+ .text          0x0000000000021118     0x1440 /home/aftermath/reconstruct/release/libcommon_socket.o
+                0x0000000000021f78                socket_gethostbyaddr
+                0x00000000000221fc                socket_ioerror
+                0x00000000000222d4                inet_tryconnect
+                0x0000000000021f1c                socket_setnonblocking
+                0x00000000000214ac                socket_close
+                0x000000000002179c                socket_shutdown
+                0x00000000000220b4                socket_hoststrerror
+                0x0000000000022410                inet_trybind
+                0x00000000000214c8                socket_destroy
+                0x0000000000021514                socket_select
+                0x0000000000021648                socket_create
+                0x0000000000021c98                socket_recv
+                0x0000000000021730                socket_listen
+                0x00000000000216b0                socket_bind
+                0x000000000002201c                socket_gethostbyname
+                0x0000000000022290                inet_trycreate
+                0x0000000000021118                socket_waitfd
+                0x0000000000021b6c                socket_sendto
+                0x0000000000021a58                socket_send
+                0x00000000000217dc                socket_connect
+                0x0000000000022110                socket_strerror
+                0x0000000000022228                io_strerror
+                0x000000000002148c                socket_open
+                0x0000000000021ec0                socket_setblocking
+                0x0000000000021da0                socket_recvfrom
+                0x000000000002192c                socket_accept
+ .text          0x0000000000022558      0xb3c /home/aftermath/reconstruct/release/libcommon_utils.o
+                0x0000000000022844                trim_chars
+                0x0000000000022928                trim_whitespace
+                0x0000000000022f80                print_hex_dump
+                0x000000000002263c                str_replace
+                0x0000000000022558                substr
+                0x00000000000227c8                replace_double_space_with_single
+                0x0000000000022a24                hex_dump_to_buffer
+ .text          0x0000000000023094      0xd7c /home/aftermath/reconstruct/release/libcommon_log.o
+                0x0000000000023704                set_log_file
+                0x0000000000023d84                log_abort
+                0x0000000000023094                log_init
+                0x00000000000233e4                log_destroy
+                0x0000000000023cdc                log_flush
+                0x000000000002385c                log_print
+                0x0000000000023d9c                log_assert
+                0x00000000000237bc                set_log_buffering
+                0x000000000002367c                create_log_module
+ .text          0x0000000000023e10       0x54 /home/aftermath/reconstruct/release/libcommon_logging.o
+                0x0000000000023e54                destroy_logging
+                0x0000000000023e10                init_logging
+ .text          0x0000000000023e64      0xaac /home/aftermath/reconstruct/release/libdstdec_yarn.o
+                0x0000000000024690                join
+                0x00000000000248c4                destruct
+                0x00000000000242f4                free_lock
+                0x0000000000024034                possess
+                0x0000000000024160                wait_for
+                0x0000000000023fa4                new_lock
+                0x00000000000242cc                peek_lock
+                0x00000000000240b4                twist
+                0x0000000000023f14                yarn_mem
+                0x0000000000024530                launch
+                0x0000000000024794                join_all
+                0x0000000000024074                release
+ .text          0x0000000000024910      0x434 /home/aftermath/reconstruct/release/libdstdec_buffer_pool.o
+                0x0000000000024910                buffer_pool_create
+                0x0000000000024974                buffer_pool_get_space
+                0x0000000000024c58                buffer_pool_free
+                0x0000000000024b38                buffer_pool_use_space
+                0x0000000000024b78                buffer_pool_drop_space
+ .text          0x0000000000024d44      0x400 /home/aftermath/reconstruct/release/libdstdec_ccp_calc.o
+                0x0000000000024d44                CCP_CalcInit
+ .text          0x0000000000025144      0x324 /home/aftermath/reconstruct/release/libdstdec_dst_ac.o
+                0x0000000000025144                DST_ACDecodeBit
+                0x0000000000025410                DST_ACGetPtableIndex
+ .text          0x0000000000025468      0x830 /home/aftermath/reconstruct/release/libdstdec_dst_data.o
+                0x0000000000025468                GetDSTDataPointer
+                0x0000000000025688                FIO_BitGetChrUnsigned
+                0x00000000000254a8                ResetReadingIndex
+                0x000000000002573c                FIO_BitGetIntUnsigned
+                0x00000000000258e4                FIO_BitGetShortSigned
+                0x00000000000255a4                DeleteBuffer
+                0x0000000000025c60                get_in_bitcount
+                0x00000000000255f8                FillBuffer
+                0x00000000000254f8                CreateBuffer
+                0x00000000000257ec                FIO_BitGetIntSigned
+                0x00000000000259f4                getbits
+ .text          0x0000000000025c98      0xc40 /home/aftermath/reconstruct/release/libdstdec_dst_decoder.o
+                0x0000000000026658                dst_decoder_create
+                0x0000000000026744                dst_decoder_destroy
+                0x0000000000026774                dst_decoder_decode
+ .text          0x00000000000268d8     0x13f0 /home/aftermath/reconstruct/release/libdstdec_dst_fram.o
+                0x00000000000270d0                DST_FramDSTDecode
+                0x0000000000027c74                DST_GetErrorMessage
+ .text          0x0000000000027cc8      0xb54 /home/aftermath/reconstruct/release/libdstdec_dst_init.o
+                0x00000000000287ec                DST_CloseDecoder
+                0x000000000002861c                DST_InitDecoder
+ .text          0x000000000002881c     0x2518 /home/aftermath/reconstruct/release/libdstdec_unpack_dst.o
+                0x0000000000029878                CopyMappingData
+                0x0000000000028958                Log2RoundUp
+                0x000000000002aa4c                UnpackDSTframe
+                0x000000000002881c                ReadDSDframe
+                0x0000000000029c40                ReadFilterCoefSets
+                0x000000000002937c                ReadSegmentData
+                0x00000000000294b0                ReadTableMappingData
+                0x0000000000029124                CopySegmentData
+                0x000000000002a258                ReadProbabilityTables
+                0x0000000000029a78                ReadMappingData
+                0x00000000000289ac                ReadTableSegmentData
+                0x000000000002a874                ReadArithmeticCodedData
+                0x0000000000028894                RiceDecode
+ .text          0x000000000002ad34      0xe68 /home/aftermath/reconstruct/release/libid3_id3.o
+                0x000000000002b740                id3_alter_file
+                0x000000000002b680                id3_close
+                0x000000000002b480                id3_open_fd
+                0x000000000002b7dc                id3_write_tag
+                0x000000000002b3a8                id3_open_mem
+                0x000000000002b580                id3_open_fp
+ .text          0x000000000002bb9c      0xd94 /home/aftermath/reconstruct/release/libid3_id3_frame.o
+                0x000000000002c574                id3_frame_clear_data
+                0x000000000002c3d0                id3_destroy_frames
+                0x000000000002c1ec                id3_delete_frame
+                0x000000000002c190                id3_decompress_frame
+                0x000000000002bd84                id3_read_frame
+                0x000000000002c0ac                id3_get_frame
+                0x000000000002c2e4                id3_add_frame
+ .text          0x000000000002c930        0x0 /home/aftermath/reconstruct/release/libid3_id3_frame_content.o
+ .text          0x000000000002c930      0xc88 /home/aftermath/reconstruct/release/libid3_id3_frame_text.o
+                0x000000000002ce8c                id3_get_text_desc
+                0x000000000002ca70                id3_get_encoding
+                0x000000000002cd98                id3_get_text
+                0x000000000002d35c                id3_get_comment
+                0x000000000002cfd8                id3_set_text
+                0x000000000002c9e8                id3_string_decode
+                0x000000000002cbec                id3_set_encoding
+                0x000000000002cf34                id3_get_text_number
+                0x000000000002d468                id3_set_comment
+                0x000000000002d2ec                id3_frame_is_text
+                0x000000000002d0d0                id3_set_text_number
+                0x000000000002c930                id3_string_size
+ .text          0x000000000002d5b8      0x19c /home/aftermath/reconstruct/release/libid3_id3_frame_url.o
+                0x000000000002d5b8                id3_get_url
+                0x000000000002d6ac                id3_get_url_desc
+ .text          0x000000000002d754      0x318 /home/aftermath/reconstruct/release/libid3_id3_tag.o
+                0x000000000002d804                id3_read_tag
+                0x000000000002d788                id3_init_tag
+ .text          0x000000000002da6c      0x2fc /home/aftermath/reconstruct/release/libid3_unicode.o
+                0x000000000002dd3c                convert_from_utf16be
+                0x000000000002dc98                convert_from_utf16
+ .text          0x000000000002dd68     0x1bec /home/aftermath/reconstruct/release/tool_main.o
+                0x000000000002ddf4                user_requested_exit
+                0x000000000002de18                requested_for_exit
+                0x000000000002f65c                server_loop
+                0x000000000002e4bc                listener_thread
+                0x000000000002ef04                main_loop
+                0x000000000002ddd0                is_client_connected
+                0x000000000002f780                main
+ .text          0x000000000002f954      0x254 /home/aftermath/reconstruct/release/tool_install.o
+                0x000000000002f954                install_modules
+                0x000000000002fb24                remove_modules
+ .text          0x000000000002fba8        0x0 /home/aftermath/reconstruct/release/tool_getopt.o
+ .text          0x000000000002fba8        0x0 /home/aftermath/reconstruct/release/tool_getopt1.o
+ .text          0x000000000002fba8        0x0 /home/aftermath/reconstruct/release/sacd_read_ko.o
+ .text          0x000000000002fba8       0x78 /home/aftermath/reconstruct/release/division/bpabi.o
+                0x000000000002fbe4                __gnu_ldivmod_helper
+                0x000000000002fba8                __gnu_uldivmod_helper
+ .text          0x000000000002fc20      0x49c /home/aftermath/reconstruct/release/division/_divdi3.o
+                0x000000000002fc20                __divdi3
+ .text          0x00000000000300bc      0x430 /home/aftermath/reconstruct/release/division/_udivdi3.o
+                0x00000000000300bc                __udivdi3
+ .text          0x00000000000304ec       0x1c /home/aftermath/reconstruct/release/libgcc.a(_aeabi_uldivmod.o)
+                0x00000000000304ec                __aeabi_uldivmod
+ .text          0x0000000000030508      0x3b8 /home/aftermath/reconstruct/release/libgcc.a(_arm_addsubdf3.o)
+                0x000000000003084c                __floatundidf
+                0x00000000000307e4                __floatsidf
+                0x00000000000307c0                __aeabi_ui2d
+                0x00000000000307e4                __aeabi_i2d
+                0x00000000000307c0                __floatunsidf
+                0x0000000000030510                __subdf3
+                0x0000000000030860                __floatdidf
+                0x0000000000030514                __adddf3
+                0x0000000000030860                __aeabi_l2d
+                0x000000000003080c                __aeabi_f2d
+                0x000000000003084c                __aeabi_ul2d
+                0x0000000000030508                __aeabi_drsub
+                0x000000000003080c                __extendsfdf2
+                0x0000000000030514                __aeabi_dadd
+                0x0000000000030510                __aeabi_dsub
+ .text          0x00000000000308c0      0x250 /home/aftermath/reconstruct/release/libgcc.a(_arm_addsubsf3.o)
+                0x00000000000308cc                __aeabi_fadd
+                0x0000000000030a94                __aeabi_l2f
+                0x0000000000030a84                __aeabi_ul2f
+                0x00000000000308c8                __subsf3
+                0x0000000000030a64                __floatsisf
+                0x00000000000308cc                __addsf3
+                0x00000000000308c0                __aeabi_frsub
+                0x0000000000030a94                __floatdisf
+                0x00000000000308c8                __aeabi_fsub
+                0x0000000000030a5c                __aeabi_ui2f
+                0x0000000000030a64                __aeabi_i2f
+                0x0000000000030a5c                __floatunsisf
+                0x0000000000030a84                __floatundisf
+ .text          0x0000000000030b10      0x128 /home/aftermath/reconstruct/release/libgcc.a(_arm_cmpdf2.o)
+                0x0000000000030b10                __gtdf2
+                0x0000000000030b18                __ltdf2
+                0x0000000000030bc0                __aeabi_cdcmple
+                0x0000000000030b10                __gedf2
+                0x0000000000030c24                __aeabi_dcmpgt
+                0x0000000000030b18                __ledf2
+                0x0000000000030bc0                __aeabi_cdcmpeq
+                0x0000000000030bd4                __aeabi_dcmpeq
+                0x0000000000030bfc                __aeabi_dcmple
+                0x0000000000030c10                __aeabi_dcmpge
+                0x0000000000030b20                __cmpdf2
+                0x0000000000030be8                __aeabi_dcmplt
+                0x0000000000030b20                __nedf2
+                0x0000000000030ba4                __aeabi_cdrcmple
+                0x0000000000030b20                __eqdf2
+ .text          0x0000000000030c38       0x5c /home/aftermath/reconstruct/release/libgcc.a(_arm_fixdfsi.o)
+                0x0000000000030c38                __fixdfsi
+                0x0000000000030c38                __aeabi_d2iz
+ .text          0x0000000000030c94      0x470 /home/aftermath/reconstruct/release/libgcc.a(_arm_muldivdf3.o)
+                0x0000000000030c94                __muldf3
+                0x0000000000030f00                __divdf3
+                0x0000000000030c94                __aeabi_dmul
+                0x0000000000030f00                __aeabi_ddiv
+ .text          0x0000000000031104      0x2f8 /home/aftermath/reconstruct/release/libgcc.a(_arm_muldivsf3.o)
+                0x000000000003129c                __aeabi_fdiv
+                0x000000000003129c                __divsf3
+                0x0000000000031104                __aeabi_fmul
+                0x0000000000031104                __mulsf3
+ .text          0x00000000000313fc       0xa0 /home/aftermath/reconstruct/release/libgcc.a(_arm_truncdfsf2.o)
+                0x00000000000313fc                __aeabi_d2f
+                0x00000000000313fc                __truncdfsf2
+ .text          0x000000000003149c      0x238 /home/aftermath/reconstruct/release/libgcc.a(_divsi3.o)
+                0x000000000003149c                __divsi3
+                0x00000000000316bc                __aeabi_idivmod
+                0x000000000003149c                __aeabi_idiv
+ .text          0x00000000000316d4       0x10 /home/aftermath/reconstruct/release/libgcc.a(_dvmd_lnx.o)
+                0x00000000000316d4                __div0
+ .text          0x00000000000316e4      0x208 /home/aftermath/reconstruct/release/libgcc.a(_udivsi3.o)
+                0x00000000000316e4                __udivsi3
+                0x00000000000316e4                __aeabi_uidiv
+                0x00000000000318d4                __aeabi_uidivmod
+ .text          0x00000000000318ec       0x6c /home/aftermath/reconstruct/release/elf-init.o
+                0x00000000000318ec                __libc_csu_fini
+                0x00000000000318f0                __libc_csu_init
+ .text          0x0000000000031958       0x10 /home/aftermath/reconstruct/release/stat64.o
+                0x0000000000031958                stat64
+ .text          0x0000000000031968       0x10 /home/aftermath/reconstruct/release/fstat64.o
+                0x0000000000031968                fstat64
+ .text          0x0000000000031978        0x0 /home/aftermath/reconstruct/release/crtend.o
+ .text          0x0000000000031978        0x0 /home/aftermath/arm-2009q3/arm-none-linux-gnueabi/libc/usr/lib/crtn.o
+ *(.gnu.warning)
+ *(.glue_7t)
+ .glue_7t       0x0000000000031978        0x0 /home/aftermath/arm-2009q3/arm-none-linux-gnueabi/libc/usr/lib/crt1.o
+ .glue_7t       0x0000000000031978        0x0 /home/aftermath/arm-2009q3/arm-none-linux-gnueabi/libc/usr/lib/crti.o
+ .glue_7t       0x0000000000031978        0x0 /home/aftermath/reconstruct/release/crtbegin.o
+ .glue_7t       0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libsacd_sacd_reader.o
+ .glue_7t       0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libsacd_sacd_input.o
+ .glue_7t       0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libsacd_sacd_read.o
+ .glue_7t       0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libsacd_scarletbook.o
+ .glue_7t       0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libsacd_scarletbook_read.o
+ .glue_7t       0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libsacd_scarletbook_print.o
+ .glue_7t       0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libsacd_scarletbook_output.o
+ .glue_7t       0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libsacd_scarletbook_helpers.o
+ .glue_7t       0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libsacd_scarletbook_id3.o
+ .glue_7t       0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libsacd_sacd_pb_stream.o
+ .glue_7t       0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libsacd_sacd_ripper.pb.o
+ .glue_7t       0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libsacd_cuesheet.o
+ .glue_7t       0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libsacd_dsf.o
+ .glue_7t       0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libsacd_dsdiff.o
+ .glue_7t       0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libsacd_iso_writer.o
+ .glue_7t       0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libcommon_charset.o
+ .glue_7t       0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libcommon_pb_decode.o
+ .glue_7t       0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libcommon_timeout.o
+ .glue_7t       0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libcommon_fileutils.o
+ .glue_7t       0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libcommon_pb_encode.o
+ .glue_7t       0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libcommon_usocket.o
+ .glue_7t       0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libcommon_socket.o
+ .glue_7t       0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libcommon_utils.o
+ .glue_7t       0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libcommon_log.o
+ .glue_7t       0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libcommon_logging.o
+ .glue_7t       0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libdstdec_yarn.o
+ .glue_7t       0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libdstdec_buffer_pool.o
+ .glue_7t       0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libdstdec_ccp_calc.o
+ .glue_7t       0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libdstdec_dst_ac.o
+ .glue_7t       0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libdstdec_dst_data.o
+ .glue_7t       0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libdstdec_dst_decoder.o
+ .glue_7t       0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libdstdec_dst_fram.o
+ .glue_7t       0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libdstdec_dst_init.o
+ .glue_7t       0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libdstdec_unpack_dst.o
+ .glue_7t       0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libid3_id3.o
+ .glue_7t       0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libid3_id3_frame.o
+ .glue_7t       0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libid3_id3_frame_content.o
+ .glue_7t       0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libid3_id3_frame_text.o
+ .glue_7t       0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libid3_id3_frame_url.o
+ .glue_7t       0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libid3_id3_tag.o
+ .glue_7t       0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libid3_unicode.o
+ .glue_7t       0x0000000000031978        0x0 /home/aftermath/reconstruct/release/tool_main.o
+ .glue_7t       0x0000000000031978        0x0 /home/aftermath/reconstruct/release/tool_install.o
+ .glue_7t       0x0000000000031978        0x0 /home/aftermath/reconstruct/release/tool_getopt.o
+ .glue_7t       0x0000000000031978        0x0 /home/aftermath/reconstruct/release/tool_getopt1.o
+ .glue_7t       0x0000000000031978        0x0 /home/aftermath/reconstruct/release/sacd_read_ko.o
+ .glue_7t       0x0000000000031978        0x0 /home/aftermath/reconstruct/release/division/bpabi.o
+ .glue_7t       0x0000000000031978        0x0 /home/aftermath/reconstruct/release/division/_divdi3.o
+ .glue_7t       0x0000000000031978        0x0 /home/aftermath/reconstruct/release/division/_udivdi3.o
+ .glue_7t       0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libgcc.a(_aeabi_uldivmod.o)
+ .glue_7t       0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libgcc.a(_arm_addsubdf3.o)
+ .glue_7t       0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libgcc.a(_arm_addsubsf3.o)
+ .glue_7t       0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libgcc.a(_arm_cmpdf2.o)
+ .glue_7t       0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libgcc.a(_arm_fixdfsi.o)
+ .glue_7t       0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libgcc.a(_arm_muldivdf3.o)
+ .glue_7t       0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libgcc.a(_arm_muldivsf3.o)
+ .glue_7t       0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libgcc.a(_arm_truncdfsf2.o)
+ .glue_7t       0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libgcc.a(_divsi3.o)
+ .glue_7t       0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libgcc.a(_dvmd_lnx.o)
+ .glue_7t       0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libgcc.a(_udivsi3.o)
+ .glue_7t       0x0000000000031978        0x0 /home/aftermath/arm-2009q3/arm-none-linux-gnueabi/libc/lib/libpthread.so.0
+ .glue_7t       0x0000000000031978        0x0 /home/aftermath/arm-2009q3/arm-none-linux-gnueabi/libc/lib/libgcc_s.so.1
+ .glue_7t       0x0000000000031978        0x0 /home/aftermath/arm-2009q3/arm-none-linux-gnueabi/libc/lib/libc.so.6
+ .glue_7t       0x0000000000031978        0x0 /home/aftermath/reconstruct/release/elf-init.o
+ .glue_7t       0x0000000000031978        0x0 /home/aftermath/reconstruct/release/stat64.o
+ .glue_7t       0x0000000000031978        0x0 /home/aftermath/reconstruct/release/fstat64.o
+ .glue_7t       0x0000000000031978        0x0 /home/aftermath/reconstruct/release/crtend.o
+ .glue_7t       0x0000000000031978        0x0 /home/aftermath/arm-2009q3/arm-none-linux-gnueabi/libc/usr/lib/crtn.o
+ *(.glue_7)
+ .glue_7        0x0000000000031978        0x0 /home/aftermath/arm-2009q3/arm-none-linux-gnueabi/libc/usr/lib/crt1.o
+ .glue_7        0x0000000000031978        0x0 /home/aftermath/arm-2009q3/arm-none-linux-gnueabi/libc/usr/lib/crti.o
+ .glue_7        0x0000000000031978        0x0 /home/aftermath/reconstruct/release/crtbegin.o
+ .glue_7        0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libsacd_sacd_reader.o
+ .glue_7        0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libsacd_sacd_input.o
+ .glue_7        0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libsacd_sacd_read.o
+ .glue_7        0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libsacd_scarletbook.o
+ .glue_7        0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libsacd_scarletbook_read.o
+ .glue_7        0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libsacd_scarletbook_print.o
+ .glue_7        0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libsacd_scarletbook_output.o
+ .glue_7        0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libsacd_scarletbook_helpers.o
+ .glue_7        0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libsacd_scarletbook_id3.o
+ .glue_7        0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libsacd_sacd_pb_stream.o
+ .glue_7        0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libsacd_sacd_ripper.pb.o
+ .glue_7        0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libsacd_cuesheet.o
+ .glue_7        0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libsacd_dsf.o
+ .glue_7        0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libsacd_dsdiff.o
+ .glue_7        0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libsacd_iso_writer.o
+ .glue_7        0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libcommon_charset.o
+ .glue_7        0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libcommon_pb_decode.o
+ .glue_7        0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libcommon_timeout.o
+ .glue_7        0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libcommon_fileutils.o
+ .glue_7        0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libcommon_pb_encode.o
+ .glue_7        0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libcommon_usocket.o
+ .glue_7        0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libcommon_socket.o
+ .glue_7        0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libcommon_utils.o
+ .glue_7        0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libcommon_log.o
+ .glue_7        0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libcommon_logging.o
+ .glue_7        0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libdstdec_yarn.o
+ .glue_7        0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libdstdec_buffer_pool.o
+ .glue_7        0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libdstdec_ccp_calc.o
+ .glue_7        0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libdstdec_dst_ac.o
+ .glue_7        0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libdstdec_dst_data.o
+ .glue_7        0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libdstdec_dst_decoder.o
+ .glue_7        0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libdstdec_dst_fram.o
+ .glue_7        0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libdstdec_dst_init.o
+ .glue_7        0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libdstdec_unpack_dst.o
+ .glue_7        0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libid3_id3.o
+ .glue_7        0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libid3_id3_frame.o
+ .glue_7        0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libid3_id3_frame_content.o
+ .glue_7        0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libid3_id3_frame_text.o
+ .glue_7        0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libid3_id3_frame_url.o
+ .glue_7        0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libid3_id3_tag.o
+ .glue_7        0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libid3_unicode.o
+ .glue_7        0x0000000000031978        0x0 /home/aftermath/reconstruct/release/tool_main.o
+ .glue_7        0x0000000000031978        0x0 /home/aftermath/reconstruct/release/tool_install.o
+ .glue_7        0x0000000000031978        0x0 /home/aftermath/reconstruct/release/tool_getopt.o
+ .glue_7        0x0000000000031978        0x0 /home/aftermath/reconstruct/release/tool_getopt1.o
+ .glue_7        0x0000000000031978        0x0 /home/aftermath/reconstruct/release/sacd_read_ko.o
+ .glue_7        0x0000000000031978        0x0 /home/aftermath/reconstruct/release/division/bpabi.o
+ .glue_7        0x0000000000031978        0x0 /home/aftermath/reconstruct/release/division/_divdi3.o
+ .glue_7        0x0000000000031978        0x0 /home/aftermath/reconstruct/release/division/_udivdi3.o
+ .glue_7        0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libgcc.a(_aeabi_uldivmod.o)
+ .glue_7        0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libgcc.a(_arm_addsubdf3.o)
+ .glue_7        0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libgcc.a(_arm_addsubsf3.o)
+ .glue_7        0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libgcc.a(_arm_cmpdf2.o)
+ .glue_7        0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libgcc.a(_arm_fixdfsi.o)
+ .glue_7        0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libgcc.a(_arm_muldivdf3.o)
+ .glue_7        0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libgcc.a(_arm_muldivsf3.o)
+ .glue_7        0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libgcc.a(_arm_truncdfsf2.o)
+ .glue_7        0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libgcc.a(_divsi3.o)
+ .glue_7        0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libgcc.a(_dvmd_lnx.o)
+ .glue_7        0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libgcc.a(_udivsi3.o)
+ .glue_7        0x0000000000031978        0x0 /home/aftermath/arm-2009q3/arm-none-linux-gnueabi/libc/lib/libpthread.so.0
+ .glue_7        0x0000000000031978        0x0 /home/aftermath/arm-2009q3/arm-none-linux-gnueabi/libc/lib/libgcc_s.so.1
+ .glue_7        0x0000000000031978        0x0 /home/aftermath/arm-2009q3/arm-none-linux-gnueabi/libc/lib/libc.so.6
+ .glue_7        0x0000000000031978        0x0 /home/aftermath/reconstruct/release/elf-init.o
+ .glue_7        0x0000000000031978        0x0 /home/aftermath/reconstruct/release/stat64.o
+ .glue_7        0x0000000000031978        0x0 /home/aftermath/reconstruct/release/fstat64.o
+ .glue_7        0x0000000000031978        0x0 /home/aftermath/reconstruct/release/crtend.o
+ .glue_7        0x0000000000031978        0x0 /home/aftermath/arm-2009q3/arm-none-linux-gnueabi/libc/usr/lib/crtn.o
+ *(.vfp11_veneer)
+ .vfp11_veneer  0x0000000000031978        0x0 /home/aftermath/arm-2009q3/arm-none-linux-gnueabi/libc/usr/lib/crt1.o
+ .vfp11_veneer  0x0000000000031978        0x0 /home/aftermath/arm-2009q3/arm-none-linux-gnueabi/libc/usr/lib/crti.o
+ .vfp11_veneer  0x0000000000031978        0x0 /home/aftermath/reconstruct/release/crtbegin.o
+ .vfp11_veneer  0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libsacd_sacd_reader.o
+ .vfp11_veneer  0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libsacd_sacd_input.o
+ .vfp11_veneer  0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libsacd_sacd_read.o
+ .vfp11_veneer  0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libsacd_scarletbook.o
+ .vfp11_veneer  0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libsacd_scarletbook_read.o
+ .vfp11_veneer  0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libsacd_scarletbook_print.o
+ .vfp11_veneer  0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libsacd_scarletbook_output.o
+ .vfp11_veneer  0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libsacd_scarletbook_helpers.o
+ .vfp11_veneer  0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libsacd_scarletbook_id3.o
+ .vfp11_veneer  0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libsacd_sacd_pb_stream.o
+ .vfp11_veneer  0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libsacd_sacd_ripper.pb.o
+ .vfp11_veneer  0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libsacd_cuesheet.o
+ .vfp11_veneer  0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libsacd_dsf.o
+ .vfp11_veneer  0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libsacd_dsdiff.o
+ .vfp11_veneer  0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libsacd_iso_writer.o
+ .vfp11_veneer  0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libcommon_charset.o
+ .vfp11_veneer  0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libcommon_pb_decode.o
+ .vfp11_veneer  0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libcommon_timeout.o
+ .vfp11_veneer  0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libcommon_fileutils.o
+ .vfp11_veneer  0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libcommon_pb_encode.o
+ .vfp11_veneer  0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libcommon_usocket.o
+ .vfp11_veneer  0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libcommon_socket.o
+ .vfp11_veneer  0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libcommon_utils.o
+ .vfp11_veneer  0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libcommon_log.o
+ .vfp11_veneer  0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libcommon_logging.o
+ .vfp11_veneer  0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libdstdec_yarn.o
+ .vfp11_veneer  0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libdstdec_buffer_pool.o
+ .vfp11_veneer  0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libdstdec_ccp_calc.o
+ .vfp11_veneer  0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libdstdec_dst_ac.o
+ .vfp11_veneer  0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libdstdec_dst_data.o
+ .vfp11_veneer  0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libdstdec_dst_decoder.o
+ .vfp11_veneer  0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libdstdec_dst_fram.o
+ .vfp11_veneer  0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libdstdec_dst_init.o
+ .vfp11_veneer  0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libdstdec_unpack_dst.o
+ .vfp11_veneer  0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libid3_id3.o
+ .vfp11_veneer  0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libid3_id3_frame.o
+ .vfp11_veneer  0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libid3_id3_frame_content.o
+ .vfp11_veneer  0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libid3_id3_frame_text.o
+ .vfp11_veneer  0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libid3_id3_frame_url.o
+ .vfp11_veneer  0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libid3_id3_tag.o
+ .vfp11_veneer  0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libid3_unicode.o
+ .vfp11_veneer  0x0000000000031978        0x0 /home/aftermath/reconstruct/release/tool_main.o
+ .vfp11_veneer  0x0000000000031978        0x0 /home/aftermath/reconstruct/release/tool_install.o
+ .vfp11_veneer  0x0000000000031978        0x0 /home/aftermath/reconstruct/release/tool_getopt.o
+ .vfp11_veneer  0x0000000000031978        0x0 /home/aftermath/reconstruct/release/tool_getopt1.o
+ .vfp11_veneer  0x0000000000031978        0x0 /home/aftermath/reconstruct/release/sacd_read_ko.o
+ .vfp11_veneer  0x0000000000031978        0x0 /home/aftermath/reconstruct/release/division/bpabi.o
+ .vfp11_veneer  0x0000000000031978        0x0 /home/aftermath/reconstruct/release/division/_divdi3.o
+ .vfp11_veneer  0x0000000000031978        0x0 /home/aftermath/reconstruct/release/division/_udivdi3.o
+ .vfp11_veneer  0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libgcc.a(_aeabi_uldivmod.o)
+ .vfp11_veneer  0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libgcc.a(_arm_addsubdf3.o)
+ .vfp11_veneer  0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libgcc.a(_arm_addsubsf3.o)
+ .vfp11_veneer  0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libgcc.a(_arm_cmpdf2.o)
+ .vfp11_veneer  0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libgcc.a(_arm_fixdfsi.o)
+ .vfp11_veneer  0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libgcc.a(_arm_muldivdf3.o)
+ .vfp11_veneer  0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libgcc.a(_arm_muldivsf3.o)
+ .vfp11_veneer  0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libgcc.a(_arm_truncdfsf2.o)
+ .vfp11_veneer  0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libgcc.a(_divsi3.o)
+ .vfp11_veneer  0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libgcc.a(_dvmd_lnx.o)
+ .vfp11_veneer  0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libgcc.a(_udivsi3.o)
+ .vfp11_veneer  0x0000000000031978        0x0 /home/aftermath/arm-2009q3/arm-none-linux-gnueabi/libc/lib/libpthread.so.0
+ .vfp11_veneer  0x0000000000031978        0x0 /home/aftermath/arm-2009q3/arm-none-linux-gnueabi/libc/lib/libgcc_s.so.1
+ .vfp11_veneer  0x0000000000031978        0x0 /home/aftermath/arm-2009q3/arm-none-linux-gnueabi/libc/lib/libc.so.6
+ .vfp11_veneer  0x0000000000031978        0x0 /home/aftermath/reconstruct/release/elf-init.o
+ .vfp11_veneer  0x0000000000031978        0x0 /home/aftermath/reconstruct/release/stat64.o
+ .vfp11_veneer  0x0000000000031978        0x0 /home/aftermath/reconstruct/release/fstat64.o
+ .vfp11_veneer  0x0000000000031978        0x0 /home/aftermath/reconstruct/release/crtend.o
+ .vfp11_veneer  0x0000000000031978        0x0 /home/aftermath/arm-2009q3/arm-none-linux-gnueabi/libc/usr/lib/crtn.o
+ *(.v4_bx)
+ .v4_bx         0x0000000000031978        0x0 /home/aftermath/arm-2009q3/arm-none-linux-gnueabi/libc/usr/lib/crt1.o
+ .v4_bx         0x0000000000031978        0x0 /home/aftermath/arm-2009q3/arm-none-linux-gnueabi/libc/usr/lib/crti.o
+ .v4_bx         0x0000000000031978        0x0 /home/aftermath/reconstruct/release/crtbegin.o
+ .v4_bx         0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libsacd_sacd_reader.o
+ .v4_bx         0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libsacd_sacd_input.o
+ .v4_bx         0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libsacd_sacd_read.o
+ .v4_bx         0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libsacd_scarletbook.o
+ .v4_bx         0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libsacd_scarletbook_read.o
+ .v4_bx         0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libsacd_scarletbook_print.o
+ .v4_bx         0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libsacd_scarletbook_output.o
+ .v4_bx         0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libsacd_scarletbook_helpers.o
+ .v4_bx         0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libsacd_scarletbook_id3.o
+ .v4_bx         0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libsacd_sacd_pb_stream.o
+ .v4_bx         0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libsacd_sacd_ripper.pb.o
+ .v4_bx         0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libsacd_cuesheet.o
+ .v4_bx         0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libsacd_dsf.o
+ .v4_bx         0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libsacd_dsdiff.o
+ .v4_bx         0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libsacd_iso_writer.o
+ .v4_bx         0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libcommon_charset.o
+ .v4_bx         0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libcommon_pb_decode.o
+ .v4_bx         0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libcommon_timeout.o
+ .v4_bx         0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libcommon_fileutils.o
+ .v4_bx         0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libcommon_pb_encode.o
+ .v4_bx         0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libcommon_usocket.o
+ .v4_bx         0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libcommon_socket.o
+ .v4_bx         0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libcommon_utils.o
+ .v4_bx         0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libcommon_log.o
+ .v4_bx         0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libcommon_logging.o
+ .v4_bx         0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libdstdec_yarn.o
+ .v4_bx         0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libdstdec_buffer_pool.o
+ .v4_bx         0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libdstdec_ccp_calc.o
+ .v4_bx         0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libdstdec_dst_ac.o
+ .v4_bx         0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libdstdec_dst_data.o
+ .v4_bx         0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libdstdec_dst_decoder.o
+ .v4_bx         0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libdstdec_dst_fram.o
+ .v4_bx         0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libdstdec_dst_init.o
+ .v4_bx         0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libdstdec_unpack_dst.o
+ .v4_bx         0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libid3_id3.o
+ .v4_bx         0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libid3_id3_frame.o
+ .v4_bx         0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libid3_id3_frame_content.o
+ .v4_bx         0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libid3_id3_frame_text.o
+ .v4_bx         0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libid3_id3_frame_url.o
+ .v4_bx         0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libid3_id3_tag.o
+ .v4_bx         0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libid3_unicode.o
+ .v4_bx         0x0000000000031978        0x0 /home/aftermath/reconstruct/release/tool_main.o
+ .v4_bx         0x0000000000031978        0x0 /home/aftermath/reconstruct/release/tool_install.o
+ .v4_bx         0x0000000000031978        0x0 /home/aftermath/reconstruct/release/tool_getopt.o
+ .v4_bx         0x0000000000031978        0x0 /home/aftermath/reconstruct/release/tool_getopt1.o
+ .v4_bx         0x0000000000031978        0x0 /home/aftermath/reconstruct/release/sacd_read_ko.o
+ .v4_bx         0x0000000000031978        0x0 /home/aftermath/reconstruct/release/division/bpabi.o
+ .v4_bx         0x0000000000031978        0x0 /home/aftermath/reconstruct/release/division/_divdi3.o
+ .v4_bx         0x0000000000031978        0x0 /home/aftermath/reconstruct/release/division/_udivdi3.o
+ .v4_bx         0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libgcc.a(_aeabi_uldivmod.o)
+ .v4_bx         0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libgcc.a(_arm_addsubdf3.o)
+ .v4_bx         0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libgcc.a(_arm_addsubsf3.o)
+ .v4_bx         0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libgcc.a(_arm_cmpdf2.o)
+ .v4_bx         0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libgcc.a(_arm_fixdfsi.o)
+ .v4_bx         0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libgcc.a(_arm_muldivdf3.o)
+ .v4_bx         0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libgcc.a(_arm_muldivsf3.o)
+ .v4_bx         0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libgcc.a(_arm_truncdfsf2.o)
+ .v4_bx         0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libgcc.a(_divsi3.o)
+ .v4_bx         0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libgcc.a(_dvmd_lnx.o)
+ .v4_bx         0x0000000000031978        0x0 /home/aftermath/reconstruct/release/libgcc.a(_udivsi3.o)
+ .v4_bx         0x0000000000031978        0x0 /home/aftermath/arm-2009q3/arm-none-linux-gnueabi/libc/lib/libpthread.so.0
+ .v4_bx         0x0000000000031978        0x0 /home/aftermath/arm-2009q3/arm-none-linux-gnueabi/libc/lib/libgcc_s.so.1
+ .v4_bx         0x0000000000031978        0x0 /home/aftermath/arm-2009q3/arm-none-linux-gnueabi/libc/lib/libc.so.6
+ .v4_bx         0x0000000000031978        0x0 /home/aftermath/reconstruct/release/elf-init.o
+ .v4_bx         0x0000000000031978        0x0 /home/aftermath/reconstruct/release/stat64.o
+ .v4_bx         0x0000000000031978        0x0 /home/aftermath/reconstruct/release/fstat64.o
+ .v4_bx         0x0000000000031978        0x0 /home/aftermath/reconstruct/release/crtend.o
+ .v4_bx         0x0000000000031978        0x0 /home/aftermath/arm-2009q3/arm-none-linux-gnueabi/libc/usr/lib/crtn.o
+
+.fini           0x0000000000031978        0x8
+ *(.fini)
+ .fini          0x0000000000031978        0x4 /home/aftermath/arm-2009q3/arm-none-linux-gnueabi/libc/usr/lib/crti.o
+                0x0000000000031978                _fini
+ .fini          0x000000000003197c        0x4 /home/aftermath/arm-2009q3/arm-none-linux-gnueabi/libc/usr/lib/crtn.o
+                0x0000000000031980                PROVIDE (__etext, .)
+                0x0000000000031980                PROVIDE (_etext, .)
+                0x0000000000031980                PROVIDE (etext, .)
+
+.rodata         0x0000000000031980     0x4978
+ *(.rodata .rodata.* .gnu.linkonce.r.*)
+ .rodata.cst4   0x0000000000031980        0x4 /home/aftermath/arm-2009q3/arm-none-linux-gnueabi/libc/usr/lib/crt1.o
+                0x0000000000031980                _IO_stdin_used
+ .rodata        0x0000000000031984      0x130 /home/aftermath/reconstruct/release/libsacd_sacd_reader.o
+ .rodata        0x0000000000031ab4       0xec /home/aftermath/reconstruct/release/libsacd_sacd_input.o
+ .rodata        0x0000000000031ba0       0x10 /home/aftermath/reconstruct/release/libsacd_sacd_read.o
+ .rodata        0x0000000000031bb0      0x1cc /home/aftermath/reconstruct/release/libsacd_scarletbook.o
+ .rodata        0x0000000000031d7c      0x510 /home/aftermath/reconstruct/release/libsacd_scarletbook_read.o
+ .rodata        0x000000000003228c      0xfc8 /home/aftermath/reconstruct/release/libsacd_scarletbook_print.o
+ .rodata        0x0000000000033254      0x1cc /home/aftermath/reconstruct/release/libsacd_scarletbook_output.o
+ .rodata        0x0000000000033420       0xac /home/aftermath/reconstruct/release/libsacd_scarletbook_helpers.o
+ .rodata        0x00000000000334cc      0x918 /home/aftermath/reconstruct/release/libsacd_scarletbook_id3.o
+ .rodata        0x0000000000033de4       0x70 /home/aftermath/reconstruct/release/libsacd_sacd_ripper.pb.o
+                0x0000000000033dec                ServerRequest_fields
+                0x0000000000033de8                ServerRequest_sector_count_default
+                0x0000000000033e20                ServerResponse_fields
+                0x0000000000033de4                ServerRequest_sector_offset_default
+ .rodata        0x0000000000033e54      0x134 /home/aftermath/reconstruct/release/libsacd_cuesheet.o
+ .rodata        0x0000000000033f88      0x120 /home/aftermath/reconstruct/release/libsacd_dsf.o
+ .rodata        0x00000000000340a8      0x158 /home/aftermath/reconstruct/release/libsacd_dsdiff.o
+ .rodata        0x0000000000034200       0x10 /home/aftermath/reconstruct/release/libsacd_iso_writer.o
+ .rodata        0x0000000000034210       0x9c /home/aftermath/reconstruct/release/libcommon_charset.o
+ .rodata        0x00000000000342ac       0x1c /home/aftermath/reconstruct/release/libcommon_pb_decode.o
+ .rodata        0x00000000000342c8       0xcc /home/aftermath/reconstruct/release/libcommon_fileutils.o
+ .rodata        0x0000000000034394       0x1c /home/aftermath/reconstruct/release/libcommon_pb_encode.o
+ .rodata        0x00000000000343b0       0x88 /home/aftermath/reconstruct/release/libcommon_socket.o
+ .rodata        0x0000000000034438       0x54 /home/aftermath/reconstruct/release/libcommon_utils.o
+                0x0000000000034450                hex_asc
+ .rodata        0x000000000003448c      0x110 /home/aftermath/reconstruct/release/libcommon_log.o
+ .rodata        0x000000000003459c       0x1c /home/aftermath/reconstruct/release/libcommon_logging.o
+ .rodata        0x00000000000345b8       0x4c /home/aftermath/reconstruct/release/libdstdec_yarn.o
+ .rodata        0x0000000000034604       0xa8 /home/aftermath/reconstruct/release/libdstdec_buffer_pool.o
+ .rodata        0x00000000000346ac       0x1c /home/aftermath/reconstruct/release/libdstdec_ccp_calc.o
+ .rodata        0x00000000000346c8       0x30 /home/aftermath/reconstruct/release/libdstdec_dst_data.o
+ .rodata        0x00000000000346f8      0x1fc /home/aftermath/reconstruct/release/libdstdec_dst_decoder.o
+ .rodata        0x00000000000348f4      0x2fc /home/aftermath/reconstruct/release/libdstdec_dst_fram.o
+ .rodata        0x0000000000034bf0       0x28 /home/aftermath/reconstruct/release/libdstdec_dst_init.o
+ .rodata        0x0000000000034c18       0x40 /home/aftermath/reconstruct/release/libdstdec_unpack_dst.o
+ .rodata        0x0000000000034c58       0x90 /home/aftermath/reconstruct/release/libid3_id3.o
+ .rodata        0x0000000000034ce8      0x81c /home/aftermath/reconstruct/release/libid3_id3_frame.o
+ .rodata        0x0000000000035504        0x4 /home/aftermath/reconstruct/release/libid3_id3_frame_text.o
+ .rodata        0x0000000000035508        0x4 /home/aftermath/reconstruct/release/libid3_unicode.o
+ .rodata        0x000000000003550c      0xd00 /home/aftermath/reconstruct/release/tool_main.o
+ .rodata        0x000000000003620c       0xec /home/aftermath/reconstruct/release/tool_install.o
+
+.rodata1
+ *(.rodata1)
+
+.ARM.extab      0x00000000000362f8        0x0
+ *(.ARM.extab* .gnu.linkonce.armextab.*)
+ .ARM.extab     0x00000000000362f8        0x0 /home/aftermath/arm-2009q3/arm-none-linux-gnueabi/libc/usr/lib/crt1.o
+ .ARM.extab     0x00000000000362f8        0x0 /home/aftermath/reconstruct/release/division/bpabi.o
+ .ARM.extab     0x00000000000362f8        0x0 /home/aftermath/reconstruct/release/division/_divdi3.o
+ .ARM.extab     0x00000000000362f8        0x0 /home/aftermath/reconstruct/release/division/_udivdi3.o
+                0x00000000000362f8                __exidx_start = .
+
+.ARM.exidx      0x00000000000362f8       0x28
+ *(.ARM.exidx* .gnu.linkonce.armexidx.*)
+ .ARM.exidx     0x00000000000362f8        0x8 /home/aftermath/arm-2009q3/arm-none-linux-gnueabi/libc/usr/lib/crt1.o
+ .ARM.exidx     0x0000000000036300       0x10 /home/aftermath/reconstruct/release/division/bpabi.o
+ .ARM.exidx     0x0000000000036310        0x8 /home/aftermath/reconstruct/release/division/_divdi3.o
+ .ARM.exidx     0x0000000000036318        0x8 /home/aftermath/reconstruct/release/division/_udivdi3.o
+                0x0000000000036320                __exidx_end = .
+
+.eh_frame_hdr
+ *(.eh_frame_hdr)
+
+.eh_frame       0x0000000000036320       0xb8
+ *(.eh_frame)
+ .eh_frame      0x0000000000036320       0x5c /home/aftermath/reconstruct/release/division/bpabi.o
+ .eh_frame      0x000000000003637c       0x2c /home/aftermath/reconstruct/release/division/_divdi3.o
+                                         0x40 (size before relaxing)
+ .eh_frame      0x00000000000363a8       0x2c /home/aftermath/reconstruct/release/division/_udivdi3.o
+                                         0x40 (size before relaxing)
+ .eh_frame      0x00000000000363d4        0x4 /home/aftermath/reconstruct/release/crtend.o
+
+.gcc_except_table
+ *(.gcc_except_table .gcc_except_table.*)
+                0x00000000000363d8                . = (ALIGN (0x8000) - ((0x8000 - .) & 0x7fff))
+                0x000000000003e3d8                . = (0x8000 DATA_SEGMENT_ALIGN 0x1000)
+
+.eh_frame
+ *(.eh_frame)
+
+.gcc_except_table
+ *(.gcc_except_table .gcc_except_table.*)
+
+.tdata
+ *(.tdata .tdata.* .gnu.linkonce.td.*)
+
+.tbss
+ *(.tbss .tbss.* .gnu.linkonce.tb.*)
+ *(.tcommon)
+
+.preinit_array  0x000000000003e3d8        0x0
+                0x000000000003e3d8                PROVIDE (__preinit_array_start, .)
+ *(.preinit_array)
+                0x000000000003e3d8                PROVIDE (__preinit_array_end, .)
+
+.init_array     0x000000000003e3d8        0x4
+                0x000000000003e3d8                PROVIDE (__init_array_start, .)
+ *(SORT(.init_array.*))
+ *(.init_array)
+ .init_array    0x000000000003e3d8        0x4 /home/aftermath/reconstruct/release/crtbegin.o
+                0x000000000003e3dc                PROVIDE (__init_array_end, .)
+
+.fini_array     0x000000000003e3dc        0x4
+                0x000000000003e3dc                PROVIDE (__fini_array_start, .)
+ *(.fini_array)
+ .fini_array    0x000000000003e3dc        0x4 /home/aftermath/reconstruct/release/crtbegin.o
+ *(SORT(.fini_array.*))
+                0x000000000003e3e0                PROVIDE (__fini_array_end, .)
+
+.ctors
+ *crtbegin.o(.ctors)
+ *crtbegin?.o(.ctors)
+ *(EXCLUDE_FILE(*crtend?.o *crtend.o) .ctors)
+ *(SORT(.ctors.*))
+ *(.ctors)
+
+.dtors
+ *crtbegin.o(.dtors)
+ *crtbegin?.o(.dtors)
+ *(EXCLUDE_FILE(*crtend?.o *crtend.o) .dtors)
+ *(SORT(.dtors.*))
+ *(.dtors)
+
+.jcr            0x000000000003e3e0        0x4
+ *(.jcr)
+ .jcr           0x000000000003e3e0        0x0 /home/aftermath/reconstruct/release/crtbegin.o
+ .jcr           0x000000000003e3e0        0x4 /home/aftermath/reconstruct/release/crtend.o
+
+.data.rel.ro
+ *(.data.rel.ro.local* .gnu.linkonce.d.rel.ro.local.*)
+ *(.data.rel.ro* .gnu.linkonce.d.rel.ro.*)
+
+.dynamic        0x000000000003e3e4       0xf8
+ *(.dynamic)
+ .dynamic       0x000000000003e3e4       0xf8 /home/aftermath/arm-2009q3/arm-none-linux-gnueabi/libc/usr/lib/crti.o
+                0x000000000003e3e4                _DYNAMIC
+                0x000000000003e4dc                . = (. DATA_SEGMENT_RELRO_END 0x0)
+
+.got            0x000000000003e4dc      0x214
+ *(.got.plt)
+ .got.plt       0x000000000003e4dc      0x210 /home/aftermath/arm-2009q3/arm-none-linux-gnueabi/libc/usr/lib/crti.o
+                0x000000000003e4dc                _GLOBAL_OFFSET_TABLE_
+ *(.got)
+ .got           0x000000000003e6ec        0x4 /home/aftermath/arm-2009q3/arm-none-linux-gnueabi/libc/usr/lib/crti.o
+
+.data           0x000000000003e6f0    0x18621
+                0x000000000003e6f0                __data_start = .
+ *(.data .data.* .gnu.linkonce.d.*)
+ .data          0x000000000003e6f0        0x4 /home/aftermath/arm-2009q3/arm-none-linux-gnueabi/libc/usr/lib/crt1.o
+                0x000000000003e6f0                data_start
+ .data          0x000000000003e6f4        0x0 /home/aftermath/arm-2009q3/arm-none-linux-gnueabi/libc/usr/lib/crti.o
+ .data          0x000000000003e6f4        0x4 /home/aftermath/reconstruct/release/crtbegin.o
+                0x000000000003e6f4                __dso_handle
+ .data          0x000000000003e6f8        0x0 /home/aftermath/reconstruct/release/libsacd_sacd_reader.o
+ .data          0x000000000003e6f8        0x0 /home/aftermath/reconstruct/release/libsacd_sacd_input.o
+ .data          0x000000000003e6f8        0x0 /home/aftermath/reconstruct/release/libsacd_sacd_read.o
+ .data          0x000000000003e6f8       0xa4 /home/aftermath/reconstruct/release/libsacd_scarletbook.o
+                0x000000000003e6f8                character_set
+                0x000000000003e790                album_category
+                0x000000000003e718                album_genre
+ .data          0x000000000003e79c        0x0 /home/aftermath/reconstruct/release/libsacd_scarletbook_read.o
+ .data          0x000000000003e79c        0x0 /home/aftermath/reconstruct/release/libsacd_scarletbook_print.o
+ .data          0x000000000003e79c       0x14 /home/aftermath/reconstruct/release/libsacd_scarletbook_output.o
+ .data          0x000000000003e7b0        0x0 /home/aftermath/reconstruct/release/libsacd_scarletbook_helpers.o
+ .data          0x000000000003e7b0        0x0 /home/aftermath/reconstruct/release/libsacd_scarletbook_id3.o
+ .data          0x000000000003e7b0        0x0 /home/aftermath/reconstruct/release/libsacd_sacd_pb_stream.o
+ .data          0x000000000003e7b0        0x0 /home/aftermath/reconstruct/release/libsacd_sacd_ripper.pb.o
+ .data          0x000000000003e7b0        0x0 /home/aftermath/reconstruct/release/libsacd_cuesheet.o
+ .data          0x000000000003e7b0       0x1c /home/aftermath/reconstruct/release/libsacd_dsf.o
+ .data          0x000000000003e7cc       0x38 /home/aftermath/reconstruct/release/libsacd_dsdiff.o
+ .data          0x000000000003e804       0x1c /home/aftermath/reconstruct/release/libsacd_iso_writer.o
+ .data          0x000000000003e820        0x0 /home/aftermath/reconstruct/release/libcommon_charset.o
+ .data          0x000000000003e820        0x0 /home/aftermath/reconstruct/release/libcommon_pb_decode.o
+ .data          0x000000000003e820        0x0 /home/aftermath/reconstruct/release/libcommon_timeout.o
+ .data          0x000000000003e820        0x0 /home/aftermath/reconstruct/release/libcommon_fileutils.o
+ .data          0x000000000003e820        0x0 /home/aftermath/reconstruct/release/libcommon_pb_encode.o
+ .data          0x000000000003e820        0x0 /home/aftermath/reconstruct/release/libcommon_usocket.o
+ .data          0x000000000003e820        0x0 /home/aftermath/reconstruct/release/libcommon_socket.o
+ .data          0x000000000003e820        0x0 /home/aftermath/reconstruct/release/libcommon_utils.o
+ .data          0x000000000003e820        0x0 /home/aftermath/reconstruct/release/libcommon_log.o
+ .data          0x000000000003e820        0x0 /home/aftermath/reconstruct/release/libcommon_logging.o
+ .data          0x000000000003e820        0xc /home/aftermath/reconstruct/release/libdstdec_yarn.o
+                0x000000000003e820                yarn_prefix
+ .data          0x000000000003e82c        0x0 /home/aftermath/reconstruct/release/libdstdec_buffer_pool.o
+ .data          0x000000000003e82c        0x0 /home/aftermath/reconstruct/release/libdstdec_ccp_calc.o
+ .data          0x000000000003e82c        0x0 /home/aftermath/reconstruct/release/libdstdec_dst_ac.o
+ .data          0x000000000003e82c       0x24 /home/aftermath/reconstruct/release/libdstdec_dst_data.o
+ .data          0x000000000003e850        0x0 /home/aftermath/reconstruct/release/libdstdec_dst_decoder.o
+ .data          0x000000000003e850       0x40 /home/aftermath/reconstruct/release/libdstdec_dst_fram.o
+ .data          0x000000000003e890        0x0 /home/aftermath/reconstruct/release/libdstdec_dst_init.o
+ .data          0x000000000003e890        0x0 /home/aftermath/reconstruct/release/libdstdec_unpack_dst.o
+ .data          0x000000000003e890       0x2c /home/aftermath/reconstruct/release/libid3_id3.o
+ .data          0x000000000003e8bc      0x648 /home/aftermath/reconstruct/release/libid3_id3_frame.o
+ .data          0x000000000003ef04        0x0 /home/aftermath/reconstruct/release/libid3_id3_frame_content.o
+ .data          0x000000000003ef04        0x0 /home/aftermath/reconstruct/release/libid3_id3_frame_text.o
+ .data          0x000000000003ef04        0x0 /home/aftermath/reconstruct/release/libid3_id3_frame_url.o
+ .data          0x000000000003ef04        0x0 /home/aftermath/reconstruct/release/libid3_id3_tag.o
+ .data          0x000000000003ef04        0x0 /home/aftermath/reconstruct/release/libid3_unicode.o
+ .data          0x000000000003ef04        0x0 /home/aftermath/reconstruct/release/tool_main.o
+ .data          0x000000000003ef04        0x0 /home/aftermath/reconstruct/release/tool_install.o
+ .data          0x000000000003ef04        0x0 /home/aftermath/reconstruct/release/tool_getopt.o
+ .data          0x000000000003ef04        0x0 /home/aftermath/reconstruct/release/tool_getopt1.o
+ .data          0x000000000003ef04    0x17e0d /home/aftermath/reconstruct/release/sacd_read_ko.o
+                0x0000000000056d11                _binary_sacd_read_ko_end
+                0x000000000003ef04                _binary_sacd_read_ko_start
+ .data          0x0000000000056d11        0x0 /home/aftermath/reconstruct/release/division/bpabi.o
+ .data          0x0000000000056d11        0x0 /home/aftermath/reconstruct/release/division/_divdi3.o
+ .data          0x0000000000056d11        0x0 /home/aftermath/reconstruct/release/division/_udivdi3.o
+ .data          0x0000000000056d11        0x0 /home/aftermath/reconstruct/release/libgcc.a(_aeabi_uldivmod.o)
+ .data          0x0000000000056d11        0x0 /home/aftermath/reconstruct/release/libgcc.a(_arm_addsubdf3.o)
+ .data          0x0000000000056d11        0x0 /home/aftermath/reconstruct/release/libgcc.a(_arm_addsubsf3.o)
+ .data          0x0000000000056d11        0x0 /home/aftermath/reconstruct/release/libgcc.a(_arm_cmpdf2.o)
+ .data          0x0000000000056d11        0x0 /home/aftermath/reconstruct/release/libgcc.a(_arm_fixdfsi.o)
+ .data          0x0000000000056d11        0x0 /home/aftermath/reconstruct/release/libgcc.a(_arm_muldivdf3.o)
+ .data          0x0000000000056d11        0x0 /home/aftermath/reconstruct/release/libgcc.a(_arm_muldivsf3.o)
+ .data          0x0000000000056d11        0x0 /home/aftermath/reconstruct/release/libgcc.a(_arm_truncdfsf2.o)
+ .data          0x0000000000056d11        0x0 /home/aftermath/reconstruct/release/libgcc.a(_divsi3.o)
+ .data          0x0000000000056d11        0x0 /home/aftermath/reconstruct/release/libgcc.a(_dvmd_lnx.o)
+ .data          0x0000000000056d11        0x0 /home/aftermath/reconstruct/release/libgcc.a(_udivsi3.o)
+ .data          0x0000000000056d11        0x0 /home/aftermath/reconstruct/release/elf-init.o
+ .data          0x0000000000056d11        0x0 /home/aftermath/reconstruct/release/stat64.o
+ .data          0x0000000000056d11        0x0 /home/aftermath/reconstruct/release/fstat64.o
+ .data          0x0000000000056d11        0x0 /home/aftermath/reconstruct/release/crtend.o
+ .data          0x0000000000056d11        0x0 /home/aftermath/arm-2009q3/arm-none-linux-gnueabi/libc/usr/lib/crtn.o
+
+.data1
+ *(.data1)
+                0x0000000000056d11                _edata = .
+                0x0000000000056d11                PROVIDE (edata, .)
+                0x0000000000056d11                __bss_start = .
+                0x0000000000056d11                __bss_start__ = .
+
+.bss            0x0000000000056d18     0x302c
+ *(.dynbss)
+ .dynbss        0x0000000000056d18       0x10 /home/aftermath/arm-2009q3/arm-none-linux-gnueabi/libc/usr/lib/crti.o
+                0x0000000000056d18                optind@@GLIBC_2.4
+                0x0000000000056d1c                stdout@@GLIBC_2.4
+                0x0000000000056d20                stderr@@GLIBC_2.4
+                0x0000000000056d24                optarg@@GLIBC_2.4
+ *(.bss .bss.* .gnu.linkonce.b.*)
+ .bss           0x0000000000056d28        0x0 /home/aftermath/arm-2009q3/arm-none-linux-gnueabi/libc/usr/lib/crt1.o
+ .bss           0x0000000000056d28        0x0 /home/aftermath/arm-2009q3/arm-none-linux-gnueabi/libc/usr/lib/crti.o
+ .bss           0x0000000000056d28        0x1 /home/aftermath/reconstruct/release/crtbegin.o
+ .bss           0x0000000000056d29        0x0 /home/aftermath/reconstruct/release/libsacd_sacd_reader.o
+ .bss           0x0000000000056d29        0x0 /home/aftermath/reconstruct/release/libsacd_sacd_input.o
+ .bss           0x0000000000056d29        0x0 /home/aftermath/reconstruct/release/libsacd_sacd_read.o
+ .bss           0x0000000000056d29        0x0 /home/aftermath/reconstruct/release/libsacd_scarletbook.o
+ *fill*         0x0000000000056d29        0x3 00
+ .bss           0x0000000000056d2c      0x800 /home/aftermath/reconstruct/release/libsacd_scarletbook_read.o
+ .bss           0x000000000005752c     0x2000 /home/aftermath/reconstruct/release/libsacd_scarletbook_print.o
+ .bss           0x000000000005952c        0x0 /home/aftermath/reconstruct/release/libsacd_scarletbook_output.o
+ .bss           0x000000000005952c        0x0 /home/aftermath/reconstruct/release/libsacd_scarletbook_helpers.o
+ .bss           0x000000000005952c        0x0 /home/aftermath/reconstruct/release/libsacd_scarletbook_id3.o
+ .bss           0x000000000005952c        0x0 /home/aftermath/reconstruct/release/libsacd_sacd_pb_stream.o
+ .bss           0x000000000005952c        0x0 /home/aftermath/reconstruct/release/libsacd_sacd_ripper.pb.o
+ .bss           0x000000000005952c      0x200 /home/aftermath/reconstruct/release/libsacd_cuesheet.o
+ .bss           0x000000000005972c        0x0 /home/aftermath/reconstruct/release/libsacd_dsf.o
+ .bss           0x000000000005972c        0x0 /home/aftermath/reconstruct/release/libsacd_dsdiff.o
+ .bss           0x000000000005972c        0x0 /home/aftermath/reconstruct/release/libsacd_iso_writer.o
+ .bss           0x000000000005972c        0x0 /home/aftermath/reconstruct/release/libcommon_charset.o
+ .bss           0x000000000005972c        0x0 /home/aftermath/reconstruct/release/libcommon_pb_decode.o
+ .bss           0x000000000005972c        0x0 /home/aftermath/reconstruct/release/libcommon_timeout.o
+ .bss           0x000000000005972c        0x0 /home/aftermath/reconstruct/release/libcommon_fileutils.o
+ .bss           0x000000000005972c        0x0 /home/aftermath/reconstruct/release/libcommon_pb_encode.o
+ .bss           0x000000000005972c        0x0 /home/aftermath/reconstruct/release/libcommon_usocket.o
+ .bss           0x000000000005972c        0x0 /home/aftermath/reconstruct/release/libcommon_socket.o
+ .bss           0x000000000005972c      0x200 /home/aftermath/reconstruct/release/libcommon_utils.o
+ .bss           0x000000000005992c       0x18 /home/aftermath/reconstruct/release/libcommon_log.o
+ .bss           0x0000000000059944        0x4 /home/aftermath/reconstruct/release/libcommon_logging.o
+                0x0000000000059944                lm_main
+ .bss           0x0000000000059948       0x60 /home/aftermath/reconstruct/release/libdstdec_yarn.o
+                0x0000000000059948                yarn_abort
+ .bss           0x00000000000599a8        0x0 /home/aftermath/reconstruct/release/libdstdec_buffer_pool.o
+ .bss           0x00000000000599a8        0x0 /home/aftermath/reconstruct/release/libdstdec_ccp_calc.o
+ .bss           0x00000000000599a8        0x0 /home/aftermath/reconstruct/release/libdstdec_dst_ac.o
+ .bss           0x00000000000599a8        0x0 /home/aftermath/reconstruct/release/libdstdec_dst_data.o
+ .bss           0x00000000000599a8        0x0 /home/aftermath/reconstruct/release/libdstdec_dst_decoder.o
+ .bss           0x00000000000599a8        0x0 /home/aftermath/reconstruct/release/libdstdec_dst_fram.o
+ .bss           0x00000000000599a8        0x0 /home/aftermath/reconstruct/release/libdstdec_dst_init.o
+ .bss           0x00000000000599a8        0x0 /home/aftermath/reconstruct/release/libdstdec_unpack_dst.o
+ .bss           0x00000000000599a8        0x0 /home/aftermath/reconstruct/release/libid3_id3.o
+ .bss           0x00000000000599a8        0x0 /home/aftermath/reconstruct/release/libid3_id3_frame.o
+ .bss           0x00000000000599a8        0x0 /home/aftermath/reconstruct/release/libid3_id3_frame_content.o
+ .bss           0x00000000000599a8        0x0 /home/aftermath/reconstruct/release/libid3_id3_frame_text.o
+ .bss           0x00000000000599a8        0x0 /home/aftermath/reconstruct/release/libid3_id3_frame_url.o
+ .bss           0x00000000000599a8        0x0 /home/aftermath/reconstruct/release/libid3_id3_tag.o
+ .bss           0x00000000000599a8        0x0 /home/aftermath/reconstruct/release/libid3_unicode.o
+ .bss           0x00000000000599a8      0x340 /home/aftermath/reconstruct/release/tool_main.o
+ .bss           0x0000000000059ce8       0x1c /home/aftermath/reconstruct/release/tool_install.o
+ .bss           0x0000000000059d04        0x0 /home/aftermath/reconstruct/release/tool_getopt.o
+ .bss           0x0000000000059d04        0x0 /home/aftermath/reconstruct/release/tool_getopt1.o
+ .bss           0x0000000000059d04        0x0 /home/aftermath/reconstruct/release/sacd_read_ko.o
+ .bss           0x0000000000059d04        0x0 /home/aftermath/reconstruct/release/division/bpabi.o
+ .bss           0x0000000000059d04        0x0 /home/aftermath/reconstruct/release/division/_divdi3.o
+ .bss           0x0000000000059d04        0x0 /home/aftermath/reconstruct/release/division/_udivdi3.o
+ .bss           0x0000000000059d04        0x0 /home/aftermath/reconstruct/release/libgcc.a(_aeabi_uldivmod.o)
+ .bss           0x0000000000059d04        0x0 /home/aftermath/reconstruct/release/libgcc.a(_arm_addsubdf3.o)
+ .bss           0x0000000000059d04        0x0 /home/aftermath/reconstruct/release/libgcc.a(_arm_addsubsf3.o)
+ .bss           0x0000000000059d04        0x0 /home/aftermath/reconstruct/release/libgcc.a(_arm_cmpdf2.o)
+ .bss           0x0000000000059d04        0x0 /home/aftermath/reconstruct/release/libgcc.a(_arm_fixdfsi.o)
+ .bss           0x0000000000059d04        0x0 /home/aftermath/reconstruct/release/libgcc.a(_arm_muldivdf3.o)
+ .bss           0x0000000000059d04        0x0 /home/aftermath/reconstruct/release/libgcc.a(_arm_muldivsf3.o)
+ .bss           0x0000000000059d04        0x0 /home/aftermath/reconstruct/release/libgcc.a(_arm_truncdfsf2.o)
+ .bss           0x0000000000059d04        0x0 /home/aftermath/reconstruct/release/libgcc.a(_divsi3.o)
+ .bss           0x0000000000059d04        0x0 /home/aftermath/reconstruct/release/libgcc.a(_dvmd_lnx.o)
+ .bss           0x0000000000059d04        0x0 /home/aftermath/reconstruct/release/libgcc.a(_udivsi3.o)
+ .bss           0x0000000000059d04        0x0 /home/aftermath/reconstruct/release/elf-init.o
+ .bss           0x0000000000059d04        0x0 /home/aftermath/reconstruct/release/stat64.o
+ .bss           0x0000000000059d04        0x0 /home/aftermath/reconstruct/release/fstat64.o
+ .bss           0x0000000000059d04        0x0 /home/aftermath/reconstruct/release/crtend.o
+ .bss           0x0000000000059d04        0x0 /home/aftermath/arm-2009q3/arm-none-linux-gnueabi/libc/usr/lib/crtn.o
+ *(COMMON)
+ COMMON         0x0000000000059d04       0x38 /home/aftermath/reconstruct/release/libsacd_sacd_input.o
+                0x0000000000059d04                category_t
+                0x0000000000059d08                sacd_input_decrypt
+                0x0000000000059d0c                track_type_t
+                0x0000000000059d10                character_set_t
+                0x0000000000059d14                audio_packet_data_type_t
+                0x0000000000059d18                sacd_input_total_sectors
+                0x0000000000059d1c                sacd_input_read64
+                0x0000000000059d20                sacd_input_error
+                0x0000000000059d24                frame_format_t
+                0x0000000000059d28                genre_t
+                0x0000000000059d2c                sacd_input_authenticate
+                0x0000000000059d30                sacd_input_open
+                0x0000000000059d34                sacd_input_read
+                0x0000000000059d38                sacd_input_close
+ COMMON         0x0000000000059d3c        0x8 /home/aftermath/reconstruct/release/tool_main.o
+                0x0000000000059d3c                handle
+                0x0000000000059d40                output
+                0x0000000000059d44                . = ALIGN ((. != 0x0)?0x4:0x1)
+                0x0000000000059d44                _bss_end__ = .
+                0x0000000000059d44                __bss_end__ = .
+                0x0000000000059d44                . = ALIGN (0x4)
+                0x0000000000059d44                . = ALIGN (0x4)
+                0x0000000000059d44                __end__ = .
+                0x0000000000059d44                _end = .
+                0x0000000000059d44                PROVIDE (end, .)
+                0x0000000000059d44                . = DATA_SEGMENT_END (.)
+
+.stab
+ *(.stab)
+
+.stabstr
+ *(.stabstr)
+
+.stab.excl
+ *(.stab.excl)
+
+.stab.exclstr
+ *(.stab.exclstr)
+
+.stab.index
+ *(.stab.index)
+
+.stab.indexstr
+ *(.stab.indexstr)
+
+.comment        0x0000000000000000      0x3ba
+ *(.comment)
+ .comment       0x0000000000000000       0x12 /home/aftermath/reconstruct/release/crtbegin.o
+ .comment       0x0000000000000012       0x12 /home/aftermath/reconstruct/release/libsacd_sacd_reader.o
+ .comment       0x0000000000000024       0x12 /home/aftermath/reconstruct/release/libsacd_sacd_input.o
+ .comment       0x0000000000000036       0x12 /home/aftermath/reconstruct/release/libsacd_sacd_read.o
+ .comment       0x0000000000000048       0x12 /home/aftermath/reconstruct/release/libsacd_scarletbook.o
+ .comment       0x000000000000005a       0x12 /home/aftermath/reconstruct/release/libsacd_scarletbook_read.o
+ .comment       0x000000000000006c       0x12 /home/aftermath/reconstruct/release/libsacd_scarletbook_print.o
+ .comment       0x000000000000007e       0x12 /home/aftermath/reconstruct/release/libsacd_scarletbook_output.o
+ .comment       0x0000000000000090       0x12 /home/aftermath/reconstruct/release/libsacd_scarletbook_helpers.o
+ .comment       0x00000000000000a2       0x12 /home/aftermath/reconstruct/release/libsacd_scarletbook_id3.o
+ .comment       0x00000000000000b4       0x12 /home/aftermath/reconstruct/release/libsacd_sacd_pb_stream.o
+ .comment       0x00000000000000c6       0x12 /home/aftermath/reconstruct/release/libsacd_sacd_ripper.pb.o
+ .comment       0x00000000000000d8       0x12 /home/aftermath/reconstruct/release/libsacd_cuesheet.o
+ .comment       0x00000000000000ea       0x12 /home/aftermath/reconstruct/release/libsacd_dsf.o
+ .comment       0x00000000000000fc       0x12 /home/aftermath/reconstruct/release/libsacd_dsdiff.o
+ .comment       0x000000000000010e       0x12 /home/aftermath/reconstruct/release/libsacd_iso_writer.o
+ .comment       0x0000000000000120       0x12 /home/aftermath/reconstruct/release/libcommon_charset.o
+ .comment       0x0000000000000132       0x12 /home/aftermath/reconstruct/release/libcommon_pb_decode.o
+ .comment       0x0000000000000144       0x12 /home/aftermath/reconstruct/release/libcommon_timeout.o
+ .comment       0x0000000000000156       0x12 /home/aftermath/reconstruct/release/libcommon_fileutils.o
+ .comment       0x0000000000000168       0x12 /home/aftermath/reconstruct/release/libcommon_pb_encode.o
+ .comment       0x000000000000017a       0x12 /home/aftermath/reconstruct/release/libcommon_usocket.o
+ .comment       0x000000000000018c       0x12 /home/aftermath/reconstruct/release/libcommon_socket.o
+ .comment       0x000000000000019e       0x12 /home/aftermath/reconstruct/release/libcommon_utils.o
+ .comment       0x00000000000001b0       0x12 /home/aftermath/reconstruct/release/libcommon_log.o
+ .comment       0x00000000000001c2       0x12 /home/aftermath/reconstruct/release/libcommon_logging.o
+ .comment       0x00000000000001d4       0x12 /home/aftermath/reconstruct/release/libdstdec_yarn.o
+ .comment       0x00000000000001e6       0x12 /home/aftermath/reconstruct/release/libdstdec_buffer_pool.o
+ .comment       0x00000000000001f8       0x12 /home/aftermath/reconstruct/release/libdstdec_ccp_calc.o
+ .comment       0x000000000000020a       0x12 /home/aftermath/reconstruct/release/libdstdec_dst_ac.o
+ .comment       0x000000000000021c       0x12 /home/aftermath/reconstruct/release/libdstdec_dst_data.o
+ .comment       0x000000000000022e       0x12 /home/aftermath/reconstruct/release/libdstdec_dst_decoder.o
+ .comment       0x0000000000000240       0x12 /home/aftermath/reconstruct/release/libdstdec_dst_fram.o
+ .comment       0x0000000000000252       0x12 /home/aftermath/reconstruct/release/libdstdec_dst_init.o
+ .comment       0x0000000000000264       0x12 /home/aftermath/reconstruct/release/libdstdec_unpack_dst.o
+ .comment       0x0000000000000276       0x12 /home/aftermath/reconstruct/release/libid3_id3.o
+ .comment       0x0000000000000288       0x12 /home/aftermath/reconstruct/release/libid3_id3_frame.o
+ .comment       0x000000000000029a       0x12 /home/aftermath/reconstruct/release/libid3_id3_frame_content.o
+ .comment       0x00000000000002ac       0x12 /home/aftermath/reconstruct/release/libid3_id3_frame_text.o
+ .comment       0x00000000000002be       0x12 /home/aftermath/reconstruct/release/libid3_id3_frame_url.o
+ .comment       0x00000000000002d0       0x12 /home/aftermath/reconstruct/release/libid3_id3_tag.o
+ .comment       0x00000000000002e2       0x12 /home/aftermath/reconstruct/release/libid3_unicode.o
+ .comment       0x00000000000002f4       0x12 /home/aftermath/reconstruct/release/tool_main.o
+ .comment       0x0000000000000306       0x12 /home/aftermath/reconstruct/release/tool_install.o
+ .comment       0x0000000000000318       0x12 /home/aftermath/reconstruct/release/tool_getopt.o
+ .comment       0x000000000000032a       0x12 /home/aftermath/reconstruct/release/tool_getopt1.o
+ .comment       0x000000000000033c       0x12 /home/aftermath/reconstruct/release/division/bpabi.o
+ .comment       0x000000000000034e       0x12 /home/aftermath/reconstruct/release/division/_divdi3.o
+ .comment       0x0000000000000360       0x12 /home/aftermath/reconstruct/release/division/_udivdi3.o
+ .comment       0x0000000000000372       0x12 /home/aftermath/reconstruct/release/elf-init.o
+ .comment       0x0000000000000384       0x12 /home/aftermath/reconstruct/release/stat64.o
+ .comment       0x0000000000000396       0x12 /home/aftermath/reconstruct/release/fstat64.o
+ .comment       0x00000000000003a8       0x12 /home/aftermath/reconstruct/release/crtend.o
+
+.debug
+ *(.debug)
+
+.line
+ *(.line)
+
+.debug_srcinfo
+ *(.debug_srcinfo)
+
+.debug_sfnames
+ *(.debug_sfnames)
+
+.debug_aranges  0x0000000000000000       0x60
+ *(.debug_aranges)
+ .debug_aranges
+                0x0000000000000000       0x20 /home/aftermath/reconstruct/release/division/bpabi.o
+ .debug_aranges
+                0x0000000000000020       0x20 /home/aftermath/reconstruct/release/division/_divdi3.o
+ .debug_aranges
+                0x0000000000000040       0x20 /home/aftermath/reconstruct/release/division/_udivdi3.o
+
+.debug_pubnames
+                0x0000000000000000       0x84
+ *(.debug_pubnames)
+ .debug_pubnames
+                0x0000000000000000       0x45 /home/aftermath/reconstruct/release/division/bpabi.o
+ .debug_pubnames
+                0x0000000000000045       0x1f /home/aftermath/reconstruct/release/division/_divdi3.o
+ .debug_pubnames
+                0x0000000000000064       0x20 /home/aftermath/reconstruct/release/division/_udivdi3.o
+
+.debug_info     0x0000000000000000      0xc2a
+ *(.debug_info .gnu.linkonce.wi.*)
+ .debug_info    0x0000000000000000       0xde /home/aftermath/reconstruct/release/division/bpabi.o
+ .debug_info    0x00000000000000de      0x5bc /home/aftermath/reconstruct/release/division/_divdi3.o
+ .debug_info    0x000000000000069a      0x590 /home/aftermath/reconstruct/release/division/_udivdi3.o
+
+.debug_abbrev   0x0000000000000000      0x341
+ *(.debug_abbrev)
+ .debug_abbrev  0x0000000000000000       0x6a /home/aftermath/reconstruct/release/division/bpabi.o
+ .debug_abbrev  0x000000000000006a      0x176 /home/aftermath/reconstruct/release/division/_divdi3.o
+ .debug_abbrev  0x00000000000001e0      0x161 /home/aftermath/reconstruct/release/division/_udivdi3.o
+
+.debug_line     0x0000000000000000      0x1dd
+ *(.debug_line)
+ .debug_line    0x0000000000000000       0x5b /home/aftermath/reconstruct/release/division/bpabi.o
+ .debug_line    0x000000000000005b       0xc7 /home/aftermath/reconstruct/release/division/_divdi3.o
+ .debug_line    0x0000000000000122       0xbb /home/aftermath/reconstruct/release/division/_udivdi3.o
+
+.debug_frame    0x0000000000000000       0x50
+ *(.debug_frame)
+ .debug_frame   0x0000000000000000       0x28 /home/aftermath/reconstruct/release/libgcc.a(_divsi3.o)
+ .debug_frame   0x0000000000000028       0x28 /home/aftermath/reconstruct/release/libgcc.a(_udivsi3.o)
+
+.debug_str      0x0000000000000000      0x163
+ *(.debug_str)
+ .debug_str     0x0000000000000000       0x90 /home/aftermath/reconstruct/release/division/bpabi.o
+ .debug_str     0x0000000000000090       0xc9 /home/aftermath/reconstruct/release/division/_divdi3.o
+                                        0x140 (size before relaxing)
+ .debug_str     0x0000000000000159        0xa /home/aftermath/reconstruct/release/division/_udivdi3.o
+                                        0x141 (size before relaxing)
+
+.debug_loc      0x0000000000000000      0xf62
+ *(.debug_loc)
+ .debug_loc     0x0000000000000000      0x11e /home/aftermath/reconstruct/release/division/bpabi.o
+ .debug_loc     0x000000000000011e      0x7a3 /home/aftermath/reconstruct/release/division/_divdi3.o
+ .debug_loc     0x00000000000008c1      0x6a1 /home/aftermath/reconstruct/release/division/_udivdi3.o
+
+.debug_macinfo
+ *(.debug_macinfo)
+
+.debug_weaknames
+ *(.debug_weaknames)
+
+.debug_funcnames
+ *(.debug_funcnames)
+
+.debug_typenames
+ *(.debug_typenames)
+
+.debug_varnames
+ *(.debug_varnames)
+
+.debug_pubtypes
+ *(.debug_pubtypes)
+
+.debug_ranges   0x0000000000000000      0x1a0
+ *(.debug_ranges)
+ .debug_ranges  0x0000000000000000       0xd8 /home/aftermath/reconstruct/release/division/_divdi3.o
+ .debug_ranges  0x00000000000000d8       0xc8 /home/aftermath/reconstruct/release/division/_udivdi3.o
+
+.gnu.attributes
+ *(.gnu.attributes)
+
+.note.gnu.arm.ident
+ *(.note.gnu.arm.ident)
+
+/DISCARD/
+ *(.note.GNU-stack)
+ *(.gnu_debuglink)
+OUTPUT(/home/aftermath/reconstruct/release/sacd_extract_160_release elf32-littlearm)
+
+.ARM.attributes
+                0x0000000000000000       0x28
+ .ARM.attributes
+                0x0000000000000000       0x29 /home/aftermath/arm-2009q3/arm-none-linux-gnueabi/libc/usr/lib/crt1.o
+ .ARM.attributes
+                0x0000000000000029       0x2b /home/aftermath/arm-2009q3/arm-none-linux-gnueabi/libc/usr/lib/crti.o
+ .ARM.attributes
+                0x0000000000000054       0x28 /home/aftermath/reconstruct/release/crtbegin.o
+ .ARM.attributes
+                0x000000000000007c       0x28 /home/aftermath/reconstruct/release/libsacd_sacd_reader.o
+ .ARM.attributes
+                0x00000000000000a4       0x28 /home/aftermath/reconstruct/release/libsacd_sacd_input.o
+ .ARM.attributes
+                0x00000000000000cc       0x28 /home/aftermath/reconstruct/release/libsacd_sacd_read.o
+ .ARM.attributes
+                0x00000000000000f4       0x26 /home/aftermath/reconstruct/release/libsacd_scarletbook.o
+ .ARM.attributes
+                0x000000000000011a       0x28 /home/aftermath/reconstruct/release/libsacd_scarletbook_read.o
+ .ARM.attributes
+                0x0000000000000142       0x28 /home/aftermath/reconstruct/release/libsacd_scarletbook_print.o
+ .ARM.attributes
+                0x000000000000016a       0x28 /home/aftermath/reconstruct/release/libsacd_scarletbook_output.o
+ .ARM.attributes
+                0x0000000000000192       0x28 /home/aftermath/reconstruct/release/libsacd_scarletbook_helpers.o
+ .ARM.attributes
+                0x00000000000001ba       0x28 /home/aftermath/reconstruct/release/libsacd_scarletbook_id3.o
+ .ARM.attributes
+                0x00000000000001e2       0x28 /home/aftermath/reconstruct/release/libsacd_sacd_pb_stream.o
+ .ARM.attributes
+                0x000000000000020a       0x26 /home/aftermath/reconstruct/release/libsacd_sacd_ripper.pb.o
+ .ARM.attributes
+                0x0000000000000230       0x28 /home/aftermath/reconstruct/release/libsacd_cuesheet.o
+ .ARM.attributes
+                0x0000000000000258       0x28 /home/aftermath/reconstruct/release/libsacd_dsf.o
+ .ARM.attributes
+                0x0000000000000280       0x28 /home/aftermath/reconstruct/release/libsacd_dsdiff.o
+ .ARM.attributes
+                0x00000000000002a8       0x28 /home/aftermath/reconstruct/release/libsacd_iso_writer.o
+ .ARM.attributes
+                0x00000000000002d0       0x28 /home/aftermath/reconstruct/release/libcommon_charset.o
+ .ARM.attributes
+                0x00000000000002f8       0x28 /home/aftermath/reconstruct/release/libcommon_pb_decode.o
+ .ARM.attributes
+                0x0000000000000320       0x28 /home/aftermath/reconstruct/release/libcommon_timeout.o
+ .ARM.attributes
+                0x0000000000000348       0x28 /home/aftermath/reconstruct/release/libcommon_fileutils.o
+ .ARM.attributes
+                0x0000000000000370       0x28 /home/aftermath/reconstruct/release/libcommon_pb_encode.o
+ .ARM.attributes
+                0x0000000000000398       0x26 /home/aftermath/reconstruct/release/libcommon_usocket.o
+ .ARM.attributes
+                0x00000000000003be       0x28 /home/aftermath/reconstruct/release/libcommon_socket.o
+ .ARM.attributes
+                0x00000000000003e6       0x28 /home/aftermath/reconstruct/release/libcommon_utils.o
+ .ARM.attributes
+                0x000000000000040e       0x28 /home/aftermath/reconstruct/release/libcommon_log.o
+ .ARM.attributes
+                0x0000000000000436       0x28 /home/aftermath/reconstruct/release/libcommon_logging.o
+ .ARM.attributes
+                0x000000000000045e       0x28 /home/aftermath/reconstruct/release/libdstdec_yarn.o
+ .ARM.attributes
+                0x0000000000000486       0x28 /home/aftermath/reconstruct/release/libdstdec_buffer_pool.o
+ .ARM.attributes
+                0x00000000000004ae       0x28 /home/aftermath/reconstruct/release/libdstdec_ccp_calc.o
+ .ARM.attributes
+                0x00000000000004d6       0x28 /home/aftermath/reconstruct/release/libdstdec_dst_ac.o
+ .ARM.attributes
+                0x00000000000004fe       0x28 /home/aftermath/reconstruct/release/libdstdec_dst_data.o
+ .ARM.attributes
+                0x0000000000000526       0x28 /home/aftermath/reconstruct/release/libdstdec_dst_decoder.o
+ .ARM.attributes
+                0x000000000000054e       0x28 /home/aftermath/reconstruct/release/libdstdec_dst_fram.o
+ .ARM.attributes
+                0x0000000000000576       0x28 /home/aftermath/reconstruct/release/libdstdec_dst_init.o
+ .ARM.attributes
+                0x000000000000059e       0x28 /home/aftermath/reconstruct/release/libdstdec_unpack_dst.o
+ .ARM.attributes
+                0x00000000000005c6       0x28 /home/aftermath/reconstruct/release/libid3_id3.o
+ .ARM.attributes
+                0x00000000000005ee       0x28 /home/aftermath/reconstruct/release/libid3_id3_frame.o
+ .ARM.attributes
+                0x0000000000000616       0x26 /home/aftermath/reconstruct/release/libid3_id3_frame_content.o
+ .ARM.attributes
+                0x000000000000063c       0x28 /home/aftermath/reconstruct/release/libid3_id3_frame_text.o
+ .ARM.attributes
+                0x0000000000000664       0x28 /home/aftermath/reconstruct/release/libid3_id3_frame_url.o
+ .ARM.attributes
+                0x000000000000068c       0x28 /home/aftermath/reconstruct/release/libid3_id3_tag.o
+ .ARM.attributes
+                0x00000000000006b4       0x28 /home/aftermath/reconstruct/release/libid3_unicode.o
+ .ARM.attributes
+                0x00000000000006dc       0x28 /home/aftermath/reconstruct/release/tool_main.o
+ .ARM.attributes
+                0x0000000000000704       0x28 /home/aftermath/reconstruct/release/tool_install.o
+ .ARM.attributes
+                0x000000000000072c       0x26 /home/aftermath/reconstruct/release/tool_getopt.o
+ .ARM.attributes
+                0x0000000000000752       0x26 /home/aftermath/reconstruct/release/tool_getopt1.o
+ .ARM.attributes
+                0x0000000000000778       0x16 /home/aftermath/reconstruct/release/sacd_read_ko.o
+ .ARM.attributes
+                0x000000000000078e       0x28 /home/aftermath/reconstruct/release/division/bpabi.o
+ .ARM.attributes
+                0x00000000000007b6       0x28 /home/aftermath/reconstruct/release/division/_divdi3.o
+ .ARM.attributes
+                0x00000000000007de       0x28 /home/aftermath/reconstruct/release/division/_udivdi3.o
+ .ARM.attributes
+                0x0000000000000806       0x18 /home/aftermath/reconstruct/release/libgcc.a(_aeabi_uldivmod.o)
+ .ARM.attributes
+                0x000000000000081e       0x18 /home/aftermath/reconstruct/release/libgcc.a(_arm_addsubdf3.o)
+ .ARM.attributes
+                0x0000000000000836       0x18 /home/aftermath/reconstruct/release/libgcc.a(_arm_addsubsf3.o)
+ .ARM.attributes
+                0x000000000000084e       0x18 /home/aftermath/reconstruct/release/libgcc.a(_arm_cmpdf2.o)
+ .ARM.attributes
+                0x0000000000000866       0x18 /home/aftermath/reconstruct/release/libgcc.a(_arm_fixdfsi.o)
+ .ARM.attributes
+                0x000000000000087e       0x18 /home/aftermath/reconstruct/release/libgcc.a(_arm_muldivdf3.o)
+ .ARM.attributes
+                0x0000000000000896       0x18 /home/aftermath/reconstruct/release/libgcc.a(_arm_muldivsf3.o)
+ .ARM.attributes
+                0x00000000000008ae       0x18 /home/aftermath/reconstruct/release/libgcc.a(_arm_truncdfsf2.o)
+ .ARM.attributes
+                0x00000000000008c6       0x18 /home/aftermath/reconstruct/release/libgcc.a(_divsi3.o)
+ .ARM.attributes
+                0x00000000000008de       0x18 /home/aftermath/reconstruct/release/libgcc.a(_dvmd_lnx.o)
+ .ARM.attributes
+                0x00000000000008f6       0x18 /home/aftermath/reconstruct/release/libgcc.a(_udivsi3.o)
+ .ARM.attributes
+                0x000000000000090e       0x28 /home/aftermath/reconstruct/release/elf-init.o
+ .ARM.attributes
+                0x0000000000000936       0x28 /home/aftermath/reconstruct/release/stat64.o
+ .ARM.attributes
+                0x000000000000095e       0x28 /home/aftermath/reconstruct/release/fstat64.o
+ .ARM.attributes
+                0x0000000000000986       0x26 /home/aftermath/reconstruct/release/crtend.o
+ .ARM.attributes
+                0x00000000000009ac       0x2b /home/aftermath/arm-2009q3/arm-none-linux-gnueabi/libc/usr/lib/crtn.o

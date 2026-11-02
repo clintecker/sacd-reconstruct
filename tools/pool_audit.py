@@ -129,40 +129,41 @@ class ELF:
         # value differently): uniformly layout-dependent
         if sec.startswith(".text") or sec.startswith(".plt"):
             return "code-ptr"
-        b = self.read_bytes(word, 32)
+        b = self.read_bytes(word, 256)
         if b is None:
             return None
-        if b[0] == 0:
-            return "empty-string"  # the shared "" literal
-        # interior to a known symbol: compare the whole symbol content
+        if b[:4] == b"\x00\x00\x00\x00":
+            return "empty-string"  # the shared "" literal (full word of NULs)
+        # narrow (char) string: through the NUL terminator
+        s = b.split(b"\x00")[0]
+        if s and all(32 <= c < 127 or c in (10, 13, 9) for c in s) and len(s) >= 2:
+            return "ascii:%r" % s.decode("ascii", "replace")
+        # wide string: ARM EABI wchar_t is 4 bytes (UTF-32LE). Decode
+        # through the 4-byte terminator, not a fixed window, so every
+        # character of the string participates in the comparison.
+        if len(b) >= 8 and b[1] == 0 and b[2] == 0 and b[3] == 0 and b[0] != 0:
+            chars = []
+            for i in range(0, len(b) - 3, 4):
+                val = int.from_bytes(b[i:i + 4], "little")
+                if val == 0:
+                    break
+                if not (32 <= val < 127 or val in (10, 13, 9)):
+                    break
+                chars.append(chr(val))
+            if len(chars) >= 1:
+                return "wide:%r" % "".join(chars)
+        # at or inside a known symbol: compare the symbol's content
         # (masked), not a window that may straddle neighbors
         snap = self.containing_symbol(word)
-        if snap is not None and snap != word:
-            saddr, ssize, sname = snap
+        if snap is None:
+            snap = self.symbol_at_start(word)
+        if snap is not None:
+            saddr, ssize = snap
             sb = self.read_bytes(saddr, min(ssize, 48))
             if sb is not None:
                 masked = self.masked_bytes(sb)
                 return "symcontent:%s" % masked.hex()
-        # string-like at the exact target?
-        s = b.split(b"\x00")[0]
-        if s and all(32 <= c < 127 or c in (10, 13, 9) for c in s) and len(s) >= 2:
-            return "ascii:%r" % s.decode("ascii", "replace")
-        # utf16-le string?
-        if b[1::2][:6] and all(b[1::2][i] == 0 for i in range(min(6, len(b[1::2])))) and \
-           all(32 <= c < 127 for c in b[0::2][:6]) and (b[0] != 0):
-            try:
-                w = b[: b.find(b"\x00\x00\x00", 0) + 2 if b"\x00\x00\x00" in b[:32] else 32]
-                # trim at first utf16 NUL
-                out = bytearray()
-                for i in range(0, len(b) - 1, 2):
-                    if b[i] == 0 and b[i + 1] == 0:
-                        break
-                    out += b[i:i + 2]
-                if len(out) >= 4:
-                    return "utf16:%r" % out.decode("utf-16-le")
-            except Exception:
-                pass
-        return "content:%s:%s" % (sec, self.masked_bytes(b).hex())
+        return "content:%s:%s" % (sec, self.masked_bytes(b[:48]).hex())
 
     @staticmethod
     def masked_bytes(b):
@@ -178,13 +179,20 @@ class ELF:
         return bytes(masked)
 
     def containing_symbol(self, va):
-        """(addr, size, name) of a sized symbol strictly containing va."""
+        """(addr, size) of a sized symbol strictly containing va."""
         best = None
         for (addr, size), name in self.symbol_sizes.items():
             if addr < va < addr + size:
                 if best is None or addr > best[0]:
-                    best = (addr, size, name)
+                    best = (addr, size)
         return best
+
+    def symbol_at_start(self, va):
+        """(addr, size) of a sized symbol starting exactly at va."""
+        for (addr, size), name in self.symbol_sizes.items():
+            if addr == va:
+                return (addr, size)
+        return None
 
     def functions(self):
         raise NotImplementedError
@@ -267,24 +275,39 @@ def main():
             print("MISMATCH(count) %s: orig %d pools, rebuild %d" %
                   (name, len(o_pools), len(r_pools)))
             continue
-        # compare the multiset of per-load content keys: pool load ORDER
-        # differences and address layout differences must not mask real
-        # content differences (wrong string, wrong scalar)
-        okeys = sorted(str(o.describe_word(w)) for _, _, w in o_pools)
-        rkeys = sorted(str(r.describe_word(w)) for _, _, w in r_pools)
-        if okeys == rkeys:
+        # Compare literals AT THEIR LOAD SITES (per review): a swapped
+        # pointer pair must fail even though the multiset is unchanged.
+        # Equal raw values pass a site outright (covers size constants
+        # like 0x40400/0x40800, TLS refs, BOMs and code-range values).
+        if len(o_pools) != len(r_pools):
+            mismatch += 1
+            mismatches.append(name)
+            if args.verbose:
+                print("  %s: pool count %d vs %d" %
+                      (name, len(o_pools), len(r_pools)))
+            continue
+        site_fail = []
+        for i, ((ova, _, oword), (rva, _, rword)) in enumerate(
+                zip(o_pools, r_pools)):
+            if oword == rword:
+                continue
+            odesc = o.describe_word(oword)
+            rdesc = r.describe_word(rword)
+            if odesc == rdesc:
+                continue
+            site_fail.append((i, oword, odesc, rword, rdesc))
+        if not site_fail:
             match += 1
             continue
+        okeys = sorted(str(o.describe_word(w)) for _, _, w in o_pools)
+        rkeys = sorted(str(r.describe_word(w)) for _, _, w in r_pools)
+        kind = "ORDER" if okeys == rkeys else "CONTENT"
         mismatch += 1
         mismatches.append(name)
         if args.verbose:
-            from collections import Counter
-            co = Counter(okeys)
-            cr = Counter(rkeys)
-            for k in sorted((co - cr).elements()):
-                print("  %s: orig-only %s" % (name, k))
-            for k in sorted((cr - co).elements()):
-                print("  %s: rebuild-only %s" % (name, k))
+            for (i, ow, od, rw, rd) in site_fail:
+                print("  %s[%s] site %d: orig %#x -> %s | rebuild %#x -> %s" %
+                      (name, kind, i, ow or 0, od, rw or 0, rd))
     print("pool audit: match %d  mismatch %d  missing %d" %
           (match, mismatch, missing))
     if mismatches:

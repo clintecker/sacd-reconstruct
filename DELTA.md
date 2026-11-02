@@ -211,3 +211,52 @@ e6daa1128da118f1fb7a7bf3c95d6faba40bc1021c920aec7fca34cae93adaa0
 Decision (operator): function-level parity is DONE; effort pivots to the
 BX510 drop-in track — TCP client harness for baseline capture (issue #5/#6
 critical path). .data order finding documented above instead of fixed.
+
+## Release pipeline (2026-11-02/03): `make verify` — VERIFY: PASS
+
+One release ELF built from tracked sources by tools/release_build.py via
+`make verify` (tools/release_verify.sh), reproducing bit-for-bit across
+independent full runs:
+
+    RELEASE IMAGE  reconstruct/release/sacd_extract_160_release
+    SHA-256       e91720fbbbd592505bde6630843b0495ff82a93e40c0e427aaa70a081ff9ae22
+
+Build command: `cd reconstruct && make verify` on the lab VM (host
+prerequisites documented in tools/release_build.py: FSF gcc-4.4.1 source +
+built 4.4.1 tree, glibc-2.9 sources, CodeSourcery 2009q3-67 sysroot whose
+libgcc_s.so.1 must hash 5068e1ea...bec6d4, FSF binutils 2.19.1).
+
+Recipe: tracked tool/install.c and tool/main.c compile directly (asserted,
+never substituted or repaired); the four __FILE__ TUs via `#line 1
+"/root/sacd-ripper/libs/..."` + `-iquote`; ko embedded via .incbin; GNU
+crtbegin/crtend from crtstuff.c; glibc 2.9 elf-init/stat64/fstat64 from
+source; division helpers + private libgcc.a from lib1funcs.asm
+(--exclude-libs); link with CS libgcc_s.so.1 as --as-needed dynamic
+provider.
+
+Checks against that exact file — all green:
+- fn_diff 388/390 normalized functions. The two accepted residuals for
+  the hardware trial are `_start` and `call_gmon_start` (glibc 2.9 csu /
+  crtbegin call_gmon: startup code built from the CS sysroot objects,
+  not source; behavior-neutral per the eager-binding, status and CLI
+  differentials that all pass on this image).
+- Link interface: DT_NEEDED order (libpthread.so.0, libgcc_s.so.1,
+  libc.so.6), 270 defined exports, 131 undefined imports with binding/
+  type/DSO/version, 5 .ARM.exidx function+descriptor pairs — all MATCH
+  the original. Only __aeabi_unwind_cpp_pr0@GCC_3.5 imported.
+- Six-state status test 6/6; eager binding (LD_BIND_NOW=1) + --help exit 0.
+- Integer-division oracle 9,246/9,246.
+- tools/pool_audit.py on the release image: 384/384 clean, zero
+  mismatches — every PC-relative pool literal reaches the same object
+  and value as the original (the four previously flagged GOT/pb windows
+  and __libc_csu_init cleared with the relink; the remaining .data
+  object-order windows of the _fsf build also cleared in the release
+  layout). Release stop rule satisfied.
+
+fn_diff changes enabling the GNU-objdump backend (OBJDUMP env/--objdump):
+whitespace collapse, decimal/hex pool offsets, ";"/"@" comment stripping,
+"(bad)" wildcards, and function-relative branch-target normalization —
+the original's ReadTableSegmentData straddles the ABS symbol
+_binary_sacd_read_ko_size, so intra-function branch anchors differ
+between disassembler layouts (verified: identical code, different
+symbol anchoring).

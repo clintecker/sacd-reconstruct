@@ -65,6 +65,22 @@ cd reconstruct && make CROSS=arm-none-linux-gnueabi-
 python3 ../tools/fn_diff.py ../original/sacd_extract_160 sacd_extract_160_fsf
 ```
 
+## Provenance of the release candidate
+
+Built with GNU GCC 4.4.1 and source-built static arithmetic helpers.
+Linked against the default ARM `libgcc_s.so.1` from CodeSourcery
+2009q3-67 (SHA-256 `5068e1ea0c56591305d3c605d9fbd3e900ae8d134d13bc32a65e3fe1ddbec6d4`).
+The player supplies the runtime DSO. The remaining sysroot inputs are
+recorded in `DELTA.md` (release pipeline section).
+
+Caveat on record (issue #4 review): the CodeSourcery archive's libc
+identifies itself as glibc 2.10.1, while the original's nonshared CSU
+bytes are glibc 2.9 — we build `elf-init.c`, `stat64.c`, `fstat64.c`
+from glibc 2.9 source to match. The CS DSO is a pinned link-time ABI
+input; the exact MTK-era `libgcc_s.so.1` byte identity is unestablished.
+On the player, resolution belongs to the player's own loader; record its
+build IDs or hashes when capturing.
+
 ## Provenance of the original
 
 Base application = sacd-ripper v0.3.7 (de008ff) + a community Linux port

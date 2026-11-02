@@ -1,0 +1,33 @@
+install_modules: 464 exact bytes, SHA-256 5cf765895ffe53e78055aa9128487eb490cbaefbfa545a5bcc055e59741d854d
+remove_modules: 132 exact bytes, SHA-256 67aea39f827f387545f577b3abcac789a7871e047a8d36ac7b22ad45e4dd2a60
+.rodata: 236 exact bytes
+DT_NEEDED (order): MATCH (3 reference, 3 candidate)
+exported names: MATCH (270 reference, 270 candidate)
+undefined symbols (binding, type, DSO and version): MATCH (131 reference, 131 candidate)
+.ARM.exidx (function and descriptor): MATCH (5 reference, 5 candidate)
+sacd_extract_160: 6/6 exact status lines
+  Tray is empty / none: exit=0
+    expected b'\rSACD Daemon 0.37 active. Client none. Tray is empty.              '
+    observed b'\rSACD Daemon 0.37 active. Client n. Tray is empty.              '
+  Tray is empty / connected: exit=0
+    expected b'\rSACD Daemon 0.37 active. Client connected. Tray is empty.              '
+    observed b'\rSACD Daemon 0.37 active. Client c. Tray is empty.              '
+  Disc inserted / none: exit=0
+    expected b'\rSACD Daemon 0.37 active. Client none. Disc inserted.              '
+    observed b'\rSACD Daemon 0.37 active. Client n. Disc inserted.              '
+  Disc inserted / connected: exit=0
+    expected b'\rSACD Daemon 0.37 active. Client connected. Disc inserted.              '
+    observed b'\rSACD Daemon 0.37 active. Client c. Disc inserted.              '
+  SACD disc inserted / none: exit=0
+    expected b'\rSACD Daemon 0.37 active. Client none. SACD disc inserted.              '
+    observed b'\rSACD Daemon 0.37 active. Client n. SACD disc inserted.              '
+  SACD disc inserted / connected: exit=0
+    expected b'\rSACD Daemon 0.37 active. Client connected. SACD disc inserted.              '
+    observed b'\rSACD Daemon 0.37 active. Client c. SACD disc inserted.              '
+sacd_extract_160_fsf: 0/6 exact status lines
+sacd_extract_160_trial: 6/6 exact status lines
+sacd_extract_160_trial  sha256=b02dbc46455266ef1679770e3090d31c98bf82f20af3ddcca1a6d5473a3c74c9
+  __divdi3                 2311 passed
+  __udivdi3                2312 passed
+  __gnu_ldivmod_helper     2311 passed
+  __gnu_uldivmod_helper    2312 passed

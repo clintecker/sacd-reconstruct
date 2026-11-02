@@ -13,7 +13,11 @@ under the identical name `sacd_extract_160`. stdout, stderr, and exit code
 captured per case (`timeout 20`). Scripts: `run2.sh` (reconstruction),
 `run3.sh` (original).
 
-## Result: 12/12 cases byte-identical (stdout, stderr, exit code)
+## Result: 10/10 cases byte-identical (stdout, stderr, exit code)
+
+(Corrected 2026-11-02: an earlier revision of this report claimed "12/12"
+while listing ten cases — see issue #5. The ten cases below are the ones
+with committed captures.)
 
 | Case | Args | rc | stdout | stderr | verdict |
 |---|---|---|---|---|---|

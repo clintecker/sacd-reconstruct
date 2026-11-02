@@ -15,13 +15,19 @@ CC      := $(CROSS)gcc
 LD      := $(CROSS)gcc
 OBJCOPY_LD := $(CROSS)ld
 
-CFLAGS  := -O0 -marm -march=armv6z -Wall -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE \
+CFLAGS  := -O0 -marm -march=armv6z -Wall -fno-unwind-tables -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE \
            -Itool -Ilibsacd -Ilibcommon -Ilibcommon/sys -Ilibid3 -Ilibdstdec \
            -DLIBSACD_INTERNAL
 LDFLAGS := -lpthread
 
 BUILD   := build
 TARGET  := sacd_extract_160
+
+# The original was built from a tree rooted at /root/sacd-ripper (its __FILE__
+# strings in assert-failure paths embed that prefix). Compile lib* sources
+# through that root so __FILE__ matches byte-for-byte. tool/ files never
+# materialize __FILE__. Set BUILDROOT=. to build without the prefix.
+BUILDROOT ?= /root/sacd-ripper/libs
 
 SACD_SRCS := \
 	libsacd/sacd_reader.c \
@@ -111,7 +117,7 @@ $(TARGET): $(OBJS) $(BUILD)/sacd_read_ko.o $(FSFLIBGCC_OBJS)
 
 $(BUILD)/%.o: %.c
 	@mkdir -p $(dir $@)
-	$(CC) $(CFLAGS) -c -o $@ $<
+	$(CC) $(CFLAGS) -c -o $@ $(if $(filter lib%,$<),$(BUILDROOT)/$<,$<)
 
 clean:
 	rm -rf $(BUILD) $(TARGET)

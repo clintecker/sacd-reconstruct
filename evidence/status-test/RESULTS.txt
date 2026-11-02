@@ -1,0 +1,11 @@
+# Six-state headless status test (issue #1 closure evidence)
+# Command: test_status.py --qemu qemu-arm-static --sysroot /home/aftermath/arm-2009q3/arm-none-linux-gnueabi/libc /tmp/sacd_orig_160 $HOME/reconstruct/sacd_extract_160
+# Date: 2026-11-02T21:57:21Z
+# Candidate SHA-256 (unstripped):
+e6daa1128da118f1fb7a7bf3c95d6faba40bc1021c920aec7fca34cae93adaa0  /home/aftermath/reconstruct/sacd_extract_160
+# Reference SHA-256:
+0fdcefdb84ae818be7385657eaf0960053f6e4452a82f19cbe6777f9c8cddb45  /tmp/sacd_orig_160
+
+sacd_orig_160: 6/6 exact status lines
+sacd_extract_160: 6/6 exact status lines
+exit=0

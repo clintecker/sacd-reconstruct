@@ -103,7 +103,7 @@ result in `.a`, close. ioctl cmds `_IOR('S', nr, 16)`:
   declaration order (first-declared deepest), block-scoped vars included in
   source order; compiler temps (sret, int64 halves) above them.
 
-## Parity session 2 final state: 377/388 instruction-exact
+## Parity session 2 final state: 377/390 instruction-exact
 
 All source-level differences between the community binary and the
 reconstruction are resolved. The 11 remaining mismatches:
@@ -152,3 +152,62 @@ reconstruction are resolved. The 11 remaining mismatches:
 - `if (x) goto L;` = branch-on-true to distant block; `if (x) {block}` =
   branch-on-false over inline block; ternary/goto choice is readable from
   branch polarity + block placement
+
+## Parity session 3 (2026-11-02): 385/390 instruction-exact + interface parity
+
+Resolved with the forensics kit (incoming/sacd-installer-and-status/):
+- `install_modules`/`remove_modules` source corrected to the witness
+  (`strcpy(mod_file, "/tmp/")` — the strcpy builtin's arg expansion produces
+  the original `ldr r3`/`mov r1,r3` dance; 26-byte `mod_file`; `size_t`
+  mod_size vs signed write result; nested-if error structure; `__func__`
+  logging names). Verified: all 464 bytes of install_modules, 132 bytes of
+  remove_modules, and 236 bytes of installer .rodata byte-identical at the
+  original addresses via a reference-address relink (no masking).
+- `server_loop` status strings restored: `L"connected"` / `L"none"`
+  (previously misread as `L"c"` / `L"n"`). Six-state QEMU status test
+  (headless server_loop + real guest vfwprintf) passes 6/6 on the rebuilt
+  candidate, matching the reference exactly.
+- `__FILE__` parity: the original was built from /root/sacd-ripper (its
+  assert-path strings embed that prefix in buffer_pool.c, dst_decoder.c,
+  id3.c, scarletbook_read.c). Our build compiles libs/* through
+  BUILDROOT=/root/sacd-ripper (symlink farm on the VM); the kit's
+  sudo-free alternative (#line 1 directives + -iquote) is equivalent.
+- pthread callback signatures: client_thread/listener_thread return void*
+  (type-compatible with pthread_create; no codegen change since both end
+  in pthread_exit).
+- fn_diff: 385/390 instruction-exact (denominator corrected 2026-11-02:
+  earlier revisions said "/388" — fn_diff compares 390 functions, so
+  385 exact + 5 remaining = 390; matches issue #2's count).
+  Remaining 5 = __libc_csu_init,
+  __do_global_dtors_aux, _start, call_gmon_start, frame_dummy — all
+  startup/crt objects addressed by the issue-#4 relink recipe (GNU
+  crtbegin.o from source + glibc 2.9 elf-init/stat64/fstat64 rebuilt;
+  CS 2009q3 libgcc_s.so.1 as pinned dynamic input, --exclude-libs
+  libgcc.a, --as-needed).
+
+New tooling: tools/pool_audit.py — audits every PC-relative pool load in
+every function by *content* (strings compared exactly, scalars by value,
+pointer-bearing structures with address words masked). Catches literal
+bugs fn_diff cannot see (it was the L"c"/L"none" class + __FILE__ paths
+that motivated it). Current: 369/390 clean; 15 residual flags,
+all accounted for (7+4+3+1):
+- 7 = .data object ORDER (benign, layout only): original links
+  yarn.c -> dst_fram.c -> dst_data.c -> id3_frame.c -> id3.c -> dsdiff.c
+  -> scarletbook_output.c -> iso_writer.c -> dsf.c -> scarletbook.c;
+  our Makefile orders differently. Runtime-invisible; documented, not
+  chased (full byte parity would reorder link lists).
+- 4 = GOT/pb-descriptor windows (import-set differences) — resolved by
+  the issue-#4 relink. These four get re-checked on the exact relinked
+  ELF that ships (release checklist).
+- 3 = audit window straddle artifacts (empty-string literal neighbors,
+  BOM constants inside code-section ranges, handler tables adjacent to
+  the embedded ko blob) — verified equal by hand.
+- 1 = __libc_csu_init itself (the known startup-object mismatch, same
+  class as the five fn_diff residuals; resolved by the issue-#4 relink).
+
+Rebuilt candidate SHA-256 (session 3, unstripped):
+e6daa1128da118f1fb7a7bf3c95d6faba40bc1021c920aec7fca34cae93adaa0
+
+Decision (operator): function-level parity is DONE; effort pivots to the
+BX510 drop-in track — TCP client harness for baseline capture (issue #5/#6
+critical path). .data order finding documented above instead of fixed.

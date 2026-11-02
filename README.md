@@ -4,17 +4,33 @@ Full source reconstruction of the closed-source ARM binary `sacd_extract_160`
 (SACD-ripping daemon from the "AutoScript" USB packages for certain Sony
 BD/SACD players), engineered back to byte-level parity with the original.
 
-## Status
+## Status (updated 2026-11-02)
 
-- **377/388 functions instruction-identical** (normalized disassembly,
-  `tools/fn_diff.py`)
-- **Runtime differential: 12/12 cases byte-identical** under qemu-arm
-  (stdout/stderr/exit codes), including the LOG subsystem and the full
-  install_modules chain — see `evidence/runtime-differential/RESULTS.md`
-- Remaining 13 diffs: toolchain-furnished startup/libgcc objects + a handful
-  of compiler-build micro-differences; all believed behavior-neutral, and
-  reproducible from stock GNU GCC 4.4.1 + glibc 2.9 + glibc-ports 2.9 +
-  binutils 2.19.1 (see RESEARCH-BRIEF.md and DELTA.md for the open items)
+- **385/390 functions instruction-identical** (normalized disassembly,
+  `tools/fn_diff.py`; denominator corrected — fn_diff compares 390
+  functions total: 385 exact + 5 remaining)
+- **Installer TU byte-identical**: install_modules (464 B), remove_modules
+  (132 B) and installer .rodata (236 B) reproduce the original bytes at the
+  original addresses via a reference-address relink, no masking
+  (`incoming/sacd-installer-and-status/`)
+- **Six-state headless status test: 6/6 exact status lines** — the
+  candidate matches the reference byte-for-byte on server_loop output
+  (`evidence/status-test/RESULTS.txt`; closes issue #1)
+- **Runtime differential: 10/10 committed cases byte-identical** under
+  qemu-arm (stdout/stderr/exit codes) — case count corrected from an
+  earlier "12/12" claim, see `evidence/runtime-differential/RESULTS.md`
+- Remaining 5 diffs: the csu/crtbegin startup objects
+  (__libc_csu_init, __do_global_dtors_aux, _start, call_gmon_start,
+  frame_dummy) — resolved by the relink recipe in
+  `incoming/sacd-installer-and-status/` (GNU crtbegin.o from source +
+  glibc 2.9 elf-init/stat64/fstat64, CodeSourcery 2009q3 libgcc_s.so.1
+  pinned as the dynamic provider)
+- **Current candidate** `reconstruct/sacd_extract_160_fsf` (unstripped),
+  SHA-256 `e6daa1128da118f1fb7a7bf3c95d6faba40bc1021c920aec7fca34cae93adaa0`
+- Layout note: the original links .data objects in a different order
+  (documented in DELTA.md); every pool reference was verified to reach
+  the same object and value. Not chased — the BX510 drop-in test is the
+  release decision.
 
 ## Layout
 
@@ -24,6 +40,8 @@ BD/SACD players), engineered back to byte-level parity with the original.
   `reconstruct/sacd_extract_160_fsf`)
 - `analysis/` — disassembly/DWARF/strings artifacts per function
 - `tools/fn_diff.py` — parity harness (normalized per-function diff)
+- `tools/pool_audit.py` — literal-pool content audit (strings/scalars/pointer
+  structures with address masking)
 - `evidence/` — runtime differential test evidence
 - `gccbuild/` — recipe + logs for building the FSF GCC 4.4.x armv6z
   cross-compiler used for the rebuild

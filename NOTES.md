@@ -99,3 +99,9 @@ Binary function `main_loop` (0xda5c) replaces PS3 dialog UI of src/main.c.
 - sacd_ripper.proto contents at v0.3.7 vs the ServerRequest/ServerResponse
   messages seen in strings (ServerRequest_fields, ServerResponse_fields,
   sector_count/offset defaults).
+
+## Standalone repo
+The reconstruction now also lives in a private standalone repo:
+  https://github.com/clintecker/sacd-reconstruct  (PRIVATE, main branch)
+Contents: reconstruct/, original/, analysis/, tools/, evidence/, gccbuild/,
+incoming/ (external forensics kit), DELTA.md, RESEARCH-BRIEF.md, README.

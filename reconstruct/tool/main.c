@@ -112,7 +112,7 @@ void requested_for_exit(int status)
     exit_requested = status;
 }
 
-static void client_thread(void *userdata)
+static void *client_thread(void *userdata)
 {
     p_socket client = (p_socket) userdata;
     ServerRequest request;
@@ -282,7 +282,7 @@ static void client_thread(void *userdata)
     pthread_exit(0);
 }
 
-void listener_thread(void *unused)
+void *listener_thread(void *unused)
 {
     pthread_t id;
     struct sockaddr_in sa;
@@ -306,7 +306,7 @@ void listener_thread(void *unused)
     {
         if((conn_s = accept(list_s, NULL, NULL)) > 0)
         {
-            pthread_create(&id, 0, client_thread, (void *)&conn_s);
+            pthread_create(&id, 0, client_thread, &conn_s);
         }
     }
 
@@ -675,7 +675,7 @@ void server_loop(void)
                 is_sacd = !(sacd_sacd() < 0);
             safe_fwprintf(stdout, L"\rSACD Daemon %ls active. Client %ls. %ls.              ",
                           L"0.37",
-                          is_client_connected() ? L"c" : L"n",
+                          is_client_connected() ? L"connected" : L"none",
                           !has_disc ? L"Tray is empty" : (is_sacd ? L"SACD disc inserted" : L"Disc inserted"));
         }
         sleep(1);
@@ -704,15 +704,14 @@ int main(int argc, char* argv[])
             {
                 pthread_t thread;
                 int rc = pthread_create(&thread, NULL, listener_thread, NULL);
-                if (rc == 0)
-                    goto server_started;
-
-                LOG(lm_main, LOG_ERROR, ("return code from listener thread creation is %d\n", rc));
-                goto loops_done;
-
-server_started:
-                server_loop();
-                goto loops_done;
+                if (rc != 0)
+                {
+                    LOG(lm_main, LOG_ERROR, ("return code from listener thread creation is %d\n", rc));
+                }
+                else
+                {
+                    server_loop();
+                }
             }
             else
             {
@@ -720,7 +719,7 @@ server_started:
             }
 
 loops_done:
-            ;
+
 
 #ifndef _WIN32
             freopen(0, "w", stdout);

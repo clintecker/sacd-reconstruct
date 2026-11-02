@@ -109,21 +109,19 @@ static sacd_input_t sacd_dev_input_open(const char *target)
     dev->fd = open64(target, O_RDONLY);
 
     if (dev->fd < 0)
-        goto error;
+        goto fail;
 
     if (sacd_input_read64 == sacd_dev_input_read64)
     {
         if (init_sacd() < 0)
         {
             close(dev->fd);
-            goto error_free;
+            goto fail;
         }
     }
     return dev;
 
-error:
-
-error_free:
+fail:
 
     free(dev);
 

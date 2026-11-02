@@ -1,0 +1,99 @@
+
+cmpdf2.o:     file format elf32-littlearm
+
+
+Disassembly of section .text:
+
+00000000 <__gedf2>:
+   0:	e3e0c000 	mvn	ip, #0
+   4:	ea000002 	b	14 <__cmpdf2+0x4>
+
+00000008 <__ledf2>:
+   8:	e3a0c001 	mov	ip, #1
+   c:	ea000000 	b	14 <__cmpdf2+0x4>
+
+00000010 <__cmpdf2>:
+  10:	e3a0c001 	mov	ip, #1
+  14:	e50dc004 	str	ip, [sp, #-4]
+  18:	e1a0c081 	lsl	ip, r1, #1
+  1c:	e1f0cacc 	mvns	ip, ip, asr #21
+  20:	e1a0c083 	lsl	ip, r3, #1
+  24:	11f0cacc 	mvnsne	ip, ip, asr #21
+  28:	0a00000d 	beq	64 <__cmpdf2+0x54>
+  2c:	e190c081 	orrs	ip, r0, r1, lsl #1
+  30:	0192c083 	orrseq	ip, r2, r3, lsl #1
+  34:	11310003 	teqne	r1, r3
+  38:	01300002 	teqeq	r0, r2
+  3c:	03a00000 	moveq	r0, #0
+  40:	012fff1e 	bxeq	lr
+  44:	e3700000 	cmn	r0, #0
+  48:	e1310003 	teq	r1, r3
+  4c:	51510003 	cmppl	r1, r3
+  50:	01500002 	cmpeq	r0, r2
+  54:	21a00fc3 	asrcs	r0, r3, #31
+  58:	31e00fc3 	mvncc	r0, r3, asr #31
+  5c:	e3800001 	orr	r0, r0, #1
+  60:	e12fff1e 	bx	lr
+  64:	e1a0c081 	lsl	ip, r1, #1
+  68:	e1f0cacc 	mvns	ip, ip, asr #21
+  6c:	1a000001 	bne	78 <__cmpdf2+0x68>
+  70:	e190c601 	orrs	ip, r0, r1, lsl #12
+  74:	1a000004 	bne	8c <__cmpdf2+0x7c>
+  78:	e1a0c083 	lsl	ip, r3, #1
+  7c:	e1f0cacc 	mvns	ip, ip, asr #21
+  80:	1affffe9 	bne	2c <__cmpdf2+0x1c>
+  84:	e192c603 	orrs	ip, r2, r3, lsl #12
+  88:	0affffe7 	beq	2c <__cmpdf2+0x1c>
+  8c:	e51d0004 	ldr	r0, [sp, #-4]
+  90:	e12fff1e 	bx	lr
+
+00000094 <__aeabi_cdrcmple>:
+  94:	e1a0c000 	mov	ip, r0
+  98:	e1a00002 	mov	r0, r2
+  9c:	e1a0200c 	mov	r2, ip
+  a0:	e1a0c001 	mov	ip, r1
+  a4:	e1a01003 	mov	r1, r3
+  a8:	e1a0300c 	mov	r3, ip
+  ac:	eaffffff 	b	b0 <__aeabi_cdcmpeq>
+
+000000b0 <__aeabi_cdcmpeq>:
+  b0:	e92d4001 	push	{r0, lr}
+  b4:	ebfffffe 	bl	10 <__cmpdf2>
+  b8:	e3500000 	cmp	r0, #0
+  bc:	43700000 	cmnmi	r0, #0
+  c0:	e8bd8001 	pop	{r0, pc}
+
+000000c4 <__aeabi_dcmpeq>:
+  c4:	e52de008 	str	lr, [sp, #-8]!
+  c8:	ebfffffe 	bl	b0 <__aeabi_cdcmpeq>
+  cc:	03a00001 	moveq	r0, #1
+  d0:	13a00000 	movne	r0, #0
+  d4:	e49df008 	ldr	pc, [sp], #8
+
+000000d8 <__aeabi_dcmplt>:
+  d8:	e52de008 	str	lr, [sp, #-8]!
+  dc:	ebfffffe 	bl	b0 <__aeabi_cdcmpeq>
+  e0:	33a00001 	movcc	r0, #1
+  e4:	23a00000 	movcs	r0, #0
+  e8:	e49df008 	ldr	pc, [sp], #8
+
+000000ec <__aeabi_dcmple>:
+  ec:	e52de008 	str	lr, [sp, #-8]!
+  f0:	ebfffffe 	bl	b0 <__aeabi_cdcmpeq>
+  f4:	93a00001 	movls	r0, #1
+  f8:	83a00000 	movhi	r0, #0
+  fc:	e49df008 	ldr	pc, [sp], #8
+
+00000100 <__aeabi_dcmpge>:
+ 100:	e52de008 	str	lr, [sp, #-8]!
+ 104:	ebfffffe 	bl	94 <__aeabi_cdrcmple>
+ 108:	93a00001 	movls	r0, #1
+ 10c:	83a00000 	movhi	r0, #0
+ 110:	e49df008 	ldr	pc, [sp], #8
+
+00000114 <__aeabi_dcmpgt>:
+ 114:	e52de008 	str	lr, [sp, #-8]!
+ 118:	ebfffffe 	bl	94 <__aeabi_cdrcmple>
+ 11c:	33a00001 	movcc	r0, #1
+ 120:	23a00000 	movcs	r0, #0
+ 124:	e49df008 	ldr	pc, [sp], #8

@@ -1,0 +1,24 @@
+make[1]: Entering directory '/w/gccbuild/obj'
+/bin/bash /tc/gcc_src/gcc-4.4.1/mkinstalldirs /gnuarm /gnuarm
+mkdir -p -- /gnuarm /gnuarm
+make[2]: Entering directory '/w/gccbuild/obj/fixincludes'
+rm -rf /gnuarm/libexec/gcc/arm-none-linux-gnueabi/4.4.1/install-tools
+/bin/bash /tc/gcc_src/gcc-4.4.1/fixincludes/../mkinstalldirs /gnuarm/libexec/gcc/arm-none-linux-gnueabi/4.4.1/install-tools 
+mkdir -p -- /gnuarm/libexec/gcc/arm-none-linux-gnueabi/4.4.1/install-tools
+/bin/bash /tc/gcc_src/gcc-4.4.1/fixincludes/../mkinstalldirs /gnuarm/lib/gcc/arm-none-linux-gnueabi/4.4.1/install-tools/include
+mkdir -p -- /gnuarm/lib/gcc/arm-none-linux-gnueabi/4.4.1/install-tools/include
+/usr/bin/install -c -m 644 /tc/gcc_src/gcc-4.4.1/fixincludes/README-fixinc \
+  /gnuarm/lib/gcc/arm-none-linux-gnueabi/4.4.1/install-tools/include/README
+/usr/bin/install -c fixinc.sh /gnuarm/libexec/gcc/arm-none-linux-gnueabi/4.4.1/install-tools/fixinc.sh
+/usr/bin/install -c fixincl \
+  /gnuarm/libexec/gcc/arm-none-linux-gnueabi/4.4.1/install-tools/fixincl
+/usr/bin/install -c mkheaders /gnuarm/libexec/gcc/arm-none-linux-gnueabi/4.4.1/install-tools/mkheaders
+make[2]: Leaving directory '/w/gccbuild/obj/fixincludes'
+make[2]: Entering directory '/w/gccbuild/obj/gcc'
+build/genmddeps /tc/gcc_src/gcc-4.4.1/gcc/config/arm/arm.md > tmp-mddeps
+/bin/bash: line 1:  8503 Segmentation fault      (core dumped) build/genmddeps /tc/gcc_src/gcc-4.4.1/gcc/config/arm/arm.md > tmp-mddeps
+make[2]: *** [Makefile:3126: s-mddeps] Error 139
+make[2]: Leaving directory '/w/gccbuild/obj/gcc'
+make[1]: *** [Makefile:4938: install-gcc] Error 2
+make[1]: Leaving directory '/w/gccbuild/obj'
+make: *** [Makefile:2476: install] Error 2

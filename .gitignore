@@ -1,0 +1,3 @@
+*.o
+!incoming/**/*.o
+gccbuild/obj/

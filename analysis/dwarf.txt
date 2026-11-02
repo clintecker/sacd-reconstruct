@@ -1,0 +1,3659 @@
+/Users/clint/code/aftermath-sacd/experiments/sacd_reconstruct/original/sacd_extract_160:	file format elf32-littlearm
+
+.debug_info contents:
+0x00000000: Compile Unit: length = 0x00000089, format = DWARF32, version = 0x0002, abbr_offset = 0x0000, addr_size = 0x04 (next unit at 0x0000008d)
+
+0x0000000b: DW_TAG_compile_unit
+              DW_AT_producer	("GNU C 4.4.1")
+              DW_AT_language	(DW_LANG_C89)
+              DW_AT_name	("init.c")
+              DW_AT_comp_dir	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/local/src/glibc-2.9/csu")
+              DW_AT_low_pc	(0x0000c850)
+              DW_AT_high_pc	(0x0000c850)
+              DW_AT_stmt_list	(0x00000000)
+
+0x00000025:   DW_TAG_base_type
+                DW_AT_byte_size	(0x01)
+                DW_AT_encoding	(DW_ATE_unsigned_char)
+                DW_AT_name	("unsigned char")
+
+0x0000002c:   DW_TAG_base_type
+                DW_AT_byte_size	(0x02)
+                DW_AT_encoding	(DW_ATE_unsigned)
+                DW_AT_name	("short unsigned int")
+
+0x00000033:   DW_TAG_base_type
+                DW_AT_byte_size	(0x04)
+                DW_AT_encoding	(DW_ATE_unsigned)
+                DW_AT_name	("unsigned int")
+
+0x0000003a:   DW_TAG_base_type
+                DW_AT_byte_size	(0x04)
+                DW_AT_encoding	(DW_ATE_unsigned)
+                DW_AT_name	("long unsigned int")
+
+0x00000041:   DW_TAG_base_type
+                DW_AT_byte_size	(0x01)
+                DW_AT_encoding	(DW_ATE_signed_char)
+                DW_AT_name	("signed char")
+
+0x00000048:   DW_TAG_base_type
+                DW_AT_byte_size	(0x02)
+                DW_AT_encoding	(DW_ATE_signed)
+                DW_AT_name	("short int")
+
+0x0000004f:   DW_TAG_base_type
+                DW_AT_byte_size	(0x04)
+                DW_AT_encoding	(DW_ATE_signed)
+                DW_AT_name	("int")
+
+0x00000056:   DW_TAG_base_type
+                DW_AT_byte_size	(0x08)
+                DW_AT_encoding	(DW_ATE_signed)
+                DW_AT_name	("long long int")
+
+0x0000005d:   DW_TAG_base_type
+                DW_AT_byte_size	(0x08)
+                DW_AT_encoding	(DW_ATE_unsigned)
+                DW_AT_name	("long long unsigned int")
+
+0x00000064:   DW_TAG_base_type
+                DW_AT_byte_size	(0x04)
+                DW_AT_encoding	(DW_ATE_signed)
+                DW_AT_name	("long int")
+
+0x0000006b:   DW_TAG_base_type
+                DW_AT_byte_size	(0x04)
+                DW_AT_encoding	(DW_ATE_unsigned)
+
+0x0000006e:   DW_TAG_base_type
+                DW_AT_byte_size	(0x01)
+                DW_AT_encoding	(DW_ATE_unsigned_char)
+                DW_AT_name	("char")
+
+0x00000075:   DW_TAG_variable
+                DW_AT_name	("_IO_stdin_used")
+                DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/local/src/glibc-2.9/csu/init.c")
+                DW_AT_decl_line	(25)
+                DW_AT_type	(0x00000087 "const int")
+                DW_AT_external	(0x01)
+                DW_AT_location	(DW_OP_addr 0x3199c)
+
+0x00000087:   DW_TAG_const_type
+                DW_AT_type	(0x0000004f "int")
+
+0x0000008c:   NULL
+0x0000008d: Compile Unit: length = 0x000000c7, format = DWARF32, version = 0x0002, abbr_offset = 0x004b, addr_size = 0x04 (next unit at 0x00000158)
+
+0x00000098: DW_TAG_compile_unit
+              DW_AT_stmt_list	(0x00000027)
+              DW_AT_low_pc	(0x0002fbc4)
+              DW_AT_high_pc	(0x0002fdcc)
+              DW_AT_name	("../../../gcc/libgcc/../gcc/config/arm/lib1funcs.asm")
+              DW_AT_comp_dir	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc")
+              DW_AT_producer	("GNU AS 2.19.1")
+              DW_AT_language	(DW_LANG_Mips_Assembler)
+0x00000158: Compile Unit: length = 0x000000c7, format = DWARF32, version = 0x0002, abbr_offset = 0x005f, addr_size = 0x04 (next unit at 0x00000223)
+
+0x00000163: DW_TAG_compile_unit
+              DW_AT_stmt_list	(0x000000ab)
+              DW_AT_low_pc	(0x0002fdcc)
+              DW_AT_high_pc	(0x00030004)
+              DW_AT_name	("../../../gcc/libgcc/../gcc/config/arm/lib1funcs.asm")
+              DW_AT_comp_dir	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc")
+              DW_AT_producer	("GNU AS 2.19.1")
+              DW_AT_language	(DW_LANG_Mips_Assembler)
+0x00000223: Compile Unit: length = 0x000000c6, format = DWARF32, version = 0x0002, abbr_offset = 0x0073, addr_size = 0x04 (next unit at 0x000002ed)
+
+0x0000022e: DW_TAG_compile_unit
+              DW_AT_stmt_list	(0x0000013b)
+              DW_AT_low_pc	(0x00030004)
+              DW_AT_high_pc	(0x000303bc)
+              DW_AT_name	("../../../gcc/libgcc/../gcc/config/arm/ieee754-df.S")
+              DW_AT_comp_dir	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc")
+              DW_AT_producer	("GNU AS 2.19.1")
+              DW_AT_language	(DW_LANG_Mips_Assembler)
+0x000002ed: Compile Unit: length = 0x000000c6, format = DWARF32, version = 0x0002, abbr_offset = 0x0087, addr_size = 0x04 (next unit at 0x000003b7)
+
+0x000002f8: DW_TAG_compile_unit
+              DW_AT_stmt_list	(0x0000031a)
+              DW_AT_low_pc	(0x000303bc)
+              DW_AT_high_pc	(0x0003082c)
+              DW_AT_name	("../../../gcc/libgcc/../gcc/config/arm/ieee754-df.S")
+              DW_AT_comp_dir	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc")
+              DW_AT_producer	("GNU AS 2.19.1")
+              DW_AT_language	(DW_LANG_Mips_Assembler)
+0x000003b7: Compile Unit: length = 0x000000c6, format = DWARF32, version = 0x0002, abbr_offset = 0x009b, addr_size = 0x04 (next unit at 0x00000481)
+
+0x000003c2: DW_TAG_compile_unit
+              DW_AT_stmt_list	(0x0000051a)
+              DW_AT_low_pc	(0x0003082c)
+              DW_AT_high_pc	(0x00030954)
+              DW_AT_name	("../../../gcc/libgcc/../gcc/config/arm/ieee754-df.S")
+              DW_AT_comp_dir	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc")
+              DW_AT_producer	("GNU AS 2.19.1")
+              DW_AT_language	(DW_LANG_Mips_Assembler)
+0x00000481: Compile Unit: length = 0x000000c6, format = DWARF32, version = 0x0002, abbr_offset = 0x00af, addr_size = 0x04 (next unit at 0x0000054b)
+
+0x0000048c: DW_TAG_compile_unit
+              DW_AT_stmt_list	(0x00000610)
+              DW_AT_low_pc	(0x00030954)
+              DW_AT_high_pc	(0x000309b0)
+              DW_AT_name	("../../../gcc/libgcc/../gcc/config/arm/ieee754-df.S")
+              DW_AT_comp_dir	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc")
+              DW_AT_producer	("GNU AS 2.19.1")
+              DW_AT_language	(DW_LANG_Mips_Assembler)
+0x0000054b: Compile Unit: length = 0x000000c6, format = DWARF32, version = 0x0002, abbr_offset = 0x00c3, addr_size = 0x04 (next unit at 0x00000615)
+
+0x00000556: DW_TAG_compile_unit
+              DW_AT_stmt_list	(0x00000689)
+              DW_AT_low_pc	(0x000309b0)
+              DW_AT_high_pc	(0x00030a50)
+              DW_AT_name	("../../../gcc/libgcc/../gcc/config/arm/ieee754-df.S")
+              DW_AT_comp_dir	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc")
+              DW_AT_producer	("GNU AS 2.19.1")
+              DW_AT_language	(DW_LANG_Mips_Assembler)
+0x00000615: Compile Unit: length = 0x000000c6, format = DWARF32, version = 0x0002, abbr_offset = 0x00d7, addr_size = 0x04 (next unit at 0x000006df)
+
+0x00000620: DW_TAG_compile_unit
+              DW_AT_stmt_list	(0x00000713)
+              DW_AT_low_pc	(0x00030a50)
+              DW_AT_high_pc	(0x00030ca0)
+              DW_AT_name	("../../../gcc/libgcc/../gcc/config/arm/ieee754-sf.S")
+              DW_AT_comp_dir	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc")
+              DW_AT_producer	("GNU AS 2.19.1")
+              DW_AT_language	(DW_LANG_Mips_Assembler)
+0x000006df: Compile Unit: length = 0x000000c6, format = DWARF32, version = 0x0002, abbr_offset = 0x00eb, addr_size = 0x04 (next unit at 0x000007a9)
+
+0x000006ea: DW_TAG_compile_unit
+              DW_AT_stmt_list	(0x00000816)
+              DW_AT_low_pc	(0x00030ca0)
+              DW_AT_high_pc	(0x00030f98)
+              DW_AT_name	("../../../gcc/libgcc/../gcc/config/arm/ieee754-sf.S")
+              DW_AT_comp_dir	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc")
+              DW_AT_producer	("GNU AS 2.19.1")
+              DW_AT_language	(DW_LANG_Mips_Assembler)
+0x000007a9: Compile Unit: length = 0x000000c1, format = DWARF32, version = 0x0002, abbr_offset = 0x00ff, addr_size = 0x04 (next unit at 0x0000086e)
+
+0x000007b4: DW_TAG_compile_unit
+              DW_AT_stmt_list	(0x0000093a)
+              DW_AT_low_pc	(0x00030f98)
+              DW_AT_high_pc	(0x00030fb4)
+              DW_AT_name	("../../../gcc/libgcc/../gcc/config/arm/bpabi.S")
+              DW_AT_comp_dir	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc")
+              DW_AT_producer	("GNU AS 2.19.1")
+              DW_AT_language	(DW_LANG_Mips_Assembler)
+0x0000086e: Compile Unit: length = 0x000000c7, format = DWARF32, version = 0x0002, abbr_offset = 0x0113, addr_size = 0x04 (next unit at 0x00000939)
+
+0x00000879: DW_TAG_compile_unit
+              DW_AT_stmt_list	(0x0000099e)
+              DW_AT_low_pc	(0x00030fb4)
+              DW_AT_high_pc	(0x00030fc4)
+              DW_AT_name	("../../../gcc/libgcc/../gcc/config/arm/lib1funcs.asm")
+              DW_AT_comp_dir	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc")
+              DW_AT_producer	("GNU AS 2.19.1")
+              DW_AT_language	(DW_LANG_Mips_Assembler)
+0x00000939: Compile Unit: length = 0x000000de, format = DWARF32, version = 0x0002, abbr_offset = 0x0127, addr_size = 0x04 (next unit at 0x00000a1b)
+
+0x00000944: DW_TAG_compile_unit
+              DW_AT_producer	("GNU C 4.4.1")
+              DW_AT_language	(DW_LANG_C89)
+              DW_AT_name	("../../../gcc/libgcc/../gcc/config/arm/bpabi.c")
+              DW_AT_comp_dir	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc")
+              DW_AT_low_pc	(0x00030fc4)
+              DW_AT_high_pc	(0x0003103c)
+              DW_AT_stmt_list	(0x00000a08)
+
+0x0000095e:   DW_TAG_subprogram
+                DW_AT_external	(0x01)
+                DW_AT_name	("__gnu_uldivmod_helper")
+                DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/config/arm/bpabi.c")
+                DW_AT_decl_line	(47)
+                DW_AT_prototyped	(0x01)
+                DW_AT_type	(0x000009af "long long unsigned int")
+                DW_AT_low_pc	(0x00030fc4)
+                DW_AT_high_pc	(0x00031000)
+                DW_AT_frame_base	(0x00000000: 
+                   [0x00030fc4, 0x00030fc8): DW_OP_reg13 SP
+                   [0x00030fc8, 0x00031000): DW_OP_breg13 SP+24)
+                DW_AT_sibling	(0x000009af)
+
+0x0000097b:     DW_TAG_formal_parameter
+                  DW_AT_name	("a")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/config/arm/bpabi.c")
+                  DW_AT_decl_line	(47)
+                  DW_AT_type	(0x000009af "long long unsigned int")
+                  DW_AT_location	(0x0000001f: 
+                     [0x00030fc4, 0x00030fd8): DW_OP_reg0 R0, DW_OP_piece 0x4, DW_OP_reg1 R1, DW_OP_piece 0x4
+                     [0x00030fd8, 0x00030fdc): DW_OP_reg6 R6, DW_OP_piece 0x4, DW_OP_reg1 R1, DW_OP_piece 0x4
+                     [0x00030fdc, 0x00030ff4): DW_OP_reg6 R6, DW_OP_piece 0x4, DW_OP_reg7 R7, DW_OP_piece 0x4)
+
+0x00000988:     DW_TAG_formal_parameter
+                  DW_AT_name	("b")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/config/arm/bpabi.c")
+                  DW_AT_decl_line	(48)
+                  DW_AT_type	(0x000009af "long long unsigned int")
+                  DW_AT_location	(0x00000057: 
+                     [0x00030fc4, 0x00030fd0): DW_OP_reg2 R2, DW_OP_piece 0x4, DW_OP_reg3 R3, DW_OP_piece 0x4
+                     [0x00030fd0, 0x00030fdc): DW_OP_reg4 R4, DW_OP_piece 0x4, DW_OP_reg3 R3, DW_OP_piece 0x4
+                     [0x00030fdc, 0x00030fe0): DW_OP_reg4 R4, DW_OP_piece 0x4, DW_OP_reg5 R5, DW_OP_piece 0x4)
+
+0x00000995:     DW_TAG_formal_parameter
+                  DW_AT_name	("remainder")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/config/arm/bpabi.c")
+                  DW_AT_decl_line	(49)
+                  DW_AT_type	(0x000009b6 "long long unsigned int *")
+                  DW_AT_location	(DW_OP_fbreg +0)
+
+0x000009a3:     DW_TAG_variable
+                  DW_AT_name	("quotient")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/config/arm/bpabi.c")
+                  DW_AT_decl_line	(51)
+                  DW_AT_type	(0x000009af "long long unsigned int")
+
+0x000009ae:     NULL
+
+0x000009af:   DW_TAG_base_type
+                DW_AT_byte_size	(0x08)
+                DW_AT_encoding	(DW_ATE_unsigned)
+                DW_AT_name	("long long unsigned int")
+
+0x000009b6:   DW_TAG_pointer_type
+                DW_AT_byte_size	(0x04)
+                DW_AT_type	(0x000009af "long long unsigned int")
+
+0x000009bc:   DW_TAG_subprogram
+                DW_AT_external	(0x01)
+                DW_AT_name	("__gnu_ldivmod_helper")
+                DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/config/arm/bpabi.c")
+                DW_AT_decl_line	(35)
+                DW_AT_prototyped	(0x01)
+                DW_AT_type	(0x00000a0d "long long int")
+                DW_AT_low_pc	(0x00031000)
+                DW_AT_high_pc	(0x0003103c)
+                DW_AT_frame_base	(0x0000008f: 
+                   [0x00031000, 0x00031004): DW_OP_reg13 SP
+                   [0x00031004, 0x0003103c): DW_OP_breg13 SP+24)
+                DW_AT_sibling	(0x00000a0d)
+
+0x000009d9:     DW_TAG_formal_parameter
+                  DW_AT_name	("a")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/config/arm/bpabi.c")
+                  DW_AT_decl_line	(35)
+                  DW_AT_type	(0x00000a0d "long long int")
+                  DW_AT_location	(0x000000ae: 
+                     [0x00031000, 0x00031014): DW_OP_reg0 R0, DW_OP_piece 0x4, DW_OP_reg1 R1, DW_OP_piece 0x4
+                     [0x00031014, 0x00031018): DW_OP_reg6 R6, DW_OP_piece 0x4, DW_OP_reg1 R1, DW_OP_piece 0x4
+                     [0x00031018, 0x00031030): DW_OP_reg6 R6, DW_OP_piece 0x4, DW_OP_reg7 R7, DW_OP_piece 0x4)
+
+0x000009e6:     DW_TAG_formal_parameter
+                  DW_AT_name	("b")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/config/arm/bpabi.c")
+                  DW_AT_decl_line	(36)
+                  DW_AT_type	(0x00000a0d "long long int")
+                  DW_AT_location	(0x000000e6: 
+                     [0x00031000, 0x0003100c): DW_OP_reg2 R2, DW_OP_piece 0x4, DW_OP_reg3 R3, DW_OP_piece 0x4
+                     [0x0003100c, 0x00031018): DW_OP_reg4 R4, DW_OP_piece 0x4, DW_OP_reg3 R3, DW_OP_piece 0x4
+                     [0x00031018, 0x0003101c): DW_OP_reg4 R4, DW_OP_piece 0x4, DW_OP_reg5 R5, DW_OP_piece 0x4)
+
+0x000009f3:     DW_TAG_formal_parameter
+                  DW_AT_name	("remainder")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/config/arm/bpabi.c")
+                  DW_AT_decl_line	(37)
+                  DW_AT_type	(0x00000a14 "long long int *")
+                  DW_AT_location	(DW_OP_fbreg +0)
+
+0x00000a01:     DW_TAG_variable
+                  DW_AT_name	("quotient")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/config/arm/bpabi.c")
+                  DW_AT_decl_line	(39)
+                  DW_AT_type	(0x00000a0d "long long int")
+
+0x00000a0c:     NULL
+
+0x00000a0d:   DW_TAG_base_type
+                DW_AT_byte_size	(0x08)
+                DW_AT_encoding	(DW_ATE_signed)
+                DW_AT_name	("long long int")
+
+0x00000a14:   DW_TAG_pointer_type
+                DW_AT_byte_size	(0x04)
+                DW_AT_type	(0x00000a0d "long long int")
+
+0x00000a1a:   NULL
+0x00000a1b: Compile Unit: length = 0x0000084c, format = DWARF32, version = 0x0002, abbr_offset = 0x0193, addr_size = 0x04 (next unit at 0x0000126b)
+
+0x00000a26: DW_TAG_compile_unit
+              DW_AT_producer	("GNU C 4.4.1")
+              DW_AT_language	(DW_LANG_C89)
+              DW_AT_name	("../../../gcc/libgcc/../gcc/libgcc2.c")
+              DW_AT_comp_dir	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc")
+              DW_AT_low_pc	(0x0003103c)
+              DW_AT_high_pc	(0x000314d8)
+              DW_AT_stmt_list	(0x00000a70)
+
+0x00000a40:   DW_TAG_base_type
+                DW_AT_byte_size	(0x04)
+                DW_AT_encoding	(DW_ATE_signed)
+                DW_AT_name	("int")
+
+0x00000a47:   DW_TAG_typedef
+                DW_AT_name	("size_t")
+                DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/./gcc/include/stddef.h")
+                DW_AT_decl_line	(211)
+                DW_AT_type	(0x00000a52 "unsigned int")
+
+0x00000a52:   DW_TAG_base_type
+                DW_AT_byte_size	(0x04)
+                DW_AT_encoding	(DW_ATE_unsigned)
+                DW_AT_name	("unsigned int")
+
+0x00000a59:   DW_TAG_pointer_type
+                DW_AT_byte_size	(0x04)
+
+0x00000a5b:   DW_TAG_base_type
+                DW_AT_byte_size	(0x01)
+                DW_AT_encoding	(DW_ATE_unsigned_char)
+                DW_AT_name	("unsigned char")
+
+0x00000a62:   DW_TAG_base_type
+                DW_AT_byte_size	(0x02)
+                DW_AT_encoding	(DW_ATE_unsigned)
+                DW_AT_name	("short unsigned int")
+
+0x00000a69:   DW_TAG_base_type
+                DW_AT_byte_size	(0x04)
+                DW_AT_encoding	(DW_ATE_unsigned)
+                DW_AT_name	("long unsigned int")
+
+0x00000a70:   DW_TAG_base_type
+                DW_AT_byte_size	(0x01)
+                DW_AT_encoding	(DW_ATE_signed_char)
+                DW_AT_name	("signed char")
+
+0x00000a77:   DW_TAG_base_type
+                DW_AT_byte_size	(0x02)
+                DW_AT_encoding	(DW_ATE_signed)
+                DW_AT_name	("short int")
+
+0x00000a7e:   DW_TAG_base_type
+                DW_AT_byte_size	(0x08)
+                DW_AT_encoding	(DW_ATE_signed)
+                DW_AT_name	("long long int")
+
+0x00000a85:   DW_TAG_base_type
+                DW_AT_byte_size	(0x08)
+                DW_AT_encoding	(DW_ATE_unsigned)
+                DW_AT_name	("long long unsigned int")
+
+0x00000a8c:   DW_TAG_typedef
+                DW_AT_name	("__quad_t")
+                DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/include/bits/types.h")
+                DW_AT_decl_line	(56)
+                DW_AT_type	(0x00000a7e "long long int")
+
+0x00000a97:   DW_TAG_typedef
+                DW_AT_name	("__off_t")
+                DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/include/bits/types.h")
+                DW_AT_decl_line	(141)
+                DW_AT_type	(0x00000aa2 "long int")
+
+0x00000aa2:   DW_TAG_base_type
+                DW_AT_byte_size	(0x04)
+                DW_AT_encoding	(DW_ATE_signed)
+                DW_AT_name	("long int")
+
+0x00000aa9:   DW_TAG_typedef
+                DW_AT_name	("__off64_t")
+                DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/include/bits/types.h")
+                DW_AT_decl_line	(142)
+                DW_AT_type	(0x00000a8c "__quad_t")
+
+0x00000ab4:   DW_TAG_base_type
+                DW_AT_byte_size	(0x04)
+                DW_AT_encoding	(DW_ATE_unsigned)
+
+0x00000ab7:   DW_TAG_pointer_type
+                DW_AT_byte_size	(0x04)
+                DW_AT_type	(0x00000abd "char")
+
+0x00000abd:   DW_TAG_base_type
+                DW_AT_byte_size	(0x01)
+                DW_AT_encoding	(DW_ATE_unsigned_char)
+                DW_AT_name	("char")
+
+0x00000ac4:   DW_TAG_structure_type
+                DW_AT_name	("_IO_FILE")
+                DW_AT_byte_size	(0x98)
+                DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/include/stdio.h")
+                DW_AT_decl_line	(45)
+                DW_AT_sibling	(0x00000c84)
+
+0x00000ad0:     DW_TAG_member
+                  DW_AT_name	("_flags")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/include/libio.h")
+                  DW_AT_decl_line	(272)
+                  DW_AT_type	(0x00000a40 "int")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x0)
+
+0x00000adf:     DW_TAG_member
+                  DW_AT_name	("_IO_read_ptr")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/include/libio.h")
+                  DW_AT_decl_line	(277)
+                  DW_AT_type	(0x00000ab7 "char *")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x4)
+
+0x00000aee:     DW_TAG_member
+                  DW_AT_name	("_IO_read_end")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/include/libio.h")
+                  DW_AT_decl_line	(278)
+                  DW_AT_type	(0x00000ab7 "char *")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x8)
+
+0x00000afd:     DW_TAG_member
+                  DW_AT_name	("_IO_read_base")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/include/libio.h")
+                  DW_AT_decl_line	(279)
+                  DW_AT_type	(0x00000ab7 "char *")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0xc)
+
+0x00000b0c:     DW_TAG_member
+                  DW_AT_name	("_IO_write_base")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/include/libio.h")
+                  DW_AT_decl_line	(280)
+                  DW_AT_type	(0x00000ab7 "char *")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x10)
+
+0x00000b1b:     DW_TAG_member
+                  DW_AT_name	("_IO_write_ptr")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/include/libio.h")
+                  DW_AT_decl_line	(281)
+                  DW_AT_type	(0x00000ab7 "char *")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x14)
+
+0x00000b2a:     DW_TAG_member
+                  DW_AT_name	("_IO_write_end")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/include/libio.h")
+                  DW_AT_decl_line	(282)
+                  DW_AT_type	(0x00000ab7 "char *")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x18)
+
+0x00000b39:     DW_TAG_member
+                  DW_AT_name	("_IO_buf_base")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/include/libio.h")
+                  DW_AT_decl_line	(283)
+                  DW_AT_type	(0x00000ab7 "char *")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x1c)
+
+0x00000b48:     DW_TAG_member
+                  DW_AT_name	("_IO_buf_end")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/include/libio.h")
+                  DW_AT_decl_line	(284)
+                  DW_AT_type	(0x00000ab7 "char *")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x20)
+
+0x00000b57:     DW_TAG_member
+                  DW_AT_name	("_IO_save_base")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/include/libio.h")
+                  DW_AT_decl_line	(286)
+                  DW_AT_type	(0x00000ab7 "char *")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x24)
+
+0x00000b66:     DW_TAG_member
+                  DW_AT_name	("_IO_backup_base")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/include/libio.h")
+                  DW_AT_decl_line	(287)
+                  DW_AT_type	(0x00000ab7 "char *")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x28)
+
+0x00000b75:     DW_TAG_member
+                  DW_AT_name	("_IO_save_end")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/include/libio.h")
+                  DW_AT_decl_line	(288)
+                  DW_AT_type	(0x00000ab7 "char *")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x2c)
+
+0x00000b84:     DW_TAG_member
+                  DW_AT_name	("_markers")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/include/libio.h")
+                  DW_AT_decl_line	(290)
+                  DW_AT_type	(0x00000cc2 "_IO_marker *")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x30)
+
+0x00000b93:     DW_TAG_member
+                  DW_AT_name	("_chain")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/include/libio.h")
+                  DW_AT_decl_line	(292)
+                  DW_AT_type	(0x00000cc8 "_IO_FILE *")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x34)
+
+0x00000ba2:     DW_TAG_member
+                  DW_AT_name	("_fileno")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/include/libio.h")
+                  DW_AT_decl_line	(294)
+                  DW_AT_type	(0x00000a40 "int")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x38)
+
+0x00000bb1:     DW_TAG_member
+                  DW_AT_name	("_flags2")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/include/libio.h")
+                  DW_AT_decl_line	(298)
+                  DW_AT_type	(0x00000a40 "int")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x3c)
+
+0x00000bc0:     DW_TAG_member
+                  DW_AT_name	("_old_offset")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/include/libio.h")
+                  DW_AT_decl_line	(300)
+                  DW_AT_type	(0x00000a97 "__off_t")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x40)
+
+0x00000bcf:     DW_TAG_member
+                  DW_AT_name	("_cur_column")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/include/libio.h")
+                  DW_AT_decl_line	(304)
+                  DW_AT_type	(0x00000a62 "short unsigned int")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x44)
+
+0x00000bde:     DW_TAG_member
+                  DW_AT_name	("_vtable_offset")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/include/libio.h")
+                  DW_AT_decl_line	(305)
+                  DW_AT_type	(0x00000a70 "signed char")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x46)
+
+0x00000bed:     DW_TAG_member
+                  DW_AT_name	("_shortbuf")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/include/libio.h")
+                  DW_AT_decl_line	(306)
+                  DW_AT_type	(0x00000cce "char[1]")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x47)
+
+0x00000bfc:     DW_TAG_member
+                  DW_AT_name	("_lock")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/include/libio.h")
+                  DW_AT_decl_line	(310)
+                  DW_AT_type	(0x00000cde "_IO_lock_t *")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x48)
+
+0x00000c0b:     DW_TAG_member
+                  DW_AT_name	("_offset")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/include/libio.h")
+                  DW_AT_decl_line	(319)
+                  DW_AT_type	(0x00000aa9 "__off64_t")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x50)
+
+0x00000c1a:     DW_TAG_member
+                  DW_AT_name	("__pad1")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/include/libio.h")
+                  DW_AT_decl_line	(328)
+                  DW_AT_type	(0x00000a59 "void *")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x58)
+
+0x00000c29:     DW_TAG_member
+                  DW_AT_name	("__pad2")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/include/libio.h")
+                  DW_AT_decl_line	(329)
+                  DW_AT_type	(0x00000a59 "void *")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x5c)
+
+0x00000c38:     DW_TAG_member
+                  DW_AT_name	("__pad3")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/include/libio.h")
+                  DW_AT_decl_line	(330)
+                  DW_AT_type	(0x00000a59 "void *")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x60)
+
+0x00000c47:     DW_TAG_member
+                  DW_AT_name	("__pad4")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/include/libio.h")
+                  DW_AT_decl_line	(331)
+                  DW_AT_type	(0x00000a59 "void *")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x64)
+
+0x00000c56:     DW_TAG_member
+                  DW_AT_name	("__pad5")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/include/libio.h")
+                  DW_AT_decl_line	(332)
+                  DW_AT_type	(0x00000a47 "size_t")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x68)
+
+0x00000c65:     DW_TAG_member
+                  DW_AT_name	("_mode")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/include/libio.h")
+                  DW_AT_decl_line	(334)
+                  DW_AT_type	(0x00000a40 "int")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x6c)
+
+0x00000c74:     DW_TAG_member
+                  DW_AT_name	("_unused2")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/include/libio.h")
+                  DW_AT_decl_line	(336)
+                  DW_AT_type	(0x00000ce4 "char[40]")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x70)
+
+0x00000c83:     NULL
+
+0x00000c84:   DW_TAG_typedef
+                DW_AT_name	("_IO_lock_t")
+                DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/include/libio.h")
+                DW_AT_decl_line	(180)
+
+0x00000c8b:   DW_TAG_structure_type
+                DW_AT_name	("_IO_marker")
+                DW_AT_byte_size	(0x0c)
+                DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/include/libio.h")
+                DW_AT_decl_line	(186)
+                DW_AT_sibling	(0x00000cc2)
+
+0x00000c97:     DW_TAG_member
+                  DW_AT_name	("_next")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/include/libio.h")
+                  DW_AT_decl_line	(187)
+                  DW_AT_type	(0x00000cc2 "_IO_marker *")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x0)
+
+0x00000ca5:     DW_TAG_member
+                  DW_AT_name	("_sbuf")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/include/libio.h")
+                  DW_AT_decl_line	(188)
+                  DW_AT_type	(0x00000cc8 "_IO_FILE *")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x4)
+
+0x00000cb3:     DW_TAG_member
+                  DW_AT_name	("_pos")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/include/libio.h")
+                  DW_AT_decl_line	(192)
+                  DW_AT_type	(0x00000a40 "int")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x8)
+
+0x00000cc1:     NULL
+
+0x00000cc2:   DW_TAG_pointer_type
+                DW_AT_byte_size	(0x04)
+                DW_AT_type	(0x00000c8b "_IO_marker")
+
+0x00000cc8:   DW_TAG_pointer_type
+                DW_AT_byte_size	(0x04)
+                DW_AT_type	(0x00000ac4 "_IO_FILE")
+
+0x00000cce:   DW_TAG_array_type
+                DW_AT_type	(0x00000abd "char")
+                DW_AT_sibling	(0x00000cde)
+
+0x00000cd7:     DW_TAG_subrange_type
+                  DW_AT_type	(0x00000ab4 "base ")
+                  DW_AT_upper_bound	(0x00)
+
+0x00000cdd:     NULL
+
+0x00000cde:   DW_TAG_pointer_type
+                DW_AT_byte_size	(0x04)
+                DW_AT_type	(0x00000c84 "_IO_lock_t")
+
+0x00000ce4:   DW_TAG_array_type
+                DW_AT_type	(0x00000abd "char")
+                DW_AT_sibling	(0x00000cf4)
+
+0x00000ced:     DW_TAG_subrange_type
+                  DW_AT_type	(0x00000ab4 "base ")
+                  DW_AT_upper_bound	(0x27)
+
+0x00000cf3:     NULL
+
+0x00000cf4:   DW_TAG_typedef
+                DW_AT_name	("SItype")
+                DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.h")
+                DW_AT_decl_line	(141)
+                DW_AT_type	(0x00000a40 "int")
+
+0x00000cff:   DW_TAG_typedef
+                DW_AT_name	("USItype")
+                DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.h")
+                DW_AT_decl_line	(142)
+                DW_AT_type	(0x00000a52 "unsigned int")
+
+0x00000d0a:   DW_TAG_typedef
+                DW_AT_name	("DItype")
+                DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.h")
+                DW_AT_decl_line	(145)
+                DW_AT_type	(0x00000a7e "long long int")
+
+0x00000d15:   DW_TAG_typedef
+                DW_AT_name	("UDItype")
+                DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.h")
+                DW_AT_decl_line	(146)
+                DW_AT_type	(0x00000a85 "long long unsigned int")
+
+0x00000d20:   DW_TAG_base_type
+                DW_AT_byte_size	(0x04)
+                DW_AT_encoding	(DW_ATE_float)
+                DW_AT_name	("float")
+
+0x00000d27:   DW_TAG_base_type
+                DW_AT_byte_size	(0x08)
+                DW_AT_encoding	(DW_ATE_complex_float)
+                DW_AT_name	("complex float")
+
+0x00000d2e:   DW_TAG_base_type
+                DW_AT_byte_size	(0x08)
+                DW_AT_encoding	(DW_ATE_float)
+                DW_AT_name	("double")
+
+0x00000d35:   DW_TAG_base_type
+                DW_AT_byte_size	(0x10)
+                DW_AT_encoding	(DW_ATE_complex_float)
+                DW_AT_name	("complex double")
+
+0x00000d3c:   DW_TAG_structure_type
+                DW_AT_name	("DWstruct")
+                DW_AT_byte_size	(0x08)
+                DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.h")
+                DW_AT_decl_line	(418)
+                DW_AT_sibling	(0x00000d68)
+
+0x00000d49:     DW_TAG_member
+                  DW_AT_name	("low")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.h")
+                  DW_AT_decl_line	(418)
+                  DW_AT_type	(0x00000cf4 "SItype")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x0)
+
+0x00000d58:     DW_TAG_member
+                  DW_AT_name	("high")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.h")
+                  DW_AT_decl_line	(418)
+                  DW_AT_type	(0x00000cf4 "SItype")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x4)
+
+0x00000d67:     NULL
+
+0x00000d68:   DW_TAG_union_type
+                DW_AT_byte_size	(0x08)
+                DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.h")
+                DW_AT_decl_line	(426)
+                DW_AT_sibling	(0x00000d87)
+
+0x00000d71:     DW_TAG_member
+                  DW_AT_name	("s")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.h")
+                  DW_AT_decl_line	(427)
+                  DW_AT_type	(0x00000d3c "DWstruct")
+
+0x00000d7b:     DW_TAG_member
+                  DW_AT_name	("ll")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.h")
+                  DW_AT_decl_line	(428)
+                  DW_AT_type	(0x00000d0a "DItype")
+
+0x00000d86:     NULL
+
+0x00000d87:   DW_TAG_typedef
+                DW_AT_name	("DWunion")
+                DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.h")
+                DW_AT_decl_line	(429)
+                DW_AT_type	(0x00000d68 "union ")
+
+0x00000d93:   DW_TAG_subprogram
+                DW_AT_name	("__udivmoddi4")
+                DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                DW_AT_decl_line	(864)
+                DW_AT_prototyped	(0x01)
+                DW_AT_type	(0x00000d15 "UDItype")
+                DW_AT_inline	(DW_INL_declared_inlined)
+                DW_AT_sibling	(0x00000ff9)
+
+0x00000da5:     DW_TAG_formal_parameter
+                  DW_AT_name	("n")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                  DW_AT_decl_line	(864)
+                  DW_AT_type	(0x00000d15 "UDItype")
+
+0x00000daf:     DW_TAG_formal_parameter
+                  DW_AT_name	("d")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                  DW_AT_decl_line	(864)
+                  DW_AT_type	(0x00000d15 "UDItype")
+
+0x00000db9:     DW_TAG_formal_parameter
+                  DW_AT_name	("rp")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                  DW_AT_decl_line	(864)
+                  DW_AT_type	(0x00000ff9 "UDItype *")
+
+0x00000dc4:     DW_TAG_variable
+                  DW_AT_name	("nn")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                  DW_AT_decl_line	(866)
+                  DW_AT_type	(0x00000fff "const DWunion")
+
+0x00000dcf:     DW_TAG_variable
+                  DW_AT_name	("dd")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                  DW_AT_decl_line	(867)
+                  DW_AT_type	(0x00000fff "const DWunion")
+
+0x00000dda:     DW_TAG_variable
+                  DW_AT_name	("rr")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                  DW_AT_decl_line	(868)
+                  DW_AT_type	(0x00000d87 "DWunion")
+
+0x00000de5:     DW_TAG_variable
+                  DW_AT_name	("d0")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                  DW_AT_decl_line	(869)
+                  DW_AT_type	(0x00000cff "USItype")
+
+0x00000df0:     DW_TAG_variable
+                  DW_AT_name	("d1")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                  DW_AT_decl_line	(869)
+                  DW_AT_type	(0x00000cff "USItype")
+
+0x00000dfb:     DW_TAG_variable
+                  DW_AT_name	("n0")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                  DW_AT_decl_line	(869)
+                  DW_AT_type	(0x00000cff "USItype")
+
+0x00000e06:     DW_TAG_variable
+                  DW_AT_name	("n1")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                  DW_AT_decl_line	(869)
+                  DW_AT_type	(0x00000cff "USItype")
+
+0x00000e11:     DW_TAG_variable
+                  DW_AT_name	("n2")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                  DW_AT_decl_line	(869)
+                  DW_AT_type	(0x00000cff "USItype")
+
+0x00000e1c:     DW_TAG_variable
+                  DW_AT_name	("q0")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                  DW_AT_decl_line	(870)
+                  DW_AT_type	(0x00000cff "USItype")
+
+0x00000e27:     DW_TAG_variable
+                  DW_AT_name	("q1")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                  DW_AT_decl_line	(870)
+                  DW_AT_type	(0x00000cff "USItype")
+
+0x00000e32:     DW_TAG_variable
+                  DW_AT_name	("b")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                  DW_AT_decl_line	(871)
+                  DW_AT_type	(0x00000cff "USItype")
+
+0x00000e3c:     DW_TAG_variable
+                  DW_AT_name	("bm")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                  DW_AT_decl_line	(871)
+                  DW_AT_type	(0x00000cff "USItype")
+
+0x00000e47:     DW_TAG_variable
+                  DW_AT_name	("ww")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                  DW_AT_decl_line	(1072)
+                  DW_AT_type	(0x00000fff "const DWunion")
+
+0x00000e52:     DW_TAG_lexical_block
+                  DW_AT_sibling	(0x00000eac)
+
+0x00000e57:       DW_TAG_variable
+                    DW_AT_name	("__d1")
+                    DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                    DW_AT_decl_line	(931)
+                    DW_AT_type	(0x00000cff "USItype")
+
+0x00000e63:       DW_TAG_variable
+                    DW_AT_name	("__d0")
+                    DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                    DW_AT_decl_line	(931)
+                    DW_AT_type	(0x00000cff "USItype")
+
+0x00000e6f:       DW_TAG_variable
+                    DW_AT_name	("__q1")
+                    DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                    DW_AT_decl_line	(931)
+                    DW_AT_type	(0x00000cff "USItype")
+
+0x00000e7b:       DW_TAG_variable
+                    DW_AT_name	("__q0")
+                    DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                    DW_AT_decl_line	(931)
+                    DW_AT_type	(0x00000cff "USItype")
+
+0x00000e87:       DW_TAG_variable
+                    DW_AT_name	("__r1")
+                    DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                    DW_AT_decl_line	(931)
+                    DW_AT_type	(0x00000cff "USItype")
+
+0x00000e93:       DW_TAG_variable
+                    DW_AT_name	("__r0")
+                    DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                    DW_AT_decl_line	(931)
+                    DW_AT_type	(0x00000cff "USItype")
+
+0x00000e9f:       DW_TAG_variable
+                    DW_AT_name	("__m")
+                    DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                    DW_AT_decl_line	(931)
+                    DW_AT_type	(0x00000cff "USItype")
+
+0x00000eab:       NULL
+
+0x00000eac:     DW_TAG_lexical_block
+                  DW_AT_sibling	(0x00000f06)
+
+0x00000eb1:       DW_TAG_variable
+                    DW_AT_name	("__d1")
+                    DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                    DW_AT_decl_line	(968)
+                    DW_AT_type	(0x00000cff "USItype")
+
+0x00000ebd:       DW_TAG_variable
+                    DW_AT_name	("__d0")
+                    DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                    DW_AT_decl_line	(968)
+                    DW_AT_type	(0x00000cff "USItype")
+
+0x00000ec9:       DW_TAG_variable
+                    DW_AT_name	("__q1")
+                    DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                    DW_AT_decl_line	(968)
+                    DW_AT_type	(0x00000cff "USItype")
+
+0x00000ed5:       DW_TAG_variable
+                    DW_AT_name	("__q0")
+                    DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                    DW_AT_decl_line	(968)
+                    DW_AT_type	(0x00000cff "USItype")
+
+0x00000ee1:       DW_TAG_variable
+                    DW_AT_name	("__r1")
+                    DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                    DW_AT_decl_line	(968)
+                    DW_AT_type	(0x00000cff "USItype")
+
+0x00000eed:       DW_TAG_variable
+                    DW_AT_name	("__r0")
+                    DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                    DW_AT_decl_line	(968)
+                    DW_AT_type	(0x00000cff "USItype")
+
+0x00000ef9:       DW_TAG_variable
+                    DW_AT_name	("__m")
+                    DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                    DW_AT_decl_line	(968)
+                    DW_AT_type	(0x00000cff "USItype")
+
+0x00000f05:       NULL
+
+0x00000f06:     DW_TAG_lexical_block
+                  DW_AT_sibling	(0x00000f60)
+
+0x00000f0b:       DW_TAG_variable
+                    DW_AT_name	("__d1")
+                    DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                    DW_AT_decl_line	(973)
+                    DW_AT_type	(0x00000cff "USItype")
+
+0x00000f17:       DW_TAG_variable
+                    DW_AT_name	("__d0")
+                    DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                    DW_AT_decl_line	(973)
+                    DW_AT_type	(0x00000cff "USItype")
+
+0x00000f23:       DW_TAG_variable
+                    DW_AT_name	("__q1")
+                    DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                    DW_AT_decl_line	(973)
+                    DW_AT_type	(0x00000cff "USItype")
+
+0x00000f2f:       DW_TAG_variable
+                    DW_AT_name	("__q0")
+                    DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                    DW_AT_decl_line	(973)
+                    DW_AT_type	(0x00000cff "USItype")
+
+0x00000f3b:       DW_TAG_variable
+                    DW_AT_name	("__r1")
+                    DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                    DW_AT_decl_line	(973)
+                    DW_AT_type	(0x00000cff "USItype")
+
+0x00000f47:       DW_TAG_variable
+                    DW_AT_name	("__r0")
+                    DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                    DW_AT_decl_line	(973)
+                    DW_AT_type	(0x00000cff "USItype")
+
+0x00000f53:       DW_TAG_variable
+                    DW_AT_name	("__m")
+                    DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                    DW_AT_decl_line	(973)
+                    DW_AT_type	(0x00000cff "USItype")
+
+0x00000f5f:       NULL
+
+0x00000f60:     DW_TAG_lexical_block
+
+0x00000f61:       DW_TAG_variable
+                    DW_AT_name	("m1")
+                    DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                    DW_AT_decl_line	(1038)
+                    DW_AT_type	(0x00000cff "USItype")
+
+0x00000f6c:       DW_TAG_variable
+                    DW_AT_name	("m0")
+                    DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                    DW_AT_decl_line	(1038)
+                    DW_AT_type	(0x00000cff "USItype")
+
+0x00000f77:       DW_TAG_lexical_block
+                    DW_AT_sibling	(0x00000fd1)
+
+0x00000f7c:         DW_TAG_variable
+                      DW_AT_name	("__d1")
+                      DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                      DW_AT_decl_line	(1049)
+                      DW_AT_type	(0x00000cff "USItype")
+
+0x00000f88:         DW_TAG_variable
+                      DW_AT_name	("__d0")
+                      DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                      DW_AT_decl_line	(1049)
+                      DW_AT_type	(0x00000cff "USItype")
+
+0x00000f94:         DW_TAG_variable
+                      DW_AT_name	("__q1")
+                      DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                      DW_AT_decl_line	(1049)
+                      DW_AT_type	(0x00000cff "USItype")
+
+0x00000fa0:         DW_TAG_variable
+                      DW_AT_name	("__q0")
+                      DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                      DW_AT_decl_line	(1049)
+                      DW_AT_type	(0x00000cff "USItype")
+
+0x00000fac:         DW_TAG_variable
+                      DW_AT_name	("__r1")
+                      DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                      DW_AT_decl_line	(1049)
+                      DW_AT_type	(0x00000cff "USItype")
+
+0x00000fb8:         DW_TAG_variable
+                      DW_AT_name	("__r0")
+                      DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                      DW_AT_decl_line	(1049)
+                      DW_AT_type	(0x00000cff "USItype")
+
+0x00000fc4:         DW_TAG_variable
+                      DW_AT_name	("__m")
+                      DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                      DW_AT_decl_line	(1049)
+                      DW_AT_type	(0x00000cff "USItype")
+
+0x00000fd0:         NULL
+
+0x00000fd1:       DW_TAG_lexical_block
+
+0x00000fd2:         DW_TAG_variable
+                      DW_AT_name	("__t0")
+                      DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                      DW_AT_decl_line	(1050)
+                      DW_AT_type	(0x00000cff "USItype")
+
+0x00000fde:         DW_TAG_variable
+                      DW_AT_name	("__t1")
+                      DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                      DW_AT_decl_line	(1050)
+                      DW_AT_type	(0x00000cff "USItype")
+
+0x00000fea:         DW_TAG_variable
+                      DW_AT_name	("__t2")
+                      DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                      DW_AT_decl_line	(1050)
+                      DW_AT_type	(0x00000cff "USItype")
+
+0x00000ff6:         NULL
+
+0x00000ff7:       NULL
+
+0x00000ff8:     NULL
+
+0x00000ff9:   DW_TAG_pointer_type
+                DW_AT_byte_size	(0x04)
+                DW_AT_type	(0x00000d15 "UDItype")
+
+0x00000fff:   DW_TAG_const_type
+                DW_AT_type	(0x00000d87 "DWunion")
+
+0x00001004:   DW_TAG_subprogram
+                DW_AT_external	(0x01)
+                DW_AT_name	("__divdi3")
+                DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                DW_AT_decl_line	(1079)
+                DW_AT_prototyped	(0x01)
+                DW_AT_type	(0x00000d0a "DItype")
+                DW_AT_low_pc	(0x0003103c)
+                DW_AT_high_pc	(0x000314d8)
+                DW_AT_frame_base	(0x0000011e: 
+                   [0x0003103c, 0x00031040): DW_OP_reg13 SP
+                   [0x00031040, 0x00031044): DW_OP_breg13 SP+36
+                   [0x00031044, 0x000314d8): DW_OP_breg13 SP+56)
+                DW_AT_sibling	(0x00001250)
+
+0x00001022:     DW_TAG_formal_parameter
+                  DW_AT_name	("u")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                  DW_AT_decl_line	(1079)
+                  DW_AT_type	(0x00000d0a "DItype")
+                  DW_AT_location	(0x00000149: 
+                     [0x0003103c, 0x0003109c): DW_OP_reg0 R0, DW_OP_piece 0x4, DW_OP_reg1 R1, DW_OP_piece 0x4
+                     [0x00031140, 0x00031170): DW_OP_reg0 R0, DW_OP_piece 0x4, DW_OP_reg1 R1, DW_OP_piece 0x4
+                     [0x00031178, 0x00031188): DW_OP_reg0 R0, DW_OP_piece 0x4, DW_OP_reg1 R1, DW_OP_piece 0x4
+                     [0x00031190, 0x000311a4): DW_OP_reg0 R0, DW_OP_piece 0x4, DW_OP_reg1 R1, DW_OP_piece 0x4
+                     [0x00031258, 0x00031284): DW_OP_reg0 R0, DW_OP_piece 0x4, DW_OP_reg1 R1, DW_OP_piece 0x4
+                     [0x0003139c, 0x000313d8): DW_OP_reg0 R0, DW_OP_piece 0x4, DW_OP_reg1 R1, DW_OP_piece 0x4
+                     [0x00031494, 0x000314a8): DW_OP_reg0 R0, DW_OP_piece 0x4, DW_OP_reg1 R1, DW_OP_piece 0x4)
+
+0x00001030:     DW_TAG_formal_parameter
+                  DW_AT_name	("v")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                  DW_AT_decl_line	(1079)
+                  DW_AT_type	(0x00000d0a "DItype")
+                  DW_AT_location	(0x000001c1: 
+                     [0x0003103c, 0x00031080): DW_OP_reg2 R2, DW_OP_piece 0x4, DW_OP_reg3 R3, DW_OP_piece 0x4
+                     [0x00031140, 0x00031158): DW_OP_reg2 R2, DW_OP_piece 0x4, DW_OP_reg3 R3, DW_OP_piece 0x4
+                     [0x00031178, 0x0003118c): DW_OP_reg2 R2, DW_OP_piece 0x4, DW_OP_reg3 R3, DW_OP_piece 0x4
+                     [0x00031190, 0x000311c0): DW_OP_reg2 R2, DW_OP_piece 0x4, DW_OP_reg3 R3, DW_OP_piece 0x4
+                     [0x00031258, 0x00031290): DW_OP_reg2 R2, DW_OP_piece 0x4, DW_OP_reg3 R3, DW_OP_piece 0x4
+                     [0x0003139c, 0x000313e4): DW_OP_reg2 R2, DW_OP_piece 0x4, DW_OP_reg3 R3, DW_OP_piece 0x4
+                     [0x00031494, 0x000314a8): DW_OP_reg2 R2, DW_OP_piece 0x4, DW_OP_reg3 R3, DW_OP_piece 0x4)
+
+0x0000103e:     DW_TAG_variable
+                  DW_AT_name	("c")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                  DW_AT_decl_line	(1081)
+                  DW_AT_type	(0x00000cf4 "SItype")
+                  DW_AT_location	(DW_OP_reg6 R6)
+
+0x0000104a:     DW_TAG_variable
+                  DW_AT_name	("uu")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                  DW_AT_decl_line	(1082)
+                  DW_AT_type	(0x00000d87 "DWunion")
+
+0x00001055:     DW_TAG_variable
+                  DW_AT_name	("vv")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                  DW_AT_decl_line	(1083)
+                  DW_AT_type	(0x00000d87 "DWunion")
+
+0x00001060:     DW_TAG_variable
+                  DW_AT_name	("w")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                  DW_AT_decl_line	(1084)
+                  DW_AT_type	(0x00000d0a "DItype")
+                  DW_AT_location	(0x00000239: 
+                     [0x00031168, 0x00031178): DW_OP_reg2 R2, DW_OP_piece 0x4, DW_OP_reg3 R3, DW_OP_piece 0x4)
+
+0x0000106e:     DW_TAG_inlined_subroutine
+                  DW_AT_abstract_origin	(0x00000d93 "__udivmoddi4")
+                  DW_AT_entry_pc	(0x00031058)
+                  DW_AT_ranges	(0x00000000
+                     [0x00031058, 0x00031150)
+                     [0x000313bc, 0x000314d8)
+                     [0x00031178, 0x0003139c)
+                     [0x00031154, 0x0003115c))
+                  DW_AT_call_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                  DW_AT_call_line	(1093)
+
+0x0000107e:       DW_TAG_formal_parameter
+                    DW_AT_abstract_origin	(0x00000db9 "rp")
+
+0x00001083:       DW_TAG_formal_parameter
+                    DW_AT_abstract_origin	(0x00000daf "d")
+
+0x00001088:       DW_TAG_formal_parameter
+                    DW_AT_abstract_origin	(0x00000da5 "n")
+
+0x0000108d:       DW_TAG_lexical_block
+                    DW_AT_ranges	(0x00000028
+                       [0x00031058, 0x00031150)
+                       [0x000313bc, 0x000314d8)
+                       [0x00031178, 0x0003139c)
+                       [0x00031154, 0x0003115c))
+
+0x00001092:         DW_TAG_variable
+                      DW_AT_abstract_origin	(0x00000dc4 "nn")
+
+0x00001097:         DW_TAG_variable
+                      DW_AT_abstract_origin	(0x00000dcf "dd")
+
+0x0000109c:         DW_TAG_variable
+                      DW_AT_abstract_origin	(0x00000dda "rr")
+
+0x000010a1:         DW_TAG_variable
+                      DW_AT_abstract_origin	(0x00000de5 "d0")
+                      DW_AT_location	(0x00000251: 
+                         [0x00031064, 0x00031074): DW_OP_reg4 R4
+                         [0x00031074, 0x00031080): DW_OP_reg2 R2
+                         [0x00031080, 0x00031150): DW_OP_reg4 R4
+                         [0x00031150, 0x00031158): DW_OP_reg2 R2
+                         [0x00031158, 0x00031178): DW_OP_reg4 R4
+                         [0x00031178, 0x0003118c): DW_OP_reg2 R2
+                         [0x0003118c, 0x000312cc): DW_OP_reg4 R4
+                         [0x000312cc, 0x000312ec): DW_OP_reg2 R2
+                         [0x0003136c, 0x0003139c): DW_OP_reg2 R2
+                         [0x000313bc, 0x000314a4): DW_OP_reg4 R4
+                         [0x000314a4, 0x000314a8): DW_OP_reg2 R2
+                         [0x000314b8, 0x000314c8): DW_OP_reg2 R2
+                         [0x000314c8, 0x000314d8): DW_OP_reg4 R4)
+
+0x000010aa:         DW_TAG_variable
+                      DW_AT_abstract_origin	(0x00000df0 "d1")
+                      DW_AT_location	(0x000002e8: 
+                         [0x0003105c, 0x000310a0): DW_OP_reg12 R12
+                         [0x00031140, 0x00031150): DW_OP_reg12 R12
+                         [0x00031150, 0x00031178): DW_OP_reg9 R9
+                         [0x00031178, 0x0003118c): DW_OP_reg12 R12
+                         [0x00031190, 0x000311c0): DW_OP_reg12 R12
+                         [0x00031258, 0x00031274): DW_OP_reg12 R12
+                         [0x00031274, 0x0003139c): DW_OP_reg9 R9
+                         [0x000313bc, 0x000313e4): DW_OP_reg12 R12
+                         [0x00031494, 0x000314a8): DW_OP_reg12 R12
+                         [0x000314a8, 0x000314c8): DW_OP_reg9 R9)
+
+0x000010b3:         DW_TAG_variable
+                      DW_AT_abstract_origin	(0x00000dfb "n0")
+                      DW_AT_location	(0x0000035e: 
+                         [0x00031068, 0x00031110): DW_OP_reg5 R5
+                         [0x00031140, 0x00031228): DW_OP_reg5 R5
+                         [0x00031258, 0x0003139c): DW_OP_reg5 R5
+                         [0x000313bc, 0x000314a4): DW_OP_reg5 R5
+                         [0x000314a4, 0x000314a8): DW_OP_reg0 R0
+                         [0x000314a8, 0x000314d8): DW_OP_reg5 R5)
+
+0x000010bc:         DW_TAG_variable
+                      DW_AT_abstract_origin	(0x00000e06 "n1")
+                      DW_AT_location	(0x000003a8: 
+                         [0x00031060, 0x00031074): DW_OP_reg7 R7
+                         [0x00031074, 0x0003108c): DW_OP_reg1 R1
+                         [0x0003108c, 0x000310b4): DW_OP_reg7 R7
+                         [0x00031140, 0x00031148): DW_OP_reg7 R7
+                         [0x00031148, 0x0003116c): DW_OP_reg1 R1
+                         [0x0003116c, 0x00031178): DW_OP_reg7 R7
+                         [0x00031178, 0x00031184): DW_OP_reg1 R1
+                         [0x00031184, 0x000311a8): DW_OP_reg7 R7
+                         [0x000311a8, 0x000311e4): DW_OP_reg10 R10
+                         [0x00031258, 0x00031288): DW_OP_reg1 R1
+                         [0x00031288, 0x000312a8): DW_OP_reg7 R7
+                         [0x000313bc, 0x000313d4): DW_OP_reg7 R7
+                         [0x000313d4, 0x000313dc): DW_OP_reg1 R1
+                         [0x00031490, 0x00031494): DW_OP_reg10 R10
+                         [0x00031494, 0x000314a8): DW_OP_reg1 R1)
+
+0x000010c5:         DW_TAG_variable
+                      DW_AT_abstract_origin	(0x00000e11 "n2")
+                      DW_AT_location	(0x00000455: 
+                         [0x00031278, 0x000312b4): DW_OP_reg10 R10
+                         [0x000313cc, 0x000313f8): DW_OP_reg8 R8)
+
+0x000010ce:         DW_TAG_variable
+                      DW_AT_abstract_origin	(0x00000e1c "q0")
+                      DW_AT_location	(0x00000473: 
+                         [0x00031150, 0x00031158): DW_OP_reg10 R10
+                         [0x0003133c, 0x00031394): DW_OP_reg10 R10)
+
+0x000010d7:         DW_TAG_variable
+                      DW_AT_abstract_origin	(0x00000e27 "q1")
+                      DW_AT_location	(DW_OP_breg13 SP+12)
+
+0x000010df:         DW_TAG_variable
+                      DW_AT_abstract_origin	(0x00000e32 "b")
+
+0x000010e4:         DW_TAG_variable
+                      DW_AT_abstract_origin	(0x00000e3c "bm")
+
+0x000010e9:         DW_TAG_variable
+                      DW_AT_abstract_origin	(0x00000e47 "ww")
+                      DW_AT_location	(0x00000491: 
+                         [0x0003115c, 0x00031168): DW_OP_reg2 R2, DW_OP_piece 0x4, DW_OP_reg3 R3, DW_OP_piece 0x4
+                         [0x00031168, 0x00031178): DW_OP_reg2 R2, DW_OP_piece 0x4, DW_OP_reg3 R3, DW_OP_piece 0x4)
+
+0x000010f2:         DW_TAG_lexical_block
+                      DW_AT_low_pc	(0x000311b4)
+                      DW_AT_high_pc	(0x00031258)
+                      DW_AT_sibling	(0x00001137)
+
+0x000010ff:           DW_TAG_variable
+                        DW_AT_abstract_origin	(0x00000f0b "__d1")
+
+0x00001104:           DW_TAG_variable
+                        DW_AT_abstract_origin	(0x00000f17 "__d0")
+
+0x00001109:           DW_TAG_variable
+                        DW_AT_abstract_origin	(0x00000f23 "__q1")
+                        DW_AT_location	(0x000004b9: 
+                           [0x000311d4, 0x000311e4): DW_OP_reg0 R0)
+
+0x00001112:           DW_TAG_variable
+                        DW_AT_abstract_origin	(0x00000f2f "__q0")
+                        DW_AT_location	(0x000004cc: 
+                           [0x00031150, 0x00031170): DW_OP_reg0 R0
+                           [0x00031224, 0x00031258): DW_OP_reg0 R0)
+
+0x0000111b:           DW_TAG_variable
+                        DW_AT_abstract_origin	(0x00000f3b "__r1")
+                        DW_AT_location	(0x000004ea: 
+                           [0x00031150, 0x00031178): DW_OP_reg9 R9
+                           [0x000311dc, 0x00031204): DW_OP_reg11 R11
+                           [0x00031204, 0x00031258): DW_OP_reg9 R9)
+
+0x00001124:           DW_TAG_variable
+                        DW_AT_abstract_origin	(0x00000f47 "__r0")
+                        DW_AT_location	(0x00000513: 
+                           [0x00031150, 0x00031178): DW_OP_reg5 R5
+                           [0x00031230, 0x00031258): DW_OP_reg5 R5)
+
+0x0000112d:           DW_TAG_variable
+                        DW_AT_abstract_origin	(0x00000f53 "__m")
+                        DW_AT_location	(0x00000531: 
+                           [0x000311d4, 0x00031204): DW_OP_reg9 R9
+                           [0x00031224, 0x00031254): DW_OP_reg8 R8)
+
+0x00001136:           NULL
+
+0x00001137:         DW_TAG_lexical_block
+                      DW_AT_ranges	(0x00000050
+                         [0x00031148, 0x00031150)
+                         [0x000314a8, 0x000314c8)
+                         [0x00031264, 0x0003139c))
+                      DW_AT_sibling	(0x000011bf)
+
+0x00001140:           DW_TAG_variable
+                        DW_AT_abstract_origin	(0x00000f61 "m1")
+                        DW_AT_location	(0x0000054f: 
+                           [0x00031150, 0x0003116c): DW_OP_reg1 R1
+                           [0x0003136c, 0x0003139c): DW_OP_reg1 R1)
+
+0x00001149:           DW_TAG_variable
+                        DW_AT_abstract_origin	(0x00000f6c "m0")
+                        DW_AT_location	(0x0000056d: 
+                           [0x00031150, 0x00031170): DW_OP_reg0 R0
+                           [0x0003136c, 0x0003139c): DW_OP_reg0 R0)
+
+0x00001152:           DW_TAG_lexical_block
+                        DW_AT_low_pc	(0x0003133c)
+                        DW_AT_high_pc	(0x0003136c)
+                        DW_AT_sibling	(0x00001179)
+
+0x0000115f:             DW_TAG_variable
+                          DW_AT_abstract_origin	(0x00000fd2 "__t0")
+                          DW_AT_location	(0x0000058b: 
+                             [0x00031150, 0x00031178): DW_OP_reg12 R12
+                             [0x0003136c, 0x0003139c): DW_OP_reg12 R12)
+
+0x00001168:             DW_TAG_variable
+                          DW_AT_abstract_origin	(0x00000fde "__t1")
+                          DW_AT_location	(DW_OP_reg2 R2)
+
+0x0000116f:             DW_TAG_variable
+                          DW_AT_abstract_origin	(0x00000fea "__t2")
+                          DW_AT_location	(0x000005a9: 
+                             [0x00031150, 0x00031178): DW_OP_reg4 R4
+                             [0x0003136c, 0x0003139c): DW_OP_reg4 R4)
+
+0x00001178:             NULL
+
+0x00001179:           DW_TAG_lexical_block
+                        DW_AT_ranges	(0x00000070
+                           [0x0003127c, 0x00031288)
+                           [0x000314a8, 0x000314c8)
+                           [0x000312cc, 0x0003133c)
+                           [0x0003128c, 0x000312c8))
+
+0x0000117e:             DW_TAG_variable
+                          DW_AT_abstract_origin	(0x00000f7c "__d1")
+                          DW_AT_location	(0x000005c7: 
+                             [0x00031150, 0x00031178): DW_OP_reg11 R11
+                             [0x00031280, 0x0003139c): DW_OP_reg11 R11
+                             [0x000314a8, 0x000314c8): DW_OP_reg11 R11)
+
+0x00001187:             DW_TAG_variable
+                          DW_AT_abstract_origin	(0x00000f88 "__d0")
+                          DW_AT_location	(0x000005f0: 
+                             [0x000312a8, 0x0003130c): DW_OP_reg7 R7
+                             [0x000314b8, 0x000314c8): DW_OP_reg7 R7)
+
+0x00001190:             DW_TAG_variable
+                          DW_AT_abstract_origin	(0x00000f94 "__q1")
+                          DW_AT_location	(0x0000060e: 
+                             [0x000312b0, 0x000312b4): DW_OP_reg0 R0
+                             [0x000314a8, 0x000314c8): DW_OP_reg10 R10)
+
+0x00001199:             DW_TAG_variable
+                          DW_AT_abstract_origin	(0x00000fa0 "__q0")
+                          DW_AT_location	(0x0000062c: 
+                             [0x0003130c, 0x0003136c): DW_OP_reg0 R0
+                             [0x000314a8, 0x000314b8): DW_OP_reg0 R0)
+
+0x000011a2:             DW_TAG_variable
+                          DW_AT_abstract_origin	(0x00000fac "__r1")
+                          DW_AT_location	(0x0000064a: 
+                             [0x000312c4, 0x000312e0): DW_OP_reg3 R3
+                             [0x000312e0, 0x0003136c): DW_OP_reg4 R4
+                             [0x000314a8, 0x000314b8): DW_OP_reg4 R4
+                             [0x000314b8, 0x000314c8): DW_OP_reg3 R3)
+
+0x000011ab:             DW_TAG_variable
+                          DW_AT_abstract_origin	(0x00000fb8 "__r0")
+                          DW_AT_location	(0x0000067e: 
+                             [0x00031150, 0x0003115c): DW_OP_reg3 R3
+                             [0x0003131c, 0x0003137c): DW_OP_reg3 R3
+                             [0x00031390, 0x0003139c): DW_OP_reg3 R3
+                             [0x000314a8, 0x000314b8): DW_OP_reg3 R3)
+
+0x000011b4:             DW_TAG_variable
+                          DW_AT_abstract_origin	(0x00000fc4 "__m")
+                          DW_AT_location	(0x000006b2: 
+                             [0x000312b0, 0x000312e8): DW_OP_reg1 R1
+                             [0x0003130c, 0x0003136c): DW_OP_reg7 R7
+                             [0x000314a8, 0x000314b8): DW_OP_reg7 R7
+                             [0x000314b8, 0x000314c8): DW_OP_reg1 R1)
+
+0x000011bd:             NULL
+
+0x000011be:           NULL
+
+0x000011bf:         DW_TAG_lexical_block
+                      DW_AT_ranges	(0x00000098
+                         [0x0003108c, 0x00031090)
+                         [0x00031094, 0x00031140))
+                      DW_AT_sibling	(0x00001208)
+
+0x000011c8:           DW_TAG_variable
+                        DW_AT_abstract_origin	(0x00000e57 "__d1")
+                        DW_AT_location	(0x000006e6: 
+                           [0x00031090, 0x0003113c): DW_OP_reg8 R8)
+
+0x000011d1:           DW_TAG_variable
+                        DW_AT_abstract_origin	(0x00000e63 "__d0")
+                        DW_AT_location	(0x000006f9: 
+                           [0x000310b4, 0x0003110c): DW_OP_reg7 R7)
+
+0x000011da:           DW_TAG_variable
+                        DW_AT_abstract_origin	(0x00000e6f "__q1")
+                        DW_AT_location	(0x0000070c: 
+                           [0x000310bc, 0x000310cc): DW_OP_reg0 R0)
+
+0x000011e3:           DW_TAG_variable
+                        DW_AT_abstract_origin	(0x00000e7b "__q0")
+                        DW_AT_location	(0x0000071f: 
+                           [0x0003110c, 0x00031140): DW_OP_reg0 R0
+                           [0x00031150, 0x00031170): DW_OP_reg0 R0)
+
+0x000011ec:           DW_TAG_variable
+                        DW_AT_abstract_origin	(0x00000e87 "__r1")
+                        DW_AT_location	(0x0000073d: 
+                           [0x000310c4, 0x000310ec): DW_OP_reg11 R11
+                           [0x000310ec, 0x00031140): DW_OP_reg9 R9
+                           [0x00031150, 0x00031178): DW_OP_reg9 R9)
+
+0x000011f5:           DW_TAG_variable
+                        DW_AT_abstract_origin	(0x00000e93 "__r0")
+                        DW_AT_location	(0x00000766: 
+                           [0x00031118, 0x00031140): DW_OP_reg5 R5
+                           [0x00031150, 0x00031178): DW_OP_reg5 R5)
+
+0x000011fe:           DW_TAG_variable
+                        DW_AT_abstract_origin	(0x00000e9f "__m")
+                        DW_AT_location	(0x00000784: 
+                           [0x000310bc, 0x000310ec): DW_OP_reg9 R9
+                           [0x0003110c, 0x00031140): DW_OP_reg7 R7
+                           [0x00031150, 0x00031178): DW_OP_reg7 R7)
+
+0x00001207:           NULL
+
+0x00001208:         DW_TAG_lexical_block
+                      DW_AT_ranges	(0x000000b0
+                         [0x000313d0, 0x000313dc)
+                         [0x000314c8, 0x000314d8)
+                         [0x00031488, 0x00031494)
+                         [0x000313e0, 0x00031484))
+
+0x0000120d:           DW_TAG_variable
+                        DW_AT_abstract_origin	(0x00000eb1 "__d1")
+                        DW_AT_location	(0x000007ad: 
+                           [0x00031150, 0x00031178): DW_OP_reg7 R7
+                           [0x000311b0, 0x00031258): DW_OP_reg7 R7
+                           [0x000313d4, 0x00031494): DW_OP_reg7 R7
+                           [0x000314c8, 0x000314d8): DW_OP_reg7 R7)
+
+0x00001216:           DW_TAG_variable
+                        DW_AT_abstract_origin	(0x00000ebd "__d0")
+                        DW_AT_location	(0x000007e1: 
+                           [0x000311a0, 0x00031224): DW_OP_reg8 R8
+                           [0x000313f8, 0x00031494): DW_OP_reg8 R8
+                           [0x000314c8, 0x000314d8): DW_OP_reg8 R8)
+
+0x0000121f:           DW_TAG_variable
+                        DW_AT_abstract_origin	(0x00000ec9 "__q1")
+                        DW_AT_location	(0x0000080a: 
+                           [0x000311b4, 0x000311d4): DW_OP_reg9 R9
+                           [0x00031400, 0x00031408): DW_OP_reg0 R0
+                           [0x000314c8, 0x000314d8): DW_OP_reg9 R9)
+
+0x00001228:           DW_TAG_variable
+                        DW_AT_abstract_origin	(0x00000ed5 "__q0")
+                        DW_AT_location	(0x00000833: 
+                           [0x00031450, 0x00031484): DW_OP_reg0 R0)
+
+0x00001231:           DW_TAG_variable
+                        DW_AT_abstract_origin	(0x00000ee1 "__r1")
+                        DW_AT_location	(0x00000846: 
+                           [0x000311b4, 0x000311c8): DW_OP_reg11 R11
+                           [0x00031410, 0x00031494): DW_OP_reg11 R11
+                           [0x000314c8, 0x000314d8): DW_OP_reg11 R11)
+
+0x0000123a:           DW_TAG_variable
+                        DW_AT_abstract_origin	(0x00000eed "__r0")
+                        DW_AT_location	(0x0000086f: 
+                           [0x000311b4, 0x000311c0): DW_OP_reg3 R3
+                           [0x00031460, 0x00031494): DW_OP_reg3 R3)
+
+0x00001243:           DW_TAG_variable
+                        DW_AT_abstract_origin	(0x00000ef9 "__m")
+                        DW_AT_location	(0x0000088d: 
+                           [0x000311b4, 0x000311bc): DW_OP_reg1 R1
+                           [0x00031400, 0x00031434): DW_OP_reg3 R3
+                           [0x00031450, 0x00031494): DW_OP_reg1 R1
+                           [0x000314c8, 0x000314d8): DW_OP_reg3 R3)
+
+0x0000124c:           NULL
+
+0x0000124d:         NULL
+
+0x0000124e:       NULL
+
+0x0000124f:     NULL
+
+0x00001250:   DW_TAG_variable
+                DW_AT_name	("stdin")
+                DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/include/stdio.h")
+                DW_AT_decl_line	(145)
+                DW_AT_type	(0x00000cc8 "_IO_FILE *")
+                DW_AT_external	(0x01)
+                DW_AT_declaration	(0x01)
+
+0x0000125d:   DW_TAG_variable
+                DW_AT_name	("stdout")
+                DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/include/stdio.h")
+                DW_AT_decl_line	(146)
+                DW_AT_type	(0x00000cc8 "_IO_FILE *")
+                DW_AT_external	(0x01)
+                DW_AT_declaration	(0x01)
+
+0x0000126a:   NULL
+0x0000126b: Compile Unit: length = 0x00000820, format = DWARF32, version = 0x0002, abbr_offset = 0x0360, addr_size = 0x04 (next unit at 0x00001a8f)
+
+0x00001276: DW_TAG_compile_unit
+              DW_AT_producer	("GNU C 4.4.1")
+              DW_AT_language	(DW_LANG_C89)
+              DW_AT_name	("../../../gcc/libgcc/../gcc/libgcc2.c")
+              DW_AT_comp_dir	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc")
+              DW_AT_low_pc	(0x000314d8)
+              DW_AT_high_pc	(0x00031908)
+              DW_AT_stmt_list	(0x00000c42)
+
+0x00001290:   DW_TAG_base_type
+                DW_AT_byte_size	(0x04)
+                DW_AT_encoding	(DW_ATE_signed)
+                DW_AT_name	("int")
+
+0x00001297:   DW_TAG_typedef
+                DW_AT_name	("size_t")
+                DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/./gcc/include/stddef.h")
+                DW_AT_decl_line	(211)
+                DW_AT_type	(0x000012a2 "unsigned int")
+
+0x000012a2:   DW_TAG_base_type
+                DW_AT_byte_size	(0x04)
+                DW_AT_encoding	(DW_ATE_unsigned)
+                DW_AT_name	("unsigned int")
+
+0x000012a9:   DW_TAG_pointer_type
+                DW_AT_byte_size	(0x04)
+
+0x000012ab:   DW_TAG_base_type
+                DW_AT_byte_size	(0x01)
+                DW_AT_encoding	(DW_ATE_unsigned_char)
+                DW_AT_name	("unsigned char")
+
+0x000012b2:   DW_TAG_base_type
+                DW_AT_byte_size	(0x02)
+                DW_AT_encoding	(DW_ATE_unsigned)
+                DW_AT_name	("short unsigned int")
+
+0x000012b9:   DW_TAG_base_type
+                DW_AT_byte_size	(0x04)
+                DW_AT_encoding	(DW_ATE_unsigned)
+                DW_AT_name	("long unsigned int")
+
+0x000012c0:   DW_TAG_base_type
+                DW_AT_byte_size	(0x01)
+                DW_AT_encoding	(DW_ATE_signed_char)
+                DW_AT_name	("signed char")
+
+0x000012c7:   DW_TAG_base_type
+                DW_AT_byte_size	(0x02)
+                DW_AT_encoding	(DW_ATE_signed)
+                DW_AT_name	("short int")
+
+0x000012ce:   DW_TAG_base_type
+                DW_AT_byte_size	(0x08)
+                DW_AT_encoding	(DW_ATE_signed)
+                DW_AT_name	("long long int")
+
+0x000012d5:   DW_TAG_base_type
+                DW_AT_byte_size	(0x08)
+                DW_AT_encoding	(DW_ATE_unsigned)
+                DW_AT_name	("long long unsigned int")
+
+0x000012dc:   DW_TAG_typedef
+                DW_AT_name	("__quad_t")
+                DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/include/bits/types.h")
+                DW_AT_decl_line	(56)
+                DW_AT_type	(0x000012ce "long long int")
+
+0x000012e7:   DW_TAG_typedef
+                DW_AT_name	("__off_t")
+                DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/include/bits/types.h")
+                DW_AT_decl_line	(141)
+                DW_AT_type	(0x000012f2 "long int")
+
+0x000012f2:   DW_TAG_base_type
+                DW_AT_byte_size	(0x04)
+                DW_AT_encoding	(DW_ATE_signed)
+                DW_AT_name	("long int")
+
+0x000012f9:   DW_TAG_typedef
+                DW_AT_name	("__off64_t")
+                DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/include/bits/types.h")
+                DW_AT_decl_line	(142)
+                DW_AT_type	(0x000012dc "__quad_t")
+
+0x00001304:   DW_TAG_base_type
+                DW_AT_byte_size	(0x04)
+                DW_AT_encoding	(DW_ATE_unsigned)
+
+0x00001307:   DW_TAG_pointer_type
+                DW_AT_byte_size	(0x04)
+                DW_AT_type	(0x0000130d "char")
+
+0x0000130d:   DW_TAG_base_type
+                DW_AT_byte_size	(0x01)
+                DW_AT_encoding	(DW_ATE_unsigned_char)
+                DW_AT_name	("char")
+
+0x00001314:   DW_TAG_structure_type
+                DW_AT_name	("_IO_FILE")
+                DW_AT_byte_size	(0x98)
+                DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/include/stdio.h")
+                DW_AT_decl_line	(45)
+                DW_AT_sibling	(0x000014d4)
+
+0x00001320:     DW_TAG_member
+                  DW_AT_name	("_flags")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/include/libio.h")
+                  DW_AT_decl_line	(272)
+                  DW_AT_type	(0x00001290 "int")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x0)
+
+0x0000132f:     DW_TAG_member
+                  DW_AT_name	("_IO_read_ptr")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/include/libio.h")
+                  DW_AT_decl_line	(277)
+                  DW_AT_type	(0x00001307 "char *")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x4)
+
+0x0000133e:     DW_TAG_member
+                  DW_AT_name	("_IO_read_end")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/include/libio.h")
+                  DW_AT_decl_line	(278)
+                  DW_AT_type	(0x00001307 "char *")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x8)
+
+0x0000134d:     DW_TAG_member
+                  DW_AT_name	("_IO_read_base")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/include/libio.h")
+                  DW_AT_decl_line	(279)
+                  DW_AT_type	(0x00001307 "char *")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0xc)
+
+0x0000135c:     DW_TAG_member
+                  DW_AT_name	("_IO_write_base")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/include/libio.h")
+                  DW_AT_decl_line	(280)
+                  DW_AT_type	(0x00001307 "char *")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x10)
+
+0x0000136b:     DW_TAG_member
+                  DW_AT_name	("_IO_write_ptr")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/include/libio.h")
+                  DW_AT_decl_line	(281)
+                  DW_AT_type	(0x00001307 "char *")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x14)
+
+0x0000137a:     DW_TAG_member
+                  DW_AT_name	("_IO_write_end")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/include/libio.h")
+                  DW_AT_decl_line	(282)
+                  DW_AT_type	(0x00001307 "char *")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x18)
+
+0x00001389:     DW_TAG_member
+                  DW_AT_name	("_IO_buf_base")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/include/libio.h")
+                  DW_AT_decl_line	(283)
+                  DW_AT_type	(0x00001307 "char *")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x1c)
+
+0x00001398:     DW_TAG_member
+                  DW_AT_name	("_IO_buf_end")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/include/libio.h")
+                  DW_AT_decl_line	(284)
+                  DW_AT_type	(0x00001307 "char *")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x20)
+
+0x000013a7:     DW_TAG_member
+                  DW_AT_name	("_IO_save_base")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/include/libio.h")
+                  DW_AT_decl_line	(286)
+                  DW_AT_type	(0x00001307 "char *")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x24)
+
+0x000013b6:     DW_TAG_member
+                  DW_AT_name	("_IO_backup_base")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/include/libio.h")
+                  DW_AT_decl_line	(287)
+                  DW_AT_type	(0x00001307 "char *")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x28)
+
+0x000013c5:     DW_TAG_member
+                  DW_AT_name	("_IO_save_end")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/include/libio.h")
+                  DW_AT_decl_line	(288)
+                  DW_AT_type	(0x00001307 "char *")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x2c)
+
+0x000013d4:     DW_TAG_member
+                  DW_AT_name	("_markers")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/include/libio.h")
+                  DW_AT_decl_line	(290)
+                  DW_AT_type	(0x00001512 "_IO_marker *")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x30)
+
+0x000013e3:     DW_TAG_member
+                  DW_AT_name	("_chain")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/include/libio.h")
+                  DW_AT_decl_line	(292)
+                  DW_AT_type	(0x00001518 "_IO_FILE *")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x34)
+
+0x000013f2:     DW_TAG_member
+                  DW_AT_name	("_fileno")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/include/libio.h")
+                  DW_AT_decl_line	(294)
+                  DW_AT_type	(0x00001290 "int")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x38)
+
+0x00001401:     DW_TAG_member
+                  DW_AT_name	("_flags2")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/include/libio.h")
+                  DW_AT_decl_line	(298)
+                  DW_AT_type	(0x00001290 "int")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x3c)
+
+0x00001410:     DW_TAG_member
+                  DW_AT_name	("_old_offset")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/include/libio.h")
+                  DW_AT_decl_line	(300)
+                  DW_AT_type	(0x000012e7 "__off_t")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x40)
+
+0x0000141f:     DW_TAG_member
+                  DW_AT_name	("_cur_column")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/include/libio.h")
+                  DW_AT_decl_line	(304)
+                  DW_AT_type	(0x000012b2 "short unsigned int")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x44)
+
+0x0000142e:     DW_TAG_member
+                  DW_AT_name	("_vtable_offset")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/include/libio.h")
+                  DW_AT_decl_line	(305)
+                  DW_AT_type	(0x000012c0 "signed char")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x46)
+
+0x0000143d:     DW_TAG_member
+                  DW_AT_name	("_shortbuf")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/include/libio.h")
+                  DW_AT_decl_line	(306)
+                  DW_AT_type	(0x0000151e "char[1]")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x47)
+
+0x0000144c:     DW_TAG_member
+                  DW_AT_name	("_lock")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/include/libio.h")
+                  DW_AT_decl_line	(310)
+                  DW_AT_type	(0x0000152e "_IO_lock_t *")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x48)
+
+0x0000145b:     DW_TAG_member
+                  DW_AT_name	("_offset")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/include/libio.h")
+                  DW_AT_decl_line	(319)
+                  DW_AT_type	(0x000012f9 "__off64_t")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x50)
+
+0x0000146a:     DW_TAG_member
+                  DW_AT_name	("__pad1")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/include/libio.h")
+                  DW_AT_decl_line	(328)
+                  DW_AT_type	(0x000012a9 "void *")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x58)
+
+0x00001479:     DW_TAG_member
+                  DW_AT_name	("__pad2")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/include/libio.h")
+                  DW_AT_decl_line	(329)
+                  DW_AT_type	(0x000012a9 "void *")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x5c)
+
+0x00001488:     DW_TAG_member
+                  DW_AT_name	("__pad3")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/include/libio.h")
+                  DW_AT_decl_line	(330)
+                  DW_AT_type	(0x000012a9 "void *")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x60)
+
+0x00001497:     DW_TAG_member
+                  DW_AT_name	("__pad4")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/include/libio.h")
+                  DW_AT_decl_line	(331)
+                  DW_AT_type	(0x000012a9 "void *")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x64)
+
+0x000014a6:     DW_TAG_member
+                  DW_AT_name	("__pad5")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/include/libio.h")
+                  DW_AT_decl_line	(332)
+                  DW_AT_type	(0x00001297 "size_t")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x68)
+
+0x000014b5:     DW_TAG_member
+                  DW_AT_name	("_mode")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/include/libio.h")
+                  DW_AT_decl_line	(334)
+                  DW_AT_type	(0x00001290 "int")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x6c)
+
+0x000014c4:     DW_TAG_member
+                  DW_AT_name	("_unused2")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/include/libio.h")
+                  DW_AT_decl_line	(336)
+                  DW_AT_type	(0x00001534 "char[40]")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x70)
+
+0x000014d3:     NULL
+
+0x000014d4:   DW_TAG_typedef
+                DW_AT_name	("_IO_lock_t")
+                DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/include/libio.h")
+                DW_AT_decl_line	(180)
+
+0x000014db:   DW_TAG_structure_type
+                DW_AT_name	("_IO_marker")
+                DW_AT_byte_size	(0x0c)
+                DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/include/libio.h")
+                DW_AT_decl_line	(186)
+                DW_AT_sibling	(0x00001512)
+
+0x000014e7:     DW_TAG_member
+                  DW_AT_name	("_next")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/include/libio.h")
+                  DW_AT_decl_line	(187)
+                  DW_AT_type	(0x00001512 "_IO_marker *")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x0)
+
+0x000014f5:     DW_TAG_member
+                  DW_AT_name	("_sbuf")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/include/libio.h")
+                  DW_AT_decl_line	(188)
+                  DW_AT_type	(0x00001518 "_IO_FILE *")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x4)
+
+0x00001503:     DW_TAG_member
+                  DW_AT_name	("_pos")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/include/libio.h")
+                  DW_AT_decl_line	(192)
+                  DW_AT_type	(0x00001290 "int")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x8)
+
+0x00001511:     NULL
+
+0x00001512:   DW_TAG_pointer_type
+                DW_AT_byte_size	(0x04)
+                DW_AT_type	(0x000014db "_IO_marker")
+
+0x00001518:   DW_TAG_pointer_type
+                DW_AT_byte_size	(0x04)
+                DW_AT_type	(0x00001314 "_IO_FILE")
+
+0x0000151e:   DW_TAG_array_type
+                DW_AT_type	(0x0000130d "char")
+                DW_AT_sibling	(0x0000152e)
+
+0x00001527:     DW_TAG_subrange_type
+                  DW_AT_type	(0x00001304 "base ")
+                  DW_AT_upper_bound	(0x00)
+
+0x0000152d:     NULL
+
+0x0000152e:   DW_TAG_pointer_type
+                DW_AT_byte_size	(0x04)
+                DW_AT_type	(0x000014d4 "_IO_lock_t")
+
+0x00001534:   DW_TAG_array_type
+                DW_AT_type	(0x0000130d "char")
+                DW_AT_sibling	(0x00001544)
+
+0x0000153d:     DW_TAG_subrange_type
+                  DW_AT_type	(0x00001304 "base ")
+                  DW_AT_upper_bound	(0x27)
+
+0x00001543:     NULL
+
+0x00001544:   DW_TAG_typedef
+                DW_AT_name	("SItype")
+                DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.h")
+                DW_AT_decl_line	(141)
+                DW_AT_type	(0x00001290 "int")
+
+0x0000154f:   DW_TAG_typedef
+                DW_AT_name	("USItype")
+                DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.h")
+                DW_AT_decl_line	(142)
+                DW_AT_type	(0x000012a2 "unsigned int")
+
+0x0000155a:   DW_TAG_typedef
+                DW_AT_name	("DItype")
+                DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.h")
+                DW_AT_decl_line	(145)
+                DW_AT_type	(0x000012ce "long long int")
+
+0x00001565:   DW_TAG_typedef
+                DW_AT_name	("UDItype")
+                DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.h")
+                DW_AT_decl_line	(146)
+                DW_AT_type	(0x000012d5 "long long unsigned int")
+
+0x00001570:   DW_TAG_base_type
+                DW_AT_byte_size	(0x04)
+                DW_AT_encoding	(DW_ATE_float)
+                DW_AT_name	("float")
+
+0x00001577:   DW_TAG_base_type
+                DW_AT_byte_size	(0x08)
+                DW_AT_encoding	(DW_ATE_complex_float)
+                DW_AT_name	("complex float")
+
+0x0000157e:   DW_TAG_base_type
+                DW_AT_byte_size	(0x08)
+                DW_AT_encoding	(DW_ATE_float)
+                DW_AT_name	("double")
+
+0x00001585:   DW_TAG_base_type
+                DW_AT_byte_size	(0x10)
+                DW_AT_encoding	(DW_ATE_complex_float)
+                DW_AT_name	("complex double")
+
+0x0000158c:   DW_TAG_structure_type
+                DW_AT_name	("DWstruct")
+                DW_AT_byte_size	(0x08)
+                DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.h")
+                DW_AT_decl_line	(418)
+                DW_AT_sibling	(0x000015b8)
+
+0x00001599:     DW_TAG_member
+                  DW_AT_name	("low")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.h")
+                  DW_AT_decl_line	(418)
+                  DW_AT_type	(0x00001544 "SItype")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x0)
+
+0x000015a8:     DW_TAG_member
+                  DW_AT_name	("high")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.h")
+                  DW_AT_decl_line	(418)
+                  DW_AT_type	(0x00001544 "SItype")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x4)
+
+0x000015b7:     NULL
+
+0x000015b8:   DW_TAG_union_type
+                DW_AT_byte_size	(0x08)
+                DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.h")
+                DW_AT_decl_line	(426)
+                DW_AT_sibling	(0x000015d7)
+
+0x000015c1:     DW_TAG_member
+                  DW_AT_name	("s")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.h")
+                  DW_AT_decl_line	(427)
+                  DW_AT_type	(0x0000158c "DWstruct")
+
+0x000015cb:     DW_TAG_member
+                  DW_AT_name	("ll")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.h")
+                  DW_AT_decl_line	(428)
+                  DW_AT_type	(0x0000155a "DItype")
+
+0x000015d6:     NULL
+
+0x000015d7:   DW_TAG_typedef
+                DW_AT_name	("DWunion")
+                DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.h")
+                DW_AT_decl_line	(429)
+                DW_AT_type	(0x000015b8 "union ")
+
+0x000015e3:   DW_TAG_subprogram
+                DW_AT_name	("__udivmoddi4")
+                DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                DW_AT_decl_line	(864)
+                DW_AT_prototyped	(0x01)
+                DW_AT_type	(0x00001565 "UDItype")
+                DW_AT_inline	(DW_INL_declared_inlined)
+                DW_AT_sibling	(0x00001849)
+
+0x000015f5:     DW_TAG_formal_parameter
+                  DW_AT_name	("n")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                  DW_AT_decl_line	(864)
+                  DW_AT_type	(0x00001565 "UDItype")
+
+0x000015ff:     DW_TAG_formal_parameter
+                  DW_AT_name	("d")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                  DW_AT_decl_line	(864)
+                  DW_AT_type	(0x00001565 "UDItype")
+
+0x00001609:     DW_TAG_formal_parameter
+                  DW_AT_name	("rp")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                  DW_AT_decl_line	(864)
+                  DW_AT_type	(0x00001849 "UDItype *")
+
+0x00001614:     DW_TAG_variable
+                  DW_AT_name	("nn")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                  DW_AT_decl_line	(866)
+                  DW_AT_type	(0x0000184f "const DWunion")
+
+0x0000161f:     DW_TAG_variable
+                  DW_AT_name	("dd")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                  DW_AT_decl_line	(867)
+                  DW_AT_type	(0x0000184f "const DWunion")
+
+0x0000162a:     DW_TAG_variable
+                  DW_AT_name	("rr")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                  DW_AT_decl_line	(868)
+                  DW_AT_type	(0x000015d7 "DWunion")
+
+0x00001635:     DW_TAG_variable
+                  DW_AT_name	("d0")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                  DW_AT_decl_line	(869)
+                  DW_AT_type	(0x0000154f "USItype")
+
+0x00001640:     DW_TAG_variable
+                  DW_AT_name	("d1")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                  DW_AT_decl_line	(869)
+                  DW_AT_type	(0x0000154f "USItype")
+
+0x0000164b:     DW_TAG_variable
+                  DW_AT_name	("n0")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                  DW_AT_decl_line	(869)
+                  DW_AT_type	(0x0000154f "USItype")
+
+0x00001656:     DW_TAG_variable
+                  DW_AT_name	("n1")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                  DW_AT_decl_line	(869)
+                  DW_AT_type	(0x0000154f "USItype")
+
+0x00001661:     DW_TAG_variable
+                  DW_AT_name	("n2")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                  DW_AT_decl_line	(869)
+                  DW_AT_type	(0x0000154f "USItype")
+
+0x0000166c:     DW_TAG_variable
+                  DW_AT_name	("q0")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                  DW_AT_decl_line	(870)
+                  DW_AT_type	(0x0000154f "USItype")
+
+0x00001677:     DW_TAG_variable
+                  DW_AT_name	("q1")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                  DW_AT_decl_line	(870)
+                  DW_AT_type	(0x0000154f "USItype")
+
+0x00001682:     DW_TAG_variable
+                  DW_AT_name	("b")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                  DW_AT_decl_line	(871)
+                  DW_AT_type	(0x0000154f "USItype")
+
+0x0000168c:     DW_TAG_variable
+                  DW_AT_name	("bm")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                  DW_AT_decl_line	(871)
+                  DW_AT_type	(0x0000154f "USItype")
+
+0x00001697:     DW_TAG_variable
+                  DW_AT_name	("ww")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                  DW_AT_decl_line	(1072)
+                  DW_AT_type	(0x0000184f "const DWunion")
+
+0x000016a2:     DW_TAG_lexical_block
+                  DW_AT_sibling	(0x000016fc)
+
+0x000016a7:       DW_TAG_variable
+                    DW_AT_name	("__d1")
+                    DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                    DW_AT_decl_line	(931)
+                    DW_AT_type	(0x0000154f "USItype")
+
+0x000016b3:       DW_TAG_variable
+                    DW_AT_name	("__d0")
+                    DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                    DW_AT_decl_line	(931)
+                    DW_AT_type	(0x0000154f "USItype")
+
+0x000016bf:       DW_TAG_variable
+                    DW_AT_name	("__q1")
+                    DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                    DW_AT_decl_line	(931)
+                    DW_AT_type	(0x0000154f "USItype")
+
+0x000016cb:       DW_TAG_variable
+                    DW_AT_name	("__q0")
+                    DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                    DW_AT_decl_line	(931)
+                    DW_AT_type	(0x0000154f "USItype")
+
+0x000016d7:       DW_TAG_variable
+                    DW_AT_name	("__r1")
+                    DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                    DW_AT_decl_line	(931)
+                    DW_AT_type	(0x0000154f "USItype")
+
+0x000016e3:       DW_TAG_variable
+                    DW_AT_name	("__r0")
+                    DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                    DW_AT_decl_line	(931)
+                    DW_AT_type	(0x0000154f "USItype")
+
+0x000016ef:       DW_TAG_variable
+                    DW_AT_name	("__m")
+                    DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                    DW_AT_decl_line	(931)
+                    DW_AT_type	(0x0000154f "USItype")
+
+0x000016fb:       NULL
+
+0x000016fc:     DW_TAG_lexical_block
+                  DW_AT_sibling	(0x00001756)
+
+0x00001701:       DW_TAG_variable
+                    DW_AT_name	("__d1")
+                    DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                    DW_AT_decl_line	(968)
+                    DW_AT_type	(0x0000154f "USItype")
+
+0x0000170d:       DW_TAG_variable
+                    DW_AT_name	("__d0")
+                    DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                    DW_AT_decl_line	(968)
+                    DW_AT_type	(0x0000154f "USItype")
+
+0x00001719:       DW_TAG_variable
+                    DW_AT_name	("__q1")
+                    DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                    DW_AT_decl_line	(968)
+                    DW_AT_type	(0x0000154f "USItype")
+
+0x00001725:       DW_TAG_variable
+                    DW_AT_name	("__q0")
+                    DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                    DW_AT_decl_line	(968)
+                    DW_AT_type	(0x0000154f "USItype")
+
+0x00001731:       DW_TAG_variable
+                    DW_AT_name	("__r1")
+                    DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                    DW_AT_decl_line	(968)
+                    DW_AT_type	(0x0000154f "USItype")
+
+0x0000173d:       DW_TAG_variable
+                    DW_AT_name	("__r0")
+                    DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                    DW_AT_decl_line	(968)
+                    DW_AT_type	(0x0000154f "USItype")
+
+0x00001749:       DW_TAG_variable
+                    DW_AT_name	("__m")
+                    DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                    DW_AT_decl_line	(968)
+                    DW_AT_type	(0x0000154f "USItype")
+
+0x00001755:       NULL
+
+0x00001756:     DW_TAG_lexical_block
+                  DW_AT_sibling	(0x000017b0)
+
+0x0000175b:       DW_TAG_variable
+                    DW_AT_name	("__d1")
+                    DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                    DW_AT_decl_line	(973)
+                    DW_AT_type	(0x0000154f "USItype")
+
+0x00001767:       DW_TAG_variable
+                    DW_AT_name	("__d0")
+                    DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                    DW_AT_decl_line	(973)
+                    DW_AT_type	(0x0000154f "USItype")
+
+0x00001773:       DW_TAG_variable
+                    DW_AT_name	("__q1")
+                    DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                    DW_AT_decl_line	(973)
+                    DW_AT_type	(0x0000154f "USItype")
+
+0x0000177f:       DW_TAG_variable
+                    DW_AT_name	("__q0")
+                    DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                    DW_AT_decl_line	(973)
+                    DW_AT_type	(0x0000154f "USItype")
+
+0x0000178b:       DW_TAG_variable
+                    DW_AT_name	("__r1")
+                    DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                    DW_AT_decl_line	(973)
+                    DW_AT_type	(0x0000154f "USItype")
+
+0x00001797:       DW_TAG_variable
+                    DW_AT_name	("__r0")
+                    DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                    DW_AT_decl_line	(973)
+                    DW_AT_type	(0x0000154f "USItype")
+
+0x000017a3:       DW_TAG_variable
+                    DW_AT_name	("__m")
+                    DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                    DW_AT_decl_line	(973)
+                    DW_AT_type	(0x0000154f "USItype")
+
+0x000017af:       NULL
+
+0x000017b0:     DW_TAG_lexical_block
+
+0x000017b1:       DW_TAG_variable
+                    DW_AT_name	("m1")
+                    DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                    DW_AT_decl_line	(1038)
+                    DW_AT_type	(0x0000154f "USItype")
+
+0x000017bc:       DW_TAG_variable
+                    DW_AT_name	("m0")
+                    DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                    DW_AT_decl_line	(1038)
+                    DW_AT_type	(0x0000154f "USItype")
+
+0x000017c7:       DW_TAG_lexical_block
+                    DW_AT_sibling	(0x00001821)
+
+0x000017cc:         DW_TAG_variable
+                      DW_AT_name	("__d1")
+                      DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                      DW_AT_decl_line	(1049)
+                      DW_AT_type	(0x0000154f "USItype")
+
+0x000017d8:         DW_TAG_variable
+                      DW_AT_name	("__d0")
+                      DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                      DW_AT_decl_line	(1049)
+                      DW_AT_type	(0x0000154f "USItype")
+
+0x000017e4:         DW_TAG_variable
+                      DW_AT_name	("__q1")
+                      DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                      DW_AT_decl_line	(1049)
+                      DW_AT_type	(0x0000154f "USItype")
+
+0x000017f0:         DW_TAG_variable
+                      DW_AT_name	("__q0")
+                      DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                      DW_AT_decl_line	(1049)
+                      DW_AT_type	(0x0000154f "USItype")
+
+0x000017fc:         DW_TAG_variable
+                      DW_AT_name	("__r1")
+                      DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                      DW_AT_decl_line	(1049)
+                      DW_AT_type	(0x0000154f "USItype")
+
+0x00001808:         DW_TAG_variable
+                      DW_AT_name	("__r0")
+                      DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                      DW_AT_decl_line	(1049)
+                      DW_AT_type	(0x0000154f "USItype")
+
+0x00001814:         DW_TAG_variable
+                      DW_AT_name	("__m")
+                      DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                      DW_AT_decl_line	(1049)
+                      DW_AT_type	(0x0000154f "USItype")
+
+0x00001820:         NULL
+
+0x00001821:       DW_TAG_lexical_block
+
+0x00001822:         DW_TAG_variable
+                      DW_AT_name	("__t0")
+                      DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                      DW_AT_decl_line	(1050)
+                      DW_AT_type	(0x0000154f "USItype")
+
+0x0000182e:         DW_TAG_variable
+                      DW_AT_name	("__t1")
+                      DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                      DW_AT_decl_line	(1050)
+                      DW_AT_type	(0x0000154f "USItype")
+
+0x0000183a:         DW_TAG_variable
+                      DW_AT_name	("__t2")
+                      DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                      DW_AT_decl_line	(1050)
+                      DW_AT_type	(0x0000154f "USItype")
+
+0x00001846:         NULL
+
+0x00001847:       NULL
+
+0x00001848:     NULL
+
+0x00001849:   DW_TAG_pointer_type
+                DW_AT_byte_size	(0x04)
+                DW_AT_type	(0x00001565 "UDItype")
+
+0x0000184f:   DW_TAG_const_type
+                DW_AT_type	(0x000015d7 "DWunion")
+
+0x00001854:   DW_TAG_subprogram
+                DW_AT_external	(0x01)
+                DW_AT_name	("__udivdi3")
+                DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                DW_AT_decl_line	(1138)
+                DW_AT_prototyped	(0x01)
+                DW_AT_type	(0x00001565 "UDItype")
+                DW_AT_low_pc	(0x000314d8)
+                DW_AT_high_pc	(0x00031908)
+                DW_AT_frame_base	(0x000008c1: 
+                   [0x000314d8, 0x000314dc): DW_OP_reg13 SP
+                   [0x000314dc, 0x000314e0): DW_OP_breg13 SP+36
+                   [0x000314e0, 0x00031908): DW_OP_breg13 SP+48)
+                DW_AT_sibling	(0x00001a74)
+
+0x00001872:     DW_TAG_formal_parameter
+                  DW_AT_name	("n")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                  DW_AT_decl_line	(1138)
+                  DW_AT_type	(0x00001565 "UDItype")
+                  DW_AT_location	(0x000008ec: 
+                     [0x000314d8, 0x00031528): DW_OP_reg0 R0, DW_OP_piece 0x4, DW_OP_reg1 R1, DW_OP_piece 0x4
+                     [0x000315cc, 0x00031600): DW_OP_reg0 R0, DW_OP_piece 0x4, DW_OP_reg1 R1, DW_OP_piece 0x4
+                     [0x0003170c, 0x0003171c): DW_OP_reg0 R0, DW_OP_piece 0x4, DW_OP_reg1 R1, DW_OP_piece 0x4
+                     [0x00031724, 0x00031748): DW_OP_reg0 R0, DW_OP_piece 0x4, DW_OP_reg1 R1, DW_OP_piece 0x4
+                     [0x000317e8, 0x00031808): DW_OP_reg0 R0, DW_OP_piece 0x4, DW_OP_reg1 R1, DW_OP_piece 0x4
+                     [0x00031810, 0x00031828): DW_OP_reg0 R0, DW_OP_piece 0x4, DW_OP_reg1 R1, DW_OP_piece 0x4)
+
+0x00001880:     DW_TAG_formal_parameter
+                  DW_AT_name	("d")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                  DW_AT_decl_line	(1138)
+                  DW_AT_type	(0x00001565 "UDItype")
+                  DW_AT_location	(0x00000954: 
+                     [0x000314d8, 0x0003150c): DW_OP_reg2 R2, DW_OP_piece 0x4, DW_OP_reg3 R3, DW_OP_piece 0x4
+                     [0x000315cc, 0x000315f0): DW_OP_reg2 R2, DW_OP_piece 0x4, DW_OP_reg3 R3, DW_OP_piece 0x4
+                     [0x0003170c, 0x00031720): DW_OP_reg2 R2, DW_OP_piece 0x4, DW_OP_reg3 R3, DW_OP_piece 0x4
+                     [0x00031724, 0x00031750): DW_OP_reg2 R2, DW_OP_piece 0x4, DW_OP_reg3 R3, DW_OP_piece 0x4
+                     [0x000317e8, 0x00031834): DW_OP_reg2 R2, DW_OP_piece 0x4, DW_OP_reg3 R3, DW_OP_piece 0x4)
+
+0x0000188e:     DW_TAG_inlined_subroutine
+                  DW_AT_abstract_origin	(0x000015e3 "__udivmoddi4")
+                  DW_AT_entry_pc	(0x000314e0)
+                  DW_AT_ranges	(0x000000d8
+                     [0x000314e0, 0x000314e4)
+                     [0x00031810, 0x00031908)
+                     [0x000314e8, 0x00031804))
+                  DW_AT_call_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/armv6z-mediatek-linux-gnueabi/libgcc/../../../gcc/libgcc/../gcc/libgcc2.c")
+                  DW_AT_call_line	(1140)
+
+0x0000189e:       DW_TAG_formal_parameter
+                    DW_AT_abstract_origin	(0x00001609 "rp")
+
+0x000018a3:       DW_TAG_formal_parameter
+                    DW_AT_abstract_origin	(0x000015ff "d")
+
+0x000018a8:       DW_TAG_formal_parameter
+                    DW_AT_abstract_origin	(0x000015f5 "n")
+
+0x000018ad:       DW_TAG_lexical_block
+                    DW_AT_ranges	(0x000000f8
+                       [0x000314e0, 0x000314e4)
+                       [0x00031810, 0x00031908)
+                       [0x000314e8, 0x00031804))
+
+0x000018b2:         DW_TAG_variable
+                      DW_AT_abstract_origin	(0x00001614 "nn")
+
+0x000018b7:         DW_TAG_variable
+                      DW_AT_abstract_origin	(0x0000161f "dd")
+
+0x000018bc:         DW_TAG_variable
+                      DW_AT_abstract_origin	(0x0000162a "rr")
+
+0x000018c1:         DW_TAG_variable
+                      DW_AT_abstract_origin	(0x00001635 "d0")
+                      DW_AT_location	(0x000009ac: 
+                         [0x000314f0, 0x00031500): DW_OP_reg4 R4
+                         [0x00031500, 0x0003150c): DW_OP_reg2 R2
+                         [0x0003150c, 0x00031640): DW_OP_reg4 R4
+                         [0x00031640, 0x00031660): DW_OP_reg2 R2
+                         [0x000316dc, 0x00031720): DW_OP_reg2 R2
+                         [0x00031720, 0x000318d8): DW_OP_reg4 R4
+                         [0x000318e8, 0x000318f8): DW_OP_reg2 R2
+                         [0x000318f8, 0x00031908): DW_OP_reg4 R4)
+
+0x000018ca:         DW_TAG_variable
+                      DW_AT_abstract_origin	(0x00001640 "d1")
+                      DW_AT_location	(0x00000a0c: 
+                         [0x000315ec, 0x000316dc): DW_OP_reg7 R7
+                         [0x000318d8, 0x000318f8): DW_OP_reg7 R7)
+
+0x000018d3:         DW_TAG_variable
+                      DW_AT_abstract_origin	(0x0000164b "n0")
+                      DW_AT_location	(0x00000a2a: 
+                         [0x000314ec, 0x0003159c): DW_OP_reg5 R5
+                         [0x000315cc, 0x000317b8): DW_OP_reg5 R5
+                         [0x000317e8, 0x00031908): DW_OP_reg5 R5)
+
+0x000018dc:         DW_TAG_variable
+                      DW_AT_abstract_origin	(0x00001656 "n1")
+                      DW_AT_location	(0x00000a53: 
+                         [0x000314f4, 0x00031500): DW_OP_reg6 R6
+                         [0x00031500, 0x00031518): DW_OP_reg1 R1
+                         [0x00031518, 0x00031540): DW_OP_reg6 R6
+                         [0x000315cc, 0x000315d8): DW_OP_reg6 R6
+                         [0x000315fc, 0x00031680): DW_OP_reg11 R11
+                         [0x0003170c, 0x00031718): DW_OP_reg1 R1
+                         [0x00031718, 0x00031738): DW_OP_reg6 R6
+                         [0x00031738, 0x000317a8): DW_OP_reg11 R11
+                         [0x000317fc, 0x00031814): DW_OP_reg6 R6
+                         [0x00031814, 0x0003182c): DW_OP_reg1 R1
+                         [0x00031830, 0x0003189c): DW_OP_reg11 R11
+                         [0x000318d0, 0x000318d8): DW_OP_reg11 R11
+                         [0x000318e8, 0x00031908): DW_OP_reg11 R11)
+
+0x000018e5:         DW_TAG_variable
+                      DW_AT_abstract_origin	(0x00001661 "n2")
+                      DW_AT_location	(0x00000aea: 
+                         [0x000315f4, 0x00031620): DW_OP_reg8 R8
+                         [0x00031820, 0x00031860): DW_OP_reg6 R6)
+
+0x000018ee:         DW_TAG_variable
+                      DW_AT_abstract_origin	(0x0000166c "q0")
+                      DW_AT_location	(0x00000b08: 
+                         [0x000316ac, 0x00031704): DW_OP_reg10 R10
+                         [0x00031804, 0x00031810): DW_OP_reg10 R10)
+
+0x000018f7:         DW_TAG_variable
+                      DW_AT_abstract_origin	(0x00001677 "q1")
+                      DW_AT_location	(0x00000b26: 
+                         [0x00031744, 0x000317e8): DW_OP_reg6 R6
+                         [0x00031804, 0x00031810): DW_OP_reg6 R6
+                         [0x000318d4, 0x000318d8): DW_OP_reg6 R6)
+
+0x00001900:         DW_TAG_variable
+                      DW_AT_abstract_origin	(0x00001682 "b")
+
+0x00001905:         DW_TAG_variable
+                      DW_AT_abstract_origin	(0x0000168c "bm")
+
+0x0000190a:         DW_TAG_variable
+                      DW_AT_abstract_origin	(0x00001697 "ww")
+                      DW_AT_location	(DW_OP_reg2 R2, DW_OP_piece 0x4, DW_OP_reg3 R3, DW_OP_piece 0x4)
+
+0x00001916:         DW_TAG_lexical_block
+                      DW_AT_low_pc	(0x00031744)
+                      DW_AT_high_pc	(0x000317e8)
+                      DW_AT_sibling	(0x0000195b)
+
+0x00001923:           DW_TAG_variable
+                        DW_AT_abstract_origin	(0x0000175b "__d1")
+
+0x00001928:           DW_TAG_variable
+                        DW_AT_abstract_origin	(0x00001767 "__d0")
+
+0x0000192d:           DW_TAG_variable
+                        DW_AT_abstract_origin	(0x00001773 "__q1")
+                        DW_AT_location	(0x00000b4f: 
+                           [0x00031764, 0x00031774): DW_OP_reg0 R0)
+
+0x00001936:           DW_TAG_variable
+                        DW_AT_abstract_origin	(0x0000177f "__q0")
+                        DW_AT_location	(0x00000b62: 
+                           [0x000317b4, 0x000317e8): DW_OP_reg0 R0
+                           [0x00031804, 0x00031808): DW_OP_reg0 R0)
+
+0x0000193f:           DW_TAG_variable
+                        DW_AT_abstract_origin	(0x0000178b "__r1")
+                        DW_AT_location	(0x00000b80: 
+                           [0x0003176c, 0x000317e8): DW_OP_reg9 R9
+                           [0x00031804, 0x00031810): DW_OP_reg9 R9)
+
+0x00001948:           DW_TAG_variable
+                        DW_AT_abstract_origin	(0x00001797 "__r0")
+                        DW_AT_location	(0x00000b9e: 
+                           [0x000317c0, 0x000317e8): DW_OP_reg5 R5
+                           [0x00031804, 0x00031810): DW_OP_reg5 R5)
+
+0x00001951:           DW_TAG_variable
+                        DW_AT_abstract_origin	(0x000017a3 "__m")
+                        DW_AT_location	(0x00000bbc: 
+                           [0x00031764, 0x000317a0): DW_OP_reg3 R3
+                           [0x000317b4, 0x000317e8): DW_OP_reg8 R8
+                           [0x00031804, 0x00031810): DW_OP_reg8 R8)
+
+0x0000195a:           NULL
+
+0x0000195b:         DW_TAG_lexical_block
+                      DW_AT_ranges	(0x00000118
+                         [0x000315e0, 0x0003170c)
+                         [0x000318d8, 0x000318f8)
+                         [0x000317fc, 0x00031804))
+                      DW_AT_sibling	(0x000019e3)
+
+0x00001964:           DW_TAG_variable
+                        DW_AT_abstract_origin	(0x000017b1 "m1")
+                        DW_AT_location	(0x00000be5: 
+                           [0x000316dc, 0x000316ec): DW_OP_reg1 R1
+                           [0x00031700, 0x00031708): DW_OP_reg1 R1)
+
+0x0000196d:           DW_TAG_variable
+                        DW_AT_abstract_origin	(0x000017bc "m0")
+                        DW_AT_location	(0x00000c03: 
+                           [0x000316dc, 0x0003170c): DW_OP_reg0 R0
+                           [0x00031804, 0x00031808): DW_OP_reg0 R0)
+
+0x00001976:           DW_TAG_lexical_block
+                        DW_AT_ranges	(0x00000138
+                           [0x000315f4, 0x000315f8)
+                           [0x000318d8, 0x000318f8)
+                           [0x00031640, 0x000316ac)
+                           [0x000315fc, 0x0003163c))
+                        DW_AT_sibling	(0x000019bf)
+
+0x0000197f:             DW_TAG_variable
+                          DW_AT_abstract_origin	(0x000017cc "__d1")
+                          DW_AT_location	(0x00000c21: 
+                             [0x000315f8, 0x000316ac): DW_OP_reg10 R10
+                             [0x000318d8, 0x000318f8): DW_OP_reg10 R10)
+
+0x00001988:             DW_TAG_variable
+                          DW_AT_abstract_origin	(0x000017d8 "__d0")
+                          DW_AT_location	(0x00000c3f: 
+                             [0x00031620, 0x0003167c): DW_OP_reg8 R8
+                             [0x000318e8, 0x000318f8): DW_OP_reg8 R8)
+
+0x00001991:             DW_TAG_variable
+                          DW_AT_abstract_origin	(0x000017e4 "__q1")
+                          DW_AT_location	(0x00000c5d: 
+                             [0x00031628, 0x0003163c): DW_OP_reg0 R0
+                             [0x00031804, 0x00031810): DW_OP_reg9 R9
+                             [0x000318d8, 0x000318f8): DW_OP_reg9 R9)
+
+0x0000199a:             DW_TAG_variable
+                          DW_AT_abstract_origin	(0x000017f0 "__q0")
+                          DW_AT_location	(0x00000c86: 
+                             [0x0003167c, 0x000316dc): DW_OP_reg0 R0
+                             [0x000318d8, 0x000318e8): DW_OP_reg0 R0)
+
+0x000019a3:             DW_TAG_variable
+                          DW_AT_abstract_origin	(0x000017fc "__r1")
+                          DW_AT_location	(0x00000ca4: 
+                             [0x00031634, 0x00031654): DW_OP_reg3 R3
+                             [0x00031654, 0x000316dc): DW_OP_reg4 R4
+                             [0x000318d8, 0x000318e8): DW_OP_reg4 R4
+                             [0x000318e8, 0x000318f8): DW_OP_reg3 R3)
+
+0x000019ac:             DW_TAG_variable
+                          DW_AT_abstract_origin	(0x00001808 "__r0")
+                          DW_AT_location	(0x00000cd8: 
+                             [0x0003168c, 0x0003170c): DW_OP_reg3 R3
+                             [0x00031804, 0x00031810): DW_OP_reg3 R3
+                             [0x000318d8, 0x000318e8): DW_OP_reg3 R3)
+
+0x000019b5:             DW_TAG_variable
+                          DW_AT_abstract_origin	(0x00001814 "__m")
+                          DW_AT_location	(0x00000d01: 
+                             [0x00031628, 0x0003165c): DW_OP_reg1 R1
+                             [0x0003167c, 0x0003170c): DW_OP_reg8 R8
+                             [0x00031804, 0x00031810): DW_OP_reg8 R8
+                             [0x000318d8, 0x000318e8): DW_OP_reg8 R8
+                             [0x000318e8, 0x000318f8): DW_OP_reg1 R1)
+
+0x000019be:             NULL
+
+0x000019bf:           DW_TAG_lexical_block
+                        DW_AT_low_pc	(0x000316ac)
+                        DW_AT_high_pc	(0x000316dc)
+
+0x000019c8:             DW_TAG_variable
+                          DW_AT_abstract_origin	(0x00001822 "__t0")
+                          DW_AT_location	(0x00000d40: 
+                             [0x000316dc, 0x0003170c): DW_OP_reg12 R12
+                             [0x00031804, 0x00031810): DW_OP_reg12 R12)
+
+0x000019d1:             DW_TAG_variable
+                          DW_AT_abstract_origin	(0x0000182e "__t1")
+                          DW_AT_location	(DW_OP_reg2 R2)
+
+0x000019d8:             DW_TAG_variable
+                          DW_AT_abstract_origin	(0x0000183a "__t2")
+                          DW_AT_location	(0x00000d5e: 
+                             [0x000316dc, 0x0003170c): DW_OP_reg4 R4
+                             [0x00031804, 0x00031810): DW_OP_reg4 R4)
+
+0x000019e1:             NULL
+
+0x000019e2:           NULL
+
+0x000019e3:         DW_TAG_lexical_block
+                      DW_AT_ranges	(0x00000160
+                         [0x00031518, 0x0003151c)
+                         [0x00031520, 0x000315cc))
+                      DW_AT_sibling	(0x00001a2c)
+
+0x000019ec:           DW_TAG_variable
+                        DW_AT_abstract_origin	(0x000016a7 "__d1")
+                        DW_AT_location	(0x00000d7c: 
+                           [0x0003151c, 0x000315cc): DW_OP_reg7 R7
+                           [0x00031804, 0x00031810): DW_OP_reg7 R7)
+
+0x000019f5:           DW_TAG_variable
+                        DW_AT_abstract_origin	(0x000016b3 "__d0")
+                        DW_AT_location	(0x00000d9a: 
+                           [0x00031540, 0x00031598): DW_OP_reg6 R6)
+
+0x000019fe:           DW_TAG_variable
+                        DW_AT_abstract_origin	(0x000016bf "__q1")
+                        DW_AT_location	(0x00000dad: 
+                           [0x00031548, 0x00031558): DW_OP_reg0 R0
+                           [0x00031804, 0x00031810): DW_OP_reg8 R8)
+
+0x00001a07:           DW_TAG_variable
+                        DW_AT_abstract_origin	(0x000016cb "__q0")
+                        DW_AT_location	(0x00000dcb: 
+                           [0x00031598, 0x000315cc): DW_OP_reg0 R0
+                           [0x00031804, 0x00031808): DW_OP_reg0 R0)
+
+0x00001a10:           DW_TAG_variable
+                        DW_AT_abstract_origin	(0x000016d7 "__r1")
+                        DW_AT_location	(0x00000de9: 
+                           [0x00031550, 0x00031578): DW_OP_reg9 R9
+                           [0x00031578, 0x000315c4): DW_OP_reg10 R10)
+
+0x00001a19:           DW_TAG_variable
+                        DW_AT_abstract_origin	(0x000016e3 "__r0")
+                        DW_AT_location	(0x00000e07: 
+                           [0x000315a4, 0x000315cc): DW_OP_reg5 R5
+                           [0x00031804, 0x00031810): DW_OP_reg5 R5)
+
+0x00001a22:           DW_TAG_variable
+                        DW_AT_abstract_origin	(0x000016ef "__m")
+                        DW_AT_location	(0x00000e25: 
+                           [0x00031548, 0x00031578): DW_OP_reg10 R10
+                           [0x00031598, 0x000315cc): DW_OP_reg6 R6
+                           [0x00031804, 0x00031810): DW_OP_reg6 R6)
+
+0x00001a2b:           NULL
+
+0x00001a2c:         DW_TAG_lexical_block
+                      DW_AT_ranges	(0x00000178
+                         [0x00031820, 0x0003182c)
+                         [0x000318f8, 0x00031908)
+                         [0x000318cc, 0x000318d8)
+                         [0x00031830, 0x000318c8))
+
+0x00001a31:           DW_TAG_variable
+                        DW_AT_abstract_origin	(0x00001701 "__d1")
+                        DW_AT_location	(0x00000e4e: 
+                           [0x00031740, 0x000317e8): DW_OP_reg7 R7
+                           [0x00031804, 0x00031810): DW_OP_reg7 R7
+                           [0x00031824, 0x000318d8): DW_OP_reg7 R7
+                           [0x000318f8, 0x00031908): DW_OP_reg7 R7)
+
+0x00001a3a:           DW_TAG_variable
+                        DW_AT_abstract_origin	(0x0000170d "__d0")
+                        DW_AT_location	(0x00000e82: 
+                           [0x00031734, 0x000317b4): DW_OP_reg8 R8
+                           [0x00031848, 0x000318d8): DW_OP_reg8 R8
+                           [0x000318f8, 0x00031908): DW_OP_reg8 R8)
+
+0x00001a43:           DW_TAG_variable
+                        DW_AT_abstract_origin	(0x00001719 "__q1")
+                        DW_AT_location	(0x00000eab: 
+                           [0x00031850, 0x00031860): DW_OP_reg0 R0
+                           [0x000318f8, 0x00031908): DW_OP_reg6 R6)
+
+0x00001a4c:           DW_TAG_variable
+                        DW_AT_abstract_origin	(0x00001725 "__q0")
+                        DW_AT_location	(0x00000ec9: 
+                           [0x00031744, 0x00031748): DW_OP_reg0 R0
+                           [0x00031898, 0x000318d8): DW_OP_reg0 R0)
+
+0x00001a55:           DW_TAG_variable
+                        DW_AT_abstract_origin	(0x00001731 "__r1")
+                        DW_AT_location	(0x00000ee7: 
+                           [0x00031744, 0x00031758): DW_OP_reg9 R9
+                           [0x00031858, 0x000318d8): DW_OP_reg9 R9
+                           [0x000318f8, 0x00031908): DW_OP_reg9 R9)
+
+0x00001a5e:           DW_TAG_variable
+                        DW_AT_abstract_origin	(0x0000173d "__r0")
+                        DW_AT_location	(0x00000f10: 
+                           [0x00031744, 0x00031750): DW_OP_reg3 R3
+                           [0x000318a8, 0x000318d8): DW_OP_reg3 R3)
+
+0x00001a67:           DW_TAG_variable
+                        DW_AT_abstract_origin	(0x00001749 "__m")
+                        DW_AT_location	(0x00000f2e: 
+                           [0x00031744, 0x00031750): DW_OP_reg2 R2
+                           [0x00031850, 0x00031880): DW_OP_reg3 R3
+                           [0x00031898, 0x000318d8): DW_OP_reg2 R2
+                           [0x000318f8, 0x00031908): DW_OP_reg3 R3)
+
+0x00001a70:           NULL
+
+0x00001a71:         NULL
+
+0x00001a72:       NULL
+
+0x00001a73:     NULL
+
+0x00001a74:   DW_TAG_variable
+                DW_AT_name	("stdin")
+                DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/include/stdio.h")
+                DW_AT_decl_line	(145)
+                DW_AT_type	(0x00001518 "_IO_FILE *")
+                DW_AT_external	(0x01)
+                DW_AT_declaration	(0x01)
+
+0x00001a81:   DW_TAG_variable
+                DW_AT_name	("stdout")
+                DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/include/stdio.h")
+                DW_AT_decl_line	(146)
+                DW_AT_type	(0x00001518 "_IO_FILE *")
+                DW_AT_external	(0x01)
+                DW_AT_declaration	(0x01)
+
+0x00001a8e:   NULL
+0x00001a8f: Compile Unit: length = 0x0000010a, format = DWARF32, version = 0x0002, abbr_offset = 0x0518, addr_size = 0x04 (next unit at 0x00001b9d)
+
+0x00001a9a: DW_TAG_compile_unit
+              DW_AT_producer	("GNU C 4.4.1")
+              DW_AT_language	(DW_LANG_C89)
+              DW_AT_name	("elf-init.c")
+              DW_AT_comp_dir	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/local/src/glibc-2.9/csu")
+              DW_AT_low_pc	(0x00031908)
+              DW_AT_high_pc	(0x00031974)
+              DW_AT_stmt_list	(0x00000e08)
+
+0x00001ab4:   DW_TAG_base_type
+                DW_AT_byte_size	(0x04)
+                DW_AT_encoding	(DW_ATE_signed)
+                DW_AT_name	("int")
+
+0x00001abb:   DW_TAG_typedef
+                DW_AT_name	("size_t")
+                DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/lib/gcc/armv6z-mediatek-linux-gnueabi/4.4.1/include/stddef.h")
+                DW_AT_decl_line	(211)
+                DW_AT_type	(0x00001ac6 "unsigned int")
+
+0x00001ac6:   DW_TAG_base_type
+                DW_AT_byte_size	(0x04)
+                DW_AT_encoding	(DW_ATE_unsigned)
+                DW_AT_name	("unsigned int")
+
+0x00001acd:   DW_TAG_subprogram
+                DW_AT_external	(0x01)
+                DW_AT_name	("__libc_csu_fini")
+                DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/local/src/glibc-2.9/csu/elf-init.c")
+                DW_AT_decl_line	(90)
+                DW_AT_prototyped	(0x01)
+                DW_AT_low_pc	(0x00031908)
+                DW_AT_high_pc	(0x0003190c)
+                DW_AT_frame_base	(DW_OP_reg13 SP)
+
+0x00001ae0:   DW_TAG_subprogram
+                DW_AT_external	(0x01)
+                DW_AT_name	("__libc_csu_init")
+                DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/local/src/glibc-2.9/csu/elf-init.c")
+                DW_AT_decl_line	(64)
+                DW_AT_prototyped	(0x01)
+                DW_AT_low_pc	(0x0003190c)
+                DW_AT_high_pc	(0x00031974)
+                DW_AT_frame_base	(0x00000f62: 
+                   [0x0003190c, 0x00031910): DW_OP_reg13 SP
+                   [0x00031910, 0x00031974): DW_OP_breg13 SP+32)
+                DW_AT_sibling	(0x00001b43)
+
+0x00001af9:     DW_TAG_formal_parameter
+                  DW_AT_name	("argc")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/local/src/glibc-2.9/csu/elf-init.c")
+                  DW_AT_decl_line	(64)
+                  DW_AT_type	(0x00001ab4 "int")
+                  DW_AT_location	(0x00000f81: 
+                     [0x0003190c, 0x00031928): DW_OP_reg0 R0
+                     [0x00031928, 0x00031974): DW_OP_reg6 R6)
+
+0x00001b08:     DW_TAG_formal_parameter
+                  DW_AT_name	("argv")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/local/src/glibc-2.9/csu/elf-init.c")
+                  DW_AT_decl_line	(64)
+                  DW_AT_type	(0x00001b43 "char **")
+                  DW_AT_location	(0x00000f9f: 
+                     [0x0003190c, 0x00031928): DW_OP_reg1 R1
+                     [0x00031928, 0x00031974): DW_OP_reg7 R7)
+
+0x00001b17:     DW_TAG_formal_parameter
+                  DW_AT_name	("envp")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/local/src/glibc-2.9/csu/elf-init.c")
+                  DW_AT_decl_line	(64)
+                  DW_AT_type	(0x00001b43 "char **")
+                  DW_AT_location	(0x00000fbd: 
+                     [0x0003190c, 0x00031928): DW_OP_reg2 R2
+                     [0x00031928, 0x00031974): DW_OP_reg8 R8)
+
+0x00001b26:     DW_TAG_variable
+                  DW_AT_name	("size")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/local/src/glibc-2.9/csu/elf-init.c")
+                  DW_AT_decl_line	(81)
+                  DW_AT_type	(0x00001b56 "const size_t")
+
+0x00001b31:     DW_TAG_lexical_block
+                  DW_AT_ranges	(0x000001a0
+                     [0x00031910, 0x00031918)
+                     [0x00031928, 0x00031974))
+
+0x00001b36:       DW_TAG_variable
+                    DW_AT_name	("i")
+                    DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/local/src/glibc-2.9/csu/elf-init.c")
+                    DW_AT_decl_line	(82)
+                    DW_AT_type	(0x00001abb "size_t")
+                    DW_AT_location	(DW_OP_reg4 R4)
+
+0x00001b41:       NULL
+
+0x00001b42:     NULL
+
+0x00001b43:   DW_TAG_pointer_type
+                DW_AT_byte_size	(0x04)
+                DW_AT_type	(0x00001b49 "char *")
+
+0x00001b49:   DW_TAG_pointer_type
+                DW_AT_byte_size	(0x04)
+                DW_AT_type	(0x00001b4f "char")
+
+0x00001b4f:   DW_TAG_base_type
+                DW_AT_byte_size	(0x01)
+                DW_AT_encoding	(DW_ATE_unsigned_char)
+                DW_AT_name	("char")
+
+0x00001b56:   DW_TAG_const_type
+                DW_AT_type	(0x00001abb "size_t")
+
+0x00001b5b:   DW_TAG_array_type
+                DW_AT_type	(0x00001b7c "void (*)(int, char **, char **)")
+                DW_AT_sibling	(0x00001b66)
+
+0x00001b64:     DW_TAG_subrange_type
+
+0x00001b65:     NULL
+
+0x00001b66:   DW_TAG_subroutine_type
+                DW_AT_prototyped	(0x01)
+                DW_AT_sibling	(0x00001b7c)
+
+0x00001b6c:     DW_TAG_formal_parameter
+                  DW_AT_type	(0x00001ab4 "int")
+
+0x00001b71:     DW_TAG_formal_parameter
+                  DW_AT_type	(0x00001b43 "char **")
+
+0x00001b76:     DW_TAG_formal_parameter
+                  DW_AT_type	(0x00001b43 "char **")
+
+0x00001b7b:     NULL
+
+0x00001b7c:   DW_TAG_pointer_type
+                DW_AT_byte_size	(0x04)
+                DW_AT_type	(0x00001b66 "void (int, char **, char **)")
+
+0x00001b82:   DW_TAG_variable
+                DW_AT_name	("__init_array_start")
+                DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/local/src/glibc-2.9/csu/elf-init.c")
+                DW_AT_decl_line	(45)
+                DW_AT_type	(0x00001b5b "void (*[]")
+                DW_AT_external	(0x01)
+                DW_AT_declaration	(0x01)
+
+0x00001b8f:   DW_TAG_variable
+                DW_AT_name	("__init_array_end")
+                DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/local/src/glibc-2.9/csu/elf-init.c")
+                DW_AT_decl_line	(47)
+                DW_AT_type	(0x00001b5b "void (*[]")
+                DW_AT_external	(0x01)
+                DW_AT_declaration	(0x01)
+
+0x00001b9c:   NULL
+0x00001b9d: Compile Unit: length = 0x00000262, format = DWARF32, version = 0x0002, abbr_offset = 0x05ec, addr_size = 0x04 (next unit at 0x00001e03)
+
+0x00001ba8: DW_TAG_compile_unit
+              DW_AT_producer	("GNU C 4.4.1")
+              DW_AT_language	(DW_LANG_C89)
+              DW_AT_name	("stat64.c")
+              DW_AT_comp_dir	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/local/src/glibc-2.9/io")
+              DW_AT_low_pc	(0x00031974)
+              DW_AT_high_pc	(0x00031984)
+              DW_AT_stmt_list	(0x00000ecf)
+
+0x00001bc2:   DW_TAG_base_type
+                DW_AT_byte_size	(0x01)
+                DW_AT_encoding	(DW_ATE_unsigned_char)
+                DW_AT_name	("unsigned char")
+
+0x00001bc9:   DW_TAG_base_type
+                DW_AT_byte_size	(0x02)
+                DW_AT_encoding	(DW_ATE_unsigned)
+                DW_AT_name	("short unsigned int")
+
+0x00001bd0:   DW_TAG_base_type
+                DW_AT_byte_size	(0x04)
+                DW_AT_encoding	(DW_ATE_unsigned)
+                DW_AT_name	("unsigned int")
+
+0x00001bd7:   DW_TAG_base_type
+                DW_AT_byte_size	(0x04)
+                DW_AT_encoding	(DW_ATE_unsigned)
+                DW_AT_name	("long unsigned int")
+
+0x00001bde:   DW_TAG_base_type
+                DW_AT_byte_size	(0x01)
+                DW_AT_encoding	(DW_ATE_signed_char)
+                DW_AT_name	("signed char")
+
+0x00001be5:   DW_TAG_base_type
+                DW_AT_byte_size	(0x02)
+                DW_AT_encoding	(DW_ATE_signed)
+                DW_AT_name	("short int")
+
+0x00001bec:   DW_TAG_base_type
+                DW_AT_byte_size	(0x04)
+                DW_AT_encoding	(DW_ATE_signed)
+                DW_AT_name	("int")
+
+0x00001bf3:   DW_TAG_base_type
+                DW_AT_byte_size	(0x08)
+                DW_AT_encoding	(DW_ATE_signed)
+                DW_AT_name	("long long int")
+
+0x00001bfa:   DW_TAG_base_type
+                DW_AT_byte_size	(0x08)
+                DW_AT_encoding	(DW_ATE_unsigned)
+                DW_AT_name	("long long unsigned int")
+
+0x00001c01:   DW_TAG_typedef
+                DW_AT_name	("__quad_t")
+                DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/local/src/glibc-2.9/io/../bits/types.h")
+                DW_AT_decl_line	(56)
+                DW_AT_type	(0x00001bf3 "long long int")
+
+0x00001c0c:   DW_TAG_typedef
+                DW_AT_name	("__u_quad_t")
+                DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/local/src/glibc-2.9/io/../bits/types.h")
+                DW_AT_decl_line	(57)
+                DW_AT_type	(0x00001bfa "long long unsigned int")
+
+0x00001c17:   DW_TAG_typedef
+                DW_AT_name	("__dev_t")
+                DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/local/src/glibc-2.9/io/../bits/types.h")
+                DW_AT_decl_line	(134)
+                DW_AT_type	(0x00001c0c "__u_quad_t")
+
+0x00001c22:   DW_TAG_typedef
+                DW_AT_name	("__uid_t")
+                DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/local/src/glibc-2.9/io/../bits/types.h")
+                DW_AT_decl_line	(135)
+                DW_AT_type	(0x00001bd0 "unsigned int")
+
+0x00001c2d:   DW_TAG_typedef
+                DW_AT_name	("__gid_t")
+                DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/local/src/glibc-2.9/io/../bits/types.h")
+                DW_AT_decl_line	(136)
+                DW_AT_type	(0x00001bd0 "unsigned int")
+
+0x00001c38:   DW_TAG_typedef
+                DW_AT_name	("__ino_t")
+                DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/local/src/glibc-2.9/io/../bits/types.h")
+                DW_AT_decl_line	(137)
+                DW_AT_type	(0x00001bd7 "long unsigned int")
+
+0x00001c43:   DW_TAG_typedef
+                DW_AT_name	("__ino64_t")
+                DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/local/src/glibc-2.9/io/../bits/types.h")
+                DW_AT_decl_line	(138)
+                DW_AT_type	(0x00001c0c "__u_quad_t")
+
+0x00001c4e:   DW_TAG_typedef
+                DW_AT_name	("__mode_t")
+                DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/local/src/glibc-2.9/io/../bits/types.h")
+                DW_AT_decl_line	(139)
+                DW_AT_type	(0x00001bd0 "unsigned int")
+
+0x00001c59:   DW_TAG_typedef
+                DW_AT_name	("__nlink_t")
+                DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/local/src/glibc-2.9/io/../bits/types.h")
+                DW_AT_decl_line	(140)
+                DW_AT_type	(0x00001bd0 "unsigned int")
+
+0x00001c64:   DW_TAG_base_type
+                DW_AT_byte_size	(0x04)
+                DW_AT_encoding	(DW_ATE_signed)
+                DW_AT_name	("long int")
+
+0x00001c6b:   DW_TAG_typedef
+                DW_AT_name	("__off64_t")
+                DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/local/src/glibc-2.9/io/../bits/types.h")
+                DW_AT_decl_line	(142)
+                DW_AT_type	(0x00001c01 "__quad_t")
+
+0x00001c76:   DW_TAG_base_type
+                DW_AT_byte_size	(0x04)
+                DW_AT_encoding	(DW_ATE_unsigned)
+
+0x00001c79:   DW_TAG_typedef
+                DW_AT_name	("__time_t")
+                DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/local/src/glibc-2.9/io/../bits/types.h")
+                DW_AT_decl_line	(149)
+                DW_AT_type	(0x00001c64 "long int")
+
+0x00001c84:   DW_TAG_typedef
+                DW_AT_name	("__blksize_t")
+                DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/local/src/glibc-2.9/io/../bits/types.h")
+                DW_AT_decl_line	(164)
+                DW_AT_type	(0x00001c64 "long int")
+
+0x00001c8f:   DW_TAG_typedef
+                DW_AT_name	("__blkcnt64_t")
+                DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/local/src/glibc-2.9/io/../bits/types.h")
+                DW_AT_decl_line	(170)
+                DW_AT_type	(0x00001c01 "__quad_t")
+
+0x00001c9a:   DW_TAG_base_type
+                DW_AT_byte_size	(0x01)
+                DW_AT_encoding	(DW_ATE_unsigned_char)
+                DW_AT_name	("char")
+
+0x00001ca1:   DW_TAG_structure_type
+                DW_AT_name	("timespec")
+                DW_AT_byte_size	(0x08)
+                DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/local/src/glibc-2.9/io/../time/time.h")
+                DW_AT_decl_line	(122)
+                DW_AT_sibling	(0x00001cca)
+
+0x00001cad:     DW_TAG_member
+                  DW_AT_name	("tv_sec")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/local/src/glibc-2.9/io/../time/time.h")
+                  DW_AT_decl_line	(123)
+                  DW_AT_type	(0x00001c79 "__time_t")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x0)
+
+0x00001cbb:     DW_TAG_member
+                  DW_AT_name	("tv_nsec")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/local/src/glibc-2.9/io/../time/time.h")
+                  DW_AT_decl_line	(124)
+                  DW_AT_type	(0x00001c64 "long int")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x4)
+
+0x00001cc9:     NULL
+
+0x00001cca:   DW_TAG_structure_type
+                DW_AT_name	("stat64")
+                DW_AT_byte_size	(0x68)
+                DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/local/src/glibc-2.9/io/../sysdeps/unix/sysv/linux/bits/stat.h")
+                DW_AT_decl_line	(94)
+                DW_AT_sibling	(0x00001db7)
+
+0x00001cd6:     DW_TAG_member
+                  DW_AT_name	("st_dev")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/local/src/glibc-2.9/io/../sysdeps/unix/sysv/linux/bits/stat.h")
+                  DW_AT_decl_line	(95)
+                  DW_AT_type	(0x00001c17 "__dev_t")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x0)
+
+0x00001ce4:     DW_TAG_member
+                  DW_AT_name	("__pad1")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/local/src/glibc-2.9/io/../sysdeps/unix/sysv/linux/bits/stat.h")
+                  DW_AT_decl_line	(96)
+                  DW_AT_type	(0x00001bd0 "unsigned int")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x8)
+
+0x00001cf2:     DW_TAG_member
+                  DW_AT_name	("__st_ino")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/local/src/glibc-2.9/io/../sysdeps/unix/sysv/linux/bits/stat.h")
+                  DW_AT_decl_line	(98)
+                  DW_AT_type	(0x00001c38 "__ino_t")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0xc)
+
+0x00001d00:     DW_TAG_member
+                  DW_AT_name	("st_mode")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/local/src/glibc-2.9/io/../sysdeps/unix/sysv/linux/bits/stat.h")
+                  DW_AT_decl_line	(99)
+                  DW_AT_type	(0x00001c4e "__mode_t")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x10)
+
+0x00001d0e:     DW_TAG_member
+                  DW_AT_name	("st_nlink")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/local/src/glibc-2.9/io/../sysdeps/unix/sysv/linux/bits/stat.h")
+                  DW_AT_decl_line	(100)
+                  DW_AT_type	(0x00001c59 "__nlink_t")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x14)
+
+0x00001d1c:     DW_TAG_member
+                  DW_AT_name	("st_uid")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/local/src/glibc-2.9/io/../sysdeps/unix/sysv/linux/bits/stat.h")
+                  DW_AT_decl_line	(101)
+                  DW_AT_type	(0x00001c22 "__uid_t")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x18)
+
+0x00001d2a:     DW_TAG_member
+                  DW_AT_name	("st_gid")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/local/src/glibc-2.9/io/../sysdeps/unix/sysv/linux/bits/stat.h")
+                  DW_AT_decl_line	(102)
+                  DW_AT_type	(0x00001c2d "__gid_t")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x1c)
+
+0x00001d38:     DW_TAG_member
+                  DW_AT_name	("st_rdev")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/local/src/glibc-2.9/io/../sysdeps/unix/sysv/linux/bits/stat.h")
+                  DW_AT_decl_line	(103)
+                  DW_AT_type	(0x00001c17 "__dev_t")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x20)
+
+0x00001d46:     DW_TAG_member
+                  DW_AT_name	("__pad2")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/local/src/glibc-2.9/io/../sysdeps/unix/sysv/linux/bits/stat.h")
+                  DW_AT_decl_line	(104)
+                  DW_AT_type	(0x00001bd0 "unsigned int")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x28)
+
+0x00001d54:     DW_TAG_member
+                  DW_AT_name	("st_size")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/local/src/glibc-2.9/io/../sysdeps/unix/sysv/linux/bits/stat.h")
+                  DW_AT_decl_line	(105)
+                  DW_AT_type	(0x00001c6b "__off64_t")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x30)
+
+0x00001d62:     DW_TAG_member
+                  DW_AT_name	("st_blksize")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/local/src/glibc-2.9/io/../sysdeps/unix/sysv/linux/bits/stat.h")
+                  DW_AT_decl_line	(106)
+                  DW_AT_type	(0x00001c84 "__blksize_t")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x38)
+
+0x00001d70:     DW_TAG_member
+                  DW_AT_name	("st_blocks")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/local/src/glibc-2.9/io/../sysdeps/unix/sysv/linux/bits/stat.h")
+                  DW_AT_decl_line	(108)
+                  DW_AT_type	(0x00001c8f "__blkcnt64_t")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x40)
+
+0x00001d7e:     DW_TAG_member
+                  DW_AT_name	("st_atim")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/local/src/glibc-2.9/io/../sysdeps/unix/sysv/linux/bits/stat.h")
+                  DW_AT_decl_line	(116)
+                  DW_AT_type	(0x00001ca1 "timespec")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x48)
+
+0x00001d8c:     DW_TAG_member
+                  DW_AT_name	("st_mtim")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/local/src/glibc-2.9/io/../sysdeps/unix/sysv/linux/bits/stat.h")
+                  DW_AT_decl_line	(117)
+                  DW_AT_type	(0x00001ca1 "timespec")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x50)
+
+0x00001d9a:     DW_TAG_member
+                  DW_AT_name	("st_ctim")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/local/src/glibc-2.9/io/../sysdeps/unix/sysv/linux/bits/stat.h")
+                  DW_AT_decl_line	(118)
+                  DW_AT_type	(0x00001ca1 "timespec")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x58)
+
+0x00001da8:     DW_TAG_member
+                  DW_AT_name	("st_ino")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/local/src/glibc-2.9/io/../sysdeps/unix/sysv/linux/bits/stat.h")
+                  DW_AT_decl_line	(127)
+                  DW_AT_type	(0x00001c43 "__ino64_t")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x60)
+
+0x00001db6:     NULL
+
+0x00001db7:   DW_TAG_subprogram
+                DW_AT_external	(0x01)
+                DW_AT_name	("stat64")
+                DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/local/src/glibc-2.9/io/stat64.c")
+                DW_AT_decl_line	(50)
+                DW_AT_prototyped	(0x01)
+                DW_AT_type	(0x00001bec "int")
+                DW_AT_low_pc	(0x00031974)
+                DW_AT_high_pc	(0x00031984)
+                DW_AT_frame_base	(DW_OP_reg13 SP)
+                DW_AT_sibling	(0x00001df1)
+
+0x00001dd2:     DW_TAG_formal_parameter
+                  DW_AT_name	("file")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/local/src/glibc-2.9/io/stat64.c")
+                  DW_AT_decl_line	(50)
+                  DW_AT_type	(0x00001df1 "const char *")
+                  DW_AT_location	(0x00000fdb: 
+                     [0x00031974, 0x00031980): DW_OP_reg0 R0)
+
+0x00001de1:     DW_TAG_formal_parameter
+                  DW_AT_name	("buf")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/local/src/glibc-2.9/io/stat64.c")
+                  DW_AT_decl_line	(50)
+                  DW_AT_type	(0x00001dfc "stat64 *")
+                  DW_AT_location	(0x00000fee: 
+                     [0x00031974, 0x0003197c): DW_OP_reg1 R1
+                     [0x0003197c, 0x00031984): DW_OP_reg2 R2)
+
+0x00001df0:     NULL
+
+0x00001df1:   DW_TAG_pointer_type
+                DW_AT_byte_size	(0x04)
+                DW_AT_type	(0x00001df7 "const char")
+
+0x00001df7:   DW_TAG_const_type
+                DW_AT_type	(0x00001c9a "char")
+
+0x00001dfc:   DW_TAG_pointer_type
+                DW_AT_byte_size	(0x04)
+                DW_AT_type	(0x00001cca "stat64")
+
+0x00001e02:   NULL
+0x00001e03: Compile Unit: length = 0x00000256, format = DWARF32, version = 0x0002, abbr_offset = 0x0691, addr_size = 0x04 (next unit at 0x0000205d)
+
+0x00001e0e: DW_TAG_compile_unit
+              DW_AT_producer	("GNU C 4.4.1")
+              DW_AT_language	(DW_LANG_C89)
+              DW_AT_name	("fstat64.c")
+              DW_AT_comp_dir	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/local/src/glibc-2.9/io")
+              DW_AT_low_pc	(0x00031984)
+              DW_AT_high_pc	(0x00031994)
+              DW_AT_stmt_list	(0x00000f5a)
+
+0x00001e28:   DW_TAG_base_type
+                DW_AT_byte_size	(0x01)
+                DW_AT_encoding	(DW_ATE_unsigned_char)
+                DW_AT_name	("unsigned char")
+
+0x00001e2f:   DW_TAG_base_type
+                DW_AT_byte_size	(0x02)
+                DW_AT_encoding	(DW_ATE_unsigned)
+                DW_AT_name	("short unsigned int")
+
+0x00001e36:   DW_TAG_base_type
+                DW_AT_byte_size	(0x04)
+                DW_AT_encoding	(DW_ATE_unsigned)
+                DW_AT_name	("unsigned int")
+
+0x00001e3d:   DW_TAG_base_type
+                DW_AT_byte_size	(0x04)
+                DW_AT_encoding	(DW_ATE_unsigned)
+                DW_AT_name	("long unsigned int")
+
+0x00001e44:   DW_TAG_base_type
+                DW_AT_byte_size	(0x01)
+                DW_AT_encoding	(DW_ATE_signed_char)
+                DW_AT_name	("signed char")
+
+0x00001e4b:   DW_TAG_base_type
+                DW_AT_byte_size	(0x02)
+                DW_AT_encoding	(DW_ATE_signed)
+                DW_AT_name	("short int")
+
+0x00001e52:   DW_TAG_base_type
+                DW_AT_byte_size	(0x04)
+                DW_AT_encoding	(DW_ATE_signed)
+                DW_AT_name	("int")
+
+0x00001e59:   DW_TAG_base_type
+                DW_AT_byte_size	(0x08)
+                DW_AT_encoding	(DW_ATE_signed)
+                DW_AT_name	("long long int")
+
+0x00001e60:   DW_TAG_base_type
+                DW_AT_byte_size	(0x08)
+                DW_AT_encoding	(DW_ATE_unsigned)
+                DW_AT_name	("long long unsigned int")
+
+0x00001e67:   DW_TAG_typedef
+                DW_AT_name	("__quad_t")
+                DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/local/src/glibc-2.9/io/../bits/types.h")
+                DW_AT_decl_line	(56)
+                DW_AT_type	(0x00001e59 "long long int")
+
+0x00001e72:   DW_TAG_typedef
+                DW_AT_name	("__u_quad_t")
+                DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/local/src/glibc-2.9/io/../bits/types.h")
+                DW_AT_decl_line	(57)
+                DW_AT_type	(0x00001e60 "long long unsigned int")
+
+0x00001e7d:   DW_TAG_typedef
+                DW_AT_name	("__dev_t")
+                DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/local/src/glibc-2.9/io/../bits/types.h")
+                DW_AT_decl_line	(134)
+                DW_AT_type	(0x00001e72 "__u_quad_t")
+
+0x00001e88:   DW_TAG_typedef
+                DW_AT_name	("__uid_t")
+                DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/local/src/glibc-2.9/io/../bits/types.h")
+                DW_AT_decl_line	(135)
+                DW_AT_type	(0x00001e36 "unsigned int")
+
+0x00001e93:   DW_TAG_typedef
+                DW_AT_name	("__gid_t")
+                DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/local/src/glibc-2.9/io/../bits/types.h")
+                DW_AT_decl_line	(136)
+                DW_AT_type	(0x00001e36 "unsigned int")
+
+0x00001e9e:   DW_TAG_typedef
+                DW_AT_name	("__ino_t")
+                DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/local/src/glibc-2.9/io/../bits/types.h")
+                DW_AT_decl_line	(137)
+                DW_AT_type	(0x00001e3d "long unsigned int")
+
+0x00001ea9:   DW_TAG_typedef
+                DW_AT_name	("__ino64_t")
+                DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/local/src/glibc-2.9/io/../bits/types.h")
+                DW_AT_decl_line	(138)
+                DW_AT_type	(0x00001e72 "__u_quad_t")
+
+0x00001eb4:   DW_TAG_typedef
+                DW_AT_name	("__mode_t")
+                DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/local/src/glibc-2.9/io/../bits/types.h")
+                DW_AT_decl_line	(139)
+                DW_AT_type	(0x00001e36 "unsigned int")
+
+0x00001ebf:   DW_TAG_typedef
+                DW_AT_name	("__nlink_t")
+                DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/local/src/glibc-2.9/io/../bits/types.h")
+                DW_AT_decl_line	(140)
+                DW_AT_type	(0x00001e36 "unsigned int")
+
+0x00001eca:   DW_TAG_base_type
+                DW_AT_byte_size	(0x04)
+                DW_AT_encoding	(DW_ATE_signed)
+                DW_AT_name	("long int")
+
+0x00001ed1:   DW_TAG_typedef
+                DW_AT_name	("__off64_t")
+                DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/local/src/glibc-2.9/io/../bits/types.h")
+                DW_AT_decl_line	(142)
+                DW_AT_type	(0x00001e67 "__quad_t")
+
+0x00001edc:   DW_TAG_base_type
+                DW_AT_byte_size	(0x04)
+                DW_AT_encoding	(DW_ATE_unsigned)
+
+0x00001edf:   DW_TAG_typedef
+                DW_AT_name	("__time_t")
+                DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/local/src/glibc-2.9/io/../bits/types.h")
+                DW_AT_decl_line	(149)
+                DW_AT_type	(0x00001eca "long int")
+
+0x00001eea:   DW_TAG_typedef
+                DW_AT_name	("__blksize_t")
+                DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/local/src/glibc-2.9/io/../bits/types.h")
+                DW_AT_decl_line	(164)
+                DW_AT_type	(0x00001eca "long int")
+
+0x00001ef5:   DW_TAG_typedef
+                DW_AT_name	("__blkcnt64_t")
+                DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/local/src/glibc-2.9/io/../bits/types.h")
+                DW_AT_decl_line	(170)
+                DW_AT_type	(0x00001e67 "__quad_t")
+
+0x00001f00:   DW_TAG_base_type
+                DW_AT_byte_size	(0x01)
+                DW_AT_encoding	(DW_ATE_unsigned_char)
+                DW_AT_name	("char")
+
+0x00001f07:   DW_TAG_structure_type
+                DW_AT_name	("timespec")
+                DW_AT_byte_size	(0x08)
+                DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/local/src/glibc-2.9/io/../time/time.h")
+                DW_AT_decl_line	(122)
+                DW_AT_sibling	(0x00001f30)
+
+0x00001f13:     DW_TAG_member
+                  DW_AT_name	("tv_sec")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/local/src/glibc-2.9/io/../time/time.h")
+                  DW_AT_decl_line	(123)
+                  DW_AT_type	(0x00001edf "__time_t")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x0)
+
+0x00001f21:     DW_TAG_member
+                  DW_AT_name	("tv_nsec")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/local/src/glibc-2.9/io/../time/time.h")
+                  DW_AT_decl_line	(124)
+                  DW_AT_type	(0x00001eca "long int")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x4)
+
+0x00001f2f:     NULL
+
+0x00001f30:   DW_TAG_structure_type
+                DW_AT_name	("stat64")
+                DW_AT_byte_size	(0x68)
+                DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/local/src/glibc-2.9/io/../sysdeps/unix/sysv/linux/bits/stat.h")
+                DW_AT_decl_line	(94)
+                DW_AT_sibling	(0x0000201d)
+
+0x00001f3c:     DW_TAG_member
+                  DW_AT_name	("st_dev")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/local/src/glibc-2.9/io/../sysdeps/unix/sysv/linux/bits/stat.h")
+                  DW_AT_decl_line	(95)
+                  DW_AT_type	(0x00001e7d "__dev_t")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x0)
+
+0x00001f4a:     DW_TAG_member
+                  DW_AT_name	("__pad1")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/local/src/glibc-2.9/io/../sysdeps/unix/sysv/linux/bits/stat.h")
+                  DW_AT_decl_line	(96)
+                  DW_AT_type	(0x00001e36 "unsigned int")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x8)
+
+0x00001f58:     DW_TAG_member
+                  DW_AT_name	("__st_ino")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/local/src/glibc-2.9/io/../sysdeps/unix/sysv/linux/bits/stat.h")
+                  DW_AT_decl_line	(98)
+                  DW_AT_type	(0x00001e9e "__ino_t")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0xc)
+
+0x00001f66:     DW_TAG_member
+                  DW_AT_name	("st_mode")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/local/src/glibc-2.9/io/../sysdeps/unix/sysv/linux/bits/stat.h")
+                  DW_AT_decl_line	(99)
+                  DW_AT_type	(0x00001eb4 "__mode_t")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x10)
+
+0x00001f74:     DW_TAG_member
+                  DW_AT_name	("st_nlink")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/local/src/glibc-2.9/io/../sysdeps/unix/sysv/linux/bits/stat.h")
+                  DW_AT_decl_line	(100)
+                  DW_AT_type	(0x00001ebf "__nlink_t")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x14)
+
+0x00001f82:     DW_TAG_member
+                  DW_AT_name	("st_uid")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/local/src/glibc-2.9/io/../sysdeps/unix/sysv/linux/bits/stat.h")
+                  DW_AT_decl_line	(101)
+                  DW_AT_type	(0x00001e88 "__uid_t")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x18)
+
+0x00001f90:     DW_TAG_member
+                  DW_AT_name	("st_gid")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/local/src/glibc-2.9/io/../sysdeps/unix/sysv/linux/bits/stat.h")
+                  DW_AT_decl_line	(102)
+                  DW_AT_type	(0x00001e93 "__gid_t")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x1c)
+
+0x00001f9e:     DW_TAG_member
+                  DW_AT_name	("st_rdev")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/local/src/glibc-2.9/io/../sysdeps/unix/sysv/linux/bits/stat.h")
+                  DW_AT_decl_line	(103)
+                  DW_AT_type	(0x00001e7d "__dev_t")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x20)
+
+0x00001fac:     DW_TAG_member
+                  DW_AT_name	("__pad2")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/local/src/glibc-2.9/io/../sysdeps/unix/sysv/linux/bits/stat.h")
+                  DW_AT_decl_line	(104)
+                  DW_AT_type	(0x00001e36 "unsigned int")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x28)
+
+0x00001fba:     DW_TAG_member
+                  DW_AT_name	("st_size")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/local/src/glibc-2.9/io/../sysdeps/unix/sysv/linux/bits/stat.h")
+                  DW_AT_decl_line	(105)
+                  DW_AT_type	(0x00001ed1 "__off64_t")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x30)
+
+0x00001fc8:     DW_TAG_member
+                  DW_AT_name	("st_blksize")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/local/src/glibc-2.9/io/../sysdeps/unix/sysv/linux/bits/stat.h")
+                  DW_AT_decl_line	(106)
+                  DW_AT_type	(0x00001eea "__blksize_t")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x38)
+
+0x00001fd6:     DW_TAG_member
+                  DW_AT_name	("st_blocks")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/local/src/glibc-2.9/io/../sysdeps/unix/sysv/linux/bits/stat.h")
+                  DW_AT_decl_line	(108)
+                  DW_AT_type	(0x00001ef5 "__blkcnt64_t")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x40)
+
+0x00001fe4:     DW_TAG_member
+                  DW_AT_name	("st_atim")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/local/src/glibc-2.9/io/../sysdeps/unix/sysv/linux/bits/stat.h")
+                  DW_AT_decl_line	(116)
+                  DW_AT_type	(0x00001f07 "timespec")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x48)
+
+0x00001ff2:     DW_TAG_member
+                  DW_AT_name	("st_mtim")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/local/src/glibc-2.9/io/../sysdeps/unix/sysv/linux/bits/stat.h")
+                  DW_AT_decl_line	(117)
+                  DW_AT_type	(0x00001f07 "timespec")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x50)
+
+0x00002000:     DW_TAG_member
+                  DW_AT_name	("st_ctim")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/local/src/glibc-2.9/io/../sysdeps/unix/sysv/linux/bits/stat.h")
+                  DW_AT_decl_line	(118)
+                  DW_AT_type	(0x00001f07 "timespec")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x58)
+
+0x0000200e:     DW_TAG_member
+                  DW_AT_name	("st_ino")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/local/src/glibc-2.9/io/../sysdeps/unix/sysv/linux/bits/stat.h")
+                  DW_AT_decl_line	(127)
+                  DW_AT_type	(0x00001ea9 "__ino64_t")
+                  DW_AT_data_member_location	(DW_OP_plus_uconst 0x60)
+
+0x0000201c:     NULL
+
+0x0000201d:   DW_TAG_subprogram
+                DW_AT_external	(0x01)
+                DW_AT_name	("fstat64")
+                DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/local/src/glibc-2.9/io/fstat64.c")
+                DW_AT_decl_line	(50)
+                DW_AT_prototyped	(0x01)
+                DW_AT_type	(0x00001e52 "int")
+                DW_AT_low_pc	(0x00031984)
+                DW_AT_high_pc	(0x00031994)
+                DW_AT_frame_base	(DW_OP_reg13 SP)
+                DW_AT_sibling	(0x00002056)
+
+0x00002038:     DW_TAG_formal_parameter
+                  DW_AT_name	("fd")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/local/src/glibc-2.9/io/fstat64.c")
+                  DW_AT_decl_line	(50)
+                  DW_AT_type	(0x00001e52 "int")
+                  DW_AT_location	(0x0000100c: 
+                     [0x00031984, 0x00031990): DW_OP_reg0 R0)
+
+0x00002046:     DW_TAG_formal_parameter
+                  DW_AT_name	("buf")
+                  DW_AT_decl_file	("/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/local/src/glibc-2.9/io/fstat64.c")
+                  DW_AT_decl_line	(50)
+                  DW_AT_type	(0x00002056 "stat64 *")
+                  DW_AT_location	(0x0000101f: 
+                     [0x00031984, 0x0003198c): DW_OP_reg1 R1
+                     [0x0003198c, 0x00031994): DW_OP_reg2 R2)
+
+0x00002055:     NULL
+
+0x00002056:   DW_TAG_pointer_type
+                DW_AT_byte_size	(0x04)
+                DW_AT_type	(0x00001f30 "stat64")
+
+0x0000205c:   NULL

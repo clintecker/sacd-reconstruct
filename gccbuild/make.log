@@ -1,0 +1,729 @@
+make[1]: Entering directory '/w/gccbuild/obj'
+make[2]: Entering directory '/w/gccbuild/obj/libiberty'
+if [ x"" != x ]; then \
+  gcc -std=gnu89 -fcommon -c -DHAVE_CONFIG_H -std=gnu89 -fcommon -O1 -w  -I. -I/tc/gcc_src/gcc-4.4.1/libiberty/../include  -W -Wall -Wwrite-strings -Wc++-compat -Wstrict-prototypes -pedantic   /tc/gcc_src/gcc-4.4.1/libiberty/obstack.c -o pic/obstack.o; \
+else true; fi
+make[2]: Entering directory '/w/gccbuild/obj/intl'
+make[2]: Nothing to be done for 'all'.
+make[2]: Leaving directory '/w/gccbuild/obj/intl'
+gcc -std=gnu89 -fcommon -c -DHAVE_CONFIG_H -std=gnu89 -fcommon -O1 -w  -I. -I/tc/gcc_src/gcc-4.4.1/libiberty/../include  -W -Wall -Wwrite-strings -Wc++-compat -Wstrict-prototypes -pedantic  /tc/gcc_src/gcc-4.4.1/libiberty/obstack.c -o obstack.o
+make[2]: Entering directory '/w/gccbuild/obj/build-x86_64-unknown-linux-gnu/libiberty'
+if [ x"" != x ]; then \
+  gcc -std=gnu89 -fcommon -c -DHAVE_CONFIG_H -std=gnu89 -fcommon -O1 -w  -I. -I/tc/gcc_src/gcc-4.4.1/libiberty/../include  -W -Wall -Wwrite-strings -Wc++-compat -Wstrict-prototypes -pedantic   /tc/gcc_src/gcc-4.4.1/libiberty/obstack.c -o pic/obstack.o; \
+else true; fi
+gcc -std=gnu89 -fcommon -c -DHAVE_CONFIG_H -std=gnu89 -fcommon -O1 -w  -I. -I/tc/gcc_src/gcc-4.4.1/libiberty/../include  -W -Wall -Wwrite-strings -Wc++-compat -Wstrict-prototypes -pedantic  /tc/gcc_src/gcc-4.4.1/libiberty/obstack.c -o obstack.o
+make[3]: Entering directory '/w/gccbuild/obj/libiberty/testsuite'
+make[3]: Nothing to be done for 'all'.
+make[3]: Leaving directory '/w/gccbuild/obj/libiberty/testsuite'
+rm -f ./libiberty.a pic/./libiberty.a
+ar rc ./libiberty.a \
+  ./regex.o ./cplus-dem.o ./cp-demangle.o ./md5.o ./sha1.o ./alloca.o ./argv.o ./choose-temp.o ./concat.o ./cp-demint.o ./dyn-string.o ./fdmatch.o ./fibheap.o ./filename_cmp.o ./floatformat.o ./fnmatch.o ./fopen_unlocked.o ./getopt.o ./getopt1.o ./getpwd.o ./getruntime.o ./hashtab.o ./hex.o ./lbasename.o ./lrealpath.o ./make-relative-prefix.o ./make-temp-file.o ./objalloc.o ./obstack.o ./partition.o ./pexecute.o ./physmem.o ./pex-common.o ./pex-one.o ./pex-unix.o ./safe-ctype.o ./sort.o ./spaces.o ./splay-tree.o ./strerror.o ./strsignal.o ./unlink-if-ordinary.o ./xatexit.o ./xexit.o ./xmalloc.o ./xmemdup.o ./xstrdup.o ./xstrerror.o ./xstrndup.o  ./sigsetmask.o
+ranlib ./libiberty.a
+if [ x"" != x ]; then \
+  cd pic; \
+  ar rc ./libiberty.a \
+    ./regex.o ./cplus-dem.o ./cp-demangle.o ./md5.o ./sha1.o ./alloca.o ./argv.o ./choose-temp.o ./concat.o ./cp-demint.o ./dyn-string.o ./fdmatch.o ./fibheap.o ./filename_cmp.o ./floatformat.o ./fnmatch.o ./fopen_unlocked.o ./getopt.o ./getopt1.o ./getpwd.o ./getruntime.o ./hashtab.o ./hex.o ./lbasename.o ./lrealpath.o ./make-relative-prefix.o ./make-temp-file.o ./objalloc.o ./obstack.o ./partition.o ./pexecute.o ./physmem.o ./pex-common.o ./pex-one.o ./pex-unix.o ./safe-ctype.o ./sort.o ./spaces.o ./splay-tree.o ./strerror.o ./strsignal.o ./unlink-if-ordinary.o ./xatexit.o ./xexit.o ./xmalloc.o ./xmemdup.o ./xstrdup.o ./xstrerror.o ./xstrndup.o  ./sigsetmask.o; \
+  ranlib ./libiberty.a; \
+  cd ..; \
+else true; fi
+make[3]: Entering directory '/w/gccbuild/obj/build-x86_64-unknown-linux-gnu/libiberty/testsuite'
+make[3]: Nothing to be done for 'all'.
+make[3]: Leaving directory '/w/gccbuild/obj/build-x86_64-unknown-linux-gnu/libiberty/testsuite'
+rm -f ./libiberty.a pic/./libiberty.a
+ar rc ./libiberty.a \
+  ./regex.o ./cplus-dem.o ./cp-demangle.o ./md5.o ./sha1.o ./alloca.o ./argv.o ./choose-temp.o ./concat.o ./cp-demint.o ./dyn-string.o ./fdmatch.o ./fibheap.o ./filename_cmp.o ./floatformat.o ./fnmatch.o ./fopen_unlocked.o ./getopt.o ./getopt1.o ./getpwd.o ./getruntime.o ./hashtab.o ./hex.o ./lbasename.o ./lrealpath.o ./make-relative-prefix.o ./make-temp-file.o ./objalloc.o ./obstack.o ./partition.o ./pexecute.o ./physmem.o ./pex-common.o ./pex-one.o ./pex-unix.o ./safe-ctype.o ./sort.o ./spaces.o ./splay-tree.o ./strerror.o ./strsignal.o ./unlink-if-ordinary.o ./xatexit.o ./xexit.o ./xmalloc.o ./xmemdup.o ./xstrdup.o ./xstrerror.o ./xstrndup.o  
+make[2]: Leaving directory '/w/gccbuild/obj/libiberty'
+ranlib ./libiberty.a
+if [ x"" != x ]; then \
+  cd pic; \
+  ar rc ./libiberty.a \
+    ./regex.o ./cplus-dem.o ./cp-demangle.o ./md5.o ./sha1.o ./alloca.o ./argv.o ./choose-temp.o ./concat.o ./cp-demint.o ./dyn-string.o ./fdmatch.o ./fibheap.o ./filename_cmp.o ./floatformat.o ./fnmatch.o ./fopen_unlocked.o ./getopt.o ./getopt1.o ./getpwd.o ./getruntime.o ./hashtab.o ./hex.o ./lbasename.o ./lrealpath.o ./make-relative-prefix.o ./make-temp-file.o ./objalloc.o ./obstack.o ./partition.o ./pexecute.o ./physmem.o ./pex-common.o ./pex-one.o ./pex-unix.o ./safe-ctype.o ./sort.o ./spaces.o ./splay-tree.o ./strerror.o ./strsignal.o ./unlink-if-ordinary.o ./xatexit.o ./xexit.o ./xmalloc.o ./xmemdup.o ./xstrdup.o ./xstrerror.o ./xstrndup.o  ; \
+  ranlib ./libiberty.a; \
+  cd ..; \
+else true; fi
+make[2]: Leaving directory '/w/gccbuild/obj/build-x86_64-unknown-linux-gnu/libiberty'
+make[2]: Entering directory '/w/gccbuild/obj/libdecnumber'
+make[2]: Nothing to be done for 'all'.
+make[2]: Leaving directory '/w/gccbuild/obj/libdecnumber'
+make[2]: Entering directory '/w/gccbuild/obj/build-x86_64-unknown-linux-gnu/fixincludes'
+make[2]: Entering directory '/w/gccbuild/obj/fixincludes'
+gcc -std=gnu89 -fcommon -std=gnu89 -fcommon -O1 -w  -o fixincl fixincl.o fixtests.o fixfixes.o server.o procopen.o fixlib.o fixopts.o ../libiberty/libiberty.a
+gcc -std=gnu89 -fcommon -std=gnu89 -fcommon -O1 -w  -o fixincl fixincl.o fixtests.o fixfixes.o server.o procopen.o fixlib.o fixopts.o ../libiberty/libiberty.a
+/usr/bin/ld: /lib/x86_64-linux-gnu/libjansson.so.4: no version information available (required by /usr/bin/ld)
+/usr/bin/ld: /lib/x86_64-linux-gnu/libjansson.so.4: no version information available (required by /usr/bin/ld)
+echo timestamp > full-stamp
+echo timestamp > full-stamp
+make[2]: Leaving directory '/w/gccbuild/obj/build-x86_64-unknown-linux-gnu/fixincludes'
+make[2]: Leaving directory '/w/gccbuild/obj/fixincludes'
+make[2]: Entering directory '/w/gccbuild/obj/libcpp'
+test -f config.h || (rm -f stamp-h1 && make stamp-h1)
+gcc -std=gnu89 -fcommon  -I/tc/gcc_src/gcc-4.4.1/libcpp -I. -I/tc/gcc_src/gcc-4.4.1/libcpp/../include -I/tc/gcc_src/gcc-4.4.1/libcpp/include  -std=gnu89 -fcommon -O1 -w -W -Wall -Wwrite-strings -Wstrict-prototypes -Wmissing-prototypes -Wold-style-definition -Wmissing-format-attribute -pedantic -Wno-long-long  -I/tc/gcc_src/gcc-4.4.1/libcpp -I. -I/tc/gcc_src/gcc-4.4.1/libcpp/../include -I/tc/gcc_src/gcc-4.4.1/libcpp/include  -c -o charset.o -MT charset.o -MMD -MP -MF .deps/charset.Tpo /tc/gcc_src/gcc-4.4.1/libcpp/charset.c
+gcc -std=gnu89 -fcommon  -I/tc/gcc_src/gcc-4.4.1/libcpp -I. -I/tc/gcc_src/gcc-4.4.1/libcpp/../include -I/tc/gcc_src/gcc-4.4.1/libcpp/include  -std=gnu89 -fcommon -O1 -w -W -Wall -Wwrite-strings -Wstrict-prototypes -Wmissing-prototypes -Wold-style-definition -Wmissing-format-attribute -pedantic -Wno-long-long  -I/tc/gcc_src/gcc-4.4.1/libcpp -I. -I/tc/gcc_src/gcc-4.4.1/libcpp/../include -I/tc/gcc_src/gcc-4.4.1/libcpp/include  -c -o directives.o -MT directives.o -MMD -MP -MF .deps/directives.Tpo /tc/gcc_src/gcc-4.4.1/libcpp/directives.c
+gcc -std=gnu89 -fcommon  -I/tc/gcc_src/gcc-4.4.1/libcpp -I. -I/tc/gcc_src/gcc-4.4.1/libcpp/../include -I/tc/gcc_src/gcc-4.4.1/libcpp/include  -std=gnu89 -fcommon -O1 -w -W -Wall -Wwrite-strings -Wstrict-prototypes -Wmissing-prototypes -Wold-style-definition -Wmissing-format-attribute -pedantic -Wno-long-long  -I/tc/gcc_src/gcc-4.4.1/libcpp -I. -I/tc/gcc_src/gcc-4.4.1/libcpp/../include -I/tc/gcc_src/gcc-4.4.1/libcpp/include  -c -o directives-only.o -MT directives-only.o -MMD -MP -MF .deps/directives-only.Tpo /tc/gcc_src/gcc-4.4.1/libcpp/directives-only.c
+gcc -std=gnu89 -fcommon  -I/tc/gcc_src/gcc-4.4.1/libcpp -I. -I/tc/gcc_src/gcc-4.4.1/libcpp/../include -I/tc/gcc_src/gcc-4.4.1/libcpp/include  -std=gnu89 -fcommon -O1 -w -W -Wall -Wwrite-strings -Wstrict-prototypes -Wmissing-prototypes -Wold-style-definition -Wmissing-format-attribute -pedantic -Wno-long-long  -I/tc/gcc_src/gcc-4.4.1/libcpp -I. -I/tc/gcc_src/gcc-4.4.1/libcpp/../include -I/tc/gcc_src/gcc-4.4.1/libcpp/include  -c -o errors.o -MT errors.o -MMD -MP -MF .deps/errors.Tpo /tc/gcc_src/gcc-4.4.1/libcpp/errors.c
+gcc -std=gnu89 -fcommon  -I/tc/gcc_src/gcc-4.4.1/libcpp -I. -I/tc/gcc_src/gcc-4.4.1/libcpp/../include -I/tc/gcc_src/gcc-4.4.1/libcpp/include  -std=gnu89 -fcommon -O1 -w -W -Wall -Wwrite-strings -Wstrict-prototypes -Wmissing-prototypes -Wold-style-definition -Wmissing-format-attribute -pedantic -Wno-long-long  -I/tc/gcc_src/gcc-4.4.1/libcpp -I. -I/tc/gcc_src/gcc-4.4.1/libcpp/../include -I/tc/gcc_src/gcc-4.4.1/libcpp/include  -c -o expr.o -MT expr.o -MMD -MP -MF .deps/expr.Tpo /tc/gcc_src/gcc-4.4.1/libcpp/expr.c
+gcc -std=gnu89 -fcommon  -I/tc/gcc_src/gcc-4.4.1/libcpp -I. -I/tc/gcc_src/gcc-4.4.1/libcpp/../include -I/tc/gcc_src/gcc-4.4.1/libcpp/include  -std=gnu89 -fcommon -O1 -w -W -Wall -Wwrite-strings -Wstrict-prototypes -Wmissing-prototypes -Wold-style-definition -Wmissing-format-attribute -pedantic -Wno-long-long  -I/tc/gcc_src/gcc-4.4.1/libcpp -I. -I/tc/gcc_src/gcc-4.4.1/libcpp/../include -I/tc/gcc_src/gcc-4.4.1/libcpp/include  -c -o files.o -MT files.o -MMD -MP -MF .deps/files.Tpo /tc/gcc_src/gcc-4.4.1/libcpp/files.c
+gcc -std=gnu89 -fcommon  -I/tc/gcc_src/gcc-4.4.1/libcpp -I. -I/tc/gcc_src/gcc-4.4.1/libcpp/../include -I/tc/gcc_src/gcc-4.4.1/libcpp/include  -std=gnu89 -fcommon -O1 -w -W -Wall -Wwrite-strings -Wstrict-prototypes -Wmissing-prototypes -Wold-style-definition -Wmissing-format-attribute -pedantic -Wno-long-long  -I/tc/gcc_src/gcc-4.4.1/libcpp -I. -I/tc/gcc_src/gcc-4.4.1/libcpp/../include -I/tc/gcc_src/gcc-4.4.1/libcpp/include  -c -o identifiers.o -MT identifiers.o -MMD -MP -MF .deps/identifiers.Tpo /tc/gcc_src/gcc-4.4.1/libcpp/identifiers.c
+gcc -std=gnu89 -fcommon  -I/tc/gcc_src/gcc-4.4.1/libcpp -I. -I/tc/gcc_src/gcc-4.4.1/libcpp/../include -I/tc/gcc_src/gcc-4.4.1/libcpp/include  -std=gnu89 -fcommon -O1 -w -W -Wall -Wwrite-strings -Wstrict-prototypes -Wmissing-prototypes -Wold-style-definition -Wmissing-format-attribute -pedantic -Wno-long-long  -I/tc/gcc_src/gcc-4.4.1/libcpp -I. -I/tc/gcc_src/gcc-4.4.1/libcpp/../include -I/tc/gcc_src/gcc-4.4.1/libcpp/include  -c -o init.o -MT init.o -MMD -MP -MF .deps/init.Tpo /tc/gcc_src/gcc-4.4.1/libcpp/init.c
+gcc -std=gnu89 -fcommon  -I/tc/gcc_src/gcc-4.4.1/libcpp -I. -I/tc/gcc_src/gcc-4.4.1/libcpp/../include -I/tc/gcc_src/gcc-4.4.1/libcpp/include  -std=gnu89 -fcommon -O1 -w -W -Wall -Wwrite-strings -Wstrict-prototypes -Wmissing-prototypes -Wold-style-definition -Wmissing-format-attribute -pedantic -Wno-long-long  -I/tc/gcc_src/gcc-4.4.1/libcpp -I. -I/tc/gcc_src/gcc-4.4.1/libcpp/../include -I/tc/gcc_src/gcc-4.4.1/libcpp/include  -c -o lex.o -MT lex.o -MMD -MP -MF .deps/lex.Tpo /tc/gcc_src/gcc-4.4.1/libcpp/lex.c
+gcc -std=gnu89 -fcommon  -I/tc/gcc_src/gcc-4.4.1/libcpp -I. -I/tc/gcc_src/gcc-4.4.1/libcpp/../include -I/tc/gcc_src/gcc-4.4.1/libcpp/include  -std=gnu89 -fcommon -O1 -w -W -Wall -Wwrite-strings -Wstrict-prototypes -Wmissing-prototypes -Wold-style-definition -Wmissing-format-attribute -pedantic -Wno-long-long  -I/tc/gcc_src/gcc-4.4.1/libcpp -I. -I/tc/gcc_src/gcc-4.4.1/libcpp/../include -I/tc/gcc_src/gcc-4.4.1/libcpp/include  -c -o macro.o -MT macro.o -MMD -MP -MF .deps/macro.Tpo /tc/gcc_src/gcc-4.4.1/libcpp/macro.c
+gcc -std=gnu89 -fcommon  -I/tc/gcc_src/gcc-4.4.1/libcpp -I. -I/tc/gcc_src/gcc-4.4.1/libcpp/../include -I/tc/gcc_src/gcc-4.4.1/libcpp/include  -std=gnu89 -fcommon -O1 -w -W -Wall -Wwrite-strings -Wstrict-prototypes -Wmissing-prototypes -Wold-style-definition -Wmissing-format-attribute -pedantic -Wno-long-long  -I/tc/gcc_src/gcc-4.4.1/libcpp -I. -I/tc/gcc_src/gcc-4.4.1/libcpp/../include -I/tc/gcc_src/gcc-4.4.1/libcpp/include  -c -o pch.o -MT pch.o -MMD -MP -MF .deps/pch.Tpo /tc/gcc_src/gcc-4.4.1/libcpp/pch.c
+gcc -std=gnu89 -fcommon  -I/tc/gcc_src/gcc-4.4.1/libcpp -I. -I/tc/gcc_src/gcc-4.4.1/libcpp/../include -I/tc/gcc_src/gcc-4.4.1/libcpp/include  -std=gnu89 -fcommon -O1 -w -W -Wall -Wwrite-strings -Wstrict-prototypes -Wmissing-prototypes -Wold-style-definition -Wmissing-format-attribute -pedantic -Wno-long-long  -I/tc/gcc_src/gcc-4.4.1/libcpp -I. -I/tc/gcc_src/gcc-4.4.1/libcpp/../include -I/tc/gcc_src/gcc-4.4.1/libcpp/include  -c -o symtab.o -MT symtab.o -MMD -MP -MF .deps/symtab.Tpo /tc/gcc_src/gcc-4.4.1/libcpp/symtab.c
+gcc -std=gnu89 -fcommon  -I/tc/gcc_src/gcc-4.4.1/libcpp -I. -I/tc/gcc_src/gcc-4.4.1/libcpp/../include -I/tc/gcc_src/gcc-4.4.1/libcpp/include  -std=gnu89 -fcommon -O1 -w -W -Wall -Wwrite-strings -Wstrict-prototypes -Wmissing-prototypes -Wold-style-definition -Wmissing-format-attribute -pedantic -Wno-long-long  -I/tc/gcc_src/gcc-4.4.1/libcpp -I. -I/tc/gcc_src/gcc-4.4.1/libcpp/../include -I/tc/gcc_src/gcc-4.4.1/libcpp/include  -c -o traditional.o -MT traditional.o -MMD -MP -MF .deps/traditional.Tpo /tc/gcc_src/gcc-4.4.1/libcpp/traditional.c
+gcc -std=gnu89 -fcommon  -I/tc/gcc_src/gcc-4.4.1/libcpp -I. -I/tc/gcc_src/gcc-4.4.1/libcpp/../include -I/tc/gcc_src/gcc-4.4.1/libcpp/include  -std=gnu89 -fcommon -O1 -w -W -Wall -Wwrite-strings -Wstrict-prototypes -Wmissing-prototypes -Wold-style-definition -Wmissing-format-attribute -pedantic -Wno-long-long  -I/tc/gcc_src/gcc-4.4.1/libcpp -I. -I/tc/gcc_src/gcc-4.4.1/libcpp/../include -I/tc/gcc_src/gcc-4.4.1/libcpp/include  -c -o makedepend.o -MT makedepend.o -MMD -MP -MF .deps/makedepend.Tpo /tc/gcc_src/gcc-4.4.1/libcpp/makedepend.c
+rm -f libcpp.a
+ar cru libcpp.a charset.o directives.o directives-only.o errors.o expr.o files.o identifiers.o init.o lex.o line-map.o macro.o mkdeps.o pch.o symtab.o traditional.o
+ar: `u' modifier ignored since `D' is the default (see `U')
+ranlib libcpp.a
+gcc -std=gnu89 -fcommon -std=gnu89 -fcommon -O1 -w  -o makedepend \
+  makedepend.o libcpp.a ../libiberty/libiberty.a \
+   
+/usr/bin/ld: /lib/x86_64-linux-gnu/libjansson.so.4: no version information available (required by /usr/bin/ld)
+make[2]: Leaving directory '/w/gccbuild/obj/libcpp'
+make[2]: Entering directory '/w/gccbuild/obj/gcc'
+TARGET_CPU_DEFAULT="" \
+HEADERS="config/arm/arm-protos.h tm-preds.h" DEFINES="" \
+/bin/bash /tc/gcc_src/gcc-4.4.1/gcc/mkconfig.sh tm_p.h
+rm -f tmp-all-tree.def
+echo '#include "tree.def"' > tmp-all-tree.def
+echo 'END_OF_BASE_TREE_CODES' >> tmp-all-tree.def
+echo '#include "c-common.def"' >> tmp-all-tree.def
+ltf="/tc/gcc_src/gcc-4.4.1/gcc/ada/gcc-interface/ada-tree.def /tc/gcc_src/gcc-4.4.1/gcc/cp/cp-tree.def /tc/gcc_src/gcc-4.4.1/gcc/java/java-tree.def /tc/gcc_src/gcc-4.4.1/gcc/objc/objc-tree.def"; for f in $ltf; do \
+  echo "#include \"$f\""; \
+done | sed 's|/tc/gcc_src/gcc-4.4.1/gcc/||' >> tmp-all-tree.def
+if test yes = yes \
+   || test -n ""; then \
+  /bin/bash /tc/gcc_src/gcc-4.4.1/gcc/genmultilib \
+    "" \
+    "" \
+    "" \
+    "" \
+    "" \
+    "" \
+    "" \
+    "yes" \
+    > tmp-mlib.h; \
+else \
+  /bin/bash /tc/gcc_src/gcc-4.4.1/gcc/genmultilib '' '' '' '' '' '' '' no \
+    > tmp-mlib.h; \
+fi
+/bin/bash /tc/gcc_src/gcc-4.4.1/gcc/../move-if-change tmp-all-tree.def all-tree.def
+echo timestamp > s-alltree
+lsf=""; for f in $lsf; do \
+    echo "#include \"$f\""; \
+done | sed 's|/tc/gcc_src/gcc-4.4.1/gcc/||' > tmp-specs.h
+/bin/bash /tc/gcc_src/gcc-4.4.1/gcc/../move-if-change tmp-specs.h specs.h
+echo timestamp > s-specs
+/bin/bash /tc/gcc_src/gcc-4.4.1/gcc/../move-if-change tmp-mlib.h multilib.h
+gcc -std=gnu89 -fcommon -c  -std=gnu89 -fcommon -O1 -w -DIN_GCC -DCROSS_DIRECTORY_STRUCTURE  -W -Wall -Wwrite-strings -Wstrict-prototypes -Wmissing-prototypes -Wcast-qual -Wold-style-definition -Wc++-compat -Wmissing-format-attribute -pedantic -Wno-long-long -Wno-variadic-macros -Wno-overlength-strings   -DHAVE_CONFIG_H -I. -I. -I/tc/gcc_src/gcc-4.4.1/gcc -I/tc/gcc_src/gcc-4.4.1/gcc/. -I/tc/gcc_src/gcc-4.4.1/gcc/../include -I/tc/gcc_src/gcc-4.4.1/gcc/../libcpp/include -I/opt/nl/include -I/opt/nl/include -I/tc/gcc_src/gcc-4.4.1/gcc/../libdecnumber -I/tc/gcc_src/gcc-4.4.1/gcc/../libdecnumber/dpd -I../libdecnumber    /tc/gcc_src/gcc-4.4.1/gcc/dummy-checksum.c -o dummy-checksum.o
+echo timestamp > s-mlib
+mawk -f /tc/gcc_src/gcc-4.4.1/gcc/opt-functions.awk -f /tc/gcc_src/gcc-4.4.1/gcc/optc-gen.awk \
+       -v header_name="config.h system.h coretypes.h tm.h" < optionlist > options.c
+gcc -std=gnu89 -fcommon -c  -std=gnu89 -fcommon -O1 -w -DIN_GCC -DCROSS_DIRECTORY_STRUCTURE  -W -Wall -Wwrite-strings -Wstrict-prototypes -Wmissing-prototypes -Wcast-qual -Wold-style-definition -Wc++-compat -Wmissing-format-attribute -pedantic -Wno-long-long -Wno-variadic-macros -Wno-overlength-strings   -DHAVE_CONFIG_H -DGENERATOR_FILE -I. -Ibuild -I/tc/gcc_src/gcc-4.4.1/gcc -I/tc/gcc_src/gcc-4.4.1/gcc/build -I/tc/gcc_src/gcc-4.4.1/gcc/../include -I/tc/gcc_src/gcc-4.4.1/gcc/../libcpp/include -I/opt/nl/include -I/opt/nl/include -I/tc/gcc_src/gcc-4.4.1/gcc/../libdecnumber -I/tc/gcc_src/gcc-4.4.1/gcc/../libdecnumber/dpd -I../libdecnumber    -o build/genchecksum.o /tc/gcc_src/gcc-4.4.1/gcc/genchecksum.c
+gcc -std=gnu89 -fcommon -c  -std=gnu89 -fcommon -O1 -w -DIN_GCC -DCROSS_DIRECTORY_STRUCTURE  -W -Wall -Wwrite-strings -Wstrict-prototypes -Wmissing-prototypes -Wcast-qual -Wold-style-definition -Wc++-compat -Wmissing-format-attribute -pedantic -Wno-long-long -Wno-variadic-macros -Wno-overlength-strings   -DHAVE_CONFIG_H -I. -I. -I/tc/gcc_src/gcc-4.4.1/gcc -I/tc/gcc_src/gcc-4.4.1/gcc/. -I/tc/gcc_src/gcc-4.4.1/gcc/../include -I/tc/gcc_src/gcc-4.4.1/gcc/../libcpp/include -I/opt/nl/include -I/opt/nl/include -I/tc/gcc_src/gcc-4.4.1/gcc/../libdecnumber -I/tc/gcc_src/gcc-4.4.1/gcc/../libdecnumber/dpd -I../libdecnumber    /tc/gcc_src/gcc-4.4.1/gcc/errors.c -o errors.o
+echo '#ifdef __ARM_ARCH_6M__' > addsf3.c
+echo '#include "config/soft-fp/addsf3.c"' >> addsf3.c
+echo '#endif' >> addsf3.c
+echo '#ifdef __ARM_ARCH_6M__' > divsf3.c
+echo '#include "config/soft-fp/divsf3.c"' >> divsf3.c
+echo '#endif' >> divsf3.c
+echo '#ifdef __ARM_ARCH_6M__' > eqsf2.c
+echo '#ifdef __ARM_ARCH_6M__' > gesf2.c
+echo '#include "config/soft-fp/eqsf2.c"' >> eqsf2.c
+echo '#include "config/soft-fp/gesf2.c"' >> gesf2.c
+echo '#endif' >> eqsf2.c
+echo '#endif' >> gesf2.c
+echo '#ifdef __ARM_ARCH_6M__' > lesf2.c
+echo '#ifdef __ARM_ARCH_6M__' > mulsf3.c
+echo '#include "config/soft-fp/lesf2.c"' >> lesf2.c
+echo '#include "config/soft-fp/mulsf3.c"' >> mulsf3.c
+echo '#endif' >> lesf2.c
+echo '#endif' >> mulsf3.c
+echo '#ifdef __ARM_ARCH_6M__' > negsf2.c
+echo '#ifdef __ARM_ARCH_6M__' > subsf3.c
+echo '#include "config/soft-fp/negsf2.c"' >> negsf2.c
+echo '#include "config/soft-fp/subsf3.c"' >> subsf3.c
+echo '#endif' >> negsf2.c
+echo '#endif' >> subsf3.c
+echo '#ifdef __ARM_ARCH_6M__' > unordsf2.c
+echo '#ifdef __ARM_ARCH_6M__' > fixsfsi.c
+echo '#include "config/soft-fp/unordsf2.c"' >> unordsf2.c
+echo '#include "config/soft-fp/fixsfsi.c"' >> fixsfsi.c
+echo '#endif' >> unordsf2.c
+echo '#endif' >> fixsfsi.c
+echo '#ifdef __ARM_ARCH_6M__' > floatsisf.c
+echo '#ifdef __ARM_ARCH_6M__' > floatunsisf.c
+echo '#include "config/soft-fp/floatsisf.c"' >> floatsisf.c
+echo '#include "config/soft-fp/floatunsisf.c"' >> floatunsisf.c
+echo '#endif' >> floatsisf.c
+echo '#endif' >> floatunsisf.c
+echo '#ifdef __ARM_ARCH_6M__' > adddf3.c
+echo '#ifdef __ARM_ARCH_6M__' > divdf3.c
+echo '#include "config/soft-fp/adddf3.c"' >> adddf3.c
+echo '#include "config/soft-fp/divdf3.c"' >> divdf3.c
+echo '#endif' >> adddf3.c
+echo '#endif' >> divdf3.c
+echo '#ifdef __ARM_ARCH_6M__' > eqdf2.c
+echo '#ifdef __ARM_ARCH_6M__' > gedf2.c
+echo '#include "config/soft-fp/eqdf2.c"' >> eqdf2.c
+echo '#include "config/soft-fp/gedf2.c"' >> gedf2.c
+echo '#endif' >> gedf2.c
+echo '#endif' >> eqdf2.c
+echo '#ifdef __ARM_ARCH_6M__' > ledf2.c
+echo '#ifdef __ARM_ARCH_6M__' > muldf3.c
+echo '#include "config/soft-fp/ledf2.c"' >> ledf2.c
+echo '#include "config/soft-fp/muldf3.c"' >> muldf3.c
+echo '#endif' >> ledf2.c
+echo '#endif' >> muldf3.c
+echo '#ifdef __ARM_ARCH_6M__' > negdf2.c
+echo '#ifdef __ARM_ARCH_6M__' > subdf3.c
+echo '#include "config/soft-fp/negdf2.c"' >> negdf2.c
+echo '#include "config/soft-fp/subdf3.c"' >> subdf3.c
+echo '#endif' >> negdf2.c
+echo '#endif' >> subdf3.c
+echo '#ifdef __ARM_ARCH_6M__' > unorddf2.c
+echo '#ifdef __ARM_ARCH_6M__' > fixdfsi.c
+echo '#include "config/soft-fp/unorddf2.c"' >> unorddf2.c
+echo '#include "config/soft-fp/fixdfsi.c"' >> fixdfsi.c
+echo '#endif' >> unorddf2.c
+echo '#endif' >> fixdfsi.c
+echo '#ifdef __ARM_ARCH_6M__' > floatsidf.c
+echo '#ifdef __ARM_ARCH_6M__' > floatunsidf.c
+echo '#include "config/soft-fp/floatunsidf.c"' >> floatunsidf.c
+echo '#include "config/soft-fp/floatsidf.c"' >> floatsidf.c
+echo '#endif' >> floatunsidf.c
+echo '#endif' >> floatsidf.c
+echo '#ifdef __ARM_ARCH_6M__' > extendsfdf2.c
+echo '#ifdef __ARM_ARCH_6M__' > truncdfsf2.c
+echo '#include "config/soft-fp/extendsfdf2.c"' >> extendsfdf2.c
+echo '#include "config/soft-fp/truncdfsf2.c"' >> truncdfsf2.c
+echo '#endif' >> truncdfsf2.c
+echo '#endif' >> extendsfdf2.c
+TARGET_CPU_DEFAULT="" \
+HEADERS="auto-host.h ansidecl.h" DEFINES="USED_FOR_TARGET " \
+/bin/bash /tc/gcc_src/gcc-4.4.1/gcc/mkconfig.sh tconfig.h
+cp /tc/gcc_src/gcc-4.4.1/gcc/config/arm/sfp-machine.h sfp-machine.h
+gcc -std=gnu89 -fcommon  -std=gnu89 -fcommon -O1 -w -DIN_GCC -DCROSS_DIRECTORY_STRUCTURE  -W -Wall -Wwrite-strings -Wstrict-prototypes -Wmissing-prototypes -Wcast-qual -Wold-style-definition -Wc++-compat -Wmissing-format-attribute -pedantic -Wno-long-long -Wno-variadic-macros -Wno-overlength-strings   -DHAVE_CONFIG_H -DGENERATOR_FILE  -o build/genmodes \
+    build/genmodes.o build/errors.o ../build-x86_64-unknown-linux-gnu/libiberty/libiberty.a
+/usr/bin/ld: /lib/x86_64-linux-gnu/libjansson.so.4: no version information available (required by /usr/bin/ld)
+gcc -std=gnu89 -fcommon  -std=gnu89 -fcommon -O1 -w -DIN_GCC -DCROSS_DIRECTORY_STRUCTURE  -W -Wall -Wwrite-strings -Wstrict-prototypes -Wmissing-prototypes -Wcast-qual -Wold-style-definition -Wc++-compat -Wmissing-format-attribute -pedantic -Wno-long-long -Wno-variadic-macros -Wno-overlength-strings   -DHAVE_CONFIG_H -DGENERATOR_FILE  -o build/gengenrtl \
+    build/gengenrtl.o build/errors.o ../build-x86_64-unknown-linux-gnu/libiberty/libiberty.a
+/usr/bin/ld: /lib/x86_64-linux-gnu/libjansson.so.4: no version information available (required by /usr/bin/ld)
+gcc -std=gnu89 -fcommon  -std=gnu89 -fcommon -O1 -w -DIN_GCC -DCROSS_DIRECTORY_STRUCTURE  -W -Wall -Wwrite-strings -Wstrict-prototypes -Wmissing-prototypes -Wcast-qual -Wold-style-definition -Wc++-compat -Wmissing-format-attribute -pedantic -Wno-long-long -Wno-variadic-macros -Wno-overlength-strings   -DHAVE_CONFIG_H -DGENERATOR_FILE  -o build/gengtype \
+    build/gengtype.o build/gengtype-lex.o build/gengtype-parse.o build/errors.o ../build-x86_64-unknown-linux-gnu/libiberty/libiberty.a
+/usr/bin/ld: /lib/x86_64-linux-gnu/libjansson.so.4: no version information available (required by /usr/bin/ld)
+build/genmodes -m > tmp-min-modes.c
+/bin/bash /tc/gcc_src/gcc-4.4.1/gcc/../move-if-change tmp-min-modes.c min-insn-modes.c
+echo timestamp > s-modes-m
+gcc -std=gnu89 -fcommon -c -std=gnu89 -fcommon -O1 -w -DIN_GCC -DCROSS_DIRECTORY_STRUCTURE -W -Wall -Wwrite-strings -Wstrict-prototypes -Wmissing-prototypes -Wcast-qual -DHAVE_CONFIG_H -DGENERATOR_FILE -I. -Ibuild -I/tc/gcc_src/gcc-4.4.1/gcc -I/tc/gcc_src/gcc-4.4.1/gcc/build -I/tc/gcc_src/gcc-4.4.1/gcc/../include -I/tc/gcc_src/gcc-4.4.1/gcc/../libcpp/include -I/opt/nl/include -I/opt/nl/include -I/tc/gcc_src/gcc-4.4.1/gcc/../libdecnumber -I/tc/gcc_src/gcc-4.4.1/gcc/../libdecnumber/dpd -I../libdecnumber    -o build/gencheck.o /tc/gcc_src/gcc-4.4.1/gcc/gencheck.c
+build/genmodes > tmp-modes.c
+/bin/bash /tc/gcc_src/gcc-4.4.1/gcc/../move-if-change tmp-modes.c insn-modes.c
+echo timestamp > s-modes
+build/gengenrtl > tmp-genrtl.c
+/bin/bash /tc/gcc_src/gcc-4.4.1/gcc/../move-if-change tmp-genrtl.c genrtl.c
+echo timestamp > s-genrtl
+gcc -std=gnu89 -fcommon  -std=gnu89 -fcommon -O1 -w -DIN_GCC -DCROSS_DIRECTORY_STRUCTURE  -W -Wall -Wwrite-strings -Wstrict-prototypes -Wmissing-prototypes -Wcast-qual -Wold-style-definition -Wc++-compat -Wmissing-format-attribute -pedantic -Wno-long-long -Wno-variadic-macros -Wno-overlength-strings   -DHAVE_CONFIG_H -DGENERATOR_FILE  -o build/genchecksum \
+    build/genchecksum.o ../build-x86_64-unknown-linux-gnu/libiberty/libiberty.a
+/usr/bin/ld: /lib/x86_64-linux-gnu/libjansson.so.4: no version information available (required by /usr/bin/ld)
+build/genmodes -h > tmp-modes.h
+/bin/bash /tc/gcc_src/gcc-4.4.1/gcc/../move-if-change tmp-modes.h insn-modes.h
+echo timestamp > s-modes-h
+build/gengenrtl -h > tmp-genrtl.h
+/bin/bash /tc/gcc_src/gcc-4.4.1/gcc/../move-if-change tmp-genrtl.h genrtl.h
+build/gengtype /tc/gcc_src/gcc-4.4.1/gcc gtyp-input.list
+echo timestamp > s-genrtl-h
+gcc -std=gnu89 -fcommon -std=gnu89 -fcommon -O1 -w -DIN_GCC -DCROSS_DIRECTORY_STRUCTURE -W -Wall -Wwrite-strings -Wstrict-prototypes -Wmissing-prototypes -Wcast-qual -DHAVE_CONFIG_H -DGENERATOR_FILE  -o build/gencheck \
+    build/gencheck.o ../build-x86_64-unknown-linux-gnu/libiberty/libiberty.a
+/usr/bin/ld: /lib/x86_64-linux-gnu/libjansson.so.4: no version information available (required by /usr/bin/ld)
+gcc -std=gnu89 -fcommon -c  -std=gnu89 -fcommon -O1 -w -DIN_GCC -DCROSS_DIRECTORY_STRUCTURE  -W -Wall -Wwrite-strings -Wstrict-prototypes -Wmissing-prototypes -Wcast-qual -Wold-style-definition -Wc++-compat -Wmissing-format-attribute -pedantic -Wno-long-long -Wno-variadic-macros -Wno-overlength-strings   -DHAVE_CONFIG_H -DGENERATOR_FILE -I. -Ibuild -I/tc/gcc_src/gcc-4.4.1/gcc -I/tc/gcc_src/gcc-4.4.1/gcc/build -I/tc/gcc_src/gcc-4.4.1/gcc/../include -I/tc/gcc_src/gcc-4.4.1/gcc/../libcpp/include -I/opt/nl/include -I/opt/nl/include -I/tc/gcc_src/gcc-4.4.1/gcc/../libdecnumber -I/tc/gcc_src/gcc-4.4.1/gcc/../libdecnumber/dpd -I../libdecnumber    -o build/read-rtl.o /tc/gcc_src/gcc-4.4.1/gcc/read-rtl.c
+echo timestamp > s-gtype
+gcc -std=gnu89 -fcommon -c  -std=gnu89 -fcommon -O1 -w -DIN_GCC -DCROSS_DIRECTORY_STRUCTURE  -W -Wall -Wwrite-strings -Wstrict-prototypes -Wmissing-prototypes -Wcast-qual -Wold-style-definition -Wc++-compat -Wmissing-format-attribute -pedantic -Wno-long-long -Wno-variadic-macros -Wno-overlength-strings   -DHAVE_CONFIG_H -DGENERATOR_FILE -I. -Ibuild -I/tc/gcc_src/gcc-4.4.1/gcc -I/tc/gcc_src/gcc-4.4.1/gcc/build -I/tc/gcc_src/gcc-4.4.1/gcc/../include -I/tc/gcc_src/gcc-4.4.1/gcc/../libcpp/include -I/opt/nl/include -I/opt/nl/include -I/tc/gcc_src/gcc-4.4.1/gcc/../libdecnumber -I/tc/gcc_src/gcc-4.4.1/gcc/../libdecnumber/dpd -I../libdecnumber    -o build/min-insn-modes.o min-insn-modes.c
+gcc -std=gnu89 -fcommon -c  -std=gnu89 -fcommon -O1 -w -DIN_GCC -DCROSS_DIRECTORY_STRUCTURE  -W -Wall -Wwrite-strings -Wstrict-prototypes -Wmissing-prototypes -Wcast-qual -Wold-style-definition -Wc++-compat -Wmissing-format-attribute -pedantic -Wno-long-long -Wno-variadic-macros -Wno-overlength-strings   -DHAVE_CONFIG_H -DGENERATOR_FILE -I. -Ibuild -I/tc/gcc_src/gcc-4.4.1/gcc -I/tc/gcc_src/gcc-4.4.1/gcc/build -I/tc/gcc_src/gcc-4.4.1/gcc/../include -I/tc/gcc_src/gcc-4.4.1/gcc/../libcpp/include -I/opt/nl/include -I/opt/nl/include -I/tc/gcc_src/gcc-4.4.1/gcc/../libdecnumber -I/tc/gcc_src/gcc-4.4.1/gcc/../libdecnumber/dpd -I../libdecnumber    -o build/gensupport.o /tc/gcc_src/gcc-4.4.1/gcc/gensupport.c
+gcc -std=gnu89 -fcommon -c  -std=gnu89 -fcommon -O1 -w -DIN_GCC -DCROSS_DIRECTORY_STRUCTURE  -W -Wall -Wwrite-strings -Wstrict-prototypes -Wmissing-prototypes -Wcast-qual -Wold-style-definition -Wc++-compat -Wmissing-format-attribute -pedantic -Wno-long-long -Wno-variadic-macros -Wno-overlength-strings   -DHAVE_CONFIG_H -DGENERATOR_FILE -I. -Ibuild -I/tc/gcc_src/gcc-4.4.1/gcc -I/tc/gcc_src/gcc-4.4.1/gcc/build -I/tc/gcc_src/gcc-4.4.1/gcc/../include -I/tc/gcc_src/gcc-4.4.1/gcc/../libcpp/include -I/opt/nl/include -I/opt/nl/include -I/tc/gcc_src/gcc-4.4.1/gcc/../libdecnumber -I/tc/gcc_src/gcc-4.4.1/gcc/../libdecnumber/dpd -I../libdecnumber    -o build/print-rtl.o /tc/gcc_src/gcc-4.4.1/gcc/print-rtl.c
+gcc -std=gnu89 -fcommon -c  -std=gnu89 -fcommon -O1 -w -DIN_GCC -DCROSS_DIRECTORY_STRUCTURE  -W -Wall -Wwrite-strings -Wstrict-prototypes -Wmissing-prototypes -Wcast-qual -Wold-style-definition -Wc++-compat -Wmissing-format-attribute -pedantic -Wno-long-long -Wno-variadic-macros -Wno-overlength-strings   -DHAVE_CONFIG_H -DGENERATOR_FILE -I. -Ibuild -I/tc/gcc_src/gcc-4.4.1/gcc -I/tc/gcc_src/gcc-4.4.1/gcc/build -I/tc/gcc_src/gcc-4.4.1/gcc/../include -I/tc/gcc_src/gcc-4.4.1/gcc/../libcpp/include -I/opt/nl/include -I/opt/nl/include -I/tc/gcc_src/gcc-4.4.1/gcc/../libdecnumber -I/tc/gcc_src/gcc-4.4.1/gcc/../libdecnumber/dpd -I../libdecnumber    -o build/genmddeps.o /tc/gcc_src/gcc-4.4.1/gcc/genmddeps.c
+gcc -std=gnu89 -fcommon -c  -std=gnu89 -fcommon -O1 -w -DIN_GCC -DCROSS_DIRECTORY_STRUCTURE  -W -Wall -Wwrite-strings -Wstrict-prototypes -Wmissing-prototypes -Wcast-qual -Wold-style-definition -Wc++-compat -Wmissing-format-attribute -pedantic -Wno-long-long -Wno-variadic-macros -Wno-overlength-strings   -DHAVE_CONFIG_H -DGENERATOR_FILE -I. -Ibuild -I/tc/gcc_src/gcc-4.4.1/gcc -I/tc/gcc_src/gcc-4.4.1/gcc/build -I/tc/gcc_src/gcc-4.4.1/gcc/../include -I/tc/gcc_src/gcc-4.4.1/gcc/../libcpp/include -I/opt/nl/include -I/opt/nl/include -I/tc/gcc_src/gcc-4.4.1/gcc/../libdecnumber -I/tc/gcc_src/gcc-4.4.1/gcc/../libdecnumber/dpd -I../libdecnumber    -o build/genflags.o /tc/gcc_src/gcc-4.4.1/gcc/genflags.c
+gcc -std=gnu89 -fcommon -c -std=gnu89 -fcommon -O1 -w -DIN_GCC -DCROSS_DIRECTORY_STRUCTURE -W -Wall -Wwrite-strings -Wstrict-prototypes -Wmissing-prototypes -Wcast-qual -DHAVE_CONFIG_H -DGENERATOR_FILE -I. -Ibuild -I/tc/gcc_src/gcc-4.4.1/gcc -I/tc/gcc_src/gcc-4.4.1/gcc/build -I/tc/gcc_src/gcc-4.4.1/gcc/../include -I/tc/gcc_src/gcc-4.4.1/gcc/../libcpp/include -I/opt/nl/include -I/opt/nl/include -I/tc/gcc_src/gcc-4.4.1/gcc/../libdecnumber -I/tc/gcc_src/gcc-4.4.1/gcc/../libdecnumber/dpd -I../libdecnumber    -o build/genconditions.o /tc/gcc_src/gcc-4.4.1/gcc/genconditions.c
+gcc -std=gnu89 -fcommon -c -std=gnu89 -fcommon -O1 -w -DIN_GCC -DCROSS_DIRECTORY_STRUCTURE -W -Wall -Wwrite-strings -Wstrict-prototypes -Wmissing-prototypes -Wcast-qual -DHAVE_CONFIG_H -DGENERATOR_FILE -I. -Ibuild -I/tc/gcc_src/gcc-4.4.1/gcc -I/tc/gcc_src/gcc-4.4.1/gcc/build -I/tc/gcc_src/gcc-4.4.1/gcc/../include -I/tc/gcc_src/gcc-4.4.1/gcc/../libcpp/include -I/opt/nl/include -I/opt/nl/include -I/tc/gcc_src/gcc-4.4.1/gcc/../libdecnumber -I/tc/gcc_src/gcc-4.4.1/gcc/../libdecnumber/dpd -I../libdecnumber    -o build/genpreds.o /tc/gcc_src/gcc-4.4.1/gcc/genpreds.c
+build/gencheck > tmp-check.h
+/bin/bash /tc/gcc_src/gcc-4.4.1/gcc/../move-if-change tmp-check.h tree-check.h
+echo timestamp > s-check
+gcc -std=gnu89 -fcommon -c  -std=gnu89 -fcommon -O1 -w -DIN_GCC -DCROSS_DIRECTORY_STRUCTURE  -W -Wall -Wwrite-strings -Wstrict-prototypes -Wmissing-prototypes -Wcast-qual -Wold-style-definition -Wc++-compat -Wmissing-format-attribute -pedantic -Wno-long-long -Wno-variadic-macros -Wno-overlength-strings   -DHAVE_CONFIG_H -DGENERATOR_FILE -I. -Ibuild -I/tc/gcc_src/gcc-4.4.1/gcc -I/tc/gcc_src/gcc-4.4.1/gcc/build -I/tc/gcc_src/gcc-4.4.1/gcc/../include -I/tc/gcc_src/gcc-4.4.1/gcc/../libcpp/include -I/opt/nl/include -I/opt/nl/include -I/tc/gcc_src/gcc-4.4.1/gcc/../libdecnumber -I/tc/gcc_src/gcc-4.4.1/gcc/../libdecnumber/dpd -I../libdecnumber    -o build/genattr.o /tc/gcc_src/gcc-4.4.1/gcc/genattr.c
+gcc -std=gnu89 -fcommon -c  -std=gnu89 -fcommon -O1 -w -DIN_GCC -DCROSS_DIRECTORY_STRUCTURE  -W -Wall -Wwrite-strings -Wstrict-prototypes -Wmissing-prototypes -Wcast-qual -Wold-style-definition -Wc++-compat -Wmissing-format-attribute -pedantic -Wno-long-long -Wno-variadic-macros -Wno-overlength-strings   -DHAVE_CONFIG_H -DGENERATOR_FILE -I. -Ibuild -I/tc/gcc_src/gcc-4.4.1/gcc -I/tc/gcc_src/gcc-4.4.1/gcc/build -I/tc/gcc_src/gcc-4.4.1/gcc/../include -I/tc/gcc_src/gcc-4.4.1/gcc/../libcpp/include -I/opt/nl/include -I/opt/nl/include -I/tc/gcc_src/gcc-4.4.1/gcc/../libdecnumber -I/tc/gcc_src/gcc-4.4.1/gcc/../libdecnumber/dpd -I../libdecnumber    -o build/gencodes.o /tc/gcc_src/gcc-4.4.1/gcc/gencodes.c
+gcc -std=gnu89 -fcommon -c  -std=gnu89 -fcommon -O1 -w -DIN_GCC -DCROSS_DIRECTORY_STRUCTURE  -W -Wall -Wwrite-strings -Wstrict-prototypes -Wmissing-prototypes -Wcast-qual -Wold-style-definition -Wc++-compat -Wmissing-format-attribute -pedantic -Wno-long-long -Wno-variadic-macros -Wno-overlength-strings   -DHAVE_CONFIG_H -DGENERATOR_FILE -I. -Ibuild -I/tc/gcc_src/gcc-4.4.1/gcc -I/tc/gcc_src/gcc-4.4.1/gcc/build -I/tc/gcc_src/gcc-4.4.1/gcc/../include -I/tc/gcc_src/gcc-4.4.1/gcc/../libcpp/include -I/opt/nl/include -I/opt/nl/include -I/tc/gcc_src/gcc-4.4.1/gcc/../libdecnumber -I/tc/gcc_src/gcc-4.4.1/gcc/../libdecnumber/dpd -I../libdecnumber    -o build/genconfig.o /tc/gcc_src/gcc-4.4.1/gcc/genconfig.c
+gcc -std=gnu89 -fcommon -c  -std=gnu89 -fcommon -O1 -w -DIN_GCC -DCROSS_DIRECTORY_STRUCTURE  -W -Wall -Wwrite-strings -Wstrict-prototypes -Wmissing-prototypes -Wcast-qual -Wold-style-definition -Wc++-compat -Wmissing-format-attribute -pedantic -Wno-long-long -Wno-variadic-macros -Wno-overlength-strings   -DHAVE_CONFIG_H -DGENERATOR_FILE -I. -Ibuild -I/tc/gcc_src/gcc-4.4.1/gcc -I/tc/gcc_src/gcc-4.4.1/gcc/build -I/tc/gcc_src/gcc-4.4.1/gcc/../include -I/tc/gcc_src/gcc-4.4.1/gcc/../libcpp/include -I/opt/nl/include -I/opt/nl/include -I/tc/gcc_src/gcc-4.4.1/gcc/../libdecnumber -I/tc/gcc_src/gcc-4.4.1/gcc/../libdecnumber/dpd -I../libdecnumber    -o build/genautomata.o /tc/gcc_src/gcc-4.4.1/gcc/genautomata.c
+gcc -std=gnu89 -fcommon -c  -std=gnu89 -fcommon -O1 -w -DIN_GCC -DCROSS_DIRECTORY_STRUCTURE  -W -Wall -Wwrite-strings -Wstrict-prototypes -Wmissing-prototypes -Wcast-qual -Wold-style-definition -Wc++-compat -Wmissing-format-attribute -pedantic -Wno-long-long -Wno-variadic-macros -Wno-overlength-strings   -DHAVE_CONFIG_H -DGENERATOR_FILE -I. -Ibuild -I/tc/gcc_src/gcc-4.4.1/gcc -I/tc/gcc_src/gcc-4.4.1/gcc/build -I/tc/gcc_src/gcc-4.4.1/gcc/../include -I/tc/gcc_src/gcc-4.4.1/gcc/../libcpp/include -I/opt/nl/include -I/opt/nl/include -I/tc/gcc_src/gcc-4.4.1/gcc/../libdecnumber -I/tc/gcc_src/gcc-4.4.1/gcc/../libdecnumber/dpd -I../libdecnumber    -o build/genemit.o /tc/gcc_src/gcc-4.4.1/gcc/genemit.c
+gcc -std=gnu89 -fcommon -c  -std=gnu89 -fcommon -O1 -w -DIN_GCC -DCROSS_DIRECTORY_STRUCTURE  -W -Wall -Wwrite-strings -Wstrict-prototypes -Wmissing-prototypes -Wcast-qual -Wold-style-definition -Wc++-compat -Wmissing-format-attribute -pedantic -Wno-long-long -Wno-variadic-macros -Wno-overlength-strings   -DHAVE_CONFIG_H -DGENERATOR_FILE -I. -Ibuild -I/tc/gcc_src/gcc-4.4.1/gcc -I/tc/gcc_src/gcc-4.4.1/gcc/build -I/tc/gcc_src/gcc-4.4.1/gcc/../include -I/tc/gcc_src/gcc-4.4.1/gcc/../libcpp/include -I/opt/nl/include -I/opt/nl/include -I/tc/gcc_src/gcc-4.4.1/gcc/../libdecnumber -I/tc/gcc_src/gcc-4.4.1/gcc/../libdecnumber/dpd -I../libdecnumber    -o build/genextract.o /tc/gcc_src/gcc-4.4.1/gcc/genextract.c
+gcc -std=gnu89 -fcommon -c  -std=gnu89 -fcommon -O1 -w -DIN_GCC -DCROSS_DIRECTORY_STRUCTURE  -W -Wall -Wwrite-strings -Wstrict-prototypes -Wmissing-prototypes -Wcast-qual -Wold-style-definition -Wc++-compat -Wmissing-format-attribute -pedantic -Wno-long-long -Wno-variadic-macros -Wno-overlength-strings   -DHAVE_CONFIG_H -DGENERATOR_FILE -I. -Ibuild -I/tc/gcc_src/gcc-4.4.1/gcc -I/tc/gcc_src/gcc-4.4.1/gcc/build -I/tc/gcc_src/gcc-4.4.1/gcc/../include -I/tc/gcc_src/gcc-4.4.1/gcc/../libcpp/include -I/opt/nl/include -I/opt/nl/include -I/tc/gcc_src/gcc-4.4.1/gcc/../libdecnumber -I/tc/gcc_src/gcc-4.4.1/gcc/../libdecnumber/dpd -I../libdecnumber    -o build/genopinit.o /tc/gcc_src/gcc-4.4.1/gcc/genopinit.c
+gcc -std=gnu89 -fcommon -c  -std=gnu89 -fcommon -O1 -w -DIN_GCC -DCROSS_DIRECTORY_STRUCTURE  -W -Wall -Wwrite-strings -Wstrict-prototypes -Wmissing-prototypes -Wcast-qual -Wold-style-definition -Wc++-compat -Wmissing-format-attribute -pedantic -Wno-long-long -Wno-variadic-macros -Wno-overlength-strings   -DHAVE_CONFIG_H -DGENERATOR_FILE -I. -Ibuild -I/tc/gcc_src/gcc-4.4.1/gcc -I/tc/gcc_src/gcc-4.4.1/gcc/build -I/tc/gcc_src/gcc-4.4.1/gcc/../include -I/tc/gcc_src/gcc-4.4.1/gcc/../libcpp/include -I/opt/nl/include -I/opt/nl/include -I/tc/gcc_src/gcc-4.4.1/gcc/../libdecnumber -I/tc/gcc_src/gcc-4.4.1/gcc/../libdecnumber/dpd -I../libdecnumber    -o build/genoutput.o /tc/gcc_src/gcc-4.4.1/gcc/genoutput.c
+gcc -std=gnu89 -fcommon -c  -std=gnu89 -fcommon -O1 -w -DIN_GCC -DCROSS_DIRECTORY_STRUCTURE  -W -Wall -Wwrite-strings -Wstrict-prototypes -Wmissing-prototypes -Wcast-qual -Wold-style-definition -Wc++-compat -Wmissing-format-attribute -pedantic -Wno-long-long -Wno-variadic-macros -Wno-overlength-strings   -DHAVE_CONFIG_H -DGENERATOR_FILE -I. -Ibuild -I/tc/gcc_src/gcc-4.4.1/gcc -I/tc/gcc_src/gcc-4.4.1/gcc/build -I/tc/gcc_src/gcc-4.4.1/gcc/../include -I/tc/gcc_src/gcc-4.4.1/gcc/../libcpp/include -I/opt/nl/include -I/opt/nl/include -I/tc/gcc_src/gcc-4.4.1/gcc/../libdecnumber -I/tc/gcc_src/gcc-4.4.1/gcc/../libdecnumber/dpd -I../libdecnumber    -o build/genpeep.o /tc/gcc_src/gcc-4.4.1/gcc/genpeep.c
+gcc -std=gnu89 -fcommon -c  -std=gnu89 -fcommon -O1 -w -DIN_GCC -DCROSS_DIRECTORY_STRUCTURE  -W -Wall -Wwrite-strings -Wstrict-prototypes -Wmissing-prototypes -Wcast-qual -Wold-style-definition -Wc++-compat -Wmissing-format-attribute -pedantic -Wno-long-long -Wno-variadic-macros -Wno-overlength-strings   -DHAVE_CONFIG_H -DGENERATOR_FILE -I. -Ibuild -I/tc/gcc_src/gcc-4.4.1/gcc -I/tc/gcc_src/gcc-4.4.1/gcc/build -I/tc/gcc_src/gcc-4.4.1/gcc/../include -I/tc/gcc_src/gcc-4.4.1/gcc/../libcpp/include -I/opt/nl/include -I/opt/nl/include -I/tc/gcc_src/gcc-4.4.1/gcc/../libdecnumber -I/tc/gcc_src/gcc-4.4.1/gcc/../libdecnumber/dpd -I../libdecnumber    -o build/genrecog.o /tc/gcc_src/gcc-4.4.1/gcc/genrecog.c
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:84:8: note: enum type defined here
+   84 |   enum decision_type
+      |        ^~~~~~~~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:84:8: note: enum type defined here
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c: In function 'add_to_sequence':
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:86:7: note: enum constant defined here
+   86 |       DT_num_insns,
+      |       ^~~~~~~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:90:7: note: enum constant defined here
+   90 |       DT_veclen_ge, DT_dup, DT_pred, DT_c_test,
+      |       ^~~~~~~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:90:29: note: enum constant defined here
+   90 |       DT_veclen_ge, DT_dup, DT_pred, DT_c_test,
+      |                             ^~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:91:7: note: enum constant defined here
+   91 |       DT_accept_op, DT_accept_insn
+      |       ^~~~~~~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:90:21: note: enum constant defined here
+   90 |       DT_veclen_ge, DT_dup, DT_pred, DT_c_test,
+      |                     ^~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:91:7: note: enum constant defined here
+   91 |       DT_accept_op, DT_accept_insn
+      |       ^~~~~~~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:90:21: note: enum constant defined here
+   90 |       DT_veclen_ge, DT_dup, DT_pred, DT_c_test,
+      |                     ^~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:88:7: note: enum constant defined here
+   88 |       DT_elt_zero_int, DT_elt_one_int, DT_elt_zero_wide, DT_elt_zero_wide_safe,
+      |       ^~~~~~~~~~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:88:24: note: enum constant defined here
+   88 |       DT_elt_zero_int, DT_elt_one_int, DT_elt_zero_wide, DT_elt_zero_wide_safe,
+      |                        ^~~~~~~~~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:84:8: note: enum type defined here
+   84 |   enum decision_type
+      |        ^~~~~~~~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:88:58: note: enum constant defined here
+   88 |       DT_elt_zero_int, DT_elt_one_int, DT_elt_zero_wide, DT_elt_zero_wide_safe,
+      |                                                          ^~~~~~~~~~~~~~~~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:88:40: note: enum constant defined here
+   88 |       DT_elt_zero_int, DT_elt_one_int, DT_elt_zero_wide, DT_elt_zero_wide_safe,
+      |                                        ^~~~~~~~~~~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:87:25: note: enum constant defined here
+   87 |       DT_mode, DT_code, DT_veclen,
+      |                         ^~~~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:87:16: note: enum constant defined here
+   87 |       DT_mode, DT_code, DT_veclen,
+      |                ^~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:87:7: note: enum constant defined here
+   87 |       DT_mode, DT_code, DT_veclen,
+      |       ^~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c: In function 'maybe_both_true_2':
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:86:7: note: enum constant defined here
+   86 |       DT_num_insns,
+      |       ^~~~~~~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:87:7: note: enum constant defined here
+   87 |       DT_mode, DT_code, DT_veclen,
+      |       ^~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:87:16: note: enum constant defined here
+   87 |       DT_mode, DT_code, DT_veclen,
+      |                ^~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:87:25: note: enum constant defined here
+   87 |       DT_mode, DT_code, DT_veclen,
+      |                         ^~~~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:88:7: note: enum constant defined here
+   88 |       DT_elt_zero_int, DT_elt_one_int, DT_elt_zero_wide, DT_elt_zero_wide_safe,
+      |       ^~~~~~~~~~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:88:24: note: enum constant defined here
+   88 |       DT_elt_zero_int, DT_elt_one_int, DT_elt_zero_wide, DT_elt_zero_wide_safe,
+      |                        ^~~~~~~~~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:88:40: note: enum constant defined here
+   88 |       DT_elt_zero_int, DT_elt_one_int, DT_elt_zero_wide, DT_elt_zero_wide_safe,
+      |                                        ^~~~~~~~~~~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:88:58: note: enum constant defined here
+   88 |       DT_elt_zero_int, DT_elt_one_int, DT_elt_zero_wide, DT_elt_zero_wide_safe,
+      |                                                          ^~~~~~~~~~~~~~~~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:90:29: note: enum constant defined here
+   90 |       DT_veclen_ge, DT_dup, DT_pred, DT_c_test,
+      |                             ^~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:90:29: note: enum constant defined here
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:90:29: note: enum constant defined here
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:87:7: note: enum constant defined here
+   87 |       DT_mode, DT_code, DT_veclen,
+      |       ^~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:87:16: note: enum constant defined here
+   87 |       DT_mode, DT_code, DT_veclen,
+      |                ^~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:90:29: note: enum constant defined here
+   90 |       DT_veclen_ge, DT_dup, DT_pred, DT_c_test,
+      |                             ^~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:87:25: note: enum constant defined here
+   87 |       DT_mode, DT_code, DT_veclen,
+      |                         ^~~~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:90:7: note: enum constant defined here
+   90 |       DT_veclen_ge, DT_dup, DT_pred, DT_c_test,
+      |       ^~~~~~~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:90:7: note: enum constant defined here
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:87:25: note: enum constant defined here
+   87 |       DT_mode, DT_code, DT_veclen,
+      |                         ^~~~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c: In function 'maybe_both_true_1':
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:91:7: note: enum constant defined here
+   91 |       DT_accept_op, DT_accept_insn
+      |       ^~~~~~~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:91:7: note: enum constant defined here
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c: In function 'nodes_identical_1':
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:86:7: note: enum constant defined here
+   86 |       DT_num_insns,
+      |       ^~~~~~~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:87:7: note: enum constant defined here
+   87 |       DT_mode, DT_code, DT_veclen,
+      |       ^~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:87:16: note: enum constant defined here
+   87 |       DT_mode, DT_code, DT_veclen,
+      |                ^~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:90:29: note: enum constant defined here
+   90 |       DT_veclen_ge, DT_dup, DT_pred, DT_c_test,
+      |                             ^~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:90:38: note: enum constant defined here
+   90 |       DT_veclen_ge, DT_dup, DT_pred, DT_c_test,
+      |                                      ^~~~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:87:25: note: enum constant defined here
+   87 |       DT_mode, DT_code, DT_veclen,
+      |                         ^~~~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:90:7: note: enum constant defined here
+   90 |       DT_veclen_ge, DT_dup, DT_pred, DT_c_test,
+      |       ^~~~~~~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:90:21: note: enum constant defined here
+   90 |       DT_veclen_ge, DT_dup, DT_pred, DT_c_test,
+      |                     ^~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:88:7: note: enum constant defined here
+   88 |       DT_elt_zero_int, DT_elt_one_int, DT_elt_zero_wide, DT_elt_zero_wide_safe,
+      |       ^~~~~~~~~~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:88:24: note: enum constant defined here
+   88 |       DT_elt_zero_int, DT_elt_one_int, DT_elt_zero_wide, DT_elt_zero_wide_safe,
+      |                        ^~~~~~~~~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:88:40: note: enum constant defined here
+   88 |       DT_elt_zero_int, DT_elt_one_int, DT_elt_zero_wide, DT_elt_zero_wide_safe,
+      |                                        ^~~~~~~~~~~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:88:58: note: enum constant defined here
+   88 |       DT_elt_zero_int, DT_elt_one_int, DT_elt_zero_wide, DT_elt_zero_wide_safe,
+      |                                                          ^~~~~~~~~~~~~~~~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:91:7: note: enum constant defined here
+   91 |       DT_accept_op, DT_accept_insn
+      |       ^~~~~~~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:91:21: note: enum constant defined here
+   91 |       DT_accept_op, DT_accept_insn
+      |                     ^~~~~~~~~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c: In function 'merge_accept_insn':
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:91:21: note: enum constant defined here
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:91:21: note: enum constant defined here
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c: In function 'factor_tests':
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:84:8: note: enum type defined here
+   84 |   enum decision_type
+      |        ^~~~~~~~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:87:7: note: enum constant defined here
+   87 |       DT_mode, DT_code, DT_veclen,
+      |       ^~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:87:16: note: enum constant defined here
+   87 |       DT_mode, DT_code, DT_veclen,
+      |                ^~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:87:25: note: enum constant defined here
+   87 |       DT_mode, DT_code, DT_veclen,
+      |                         ^~~~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:88:7: note: enum constant defined here
+   88 |       DT_elt_zero_int, DT_elt_one_int, DT_elt_zero_wide, DT_elt_zero_wide_safe,
+      |       ^~~~~~~~~~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:88:24: note: enum constant defined here
+   88 |       DT_elt_zero_int, DT_elt_one_int, DT_elt_zero_wide, DT_elt_zero_wide_safe,
+      |                        ^~~~~~~~~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:88:58: note: enum constant defined here
+   88 |       DT_elt_zero_int, DT_elt_one_int, DT_elt_zero_wide, DT_elt_zero_wide_safe,
+      |                                                          ^~~~~~~~~~~~~~~~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c: In function 'simplify_tests':
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:90:29: note: enum constant defined here
+   90 |       DT_veclen_ge, DT_dup, DT_pred, DT_c_test,
+      |                             ^~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:87:7: note: enum constant defined here
+   87 |       DT_mode, DT_code, DT_veclen,
+      |       ^~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:87:16: note: enum constant defined here
+   87 |       DT_mode, DT_code, DT_veclen,
+      |                ^~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c: In function 'write_switch':
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:84:8: note: enum type defined here
+   84 |   enum decision_type
+      |        ^~~~~~~~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:87:16: note: enum constant defined here
+   87 |       DT_mode, DT_code, DT_veclen,
+      |                ^~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:87:16: note: enum constant defined here
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:90:29: note: enum constant defined here
+   90 |       DT_veclen_ge, DT_dup, DT_pred, DT_c_test,
+      |                             ^~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:87:7: note: enum constant defined here
+   87 |       DT_mode, DT_code, DT_veclen,
+      |       ^~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:87:25: note: enum constant defined here
+   87 |       DT_mode, DT_code, DT_veclen,
+      |                         ^~~~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:88:7: note: enum constant defined here
+   88 |       DT_elt_zero_int, DT_elt_one_int, DT_elt_zero_wide, DT_elt_zero_wide_safe,
+      |       ^~~~~~~~~~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:88:24: note: enum constant defined here
+   88 |       DT_elt_zero_int, DT_elt_one_int, DT_elt_zero_wide, DT_elt_zero_wide_safe,
+      |                        ^~~~~~~~~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:88:58: note: enum constant defined here
+   88 |       DT_elt_zero_int, DT_elt_one_int, DT_elt_zero_wide, DT_elt_zero_wide_safe,
+      |                                                          ^~~~~~~~~~~~~~~~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:88:58: note: enum constant defined here
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:87:7: note: enum constant defined here
+   87 |       DT_mode, DT_code, DT_veclen,
+      |       ^~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:87:25: note: enum constant defined here
+   87 |       DT_mode, DT_code, DT_veclen,
+      |                         ^~~~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:88:7: note: enum constant defined here
+   88 |       DT_elt_zero_int, DT_elt_one_int, DT_elt_zero_wide, DT_elt_zero_wide_safe,
+      |       ^~~~~~~~~~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:88:24: note: enum constant defined here
+   88 |       DT_elt_zero_int, DT_elt_one_int, DT_elt_zero_wide, DT_elt_zero_wide_safe,
+      |                        ^~~~~~~~~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:88:58: note: enum constant defined here
+   88 |       DT_elt_zero_int, DT_elt_one_int, DT_elt_zero_wide, DT_elt_zero_wide_safe,
+      |                                                          ^~~~~~~~~~~~~~~~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:87:7: note: enum constant defined here
+   87 |       DT_mode, DT_code, DT_veclen,
+      |       ^~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:87:25: note: enum constant defined here
+   87 |       DT_mode, DT_code, DT_veclen,
+      |                         ^~~~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:88:7: note: enum constant defined here
+   88 |       DT_elt_zero_int, DT_elt_one_int, DT_elt_zero_wide, DT_elt_zero_wide_safe,
+      |       ^~~~~~~~~~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:88:24: note: enum constant defined here
+   88 |       DT_elt_zero_int, DT_elt_one_int, DT_elt_zero_wide, DT_elt_zero_wide_safe,
+      |                        ^~~~~~~~~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:88:40: note: enum constant defined here
+   88 |       DT_elt_zero_int, DT_elt_one_int, DT_elt_zero_wide, DT_elt_zero_wide_safe,
+      |                                        ^~~~~~~~~~~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:88:58: note: enum constant defined here
+   88 |       DT_elt_zero_int, DT_elt_one_int, DT_elt_zero_wide, DT_elt_zero_wide_safe,
+      |                                                          ^~~~~~~~~~~~~~~~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c: In function 'write_cond':
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:86:7: note: enum constant defined here
+   86 |       DT_num_insns,
+      |       ^~~~~~~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:87:7: note: enum constant defined here
+   87 |       DT_mode, DT_code, DT_veclen,
+      |       ^~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:87:16: note: enum constant defined here
+   87 |       DT_mode, DT_code, DT_veclen,
+      |                ^~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:87:25: note: enum constant defined here
+   87 |       DT_mode, DT_code, DT_veclen,
+      |                         ^~~~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:88:7: note: enum constant defined here
+   88 |       DT_elt_zero_int, DT_elt_one_int, DT_elt_zero_wide, DT_elt_zero_wide_safe,
+      |       ^~~~~~~~~~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:88:24: note: enum constant defined here
+   88 |       DT_elt_zero_int, DT_elt_one_int, DT_elt_zero_wide, DT_elt_zero_wide_safe,
+      |                        ^~~~~~~~~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:88:40: note: enum constant defined here
+   88 |       DT_elt_zero_int, DT_elt_one_int, DT_elt_zero_wide, DT_elt_zero_wide_safe,
+      |                                        ^~~~~~~~~~~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:88:58: note: enum constant defined here
+   88 |       DT_elt_zero_int, DT_elt_one_int, DT_elt_zero_wide, DT_elt_zero_wide_safe,
+      |                                                          ^~~~~~~~~~~~~~~~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:89:7: note: enum constant defined here
+   89 |       DT_const_int,
+      |       ^~~~~~~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:90:7: note: enum constant defined here
+   90 |       DT_veclen_ge, DT_dup, DT_pred, DT_c_test,
+      |       ^~~~~~~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:90:21: note: enum constant defined here
+   90 |       DT_veclen_ge, DT_dup, DT_pred, DT_c_test,
+      |                     ^~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:90:29: note: enum constant defined here
+   90 |       DT_veclen_ge, DT_dup, DT_pred, DT_c_test,
+      |                             ^~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:90:38: note: enum constant defined here
+   90 |       DT_veclen_ge, DT_dup, DT_pred, DT_c_test,
+      |                                      ^~~~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:91:21: note: enum constant defined here
+   91 |       DT_accept_op, DT_accept_insn
+      |                     ^~~~~~~~~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c: In function 'write_action':
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:91:7: note: enum constant defined here
+   91 |       DT_accept_op, DT_accept_insn
+      |       ^~~~~~~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:91:21: note: enum constant defined here
+   91 |       DT_accept_op, DT_accept_insn
+      |                     ^~~~~~~~~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:91:7: note: enum constant defined here
+   91 |       DT_accept_op, DT_accept_insn
+      |       ^~~~~~~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:91:21: note: enum constant defined here
+   91 |       DT_accept_op, DT_accept_insn
+      |                     ^~~~~~~~~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:91:21: note: enum constant defined here
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c: In function 'is_unconditional':
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:91:7: note: enum constant defined here
+   91 |       DT_accept_op, DT_accept_insn
+      |       ^~~~~~~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:91:21: note: enum constant defined here
+   91 |       DT_accept_op, DT_accept_insn
+      |                     ^~~~~~~~~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c: In function 'write_node':
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:87:16: note: enum constant defined here
+   87 |       DT_mode, DT_code, DT_veclen,
+      |                ^~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:88:58: note: enum constant defined here
+   88 |       DT_elt_zero_int, DT_elt_one_int, DT_elt_zero_wide, DT_elt_zero_wide_safe,
+      |                                                          ^~~~~~~~~~~~~~~~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:89:7: note: enum constant defined here
+   89 |       DT_const_int,
+      |       ^~~~~~~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c: In function 'make_insn_sequence':
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:91:7: note: enum constant defined here
+   91 |       DT_accept_op, DT_accept_insn
+      |       ^~~~~~~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:90:38: note: enum constant defined here
+   90 |       DT_veclen_ge, DT_dup, DT_pred, DT_c_test,
+      |                                      ^~~~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:91:21: note: enum constant defined here
+   91 |       DT_accept_op, DT_accept_insn
+      |                     ^~~~~~~~~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:91:7: note: enum constant defined here
+   91 |       DT_accept_op, DT_accept_insn
+      |       ^~~~~~~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:90:38: note: enum constant defined here
+   90 |       DT_veclen_ge, DT_dup, DT_pred, DT_c_test,
+      |                                      ^~~~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:91:21: note: enum constant defined here
+   91 |       DT_accept_op, DT_accept_insn
+      |                     ^~~~~~~~~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c: In function 'debug_decision_2':
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:86:7: note: enum constant defined here
+   86 |       DT_num_insns,
+      |       ^~~~~~~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:87:7: note: enum constant defined here
+   87 |       DT_mode, DT_code, DT_veclen,
+      |       ^~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:87:16: note: enum constant defined here
+   87 |       DT_mode, DT_code, DT_veclen,
+      |                ^~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:87:25: note: enum constant defined here
+   87 |       DT_mode, DT_code, DT_veclen,
+      |                         ^~~~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:88:7: note: enum constant defined here
+   88 |       DT_elt_zero_int, DT_elt_one_int, DT_elt_zero_wide, DT_elt_zero_wide_safe,
+      |       ^~~~~~~~~~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:88:24: note: enum constant defined here
+   88 |       DT_elt_zero_int, DT_elt_one_int, DT_elt_zero_wide, DT_elt_zero_wide_safe,
+      |                        ^~~~~~~~~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:88:40: note: enum constant defined here
+   88 |       DT_elt_zero_int, DT_elt_one_int, DT_elt_zero_wide, DT_elt_zero_wide_safe,
+      |                                        ^~~~~~~~~~~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:88:58: note: enum constant defined here
+   88 |       DT_elt_zero_int, DT_elt_one_int, DT_elt_zero_wide, DT_elt_zero_wide_safe,
+      |                                                          ^~~~~~~~~~~~~~~~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:90:7: note: enum constant defined here
+   90 |       DT_veclen_ge, DT_dup, DT_pred, DT_c_test,
+      |       ^~~~~~~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:90:21: note: enum constant defined here
+   90 |       DT_veclen_ge, DT_dup, DT_pred, DT_c_test,
+      |                     ^~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:90:29: note: enum constant defined here
+   90 |       DT_veclen_ge, DT_dup, DT_pred, DT_c_test,
+      |                             ^~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:90:38: note: enum constant defined here
+   90 |       DT_veclen_ge, DT_dup, DT_pred, DT_c_test,
+      |                                      ^~~~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:91:7: note: enum constant defined here
+   91 |       DT_accept_op, DT_accept_insn
+      |       ^~~~~~~~~~~~
+/tc/gcc_src/gcc-4.4.1/gcc/genrecog.c:91:21: note: enum constant defined here
+   91 |       DT_accept_op, DT_accept_insn
+      |                     ^~~~~~~~~~~~~~
+gcc -std=gnu89 -fcommon -c  -std=gnu89 -fcommon -O1 -w -DIN_GCC -DCROSS_DIRECTORY_STRUCTURE  -W -Wall -Wwrite-strings -Wstrict-prototypes -Wmissing-prototypes -Wcast-qual -Wold-style-definition -Wc++-compat -Wmissing-format-attribute -pedantic -Wno-long-long -Wno-variadic-macros -Wno-overlength-strings   -DHAVE_CONFIG_H -DGENERATOR_FILE -I. -Ibuild -I/tc/gcc_src/gcc-4.4.1/gcc -I/tc/gcc_src/gcc-4.4.1/gcc/build -I/tc/gcc_src/gcc-4.4.1/gcc/../include -I/tc/gcc_src/gcc-4.4.1/gcc/../libcpp/include -I/opt/nl/include -I/opt/nl/include -I/tc/gcc_src/gcc-4.4.1/gcc/../libdecnumber -I/tc/gcc_src/gcc-4.4.1/gcc/../libdecnumber/dpd -I../libdecnumber    -o build/genattrtab.o /tc/gcc_src/gcc-4.4.1/gcc/genattrtab.c
+gcc -std=gnu89 -fcommon -c  -std=gnu89 -fcommon -O1 -w -DIN_GCC -DCROSS_DIRECTORY_STRUCTURE  -W -Wall -Wwrite-strings -Wstrict-prototypes -Wmissing-prototypes -Wcast-qual -Wold-style-definition -Wc++-compat -Wmissing-format-attribute -pedantic -Wno-long-long -Wno-variadic-macros -Wno-overlength-strings   -DHAVE_CONFIG_H -DGENERATOR_FILE -I. -Ibuild -I/tc/gcc_src/gcc-4.4.1/gcc -I/tc/gcc_src/gcc-4.4.1/gcc/build -I/tc/gcc_src/gcc-4.4.1/gcc/../include -I/tc/gcc_src/gcc-4.4.1/gcc/../libcpp/include -I/opt/nl/include -I/opt/nl/include -I/tc/gcc_src/gcc-4.4.1/gcc/../libdecnumber -I/tc/gcc_src/gcc-4.4.1/gcc/../libdecnumber/dpd -I../libdecnumber    -o build/ggc-none.o /tc/gcc_src/gcc-4.4.1/gcc/ggc-none.c
+gcc -std=gnu89 -fcommon -c  -std=gnu89 -fcommon -O1 -w -DIN_GCC -DCROSS_DIRECTORY_STRUCTURE  -W -Wall -Wwrite-strings -Wstrict-prototypes -Wmissing-prototypes -Wcast-qual -Wold-style-definition -Wc++-compat -Wmissing-format-attribute -pedantic -Wno-long-long -Wno-variadic-macros -Wno-overlength-strings   -DHAVE_CONFIG_H -DGENERATOR_FILE -I. -Ibuild -I/tc/gcc_src/gcc-4.4.1/gcc -I/tc/gcc_src/gcc-4.4.1/gcc/build -I/tc/gcc_src/gcc-4.4.1/gcc/../include -I/tc/gcc_src/gcc-4.4.1/gcc/../libcpp/include -I/opt/nl/include -I/opt/nl/include -I/tc/gcc_src/gcc-4.4.1/gcc/../libdecnumber -I/tc/gcc_src/gcc-4.4.1/gcc/../libdecnumber/dpd -I../libdecnumber    -o build/vec.o /tc/gcc_src/gcc-4.4.1/gcc/vec.c
+gcc -std=gnu89 -fcommon  -std=gnu89 -fcommon -O1 -w -DIN_GCC -DCROSS_DIRECTORY_STRUCTURE  -W -Wall -Wwrite-strings -Wstrict-prototypes -Wmissing-prototypes -Wcast-qual -Wold-style-definition -Wc++-compat -Wmissing-format-attribute -pedantic -Wno-long-long -Wno-variadic-macros -Wno-overlength-strings   -DHAVE_CONFIG_H -DGENERATOR_FILE  -o build/genconstants \
+    build/genconstants.o build/rtl.o build/read-rtl.o build/ggc-none.o build/vec.o build/min-insn-modes.o build/gensupport.o build/print-rtl.o build/errors.o ../build-x86_64-unknown-linux-gnu/libiberty/libiberty.a
+/usr/bin/ld: /lib/x86_64-linux-gnu/libjansson.so.4: no version information available (required by /usr/bin/ld)
+gcc -std=gnu89 -fcommon  -std=gnu89 -fcommon -O1 -w -DIN_GCC -DCROSS_DIRECTORY_STRUCTURE  -W -Wall -Wwrite-strings -Wstrict-prototypes -Wmissing-prototypes -Wcast-qual -Wold-style-definition -Wc++-compat -Wmissing-format-attribute -pedantic -Wno-long-long -Wno-variadic-macros -Wno-overlength-strings   -DHAVE_CONFIG_H -DGENERATOR_FILE  -o build/genmddeps \
+    build/genmddeps.o build/rtl.o build/read-rtl.o build/ggc-none.o build/vec.o build/min-insn-modes.o build/gensupport.o build/print-rtl.o build/errors.o ../build-x86_64-unknown-linux-gnu/libiberty/libiberty.a
+/usr/bin/ld: /lib/x86_64-linux-gnu/libjansson.so.4: no version information available (required by /usr/bin/ld)
+gcc -std=gnu89 -fcommon  -std=gnu89 -fcommon -O1 -w -DIN_GCC -DCROSS_DIRECTORY_STRUCTURE  -W -Wall -Wwrite-strings -Wstrict-prototypes -Wmissing-prototypes -Wcast-qual -Wold-style-definition -Wc++-compat -Wmissing-format-attribute -pedantic -Wno-long-long -Wno-variadic-macros -Wno-overlength-strings   -DHAVE_CONFIG_H -DGENERATOR_FILE  -o build/genflags \
+    build/genflags.o build/rtl.o build/read-rtl.o build/ggc-none.o build/vec.o build/min-insn-modes.o build/gensupport.o build/print-rtl.o build/errors.o ../build-x86_64-unknown-linux-gnu/libiberty/libiberty.a
+/usr/bin/ld: /lib/x86_64-linux-gnu/libjansson.so.4: no version information available (required by /usr/bin/ld)
+gcc -std=gnu89 -fcommon -std=gnu89 -fcommon -O1 -w -DIN_GCC -DCROSS_DIRECTORY_STRUCTURE -W -Wall -Wwrite-strings -Wstrict-prototypes -Wmissing-prototypes -Wcast-qual -DHAVE_CONFIG_H -DGENERATOR_FILE  -o build/genconditions \
+    build/genconditions.o build/rtl.o build/read-rtl.o build/ggc-none.o build/vec.o build/min-insn-modes.o build/gensupport.o build/print-rtl.o build/errors.o ../build-x86_64-unknown-linux-gnu/libiberty/libiberty.a
+/usr/bin/ld: /lib/x86_64-linux-gnu/libjansson.so.4: no version information available (required by /usr/bin/ld)
+gcc -std=gnu89 -fcommon -std=gnu89 -fcommon -O1 -w -DIN_GCC -DCROSS_DIRECTORY_STRUCTURE -W -Wall -Wwrite-strings -Wstrict-prototypes -Wmissing-prototypes -Wcast-qual -DHAVE_CONFIG_H -DGENERATOR_FILE  -o build/genpreds \
+    build/genpreds.o build/rtl.o build/read-rtl.o build/ggc-none.o build/vec.o build/min-insn-modes.o build/gensupport.o build/print-rtl.o build/errors.o ../build-x86_64-unknown-linux-gnu/libiberty/libiberty.a
+/usr/bin/ld: /lib/x86_64-linux-gnu/libjansson.so.4: no version information available (required by /usr/bin/ld)
+gcc -std=gnu89 -fcommon  -std=gnu89 -fcommon -O1 -w -DIN_GCC -DCROSS_DIRECTORY_STRUCTURE  -W -Wall -Wwrite-strings -Wstrict-prototypes -Wmissing-prototypes -Wcast-qual -Wold-style-definition -Wc++-compat -Wmissing-format-attribute -pedantic -Wno-long-long -Wno-variadic-macros -Wno-overlength-strings   -DHAVE_CONFIG_H -DGENERATOR_FILE  -o build/genattr \
+    build/genattr.o build/rtl.o build/read-rtl.o build/ggc-none.o build/vec.o build/min-insn-modes.o build/gensupport.o build/print-rtl.o build/errors.o ../build-x86_64-unknown-linux-gnu/libiberty/libiberty.a
+/usr/bin/ld: /lib/x86_64-linux-gnu/libjansson.so.4: no version information available (required by /usr/bin/ld)
+gcc -std=gnu89 -fcommon  -std=gnu89 -fcommon -O1 -w -DIN_GCC -DCROSS_DIRECTORY_STRUCTURE  -W -Wall -Wwrite-strings -Wstrict-prototypes -Wmissing-prototypes -Wcast-qual -Wold-style-definition -Wc++-compat -Wmissing-format-attribute -pedantic -Wno-long-long -Wno-variadic-macros -Wno-overlength-strings   -DHAVE_CONFIG_H -DGENERATOR_FILE  -o build/gencodes \
+    build/gencodes.o build/rtl.o build/read-rtl.o build/ggc-none.o build/vec.o build/min-insn-modes.o build/gensupport.o build/print-rtl.o build/errors.o ../build-x86_64-unknown-linux-gnu/libiberty/libiberty.a
+/usr/bin/ld: /lib/x86_64-linux-gnu/libjansson.so.4: no version information available (required by /usr/bin/ld)
+gcc -std=gnu89 -fcommon  -std=gnu89 -fcommon -O1 -w -DIN_GCC -DCROSS_DIRECTORY_STRUCTURE  -W -Wall -Wwrite-strings -Wstrict-prototypes -Wmissing-prototypes -Wcast-qual -Wold-style-definition -Wc++-compat -Wmissing-format-attribute -pedantic -Wno-long-long -Wno-variadic-macros -Wno-overlength-strings   -DHAVE_CONFIG_H -DGENERATOR_FILE  -o build/genconfig \
+    build/genconfig.o build/rtl.o build/read-rtl.o build/ggc-none.o build/vec.o build/min-insn-modes.o build/gensupport.o build/print-rtl.o build/errors.o ../build-x86_64-unknown-linux-gnu/libiberty/libiberty.a
+/usr/bin/ld: /lib/x86_64-linux-gnu/libjansson.so.4: no version information available (required by /usr/bin/ld)
+gcc -std=gnu89 -fcommon  -std=gnu89 -fcommon -O1 -w -DIN_GCC -DCROSS_DIRECTORY_STRUCTURE  -W -Wall -Wwrite-strings -Wstrict-prototypes -Wmissing-prototypes -Wcast-qual -Wold-style-definition -Wc++-compat -Wmissing-format-attribute -pedantic -Wno-long-long -Wno-variadic-macros -Wno-overlength-strings   -DHAVE_CONFIG_H -DGENERATOR_FILE  -o build/genautomata \
+    build/genautomata.o build/rtl.o build/read-rtl.o build/ggc-none.o build/vec.o build/min-insn-modes.o build/gensupport.o build/print-rtl.o build/errors.o ../build-x86_64-unknown-linux-gnu/libiberty/libiberty.a -lm
+gcc -std=gnu89 -fcommon  -std=gnu89 -fcommon -O1 -w -DIN_GCC -DCROSS_DIRECTORY_STRUCTURE  -W -Wall -Wwrite-strings -Wstrict-prototypes -Wmissing-prototypes -Wcast-qual -Wold-style-definition -Wc++-compat -Wmissing-format-attribute -pedantic -Wno-long-long -Wno-variadic-macros -Wno-overlength-strings   -DHAVE_CONFIG_H -DGENERATOR_FILE  -o build/genemit \
+    build/genemit.o build/rtl.o build/read-rtl.o build/ggc-none.o build/vec.o build/min-insn-modes.o build/gensupport.o build/print-rtl.o build/errors.o ../build-x86_64-unknown-linux-gnu/libiberty/libiberty.a
+/usr/bin/ld: /lib/x86_64-linux-gnu/libjansson.so.4: no version information available (required by /usr/bin/ld)
+/usr/bin/ld: /lib/x86_64-linux-gnu/libjansson.so.4: no version information available (required by /usr/bin/ld)
+gcc -std=gnu89 -fcommon  -std=gnu89 -fcommon -O1 -w -DIN_GCC -DCROSS_DIRECTORY_STRUCTURE  -W -Wall -Wwrite-strings -Wstrict-prototypes -Wmissing-prototypes -Wcast-qual -Wold-style-definition -Wc++-compat -Wmissing-format-attribute -pedantic -Wno-long-long -Wno-variadic-macros -Wno-overlength-strings   -DHAVE_CONFIG_H -DGENERATOR_FILE  -o build/genextract \
+    build/genextract.o build/rtl.o build/read-rtl.o build/ggc-none.o build/vec.o build/min-insn-modes.o build/gensupport.o build/print-rtl.o build/errors.o ../build-x86_64-unknown-linux-gnu/libiberty/libiberty.a
+gcc -std=gnu89 -fcommon  -std=gnu89 -fcommon -O1 -w -DIN_GCC -DCROSS_DIRECTORY_STRUCTURE  -W -Wall -Wwrite-strings -Wstrict-prototypes -Wmissing-prototypes -Wcast-qual -Wold-style-definition -Wc++-compat -Wmissing-format-attribute -pedantic -Wno-long-long -Wno-variadic-macros -Wno-overlength-strings   -DHAVE_CONFIG_H -DGENERATOR_FILE  -o build/genopinit \
+    build/genopinit.o build/rtl.o build/read-rtl.o build/ggc-none.o build/vec.o build/min-insn-modes.o build/gensupport.o build/print-rtl.o build/errors.o ../build-x86_64-unknown-linux-gnu/libiberty/libiberty.a
+/usr/bin/ld: /lib/x86_64-linux-gnu/libjansson.so.4: no version information available (required by /usr/bin/ld)
+/usr/bin/ld: /lib/x86_64-linux-gnu/libjansson.so.4: no version information available (required by /usr/bin/ld)
+gcc -std=gnu89 -fcommon  -std=gnu89 -fcommon -O1 -w -DIN_GCC -DCROSS_DIRECTORY_STRUCTURE  -W -Wall -Wwrite-strings -Wstrict-prototypes -Wmissing-prototypes -Wcast-qual -Wold-style-definition -Wc++-compat -Wmissing-format-attribute -pedantic -Wno-long-long -Wno-variadic-macros -Wno-overlength-strings   -DHAVE_CONFIG_H -DGENERATOR_FILE  -o build/genoutput \
+    build/genoutput.o build/rtl.o build/read-rtl.o build/ggc-none.o build/vec.o build/min-insn-modes.o build/gensupport.o build/print-rtl.o build/errors.o ../build-x86_64-unknown-linux-gnu/libiberty/libiberty.a
+gcc -std=gnu89 -fcommon  -std=gnu89 -fcommon -O1 -w -DIN_GCC -DCROSS_DIRECTORY_STRUCTURE  -W -Wall -Wwrite-strings -Wstrict-prototypes -Wmissing-prototypes -Wcast-qual -Wold-style-definition -Wc++-compat -Wmissing-format-attribute -pedantic -Wno-long-long -Wno-variadic-macros -Wno-overlength-strings   -DHAVE_CONFIG_H -DGENERATOR_FILE  -o build/genpeep \
+    build/genpeep.o build/rtl.o build/read-rtl.o build/ggc-none.o build/vec.o build/min-insn-modes.o build/gensupport.o build/print-rtl.o build/errors.o ../build-x86_64-unknown-linux-gnu/libiberty/libiberty.a
+/usr/bin/ld: /lib/x86_64-linux-gnu/libjansson.so.4: no version information available (required by /usr/bin/ld)
+/usr/bin/ld: /lib/x86_64-linux-gnu/libjansson.so.4: no version information available (required by /usr/bin/ld)
+gcc -std=gnu89 -fcommon  -std=gnu89 -fcommon -O1 -w -DIN_GCC -DCROSS_DIRECTORY_STRUCTURE  -W -Wall -Wwrite-strings -Wstrict-prototypes -Wmissing-prototypes -Wcast-qual -Wold-style-definition -Wc++-compat -Wmissing-format-attribute -pedantic -Wno-long-long -Wno-variadic-macros -Wno-overlength-strings   -DHAVE_CONFIG_H -DGENERATOR_FILE  -o build/genrecog \
+    build/genrecog.o build/rtl.o build/read-rtl.o build/ggc-none.o build/vec.o build/min-insn-modes.o build/gensupport.o build/print-rtl.o build/errors.o ../build-x86_64-unknown-linux-gnu/libiberty/libiberty.a
+build/genmddeps /tc/gcc_src/gcc-4.4.1/gcc/config/arm/arm.md > tmp-mddeps
+/usr/bin/ld: /lib/x86_64-linux-gnu/libjansson.so.4: no version information available (required by /usr/bin/ld)
+gcc -std=gnu89 -fcommon  -std=gnu89 -fcommon -O1 -w -DIN_GCC -DCROSS_DIRECTORY_STRUCTURE  -W -Wall -Wwrite-strings -Wstrict-prototypes -Wmissing-prototypes -Wcast-qual -Wold-style-definition -Wc++-compat -Wmissing-format-attribute -pedantic -Wno-long-long -Wno-variadic-macros -Wno-overlength-strings   -DHAVE_CONFIG_H -DGENERATOR_FILE  -o build/genattrtab \
+    build/genattrtab.o build/rtl.o build/read-rtl.o build/ggc-none.o build/vec.o build/min-insn-modes.o build/gensupport.o build/print-rtl.o build/errors.o ../build-x86_64-unknown-linux-gnu/libiberty/libiberty.a
+/usr/bin/ld: /lib/x86_64-linux-gnu/libjansson.so.4: no version information available (required by /usr/bin/ld)
+/bin/bash: line 1:  7347 Segmentation fault      (core dumped) build/genmddeps /tc/gcc_src/gcc-4.4.1/gcc/config/arm/arm.md > tmp-mddeps
+make[2]: *** [Makefile:3126: s-mddeps] Error 139
+make[2]: Leaving directory '/w/gccbuild/obj/gcc'
+make[1]: *** [Makefile:4859: all-gcc] Error 2
+make[1]: Leaving directory '/w/gccbuild/obj'
+make: *** [Makefile:737: all] Error 2
+make[1]: Entering directory '/w/gccbuild/obj'
+make[2]: Entering directory '/w/gccbuild/obj/libiberty'
+make[3]: Entering directory '/w/gccbuild/obj/libiberty/testsuite'
+make[3]: Nothing to be done for 'all'.
+make[3]: Leaving directory '/w/gccbuild/obj/libiberty/testsuite'
+make[2]: Leaving directory '/w/gccbuild/obj/libiberty'
+make[2]: Entering directory '/w/gccbuild/obj/fixincludes'
+make[2]: Nothing to be done for 'all'.
+make[2]: Leaving directory '/w/gccbuild/obj/fixincludes'
+make[2]: Entering directory '/w/gccbuild/obj/intl'
+make[2]: Nothing to be done for 'all'.
+make[2]: Leaving directory '/w/gccbuild/obj/intl'
+make[2]: Entering directory '/w/gccbuild/obj/build-x86_64-unknown-linux-gnu/libiberty'
+make[3]: Entering directory '/w/gccbuild/obj/build-x86_64-unknown-linux-gnu/libiberty/testsuite'
+make[3]: Nothing to be done for 'all'.
+make[3]: Leaving directory '/w/gccbuild/obj/build-x86_64-unknown-linux-gnu/libiberty/testsuite'
+make[2]: Leaving directory '/w/gccbuild/obj/build-x86_64-unknown-linux-gnu/libiberty'
+make[2]: Entering directory '/w/gccbuild/obj/build-x86_64-unknown-linux-gnu/fixincludes'
+make[2]: Nothing to be done for 'all'.
+make[2]: Leaving directory '/w/gccbuild/obj/build-x86_64-unknown-linux-gnu/fixincludes'
+make[2]: Entering directory '/w/gccbuild/obj/libcpp'
+test -f config.h || (rm -f stamp-h1 && make stamp-h1)
+make[2]: Leaving directory '/w/gccbuild/obj/libcpp'
+make[2]: Entering directory '/w/gccbuild/obj/libdecnumber'
+make[2]: Nothing to be done for 'all'.
+make[2]: Leaving directory '/w/gccbuild/obj/libdecnumber'
+make[2]: Entering directory '/w/gccbuild/obj/gcc'
+build/genmddeps /tc/gcc_src/gcc-4.4.1/gcc/config/arm/arm.md > tmp-mddeps
+/bin/bash: line 1:  8078 Segmentation fault      (core dumped) build/genmddeps /tc/gcc_src/gcc-4.4.1/gcc/config/arm/arm.md > tmp-mddeps
+make[2]: *** [Makefile:3126: s-mddeps] Error 139
+make[2]: Leaving directory '/w/gccbuild/obj/gcc'
+make[1]: *** [Makefile:4859: all-gcc] Error 2
+make[1]: Leaving directory '/w/gccbuild/obj'
+make: *** [Makefile:737: all] Error 2

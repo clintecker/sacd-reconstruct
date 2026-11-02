@@ -1,0 +1,5 @@
+mknod: /dev/sacd_read: Permission denied
+sh: 1: insmod: not found
+[0]: install_modules: mknod/insmod filed
+sh: 1: rmmod: not found
+[0]: Can not install modules

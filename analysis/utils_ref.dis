@@ -1,0 +1,737 @@
+
+build_utils.o:	file format elf32-littlearm
+
+Disassembly of section .text:
+
+00000000 <substr>:
+       0:      	push	{r4, r11, lr}
+       4:      	add	r11, sp, #8
+       8:      	sub	sp, sp, #36
+       c:      	str	r0, [r11, #-0x20]
+      10:      	str	r1, [r11, #-0x24]
+      14:      	str	r2, [r11, #-0x28]
+      18:      	ldr	r0, [pc, #0xb4]         @ 0xd4 <substr+0xd4>
+      1c:      	mov	r1, #0
+      20:      	mov	r2, #512
+      24:      	bl	0x24 <substr+0x24>      @ imm = #-0x8
+      28:      	ldr	r2, [r11, #-0x28]
+      2c:      	ldr	r3, [pc, #0xa4]         @ 0xd8 <substr+0xd8>
+      30:      	cmp	r2, r3
+      34:      	bgt	0xc4 <substr+0xc4>      @ imm = #0x88
+      38:      	ldr	r3, [pc, #0x9c]         @ 0xdc <substr+0xdc>
+      3c:      	str	r3, [r11, #-0x18]
+      40:      	ldr	r2, [r11, #-0x24]
+      44:      	ldr	r3, [r11, #-0x20]
+      48:      	add	r2, r2, r3
+      4c:      	ldr	r3, [r11, #-0x28]
+      50:      	mov	r0, r2
+      54:      	mov	r1, r3
+      58:      	ldr	r2, [pc, #0x80]         @ 0xe0 <substr+0xe0>
+      5c:      	ldr	r3, [r11, #-0x18]
+      60:      	bl	0x60 <substr+0x60>      @ imm = #-0x8
+      64:      	mov	r3, r0
+      68:      	str	r3, [r11, #-0x14]
+      6c:      	ldr	r4, [r11, #-0x14]
+      70:      	ldr	r0, [r11, #-0x14]
+      74:      	bl	0x74 <substr+0x74>      @ imm = #-0x8
+      78:      	mov	r3, r0
+      7c:      	lsl	r3, r3, #2
+      80:      	mov	r0, r4
+      84:      	mov	r1, r3
+      88:      	ldr	r2, [r11, #-0x18]
+      8c:      	ldr	r3, [pc, #0x4c]         @ 0xe0 <substr+0xe0>
+      90:      	bl	0x90 <substr+0x90>      @ imm = #-0x8
+      94:      	mov	r3, r0
+      98:      	str	r3, [r11, #-0x10]
+      9c:      	ldr	r3, [r11, #-0x10]
+      a0:      	ldr	r0, [pc, #0x2c]         @ 0xd4 <substr+0xd4>
+      a4:      	mov	r1, r3
+      a8:      	bl	0xa8 <substr+0xa8>      @ imm = #-0x8
+      ac:      	ldr	r0, [r11, #-0x14]
+      b0:      	bl	0xb0 <substr+0xb0>      @ imm = #-0x8
+      b4:      	ldr	r0, [r11, #-0x10]
+      b8:      	bl	0xb8 <substr+0xb8>      @ imm = #-0x8
+      bc:      	ldr	r3, [pc, #0x10]         @ 0xd4 <substr+0xd4>
+      c0:      	b	0xc8 <substr+0xc8>      @ imm = #0x0
+      c4:      	ldr	r3, [pc, #0x8]          @ 0xd4 <substr+0xd4>
+      c8:      	mov	r0, r3
+      cc:      	sub	sp, r11, #8
+      d0:      	pop	{r4, r11, pc}
+      d4: 00 00 00 00  	.word	0x00000000
+      d8: ff 01 00 00  	.word	0x000001ff
+      dc: 00 00 00 00  	.word	0x00000000
+      e0: 08 00 00 00  	.word	0x00000008
+
+000000e4 <str_replace>:
+      e4:      	push	{r11, lr}
+      e8:      	add	r11, sp, #4
+      ec:      	sub	sp, sp, #48
+      f0:      	str	r0, [r11, #-0x28]
+      f4:      	str	r1, [r11, #-0x2c]
+      f8:      	str	r2, [r11, #-0x30]
+      fc:      	ldr	r0, [r11, #-0x28]
+     100:      	bl	0x100 <str_replace+0x1c> @ imm = #-0x8
+     104:      	mov	r3, r0
+     108:      	add	r3, r3, #1
+     10c:      	str	r3, [r11, #-0x24]
+     110:      	ldr	r0, [r11, #-0x2c]
+     114:      	bl	0x114 <str_replace+0x30> @ imm = #-0x8
+     118:      	mov	r3, r0
+     11c:      	str	r3, [r11, #-0x20]
+     120:      	ldr	r0, [r11, #-0x30]
+     124:      	bl	0x124 <str_replace+0x40> @ imm = #-0x8
+     128:      	mov	r3, r0
+     12c:      	str	r3, [r11, #-0x1c]
+     130:      	ldr	r0, [r11, #-0x24]
+     134:      	bl	0x134 <str_replace+0x50> @ imm = #-0x8
+     138:      	mov	r3, r0
+     13c:      	str	r3, [r11, #-0x18]
+     140:      	ldr	r3, [r11, #-0x18]
+     144:      	str	r3, [r11, #-0x14]
+     148:      	ldr	r3, [r11, #-0x18]
+     14c:      	cmp	r3, #0
+     150:      	beq	0x260 <str_replace+0x17c> @ imm = #0x108
+     154:      	ldr	r0, [r11, #-0x28]
+     158:      	ldr	r1, [r11, #-0x2c]
+     15c:      	bl	0x15c <str_replace+0x78> @ imm = #-0x8
+     160:      	mov	r3, r0
+     164:      	str	r3, [r11, #-0x10]
+     168:      	ldr	r3, [r11, #-0x10]
+     16c:      	cmp	r3, #0
+     170:      	beq	0x250 <str_replace+0x16c> @ imm = #0xd8
+     174:      	ldr	r2, [r11, #-0x10]
+     178:      	ldr	r3, [r11, #-0x28]
+     17c:      	rsb	r3, r3, r2
+     180:      	str	r3, [r11, #-0xc]
+     184:      	ldr	r2, [r11, #-0x1c]
+     188:      	ldr	r3, [r11, #-0x20]
+     18c:      	rsb	r3, r3, r2
+     190:      	ldr	r2, [r11, #-0x24]
+     194:      	add	r3, r2, r3
+     198:      	str	r3, [r11, #-0x24]
+     19c:      	ldr	r0, [r11, #-0x18]
+     1a0:      	ldr	r1, [r11, #-0x24]
+     1a4:      	bl	0x1a4 <str_replace+0xc0> @ imm = #-0x8
+     1a8:      	mov	r3, r0
+     1ac:      	str	r3, [r11, #-0x8]
+     1b0:      	ldr	r3, [r11, #-0x8]
+     1b4:      	cmp	r3, #0
+     1b8:      	bne	0x1cc <str_replace+0xe8> @ imm = #0xc
+     1bc:      	ldr	r0, [r11, #-0x18]
+     1c0:      	bl	0x1c0 <str_replace+0xdc> @ imm = #-0x8
+     1c4:      	mov	r3, #0
+     1c8:      	b	0x264 <str_replace+0x180> @ imm = #0x94
+     1cc:      	ldr	r2, [r11, #-0x14]
+     1d0:      	ldr	r3, [r11, #-0x18]
+     1d4:      	rsb	r3, r3, r2
+     1d8:      	ldr	r2, [r11, #-0x8]
+     1dc:      	add	r3, r2, r3
+     1e0:      	str	r3, [r11, #-0x14]
+     1e4:      	ldr	r3, [r11, #-0x8]
+     1e8:      	str	r3, [r11, #-0x18]
+     1ec:      	ldr	r0, [r11, #-0x14]
+     1f0:      	ldr	r1, [r11, #-0x28]
+     1f4:      	ldr	r2, [r11, #-0xc]
+     1f8:      	bl	0x1f8 <str_replace+0x114> @ imm = #-0x8
+     1fc:      	ldr	r2, [r11, #-0x28]
+     200:      	ldr	r3, [r11, #-0xc]
+     204:      	add	r3, r2, r3
+     208:      	str	r3, [r11, #-0x28]
+     20c:      	ldr	r2, [r11, #-0x14]
+     210:      	ldr	r3, [r11, #-0xc]
+     214:      	add	r3, r2, r3
+     218:      	str	r3, [r11, #-0x14]
+     21c:      	ldr	r0, [r11, #-0x14]
+     220:      	ldr	r1, [r11, #-0x30]
+     224:      	ldr	r2, [r11, #-0x1c]
+     228:      	bl	0x228 <str_replace+0x144> @ imm = #-0x8
+     22c:      	ldr	r2, [r11, #-0x28]
+     230:      	ldr	r3, [r11, #-0x20]
+     234:      	add	r3, r2, r3
+     238:      	str	r3, [r11, #-0x28]
+     23c:      	ldr	r2, [r11, #-0x14]
+     240:      	ldr	r3, [r11, #-0x1c]
+     244:      	add	r3, r2, r3
+     248:      	str	r3, [r11, #-0x14]
+     24c:      	b	0x154 <str_replace+0x70> @ imm = #-0x100
+     250:      	ldr	r0, [r11, #-0x14]
+     254:      	ldr	r1, [r11, #-0x28]
+     258:      	bl	0x258 <str_replace+0x174> @ imm = #-0x8
+     25c:      	mov	r0, r0
+     260:      	ldr	r3, [r11, #-0x18]
+     264:      	mov	r0, r3
+     268:      	sub	sp, r11, #4
+     26c:      	pop	{r11, pc}
+
+00000270 <replace_double_space_with_single>:
+     270:      	push	{r11, lr}
+     274:      	add	r11, sp, #4
+     278:      	sub	sp, sp, #16
+     27c:      	str	r0, [r11, #-0x10]
+     280:      	ldr	r0, [r11, #-0x10]
+     284:      	ldr	r1, [pc, #0x58]         @ 0x2e4 <replace_double_space_with_single+0x74>
+     288:      	ldr	r2, [pc, #0x58]         @ 0x2e8 <replace_double_space_with_single+0x78>
+     28c:      	bl	0x28c <replace_double_space_with_single+0x1c> @ imm = #-0x8
+     290:      	mov	r3, r0
+     294:      	str	r3, [r11, #-0x8]
+     298:      	ldr	r3, [r11, #-0x8]
+     29c:      	cmp	r3, #0
+     2a0:      	beq	0x2bc <replace_double_space_with_single+0x4c> @ imm = #0x14
+     2a4:      	ldr	r3, [r11, #-0x8]
+     2a8:      	ldr	r0, [r11, #-0x10]
+     2ac:      	mov	r1, r3
+     2b0:      	bl	0x2b0 <replace_double_space_with_single+0x40> @ imm = #-0x8
+     2b4:      	ldr	r0, [r11, #-0x8]
+     2b8:      	bl	0x2b8 <replace_double_space_with_single+0x48> @ imm = #-0x8
+     2bc:      	ldr	r0, [r11, #-0x10]
+     2c0:      	ldr	r1, [pc, #0x1c]         @ 0x2e4 <replace_double_space_with_single+0x74>
+     2c4:      	bl	0x2c4 <replace_double_space_with_single+0x54> @ imm = #-0x8
+     2c8:      	mov	r3, r0
+     2cc:      	str	r3, [r11, #-0xc]
+     2d0:      	ldr	r3, [r11, #-0xc]
+     2d4:      	cmp	r3, #0
+     2d8:      	bne	0x280 <replace_double_space_with_single+0x10> @ imm = #-0x60
+     2dc:      	sub	sp, r11, #4
+     2e0:      	pop	{r11, pc}
+     2e4: 10 00 00 00  	.word	0x00000010
+     2e8: 14 00 00 00  	.word	0x00000014
+
+000002ec <trim_chars>:
+     2ec:      	push	{r11, lr}
+     2f0:      	add	r11, sp, #4
+     2f4:      	sub	sp, sp, #24
+     2f8:      	str	r0, [r11, #-0x18]
+     2fc:      	str	r1, [r11, #-0x1c]
+     300:      	ldr	r0, [r11, #-0x18]
+     304:      	bl	0x304 <trim_chars+0x18> @ imm = #-0x8
+     308:      	mov	r3, r0
+     30c:      	str	r3, [r11, #-0xc]
+     310:      	mov	r3, #0
+     314:      	str	r3, [r11, #-0x8]
+     318:      	b	0x3b0 <trim_chars+0xc4> @ imm = #0x90
+     31c:      	mov	r3, #0
+     320:      	str	r3, [r11, #-0x10]
+     324:      	mov	r3, #0
+     328:      	str	r3, [r11, #-0x14]
+     32c:      	b	0x390 <trim_chars+0xa4> @ imm = #0x5c
+     330:      	ldr	r2, [r11, #-0x14]
+     334:      	ldr	r3, [r11, #-0x18]
+     338:      	add	r3, r2, r3
+     33c:      	ldrb	r2, [r3]
+     340:      	ldr	r1, [r11, #-0x1c]
+     344:      	ldr	r3, [r11, #-0x8]
+     348:      	add	r3, r1, r3
+     34c:      	ldrb	r3, [r3]
+     350:      	cmp	r2, r3
+     354:      	beq	0x384 <trim_chars+0x98> @ imm = #0x28
+     358:      	ldr	r2, [r11, #-0x10]
+     35c:      	ldr	r3, [r11, #-0x18]
+     360:      	add	r3, r2, r3
+     364:      	ldr	r1, [r11, #-0x14]
+     368:      	ldr	r2, [r11, #-0x18]
+     36c:      	add	r2, r1, r2
+     370:      	ldrb	r2, [r2]
+     374:      	strb	r2, [r3]
+     378:      	ldr	r3, [r11, #-0x10]
+     37c:      	add	r3, r3, #1
+     380:      	str	r3, [r11, #-0x10]
+     384:      	ldr	r3, [r11, #-0x14]
+     388:      	add	r3, r3, #1
+     38c:      	str	r3, [r11, #-0x14]
+     390:      	ldr	r3, [r11, #-0xc]
+     394:      	add	r2, r3, #1
+     398:      	ldr	r3, [r11, #-0x14]
+     39c:      	cmp	r2, r3
+     3a0:      	bgt	0x330 <trim_chars+0x44> @ imm = #-0x78
+     3a4:      	ldr	r3, [r11, #-0x8]
+     3a8:      	add	r3, r3, #1
+     3ac:      	str	r3, [r11, #-0x8]
+     3b0:      	ldr	r0, [r11, #-0x1c]
+     3b4:      	bl	0x3b4 <trim_chars+0xc8> @ imm = #-0x8
+     3b8:      	mov	r2, r0
+     3bc:      	ldr	r3, [r11, #-0x8]
+     3c0:      	cmp	r2, r3
+     3c4:      	bhi	0x31c <trim_chars+0x30> @ imm = #-0xb0
+     3c8:      	sub	sp, r11, #4
+     3cc:      	pop	{r11, pc}
+
+000003d0 <trim_whitespace>:
+     3d0:      	push	{r11, lr}
+     3d4:      	add	r11, sp, #4
+     3d8:      	sub	sp, sp, #16
+     3dc:      	str	r0, [r11, #-0x10]
+     3e0:      	ldr	r3, [r11, #-0x10]
+     3e4:      	str	r3, [r11, #-0xc]
+     3e8:      	ldr	r0, [r11, #-0xc]
+     3ec:      	bl	0x3ec <trim_whitespace+0x1c> @ imm = #-0x8
+     3f0:      	mov	r3, r0
+     3f4:      	str	r3, [r11, #-0x8]
+     3f8:      	b	0x41c <trim_whitespace+0x4c> @ imm = #0x1c
+     3fc:      	ldr	r3, [r11, #-0x8]
+     400:      	sub	r3, r3, #1
+     404:      	str	r3, [r11, #-0x8]
+     408:      	ldr	r2, [r11, #-0x8]
+     40c:      	ldr	r3, [r11, #-0xc]
+     410:      	add	r3, r2, r3
+     414:      	mov	r2, #0
+     418:      	strb	r2, [r3]
+     41c:      	bl	0x41c <trim_whitespace+0x4c> @ imm = #-0x8
+     420:      	mov	r3, r0
+     424:      	ldr	r2, [r3]
+     428:      	ldr	r3, [r11, #-0x8]
+     42c:      	sub	r1, r3, #1
+     430:      	ldr	r3, [r11, #-0xc]
+     434:      	add	r3, r1, r3
+     438:      	ldrb	r3, [r3]
+     43c:      	lsl	r3, r3, #1
+     440:      	add	r3, r2, r3
+     444:      	ldrh	r3, [r3]
+     448:      	and	r3, r3, #8192
+     44c:      	cmp	r3, #0
+     450:      	bne	0x3fc <trim_whitespace+0x2c> @ imm = #-0x5c
+     454:      	b	0x470 <trim_whitespace+0xa0> @ imm = #0x14
+     458:      	ldr	r3, [r11, #-0xc]
+     45c:      	add	r3, r3, #1
+     460:      	str	r3, [r11, #-0xc]
+     464:      	ldr	r3, [r11, #-0x8]
+     468:      	sub	r3, r3, #1
+     46c:      	str	r3, [r11, #-0x8]
+     470:      	ldr	r3, [r11, #-0xc]
+     474:      	ldrb	r3, [r3]
+     478:      	cmp	r3, #0
+     47c:      	beq	0x4ac <trim_whitespace+0xdc> @ imm = #0x28
+     480:      	bl	0x480 <trim_whitespace+0xb0> @ imm = #-0x8
+     484:      	mov	r3, r0
+     488:      	ldr	r2, [r3]
+     48c:      	ldr	r3, [r11, #-0xc]
+     490:      	ldrb	r3, [r3]
+     494:      	lsl	r3, r3, #1
+     498:      	add	r3, r2, r3
+     49c:      	ldrh	r3, [r3]
+     4a0:      	and	r3, r3, #8192
+     4a4:      	cmp	r3, #0
+     4a8:      	bne	0x458 <trim_whitespace+0x88> @ imm = #-0x58
+     4ac:      	ldr	r3, [r11, #-0x8]
+     4b0:      	add	r3, r3, #1
+     4b4:      	ldr	r0, [r11, #-0x10]
+     4b8:      	ldr	r1, [r11, #-0xc]
+     4bc:      	mov	r2, r3
+     4c0:      	bl	0x4c0 <trim_whitespace+0xf0> @ imm = #-0x8
+     4c4:      	sub	sp, r11, #4
+     4c8:      	pop	{r11, pc}
+
+000004cc <hex_dump_to_buffer>:
+     4cc:      	push	{r4, r11, lr}
+     4d0:      	add	r11, sp, #8
+     4d4:      	sub	sp, sp, #76
+     4d8:      	str	r0, [r11, #-0x40]
+     4dc:      	str	r1, [r11, #-0x44]
+     4e0:      	str	r2, [r11, #-0x48]
+     4e4:      	str	r3, [r11, #-0x4c]
+     4e8:      	ldr	r3, [r11, #-0x40]
+     4ec:      	str	r3, [r11, #-0x38]
+     4f0:      	mov	r3, #0
+     4f4:      	str	r3, [r11, #-0x2c]
+     4f8:      	ldr	r3, [r11, #-0x48]
+     4fc:      	cmp	r3, #16
+     500:      	beq	0x518 <hex_dump_to_buffer+0x4c> @ imm = #0x10
+     504:      	ldr	r3, [r11, #-0x48]
+     508:      	cmp	r3, #32
+     50c:      	beq	0x518 <hex_dump_to_buffer+0x4c> @ imm = #0x4
+     510:      	mov	r3, #16
+     514:      	str	r3, [r11, #-0x48]
+     518:      	ldr	r3, [r11, #-0x44]
+     51c:      	cmp	r3, #0
+     520:      	beq	0x9e4 <hex_dump_to_buffer+0x518> @ imm = #0x4bc
+     524:      	ldr	r2, [r11, #-0x44]
+     528:      	ldr	r3, [r11, #-0x48]
+     52c:      	cmp	r2, r3
+     530:      	ble	0x53c <hex_dump_to_buffer+0x70> @ imm = #0x4
+     534:      	ldr	r3, [r11, #-0x48]
+     538:      	str	r3, [r11, #-0x44]
+     53c:      	ldr	r3, [r11, #-0x44]
+     540:      	mov	r0, r3
+     544:      	ldr	r1, [r11, #-0x4c]
+     548:      	bl	0x548 <hex_dump_to_buffer+0x7c> @ imm = #-0x8
+     54c:      	mov	r3, r1
+     550:      	cmp	r3, #0
+     554:      	beq	0x560 <hex_dump_to_buffer+0x94> @ imm = #0x4
+     558:      	mov	r3, #1
+     55c:      	str	r3, [r11, #-0x4c]
+     560:      	ldr	r3, [r11, #-0x4c]
+     564:      	cmp	r3, #4
+     568:      	beq	0x64c <hex_dump_to_buffer+0x180> @ imm = #0xdc
+     56c:      	cmp	r3, #8
+     570:      	beq	0x580 <hex_dump_to_buffer+0xb4> @ imm = #0x8
+     574:      	cmp	r3, #2
+     578:      	beq	0x710 <hex_dump_to_buffer+0x244> @ imm = #0x190
+     57c:      	b	0x7d4 <hex_dump_to_buffer+0x308> @ imm = #0x250
+     580:      	ldr	r3, [r11, #-0x40]
+     584:      	str	r3, [r11, #-0x24]
+     588:      	ldr	r0, [r11, #-0x44]
+     58c:      	ldr	r1, [r11, #-0x4c]
+     590:      	bl	0x590 <hex_dump_to_buffer+0xc4> @ imm = #-0x8
+     594:      	mov	r3, r0
+     598:      	str	r3, [r11, #-0x20]
+     59c:      	mov	r3, #0
+     5a0:      	str	r3, [r11, #-0x30]
+     5a4:      	b	0x620 <hex_dump_to_buffer+0x154> @ imm = #0x74
+     5a8:      	ldr	r2, [r11, #-0x2c]
+     5ac:      	ldr	r3, [r11, #0x4]
+     5b0:      	add	r0, r2, r3
+     5b4:      	ldr	r2, [r11, #0x8]
+     5b8:      	ldr	r3, [r11, #-0x2c]
+     5bc:      	rsb	r3, r3, r2
+     5c0:      	mov	r1, r3
+     5c4:      	ldr	lr, [pc, #0x444]        @ 0xa10 <hex_dump_to_buffer+0x544>
+     5c8:      	ldr	r3, [r11, #-0x30]
+     5cc:      	cmp	r3, #0
+     5d0:      	beq	0x5dc <hex_dump_to_buffer+0x110> @ imm = #0x4
+     5d4:      	ldr	r12, [pc, #0x438]       @ 0xa14 <hex_dump_to_buffer+0x548>
+     5d8:      	b	0x5e0 <hex_dump_to_buffer+0x114> @ imm = #0x0
+     5dc:      	ldr	r12, [pc, #0x434]       @ 0xa18 <hex_dump_to_buffer+0x54c>
+     5e0:      	ldr	r3, [r11, #-0x30]
+     5e4:      	lsl	r2, r3, #3
+     5e8:      	ldr	r3, [r11, #-0x24]
+     5ec:      	add	r3, r2, r3
+     5f0:      	ldrd	r2, r3, [r3]
+     5f4:      	strd	r2, r3, [sp]
+     5f8:      	mov	r2, lr
+     5fc:      	mov	r3, r12
+     600:      	bl	0x600 <hex_dump_to_buffer+0x134> @ imm = #-0x8
+     604:      	mov	r3, r0
+     608:      	ldr	r2, [r11, #-0x2c]
+     60c:      	add	r3, r2, r3
+     610:      	str	r3, [r11, #-0x2c]
+     614:      	ldr	r3, [r11, #-0x30]
+     618:      	add	r3, r3, #1
+     61c:      	str	r3, [r11, #-0x30]
+     620:      	ldr	r2, [r11, #-0x30]
+     624:      	ldr	r3, [r11, #-0x20]
+     628:      	cmp	r2, r3
+     62c:      	blt	0x5a8 <hex_dump_to_buffer+0xdc> @ imm = #-0x8c
+     630:      	ldr	r2, [r11, #-0x20]
+     634:      	mov	r3, r2
+     638:      	lsl	r3, r3, #4
+     63c:      	add	r3, r3, r2
+     640:      	add	r3, r3, #2
+     644:      	str	r3, [r11, #-0x28]
+     648:      	b	0x8d0 <hex_dump_to_buffer+0x404> @ imm = #0x280
+     64c:      	ldr	r3, [r11, #-0x40]
+     650:      	str	r3, [r11, #-0x1c]
+     654:      	ldr	r0, [r11, #-0x44]
+     658:      	ldr	r1, [r11, #-0x4c]
+     65c:      	bl	0x65c <hex_dump_to_buffer+0x190> @ imm = #-0x8
+     660:      	mov	r3, r0
+     664:      	str	r3, [r11, #-0x18]
+     668:      	mov	r3, #0
+     66c:      	str	r3, [r11, #-0x30]
+     670:      	b	0x6e4 <hex_dump_to_buffer+0x218> @ imm = #0x6c
+     674:      	ldr	r2, [r11, #-0x2c]
+     678:      	ldr	r3, [r11, #0x4]
+     67c:      	add	r0, r2, r3
+     680:      	ldr	r2, [r11, #0x8]
+     684:      	ldr	r3, [r11, #-0x2c]
+     688:      	rsb	r3, r3, r2
+     68c:      	mov	r1, r3
+     690:      	ldr	r2, [pc, #0x384]        @ 0xa1c <hex_dump_to_buffer+0x550>
+     694:      	ldr	r3, [r11, #-0x30]
+     698:      	cmp	r3, #0
+     69c:      	beq	0x6a8 <hex_dump_to_buffer+0x1dc> @ imm = #0x4
+     6a0:      	ldr	r3, [pc, #0x36c]        @ 0xa14 <hex_dump_to_buffer+0x548>
+     6a4:      	b	0x6ac <hex_dump_to_buffer+0x1e0> @ imm = #0x0
+     6a8:      	ldr	r3, [pc, #0x368]        @ 0xa18 <hex_dump_to_buffer+0x54c>
+     6ac:      	ldr	r12, [r11, #-0x30]
+     6b0:      	lsl	lr, r12, #2
+     6b4:      	ldr	r12, [r11, #-0x1c]
+     6b8:      	add	r12, lr, r12
+     6bc:      	ldr	r12, [r12]
+     6c0:      	str	r12, [sp]
+     6c4:      	bl	0x6c4 <hex_dump_to_buffer+0x1f8> @ imm = #-0x8
+     6c8:      	mov	r3, r0
+     6cc:      	ldr	r2, [r11, #-0x2c]
+     6d0:      	add	r3, r2, r3
+     6d4:      	str	r3, [r11, #-0x2c]
+     6d8:      	ldr	r3, [r11, #-0x30]
+     6dc:      	add	r3, r3, #1
+     6e0:      	str	r3, [r11, #-0x30]
+     6e4:      	ldr	r2, [r11, #-0x30]
+     6e8:      	ldr	r3, [r11, #-0x18]
+     6ec:      	cmp	r2, r3
+     6f0:      	blt	0x674 <hex_dump_to_buffer+0x1a8> @ imm = #-0x84
+     6f4:      	ldr	r2, [r11, #-0x18]
+     6f8:      	mov	r3, r2
+     6fc:      	lsl	r3, r3, #3
+     700:      	add	r3, r3, r2
+     704:      	add	r3, r3, #2
+     708:      	str	r3, [r11, #-0x28]
+     70c:      	b	0x8d0 <hex_dump_to_buffer+0x404> @ imm = #0x1bc
+     710:      	ldr	r3, [r11, #-0x40]
+     714:      	str	r3, [r11, #-0x14]
+     718:      	ldr	r0, [r11, #-0x44]
+     71c:      	ldr	r1, [r11, #-0x4c]
+     720:      	bl	0x720 <hex_dump_to_buffer+0x254> @ imm = #-0x8
+     724:      	mov	r3, r0
+     728:      	str	r3, [r11, #-0x10]
+     72c:      	mov	r3, #0
+     730:      	str	r3, [r11, #-0x30]
+     734:      	b	0x7a8 <hex_dump_to_buffer+0x2dc> @ imm = #0x6c
+     738:      	ldr	r2, [r11, #-0x2c]
+     73c:      	ldr	r3, [r11, #0x4]
+     740:      	add	r0, r2, r3
+     744:      	ldr	r2, [r11, #0x8]
+     748:      	ldr	r3, [r11, #-0x2c]
+     74c:      	rsb	r3, r3, r2
+     750:      	mov	r1, r3
+     754:      	ldr	r2, [pc, #0x2c4]        @ 0xa20 <hex_dump_to_buffer+0x554>
+     758:      	ldr	r3, [r11, #-0x30]
+     75c:      	cmp	r3, #0
+     760:      	beq	0x76c <hex_dump_to_buffer+0x2a0> @ imm = #0x4
+     764:      	ldr	r3, [pc, #0x2a8]        @ 0xa14 <hex_dump_to_buffer+0x548>
+     768:      	b	0x770 <hex_dump_to_buffer+0x2a4> @ imm = #0x0
+     76c:      	ldr	r3, [pc, #0x2a4]        @ 0xa18 <hex_dump_to_buffer+0x54c>
+     770:      	ldr	r12, [r11, #-0x30]
+     774:      	lsl	lr, r12, #1
+     778:      	ldr	r12, [r11, #-0x14]
+     77c:      	add	r12, lr, r12
+     780:      	ldrh	r12, [r12]
+     784:      	str	r12, [sp]
+     788:      	bl	0x788 <hex_dump_to_buffer+0x2bc> @ imm = #-0x8
+     78c:      	mov	r3, r0
+     790:      	ldr	r2, [r11, #-0x2c]
+     794:      	add	r3, r2, r3
+     798:      	str	r3, [r11, #-0x2c]
+     79c:      	ldr	r3, [r11, #-0x30]
+     7a0:      	add	r3, r3, #1
+     7a4:      	str	r3, [r11, #-0x30]
+     7a8:      	ldr	r2, [r11, #-0x30]
+     7ac:      	ldr	r3, [r11, #-0x10]
+     7b0:      	cmp	r2, r3
+     7b4:      	blt	0x738 <hex_dump_to_buffer+0x26c> @ imm = #-0x84
+     7b8:      	ldr	r2, [r11, #-0x10]
+     7bc:      	mov	r3, r2
+     7c0:      	lsl	r3, r3, #2
+     7c4:      	add	r3, r3, r2
+     7c8:      	add	r3, r3, #2
+     7cc:      	str	r3, [r11, #-0x28]
+     7d0:      	b	0x8d0 <hex_dump_to_buffer+0x404> @ imm = #0xf8
+     7d4:      	mov	r3, #0
+     7d8:      	str	r3, [r11, #-0x30]
+     7dc:      	b	0x87c <hex_dump_to_buffer+0x3b0> @ imm = #0x98
+     7e0:      	ldr	r2, [r11, #-0x30]
+     7e4:      	ldr	r3, [r11, #-0x38]
+     7e8:      	add	r3, r2, r3
+     7ec:      	ldrb	r3, [r3]
+     7f0:      	strb	r3, [r11, #-0x31]
+     7f4:      	ldr	r2, [r11, #-0x2c]
+     7f8:      	ldr	r3, [r11, #0x4]
+     7fc:      	add	r3, r2, r3
+     800:      	ldrb	r2, [r11, #-0x31]
+     804:      	lsr	r2, r2, #4
+     808:      	and	r2, r2, #255
+     80c:      	ldr	r1, [pc, #0x210]        @ 0xa24 <hex_dump_to_buffer+0x558>
+     810:      	ldrb	r2, [r1, r2]
+     814:      	strb	r2, [r3]
+     818:      	ldr	r3, [r11, #-0x2c]
+     81c:      	add	r3, r3, #1
+     820:      	str	r3, [r11, #-0x2c]
+     824:      	ldr	r2, [r11, #-0x2c]
+     828:      	ldr	r3, [r11, #0x4]
+     82c:      	add	r3, r2, r3
+     830:      	ldrb	r2, [r11, #-0x31]
+     834:      	and	r2, r2, #15
+     838:      	ldr	r1, [pc, #0x1e4]        @ 0xa24 <hex_dump_to_buffer+0x558>
+     83c:      	ldrb	r2, [r1, r2]
+     840:      	strb	r2, [r3]
+     844:      	ldr	r3, [r11, #-0x2c]
+     848:      	add	r3, r3, #1
+     84c:      	str	r3, [r11, #-0x2c]
+     850:      	ldr	r2, [r11, #-0x2c]
+     854:      	ldr	r3, [r11, #0x4]
+     858:      	add	r3, r2, r3
+     85c:      	mov	r2, #32
+     860:      	strb	r2, [r3]
+     864:      	ldr	r3, [r11, #-0x2c]
+     868:      	add	r3, r3, #1
+     86c:      	str	r3, [r11, #-0x2c]
+     870:      	ldr	r3, [r11, #-0x30]
+     874:      	add	r3, r3, #1
+     878:      	str	r3, [r11, #-0x30]
+     87c:      	ldr	r2, [r11, #-0x30]
+     880:      	ldr	r3, [r11, #-0x44]
+     884:      	cmp	r2, r3
+     888:      	bge	0x8a0 <hex_dump_to_buffer+0x3d4> @ imm = #0x10
+     88c:      	ldr	r3, [r11, #-0x2c]
+     890:      	add	r2, r3, #3
+     894:      	ldr	r3, [r11, #0x8]
+     898:      	cmp	r2, r3
+     89c:      	ble	0x7e0 <hex_dump_to_buffer+0x314> @ imm = #-0xc4
+     8a0:      	ldr	r3, [r11, #-0x30]
+     8a4:      	cmp	r3, #0
+     8a8:      	beq	0x8b8 <hex_dump_to_buffer+0x3ec> @ imm = #0x8
+     8ac:      	ldr	r3, [r11, #-0x2c]
+     8b0:      	sub	r3, r3, #1
+     8b4:      	str	r3, [r11, #-0x2c]
+     8b8:      	ldr	r2, [r11, #-0x48]
+     8bc:      	mov	r3, r2
+     8c0:      	lsl	r3, r3, #1
+     8c4:      	add	r3, r3, r2
+     8c8:      	add	r3, r3, #2
+     8cc:      	str	r3, [r11, #-0x28]
+     8d0:      	ldr	r3, [r11, #0xc]
+     8d4:      	cmp	r3, #0
+     8d8:      	bne	0x904 <hex_dump_to_buffer+0x438> @ imm = #0x24
+     8dc:      	b	0x9e8 <hex_dump_to_buffer+0x51c> @ imm = #0x104
+     8e0:      	ldr	r2, [r11, #-0x2c]
+     8e4:      	ldr	r3, [r11, #0x4]
+     8e8:      	add	r3, r2, r3
+     8ec:      	mov	r2, #32
+     8f0:      	strb	r2, [r3]
+     8f4:      	ldr	r3, [r11, #-0x2c]
+     8f8:      	add	r3, r3, #1
+     8fc:      	str	r3, [r11, #-0x2c]
+     900:      	b	0x908 <hex_dump_to_buffer+0x43c> @ imm = #0x0
+     904:      	mov	r0, r0
+     908:      	ldr	r3, [r11, #0x8]
+     90c:      	sub	r2, r3, #1
+     910:      	ldr	r3, [r11, #-0x2c]
+     914:      	cmp	r2, r3
+     918:      	ble	0x930 <hex_dump_to_buffer+0x464> @ imm = #0x10
+     91c:      	ldr	r3, [r11, #-0x28]
+     920:      	sub	r2, r3, #1
+     924:      	ldr	r3, [r11, #-0x2c]
+     928:      	cmp	r2, r3
+     92c:      	bgt	0x8e0 <hex_dump_to_buffer+0x414> @ imm = #-0x54
+     930:      	mov	r3, #0
+     934:      	str	r3, [r11, #-0x30]
+     938:      	b	0x9bc <hex_dump_to_buffer+0x4f0> @ imm = #0x7c
+     93c:      	ldr	r2, [r11, #-0x30]
+     940:      	ldr	r3, [r11, #-0x38]
+     944:      	add	r3, r2, r3
+     948:      	ldrb	r3, [r3]
+     94c:      	strb	r3, [r11, #-0x31]
+     950:      	ldr	r2, [r11, #-0x2c]
+     954:      	ldr	r3, [r11, #0x4]
+     958:      	add	r4, r2, r3
+     95c:      	ldrb	r3, [r11, #-0x31]
+     960:      	bic	r3, r3, #127
+     964:      	cmp	r3, #0
+     968:      	bne	0x99c <hex_dump_to_buffer+0x4d0> @ imm = #0x2c
+     96c:      	bl	0x96c <hex_dump_to_buffer+0x4a0> @ imm = #-0x8
+     970:      	mov	r3, r0
+     974:      	ldr	r2, [r3]
+     978:      	ldrb	r3, [r11, #-0x31]
+     97c:      	lsl	r3, r3, #1
+     980:      	add	r3, r2, r3
+     984:      	ldrh	r3, [r3]
+     988:      	and	r3, r3, #16384
+     98c:      	cmp	r3, #0
+     990:      	beq	0x99c <hex_dump_to_buffer+0x4d0> @ imm = #0x4
+     994:      	ldrb	r3, [r11, #-0x31]
+     998:      	b	0x9a0 <hex_dump_to_buffer+0x4d4> @ imm = #0x0
+     99c:      	mov	r3, #46
+     9a0:      	strb	r3, [r4]
+     9a4:      	ldr	r3, [r11, #-0x2c]
+     9a8:      	add	r3, r3, #1
+     9ac:      	str	r3, [r11, #-0x2c]
+     9b0:      	ldr	r3, [r11, #-0x30]
+     9b4:      	add	r3, r3, #1
+     9b8:      	str	r3, [r11, #-0x30]
+     9bc:      	ldr	r2, [r11, #-0x30]
+     9c0:      	ldr	r3, [r11, #-0x44]
+     9c4:      	cmp	r2, r3
+     9c8:      	bge	0x9e8 <hex_dump_to_buffer+0x51c> @ imm = #0x18
+     9cc:      	ldr	r3, [r11, #-0x2c]
+     9d0:      	add	r2, r3, #2
+     9d4:      	ldr	r3, [r11, #0x8]
+     9d8:      	cmp	r2, r3
+     9dc:      	blt	0x93c <hex_dump_to_buffer+0x470> @ imm = #-0xa8
+     9e0:      	b	0x9e8 <hex_dump_to_buffer+0x51c> @ imm = #0x0
+     9e4:      	mov	r0, r0
+     9e8:      	ldr	r2, [r11, #-0x2c]
+     9ec:      	ldr	r3, [r11, #0x4]
+     9f0:      	add	r3, r2, r3
+     9f4:      	mov	r2, #0
+     9f8:      	strb	r2, [r3]
+     9fc:      	ldr	r3, [r11, #-0x2c]
+     a00:      	add	r3, r3, #1
+     a04:      	str	r3, [r11, #-0x2c]
+     a08:      	sub	sp, r11, #8
+     a0c:      	pop	{r4, r11, pc}
+     a10: 2c 00 00 00  	.word	0x0000002c
+     a14: 14 00 00 00  	.word	0x00000014
+     a18: 38 00 00 00  	.word	0x00000038
+     a1c: 3c 00 00 00  	.word	0x0000003c
+     a20: 44 00 00 00  	.word	0x00000044
+     a24: 00 00 00 00  	.word	0x00000000
+
+00000a28 <print_hex_dump>:
+     a28:      	push	{r11, lr}
+     a2c:      	add	r11, sp, #4
+     a30:      	sub	sp, sp, #184
+     a34:      	str	r0, [r11, #-0xa0]
+     a38:      	str	r1, [r11, #-0xa4]
+     a3c:      	str	r2, [r11, #-0xa8]
+     a40:      	str	r3, [r11, #-0xac]
+     a44:      	ldr	r3, [r11, #0x4]
+     a48:      	str	r3, [r11, #-0x14]
+     a4c:      	ldr	r3, [r11, #0x8]
+     a50:      	str	r3, [r11, #-0x8]
+     a54:      	ldr	r3, [r11, #-0xa8]
+     a58:      	cmp	r3, #16
+     a5c:      	beq	0xa74 <print_hex_dump+0x4c> @ imm = #0x10
+     a60:      	ldr	r3, [r11, #-0xa8]
+     a64:      	cmp	r3, #32
+     a68:      	beq	0xa74 <print_hex_dump+0x4c> @ imm = #0x4
+     a6c:      	mov	r3, #16
+     a70:      	str	r3, [r11, #-0xa8]
+     a74:      	mov	r3, #0
+     a78:      	str	r3, [r11, #-0x10]
+     a7c:      	b	0xb1c <print_hex_dump+0xf4> @ imm = #0x98
+     a80:      	ldr	r2, [r11, #-0xa8]
+     a84:      	ldr	r3, [r11, #-0x8]
+     a88:      	cmp	r2, r3
+     a8c:      	movlt	r3, r2
+     a90:      	movge	r3, r3
+     a94:      	str	r3, [r11, #-0xc]
+     a98:      	ldr	r2, [r11, #-0x8]
+     a9c:      	ldr	r3, [r11, #-0xa8]
+     aa0:      	rsb	r3, r3, r2
+     aa4:      	str	r3, [r11, #-0x8]
+     aa8:      	ldr	r2, [r11, #-0x10]
+     aac:      	ldr	r3, [r11, #-0x14]
+     ab0:      	add	r3, r2, r3
+     ab4:      	sub	r2, r11, #152
+     ab8:      	str	r2, [sp]
+     abc:      	mov	r2, #131
+     ac0:      	str	r2, [sp, #0x4]
+     ac4:      	ldr	r2, [r11, #0xc]
+     ac8:      	str	r2, [sp, #0x8]
+     acc:      	mov	r0, r3
+     ad0:      	ldr	r1, [r11, #-0xc]
+     ad4:      	ldr	r2, [r11, #-0xa8]
+     ad8:      	ldr	r3, [r11, #-0xac]
+     adc:      	bl	0xadc <print_hex_dump+0xb4> @ imm = #-0x8
+     ae0:      	ldr	r3, [pc, #0x4c]         @ 0xb34 <print_hex_dump+0x10c>
+     ae4:      	ldr	r3, [r3]
+     ae8:      	ldr	r2, [r3, #0x4]
+     aec:      	ldr	r3, [r11, #-0xa0]
+     af0:      	cmp	r2, r3
+     af4:      	blo	0xb0c <print_hex_dump+0xe4> @ imm = #0x10
+     af8:      	sub	r3, r11, #152
+     afc:      	ldr	r0, [pc, #0x34]         @ 0xb38 <print_hex_dump+0x110>
+     b00:      	ldr	r1, [r11, #-0xa4]
+     b04:      	mov	r2, r3
+     b08:      	bl	0xb08 <print_hex_dump+0xe0> @ imm = #-0x8
+     b0c:      	ldr	r2, [r11, #-0x10]
+     b10:      	ldr	r3, [r11, #-0xa8]
+     b14:      	add	r3, r2, r3
+     b18:      	str	r3, [r11, #-0x10]
+     b1c:      	ldr	r2, [r11, #-0x10]
+     b20:      	ldr	r3, [r11, #0x8]
+     b24:      	cmp	r2, r3
+     b28:      	blt	0xa80 <print_hex_dump+0x58> @ imm = #-0xb0
+     b2c:      	sub	sp, r11, #4
+     b30:      	pop	{r11, pc}
+     b34: 00 00 00 00  	.word	0x00000000
+     b38: 4c 00 00 00  	.word	0x0000004c

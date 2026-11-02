@@ -1,0 +1,1932 @@
+/Users/clint/code/aftermath-sacd/experiments/sacd_reconstruct/original/sacd_extract_160:	file format elf32-littlearm
+
+.debug_line contents:
+debug_line[0x00000000]
+Line table prologue:
+    total_length: 0x00000023
+          format: DWARF32
+         version: 2
+ prologue_length: 0x0000001d
+ min_inst_length: 2
+ default_is_stmt: 1
+       line_base: -5
+      line_range: 14
+     opcode_base: 13
+standard_opcode_lengths[DW_LNS_copy] = 0
+standard_opcode_lengths[DW_LNS_advance_pc] = 1
+standard_opcode_lengths[DW_LNS_advance_line] = 1
+standard_opcode_lengths[DW_LNS_set_file] = 1
+standard_opcode_lengths[DW_LNS_set_column] = 1
+standard_opcode_lengths[DW_LNS_negate_stmt] = 0
+standard_opcode_lengths[DW_LNS_set_basic_block] = 0
+standard_opcode_lengths[DW_LNS_const_add_pc] = 0
+standard_opcode_lengths[DW_LNS_fixed_advance_pc] = 1
+standard_opcode_lengths[DW_LNS_set_prologue_end] = 0
+standard_opcode_lengths[DW_LNS_set_epilogue_begin] = 0
+standard_opcode_lengths[DW_LNS_set_isa] = 1
+file_names[  1]:
+           name: "init.c"
+      dir_index: 0
+       mod_time: 0x00000000
+         length: 0x00000000
+
+debug_line[0x00000027]
+Line table prologue:
+    total_length: 0x00000080
+          format: DWARF32
+         version: 2
+ prologue_length: 0x0000004a
+ min_inst_length: 2
+ default_is_stmt: 1
+       line_base: -5
+      line_range: 14
+     opcode_base: 13
+standard_opcode_lengths[DW_LNS_copy] = 0
+standard_opcode_lengths[DW_LNS_advance_pc] = 1
+standard_opcode_lengths[DW_LNS_advance_line] = 1
+standard_opcode_lengths[DW_LNS_set_file] = 1
+standard_opcode_lengths[DW_LNS_set_column] = 1
+standard_opcode_lengths[DW_LNS_negate_stmt] = 0
+standard_opcode_lengths[DW_LNS_set_basic_block] = 0
+standard_opcode_lengths[DW_LNS_const_add_pc] = 0
+standard_opcode_lengths[DW_LNS_fixed_advance_pc] = 1
+standard_opcode_lengths[DW_LNS_set_prologue_end] = 0
+standard_opcode_lengths[DW_LNS_set_epilogue_begin] = 0
+standard_opcode_lengths[DW_LNS_set_isa] = 1
+include_directories[  1] = "../../../gcc/libgcc/../gcc/config/arm"
+file_names[  1]:
+           name: "lib1funcs.asm"
+      dir_index: 1
+       mod_time: 0x00000000
+         length: 0x00000000
+
+Address            Line   Column File   ISA Discriminator OpIndex Flags
+------------------ ------ ------ ------ --- ------------- ------- -------------
+0x000000000002fbc4    824      0      1   0             0       0  is_stmt
+0x000000000002fbc8    825      0      1   0             0       0  is_stmt
+0x000000000002fbcc    826      0      1   0             0       0  is_stmt
+0x000000000002fbd0    827      0      1   0             0       0  is_stmt
+0x000000000002fbd4    828      0      1   0             0       0  is_stmt
+0x000000000002fbd8    829      0      1   0             0       0  is_stmt
+0x000000000002fbdc    830      0      1   0             0       0  is_stmt
+0x000000000002fbe0    832      0      1   0             0       0  is_stmt
+0x000000000002fd80    834      0      1   0             0       0  is_stmt
+0x000000000002fd84    835      0      1   0             0       0  is_stmt
+0x000000000002fd88    837      0      1   0             0       0  is_stmt
+0x000000000002fd8c    838      0      1   0             0       0  is_stmt
+0x000000000002fd90    839      0      1   0             0       0  is_stmt
+0x000000000002fd94    841      0      1   0             0       0  is_stmt
+0x000000000002fd9c    843      0      1   0             0       0  is_stmt
+0x000000000002fda0    844      0      1   0             0       0  is_stmt
+0x000000000002fda4    848      0      1   0             0       0  is_stmt
+0x000000000002fdb0    213      0      1   0             0       0  is_stmt
+0x000000000002fdb4    859      0      1   0             0       0  is_stmt
+0x000000000002fdb8    860      0      1   0             0       0  is_stmt
+0x000000000002fdbc    861      0      1   0             0       0  is_stmt
+0x000000000002fdc0    862      0      1   0             0       0  is_stmt
+0x000000000002fdc4    863      0      1   0             0       0  is_stmt
+0x000000000002fdc8    864      0      1   0             0       0  is_stmt
+0x000000000002fdcc    864      0      1   0             0       0  is_stmt end_sequence
+
+debug_line[0x000000ab]
+Line table prologue:
+    total_length: 0x0000008c
+          format: DWARF32
+         version: 2
+ prologue_length: 0x0000004a
+ min_inst_length: 2
+ default_is_stmt: 1
+       line_base: -5
+      line_range: 14
+     opcode_base: 13
+standard_opcode_lengths[DW_LNS_copy] = 0
+standard_opcode_lengths[DW_LNS_advance_pc] = 1
+standard_opcode_lengths[DW_LNS_advance_line] = 1
+standard_opcode_lengths[DW_LNS_set_file] = 1
+standard_opcode_lengths[DW_LNS_set_column] = 1
+standard_opcode_lengths[DW_LNS_negate_stmt] = 0
+standard_opcode_lengths[DW_LNS_set_basic_block] = 0
+standard_opcode_lengths[DW_LNS_const_add_pc] = 0
+standard_opcode_lengths[DW_LNS_fixed_advance_pc] = 1
+standard_opcode_lengths[DW_LNS_set_prologue_end] = 0
+standard_opcode_lengths[DW_LNS_set_epilogue_begin] = 0
+standard_opcode_lengths[DW_LNS_set_isa] = 1
+include_directories[  1] = "../../../gcc/libgcc/../gcc/config/arm"
+file_names[  1]:
+           name: "lib1funcs.asm"
+      dir_index: 1
+       mod_time: 0x00000000
+         length: 0x00000000
+
+Address            Line   Column File   ISA Discriminator OpIndex Flags
+------------------ ------ ------ ------ --- ------------- ------- -------------
+0x000000000002fdcc    950      0      1   0             0       0  is_stmt
+0x000000000002fdd0    951      0      1   0             0       0  is_stmt
+0x000000000002fdd4    952      0      1   0             0       0  is_stmt
+0x000000000002fdd8    953      0      1   0             0       0  is_stmt
+0x000000000002fddc    954      0      1   0             0       0  is_stmt
+0x000000000002fde0    955      0      1   0             0       0  is_stmt
+0x000000000002fde4    956      0      1   0             0       0  is_stmt
+0x000000000002fde8    957      0      1   0             0       0  is_stmt
+0x000000000002fdec    958      0      1   0             0       0  is_stmt
+0x000000000002fdf0    959      0      1   0             0       0  is_stmt
+0x000000000002fdf4    960      0      1   0             0       0  is_stmt
+0x000000000002fdf8    961      0      1   0             0       0  is_stmt
+0x000000000002fdfc    963      0      1   0             0       0  is_stmt
+0x000000000002ff9c    965      0      1   0             0       0  is_stmt
+0x000000000002ffa0    966      0      1   0             0       0  is_stmt
+0x000000000002ffa4    967      0      1   0             0       0  is_stmt
+0x000000000002ffa8    969      0      1   0             0       0  is_stmt
+0x000000000002ffac    970      0      1   0             0       0  is_stmt
+0x000000000002ffb0    971      0      1   0             0       0  is_stmt
+0x000000000002ffb4    973      0      1   0             0       0  is_stmt
+0x000000000002ffb8    974      0      1   0             0       0  is_stmt
+0x000000000002ffbc    975      0      1   0             0       0  is_stmt
+0x000000000002ffc0    976      0      1   0             0       0  is_stmt
+0x000000000002ffc4    978      0      1   0             0       0  is_stmt
+0x000000000002ffcc    980      0      1   0             0       0  is_stmt
+0x000000000002ffd0    981      0      1   0             0       0  is_stmt
+0x000000000002ffd4    982      0      1   0             0       0  is_stmt
+0x000000000002ffd8    983      0      1   0             0       0  is_stmt
+0x000000000002ffdc    987      0      1   0             0       0  is_stmt
+0x000000000002ffe8    213      0      1   0             0       0  is_stmt
+0x000000000002ffec    998      0      1   0             0       0  is_stmt
+0x000000000002fff0    999      0      1   0             0       0  is_stmt
+0x000000000002fff4   1000      0      1   0             0       0  is_stmt
+0x000000000002fff8   1001      0      1   0             0       0  is_stmt
+0x000000000002fffc   1002      0      1   0             0       0  is_stmt
+0x0000000000030000   1003      0      1   0             0       0  is_stmt
+0x0000000000030004   1003      0      1   0             0       0  is_stmt end_sequence
+
+debug_line[0x0000013b]
+Line table prologue:
+    total_length: 0x000001db
+          format: DWARF32
+         version: 2
+ prologue_length: 0x0000005a
+ min_inst_length: 2
+ default_is_stmt: 1
+       line_base: -5
+      line_range: 14
+     opcode_base: 13
+standard_opcode_lengths[DW_LNS_copy] = 0
+standard_opcode_lengths[DW_LNS_advance_pc] = 1
+standard_opcode_lengths[DW_LNS_advance_line] = 1
+standard_opcode_lengths[DW_LNS_set_file] = 1
+standard_opcode_lengths[DW_LNS_set_column] = 1
+standard_opcode_lengths[DW_LNS_negate_stmt] = 0
+standard_opcode_lengths[DW_LNS_set_basic_block] = 0
+standard_opcode_lengths[DW_LNS_const_add_pc] = 0
+standard_opcode_lengths[DW_LNS_fixed_advance_pc] = 1
+standard_opcode_lengths[DW_LNS_set_prologue_end] = 0
+standard_opcode_lengths[DW_LNS_set_epilogue_begin] = 0
+standard_opcode_lengths[DW_LNS_set_isa] = 1
+include_directories[  1] = "../../../gcc/libgcc/../gcc/config/arm"
+file_names[  1]:
+           name: "ieee754-df.S"
+      dir_index: 1
+       mod_time: 0x00000000
+         length: 0x00000000
+file_names[  2]:
+           name: "lib1funcs.asm"
+      dir_index: 1
+       mod_time: 0x00000000
+         length: 0x00000000
+
+Address            Line   Column File   ISA Discriminator OpIndex Flags
+------------------ ------ ------ ------ --- ------------- ------- -------------
+0x0000000000030004     72      0      1   0             0       0  is_stmt
+0x0000000000030008     73      0      1   0             0       0  is_stmt
+0x000000000003000c     78      0      1   0             0       0  is_stmt
+0x0000000000030010     86      0      1   0             0       0  is_stmt
+0x0000000000030014     89      0      1   0             0       0  is_stmt
+0x0000000000030018     90      0      1   0             0       0  is_stmt
+0x000000000003001c     91      0      1   0             0       0  is_stmt
+0x0000000000030020     93      0      1   0             0       0  is_stmt
+0x0000000000030024     95      0      1   0             0       0  is_stmt
+0x0000000000030028     96      0      1   0             0       0  is_stmt
+0x000000000003002c     97      0      1   0             0       0  is_stmt
+0x0000000000030030     98      0      1   0             0       0  is_stmt
+0x0000000000030034     99      0      1   0             0       0  is_stmt
+0x0000000000030038    103      0      1   0             0       0  is_stmt
+0x000000000003003c    104      0      1   0             0       0  is_stmt
+0x0000000000030040    106      0      1   0             0       0  is_stmt
+0x0000000000030044    107      0      1   0             0       0  is_stmt
+0x0000000000030048    108      0      1   0             0       0  is_stmt
+0x000000000003004c    109      0      1   0             0       0  is_stmt
+0x0000000000030050    110      0      1   0             0       0  is_stmt
+0x0000000000030054    111      0      1   0             0       0  is_stmt
+0x0000000000030058    112      0      1   0             0       0  is_stmt
+0x000000000003005c    113      0      1   0             0       0  is_stmt
+0x0000000000030060    114      0      1   0             0       0  is_stmt
+0x0000000000030064    119      0      1   0             0       0  is_stmt
+0x0000000000030068    213      0      2   0             0       0  is_stmt
+0x000000000003006c    124      0      1   0             0       0  is_stmt
+0x0000000000030070    125      0      1   0             0       0  is_stmt
+0x0000000000030074    126      0      1   0             0       0  is_stmt
+0x0000000000030078    127      0      1   0             0       0  is_stmt
+0x000000000003007c    128      0      1   0             0       0  is_stmt
+0x0000000000030080    133      0      1   0             0       0  is_stmt
+0x0000000000030084    134      0      1   0             0       0  is_stmt
+0x0000000000030088    137      0      1   0             0       0  is_stmt
+0x000000000003008c    138      0      1   0             0       0  is_stmt
+0x0000000000030090    139      0      1   0             0       0  is_stmt
+0x0000000000030094    140      0      1   0             0       0  is_stmt
+0x0000000000030098    145      0      1   0             0       0  is_stmt
+0x000000000003009c    146      0      1   0             0       0  is_stmt
+0x00000000000300a0    151      0      1   0             0       0  is_stmt
+0x00000000000300a4    152      0      1   0             0       0  is_stmt
+0x00000000000300a8    156      0      1   0             0       0  is_stmt
+0x00000000000300ac    159      0      1   0             0       0  is_stmt
+0x00000000000300b0    160      0      1   0             0       0  is_stmt
+0x00000000000300b4    161      0      1   0             0       0  is_stmt
+0x00000000000300b8    162      0      1   0             0       0  is_stmt
+0x00000000000300bc    163      0      1   0             0       0  is_stmt
+0x00000000000300c0    164      0      1   0             0       0  is_stmt
+0x00000000000300c4    165      0      1   0             0       0  is_stmt
+0x00000000000300c8    166      0      1   0             0       0  is_stmt
+0x00000000000300cc    167      0      1   0             0       0  is_stmt
+0x00000000000300d0    168      0      1   0             0       0  is_stmt
+0x00000000000300d4    169      0      1   0             0       0  is_stmt
+0x00000000000300d8    170      0      1   0             0       0  is_stmt
+0x00000000000300dc    172      0      1   0             0       0  is_stmt
+0x00000000000300e0    173      0      1   0             0       0  is_stmt
+0x00000000000300e4    174      0      1   0             0       0  is_stmt
+0x00000000000300e8    178      0      1   0             0       0  is_stmt
+0x00000000000300ec    179      0      1   0             0       0  is_stmt
+0x00000000000300f0    186      0      1   0             0       0  is_stmt
+0x00000000000300f4    187      0      1   0             0       0  is_stmt
+0x00000000000300f8    188      0      1   0             0       0  is_stmt
+0x00000000000300fc    193      0      1   0             0       0  is_stmt
+0x0000000000030100    194      0      1   0             0       0  is_stmt
+0x0000000000030104    195      0      1   0             0       0  is_stmt
+0x0000000000030108    196      0      1   0             0       0  is_stmt
+0x000000000003010c    199      0      1   0             0       0  is_stmt
+0x0000000000030110    200      0      1   0             0       0  is_stmt
+0x0000000000030114    201      0      1   0             0       0  is_stmt
+0x0000000000030118    202      0      1   0             0       0  is_stmt
+0x000000000003011c    205      0      1   0             0       0  is_stmt
+0x0000000000030120    206      0      1   0             0       0  is_stmt
+0x0000000000030124    207      0      1   0             0       0  is_stmt
+0x0000000000030128    214      0      1   0             0       0  is_stmt
+0x000000000003012c    216      0      1   0             0       0  is_stmt
+0x0000000000030130    217      0      1   0             0       0  is_stmt
+0x0000000000030134    218      0      1   0             0       0  is_stmt
+0x0000000000030138    219      0      1   0             0       0  is_stmt
+0x000000000003013c    213      0      2   0             0       0  is_stmt
+0x0000000000030140    224      0      1   0             0       0  is_stmt
+0x0000000000030144    225      0      1   0             0       0  is_stmt
+0x0000000000030148    226      0      1   0             0       0  is_stmt
+0x000000000003014c    227      0      1   0             0       0  is_stmt
+0x0000000000030150    228      0      1   0             0       0  is_stmt
+0x0000000000030154    229      0      1   0             0       0  is_stmt
+0x0000000000030158    258      0      1   0             0       0  is_stmt
+0x000000000003015c    260      0      1   0             0       0  is_stmt
+0x0000000000030160    261      0      1   0             0       0  is_stmt
+0x0000000000030164    262      0      1   0             0       0  is_stmt
+0x0000000000030168    264      0      1   0             0       0  is_stmt
+0x000000000003016c    265      0      1   0             0       0  is_stmt
+0x0000000000030170    270      0      1   0             0       0  is_stmt
+0x0000000000030174    271      0      1   0             0       0  is_stmt
+0x0000000000030178    272      0      1   0             0       0  is_stmt
+0x000000000003017c    273      0      1   0             0       0  is_stmt
+0x0000000000030180    277      0      1   0             0       0  is_stmt
+0x0000000000030184    278      0      1   0             0       0  is_stmt
+0x0000000000030188    279      0      1   0             0       0  is_stmt
+0x000000000003018c    280      0      1   0             0       0  is_stmt
+0x0000000000030190    281      0      1   0             0       0  is_stmt
+0x0000000000030194    285      0      1   0             0       0  is_stmt
+0x0000000000030198    287      0      1   0             0       0  is_stmt
+0x000000000003019c    288      0      1   0             0       0  is_stmt
+0x00000000000301a0    295      0      1   0             0       0  is_stmt
+0x00000000000301a4    296      0      1   0             0       0  is_stmt
+0x00000000000301a8    300      0      1   0             0       0  is_stmt
+0x00000000000301ac    302      0      1   0             0       0  is_stmt
+0x00000000000301b0    303      0      1   0             0       0  is_stmt
+0x00000000000301b4    213      0      2   0             0       0  is_stmt
+0x00000000000301b8    308      0      1   0             0       0  is_stmt
+0x00000000000301bc    309      0      1   0             0       0  is_stmt
+0x00000000000301c0    310      0      1   0             0       0  is_stmt
+0x00000000000301c4    311      0      1   0             0       0  is_stmt
+0x00000000000301c8    312      0      1   0             0       0  is_stmt
+0x00000000000301cc    315      0      1   0             0       0  is_stmt
+0x00000000000301d0    316      0      1   0             0       0  is_stmt
+0x00000000000301d4    317      0      1   0             0       0  is_stmt
+0x00000000000301d8    318      0      1   0             0       0  is_stmt
+0x00000000000301dc    319      0      1   0             0       0  is_stmt
+0x00000000000301e0    213      0      2   0             0       0  is_stmt
+0x00000000000301e4    324      0      1   0             0       0  is_stmt
+0x00000000000301e8    325      0      1   0             0       0  is_stmt
+0x00000000000301ec    326      0      1   0             0       0  is_stmt
+0x00000000000301f0    327      0      1   0             0       0  is_stmt
+0x00000000000301f4    328      0      1   0             0       0  is_stmt
+0x00000000000301f8    213      0      2   0             0       0  is_stmt
+0x00000000000301fc    333      0      1   0             0       0  is_stmt
+0x0000000000030200    334      0      1   0             0       0  is_stmt
+0x0000000000030204    213      0      2   0             0       0  is_stmt
+0x0000000000030208    340      0      1   0             0       0  is_stmt
+0x000000000003020c    341      0      1   0             0       0  is_stmt
+0x0000000000030210    343      0      1   0             0       0  is_stmt
+0x0000000000030214    344      0      1   0             0       0  is_stmt
+0x0000000000030218    345      0      1   0             0       0  is_stmt
+0x000000000003021c    346      0      1   0             0       0  is_stmt
+0x0000000000030220    350      0      1   0             0       0  is_stmt
+0x0000000000030224    352      0      1   0             0       0  is_stmt
+0x0000000000030228    353      0      1   0             0       0  is_stmt
+0x000000000003022c    355      0      1   0             0       0  is_stmt
+0x0000000000030230    357      0      1   0             0       0  is_stmt
+0x0000000000030234    358      0      1   0             0       0  is_stmt
+0x0000000000030238    361      0      1   0             0       0  is_stmt
+0x000000000003023c    363      0      1   0             0       0  is_stmt
+0x0000000000030240    364      0      1   0             0       0  is_stmt
+0x0000000000030244    213      0      2   0             0       0  is_stmt
+0x0000000000030248    367      0      1   0             0       0  is_stmt
+0x000000000003024c    371      0      1   0             0       0  is_stmt
+0x0000000000030250    372      0      1   0             0       0  is_stmt
+0x0000000000030254    213      0      2   0             0       0  is_stmt
+0x0000000000030258    376      0      1   0             0       0  is_stmt
+0x000000000003025c    377      0      1   0             0       0  is_stmt
+0x0000000000030260    378      0      1   0             0       0  is_stmt
+0x0000000000030264    379      0      1   0             0       0  is_stmt
+0x0000000000030268    381      0      1   0             0       0  is_stmt
+0x000000000003026c    213      0      2   0             0       0  is_stmt
+0x0000000000030270    383      0      1   0             0       0  is_stmt
+0x0000000000030274    385      0      1   0             0       0  is_stmt
+0x0000000000030278    213      0      2   0             0       0  is_stmt
+0x000000000003027c    387      0      1   0             0       0  is_stmt
+0x0000000000030280    391      0      1   0             0       0  is_stmt
+0x0000000000030284    392      0      1   0             0       0  is_stmt
+0x0000000000030288    393      0      1   0             0       0  is_stmt
+0x000000000003028c    213      0      2   0             0       0  is_stmt
+0x0000000000030290    403      0      1   0             0       0  is_stmt
+0x0000000000030294    405      0      1   0             0       0  is_stmt
+0x0000000000030298    406      0      1   0             0       0  is_stmt
+0x000000000003029c    407      0      1   0             0       0  is_stmt
+0x00000000000302a0    409      0      1   0             0       0  is_stmt
+0x00000000000302a4    410      0      1   0             0       0  is_stmt
+0x00000000000302a8    411      0      1   0             0       0  is_stmt
+0x00000000000302ac    413      0      1   0             0       0  is_stmt
+0x00000000000302b0    414      0      1   0             0       0  is_stmt
+0x00000000000302b4    415      0      1   0             0       0  is_stmt
+0x00000000000302b8    213      0      2   0             0       0  is_stmt
+0x00000000000302bc    426      0      1   0             0       0  is_stmt
+0x00000000000302c0    428      0      1   0             0       0  is_stmt
+0x00000000000302c4    429      0      1   0             0       0  is_stmt
+0x00000000000302c8    430      0      1   0             0       0  is_stmt
+0x00000000000302cc    431      0      1   0             0       0  is_stmt
+0x00000000000302d0    432      0      1   0             0       0  is_stmt
+0x00000000000302d4    433      0      1   0             0       0  is_stmt
+0x00000000000302d8    437      0      1   0             0       0  is_stmt
+0x00000000000302dc    438      0      1   0             0       0  is_stmt
+0x00000000000302e0    446      0      1   0             0       0  is_stmt
+0x00000000000302e4    448      0      1   0             0       0  is_stmt
+0x00000000000302e8    449      0      1   0             0       0  is_stmt
+0x00000000000302ec    450      0      1   0             0       0  is_stmt
+0x00000000000302f0    451      0      1   0             0       0  is_stmt
+0x00000000000302f4    452      0      1   0             0       0  is_stmt
+0x00000000000302f8    453      0      1   0             0       0  is_stmt
+0x00000000000302fc    455      0      1   0             0       0  is_stmt
+0x0000000000030300    459      0      1   0             0       0  is_stmt
+0x0000000000030304    460      0      1   0             0       0  is_stmt
+0x0000000000030308    468      0      1   0             0       0  is_stmt
+0x000000000003030c    469      0      1   0             0       0  is_stmt
+0x0000000000030310    470      0      1   0             0       0  is_stmt
+0x0000000000030314    471      0      1   0             0       0  is_stmt
+0x0000000000030318    473      0      1   0             0       0  is_stmt
+0x000000000003031c    474      0      1   0             0       0  is_stmt
+0x0000000000030320    475      0      1   0             0       0  is_stmt
+0x0000000000030324    476      0      1   0             0       0  is_stmt
+0x0000000000030328    478      0      1   0             0       0  is_stmt
+0x000000000003032c    480      0      1   0             0       0  is_stmt
+0x0000000000030330    481      0      1   0             0       0  is_stmt
+0x0000000000030334    484      0      1   0             0       0  is_stmt
+0x0000000000030338    485      0      1   0             0       0  is_stmt
+0x000000000003033c    486      0      1   0             0       0  is_stmt
+0x0000000000030340    487      0      1   0             0       0  is_stmt
+0x0000000000030344    488      0      1   0             0       0  is_stmt
+0x0000000000030348    496      0      1   0             0       0  is_stmt
+0x000000000003034c    503      0      1   0             0       0  is_stmt
+0x0000000000030350    513      0      1   0             0       0  is_stmt
+0x0000000000030354    516      0      1   0             0       0  is_stmt
+0x0000000000030358    517      0      1   0             0       0  is_stmt
+0x000000000003035c    522      0      1   0             0       0  is_stmt
+0x0000000000030360    529      0      1   0             0       0  is_stmt
+0x0000000000030364    539      0      1   0             0       0  is_stmt
+0x0000000000030368    542      0      1   0             0       0  is_stmt
+0x000000000003036c    543      0      1   0             0       0  is_stmt
+0x0000000000030370    548      0      1   0             0       0  is_stmt
+0x0000000000030374    549      0      1   0             0       0  is_stmt
+0x0000000000030378    552      0      1   0             0       0  is_stmt
+0x000000000003037c    553      0      1   0             0       0  is_stmt
+0x0000000000030380    562      0      1   0             0       0  is_stmt
+0x0000000000030384    563      0      1   0             0       0  is_stmt
+0x0000000000030388    566      0      1   0             0       0  is_stmt
+0x000000000003038c    567      0      1   0             0       0  is_stmt
+0x0000000000030390    569      0      1   0             0       0  is_stmt
+0x0000000000030394    570      0      1   0             0       0  is_stmt
+0x0000000000030398    572      0      1   0             0       0  is_stmt
+0x000000000003039c    573      0      1   0             0       0  is_stmt
+0x00000000000303a0    575      0      1   0             0       0  is_stmt
+0x00000000000303a4    576      0      1   0             0       0  is_stmt
+0x00000000000303a8    577      0      1   0             0       0  is_stmt
+0x00000000000303ac    578      0      1   0             0       0  is_stmt
+0x00000000000303b0    579      0      1   0             0       0  is_stmt
+0x00000000000303b4    580      0      1   0             0       0  is_stmt
+0x00000000000303b8    581      0      1   0             0       0  is_stmt
+0x00000000000303bc    581      0      1   0             0       0  is_stmt end_sequence
+
+debug_line[0x0000031a]
+Line table prologue:
+    total_length: 0x000001fc
+          format: DWARF32
+         version: 2
+ prologue_length: 0x0000005a
+ min_inst_length: 2
+ default_is_stmt: 1
+       line_base: -5
+      line_range: 14
+     opcode_base: 13
+standard_opcode_lengths[DW_LNS_copy] = 0
+standard_opcode_lengths[DW_LNS_advance_pc] = 1
+standard_opcode_lengths[DW_LNS_advance_line] = 1
+standard_opcode_lengths[DW_LNS_set_file] = 1
+standard_opcode_lengths[DW_LNS_set_column] = 1
+standard_opcode_lengths[DW_LNS_negate_stmt] = 0
+standard_opcode_lengths[DW_LNS_set_basic_block] = 0
+standard_opcode_lengths[DW_LNS_const_add_pc] = 0
+standard_opcode_lengths[DW_LNS_fixed_advance_pc] = 1
+standard_opcode_lengths[DW_LNS_set_prologue_end] = 0
+standard_opcode_lengths[DW_LNS_set_epilogue_begin] = 0
+standard_opcode_lengths[DW_LNS_set_isa] = 1
+include_directories[  1] = "../../../gcc/libgcc/../gcc/config/arm"
+file_names[  1]:
+           name: "ieee754-df.S"
+      dir_index: 1
+       mod_time: 0x00000000
+         length: 0x00000000
+file_names[  2]:
+           name: "lib1funcs.asm"
+      dir_index: 1
+       mod_time: 0x00000000
+         length: 0x00000000
+
+Address            Line   Column File   ISA Discriminator OpIndex Flags
+------------------ ------ ------ ------ --- ------------- ------- -------------
+0x00000000000303bc    605      0      1   0             0       0  is_stmt
+0x00000000000303c0    608      0      1   0             0       0  is_stmt
+0x00000000000303c4    609      0      1   0             0       0  is_stmt
+0x00000000000303c8    610      0      1   0             0       0  is_stmt
+0x00000000000303cc    612      0      1   0             0       0  is_stmt
+0x00000000000303d0    613      0      1   0             0       0  is_stmt
+0x00000000000303d4    614      0      1   0             0       0  is_stmt
+0x00000000000303d8    615      0      1   0             0       0  is_stmt
+0x00000000000303dc    618      0      1   0             0       0  is_stmt
+0x00000000000303e0    621      0      1   0             0       0  is_stmt
+0x00000000000303e4    625      0      1   0             0       0  is_stmt
+0x00000000000303e8    626      0      1   0             0       0  is_stmt
+0x00000000000303ec    627      0      1   0             0       0  is_stmt
+0x00000000000303f0    629      0      1   0             0       0  is_stmt
+0x00000000000303f4    630      0      1   0             0       0  is_stmt
+0x00000000000303f8    631      0      1   0             0       0  is_stmt
+0x00000000000303fc    632      0      1   0             0       0  is_stmt
+0x0000000000030400    697      0      1   0             0       0  is_stmt
+0x0000000000030404    698      0      1   0             0       0  is_stmt
+0x0000000000030408    699      0      1   0             0       0  is_stmt
+0x000000000003040c    700      0      1   0             0       0  is_stmt
+0x0000000000030410    701      0      1   0             0       0  is_stmt
+0x0000000000030414    702      0      1   0             0       0  is_stmt
+0x0000000000030418    703      0      1   0             0       0  is_stmt
+0x000000000003041c    709      0      1   0             0       0  is_stmt
+0x0000000000030420    711      0      1   0             0       0  is_stmt
+0x0000000000030424    714      0      1   0             0       0  is_stmt
+0x0000000000030428    715      0      1   0             0       0  is_stmt
+0x000000000003042c    716      0      1   0             0       0  is_stmt
+0x0000000000030430    717      0      1   0             0       0  is_stmt
+0x0000000000030434    718      0      1   0             0       0  is_stmt
+0x0000000000030438    719      0      1   0             0       0  is_stmt
+0x000000000003043c    720      0      1   0             0       0  is_stmt
+0x0000000000030440    723      0      1   0             0       0  is_stmt
+0x0000000000030444    724      0      1   0             0       0  is_stmt
+0x0000000000030448    725      0      1   0             0       0  is_stmt
+0x000000000003044c    726      0      1   0             0       0  is_stmt
+0x0000000000030450    727      0      1   0             0       0  is_stmt
+0x0000000000030454    730      0      1   0             0       0  is_stmt
+0x0000000000030458    732      0      1   0             0       0  is_stmt
+0x000000000003045c    733      0      1   0             0       0  is_stmt
+0x0000000000030460    736      0      1   0             0       0  is_stmt
+0x0000000000030464    738      0      1   0             0       0  is_stmt
+0x0000000000030468    739      0      1   0             0       0  is_stmt
+0x000000000003046c    740      0      1   0             0       0  is_stmt
+0x0000000000030470    213      0      2   0             0       0  is_stmt
+0x0000000000030474    745      0      1   0             0       0  is_stmt
+0x0000000000030478    746      0      1   0             0       0  is_stmt
+0x000000000003047c    747      0      1   0             0       0  is_stmt
+0x0000000000030480    748      0      1   0             0       0  is_stmt
+0x0000000000030484    749      0      1   0             0       0  is_stmt
+0x0000000000030488    751      0      1   0             0       0  is_stmt
+0x000000000003048c    752      0      1   0             0       0  is_stmt
+0x0000000000030490    213      0      2   0             0       0  is_stmt
+0x0000000000030494    756      0      1   0             0       0  is_stmt
+0x0000000000030498    757      0      1   0             0       0  is_stmt
+0x000000000003049c    758      0      1   0             0       0  is_stmt
+0x00000000000304a0    762      0      1   0             0       0  is_stmt
+0x00000000000304a4    765      0      1   0             0       0  is_stmt
+0x00000000000304a8    767      0      1   0             0       0  is_stmt
+0x00000000000304ac    768      0      1   0             0       0  is_stmt
+0x00000000000304b0    213      0      2   0             0       0  is_stmt
+0x00000000000304b4    772      0      1   0             0       0  is_stmt
+0x00000000000304b8    773      0      1   0             0       0  is_stmt
+0x00000000000304bc    774      0      1   0             0       0  is_stmt
+0x00000000000304c0    775      0      1   0             0       0  is_stmt
+0x00000000000304c4    776      0      1   0             0       0  is_stmt
+0x00000000000304c8    779      0      1   0             0       0  is_stmt
+0x00000000000304cc    780      0      1   0             0       0  is_stmt
+0x00000000000304d0    781      0      1   0             0       0  is_stmt
+0x00000000000304d4    782      0      1   0             0       0  is_stmt
+0x00000000000304d8    783      0      1   0             0       0  is_stmt
+0x00000000000304dc    784      0      1   0             0       0  is_stmt
+0x00000000000304e0    785      0      1   0             0       0  is_stmt
+0x00000000000304e4    786      0      1   0             0       0  is_stmt
+0x00000000000304e8    787      0      1   0             0       0  is_stmt
+0x00000000000304ec    788      0      1   0             0       0  is_stmt
+0x00000000000304f0    790      0      1   0             0       0  is_stmt
+0x00000000000304f4    213      0      2   0             0       0  is_stmt
+0x00000000000304f8    795      0      1   0             0       0  is_stmt
+0x00000000000304fc    796      0      1   0             0       0  is_stmt
+0x0000000000030500    797      0      1   0             0       0  is_stmt
+0x0000000000030504    798      0      1   0             0       0  is_stmt
+0x0000000000030508    799      0      1   0             0       0  is_stmt
+0x000000000003050c    800      0      1   0             0       0  is_stmt
+0x0000000000030510    801      0      1   0             0       0  is_stmt
+0x0000000000030514    802      0      1   0             0       0  is_stmt
+0x0000000000030518    803      0      1   0             0       0  is_stmt
+0x000000000003051c    805      0      1   0             0       0  is_stmt
+0x0000000000030520    213      0      2   0             0       0  is_stmt
+0x0000000000030524    810      0      1   0             0       0  is_stmt
+0x0000000000030528    811      0      1   0             0       0  is_stmt
+0x000000000003052c    812      0      1   0             0       0  is_stmt
+0x0000000000030530    813      0      1   0             0       0  is_stmt
+0x0000000000030534    814      0      1   0             0       0  is_stmt
+0x0000000000030538    815      0      1   0             0       0  is_stmt
+0x000000000003053c    816      0      1   0             0       0  is_stmt
+0x0000000000030540    817      0      1   0             0       0  is_stmt
+0x0000000000030544    818      0      1   0             0       0  is_stmt
+0x0000000000030548    820      0      1   0             0       0  is_stmt
+0x000000000003054c    213      0      2   0             0       0  is_stmt
+0x0000000000030550    826      0      1   0             0       0  is_stmt
+0x0000000000030554    827      0      1   0             0       0  is_stmt
+0x0000000000030558    828      0      1   0             0       0  is_stmt
+0x000000000003055c    829      0      1   0             0       0  is_stmt
+0x0000000000030560    830      0      1   0             0       0  is_stmt
+0x0000000000030564    831      0      1   0             0       0  is_stmt
+0x0000000000030568    833      0      1   0             0       0  is_stmt
+0x000000000003056c    834      0      1   0             0       0  is_stmt
+0x0000000000030570    835      0      1   0             0       0  is_stmt
+0x0000000000030574    836      0      1   0             0       0  is_stmt
+0x0000000000030578    838      0      1   0             0       0  is_stmt
+0x000000000003057c    839      0      1   0             0       0  is_stmt
+0x0000000000030580    840      0      1   0             0       0  is_stmt
+0x0000000000030584    841      0      1   0             0       0  is_stmt
+0x0000000000030588    842      0      1   0             0       0  is_stmt
+0x000000000003058c    844      0      1   0             0       0  is_stmt
+0x0000000000030590    845      0      1   0             0       0  is_stmt
+0x0000000000030594    846      0      1   0             0       0  is_stmt
+0x0000000000030598    847      0      1   0             0       0  is_stmt
+0x000000000003059c    851      0      1   0             0       0  is_stmt
+0x00000000000305a0    852      0      1   0             0       0  is_stmt
+0x00000000000305a4    854      0      1   0             0       0  is_stmt
+0x00000000000305a8    855      0      1   0             0       0  is_stmt
+0x00000000000305ac    858      0      1   0             0       0  is_stmt
+0x00000000000305b0    860      0      1   0             0       0  is_stmt
+0x00000000000305b4    861      0      1   0             0       0  is_stmt
+0x00000000000305b8    865      0      1   0             0       0  is_stmt
+0x00000000000305bc    866      0      1   0             0       0  is_stmt
+0x00000000000305c0    867      0      1   0             0       0  is_stmt
+0x00000000000305c4    213      0      2   0             0       0  is_stmt
+0x00000000000305c8    871      0      1   0             0       0  is_stmt
+0x00000000000305cc    873      0      1   0             0       0  is_stmt
+0x00000000000305d0    874      0      1   0             0       0  is_stmt
+0x00000000000305d4    875      0      1   0             0       0  is_stmt
+0x00000000000305d8    876      0      1   0             0       0  is_stmt
+0x00000000000305dc    877      0      1   0             0       0  is_stmt
+0x00000000000305e0    878      0      1   0             0       0  is_stmt
+0x00000000000305e4    879      0      1   0             0       0  is_stmt
+0x00000000000305e8    880      0      1   0             0       0  is_stmt
+0x00000000000305ec    881      0      1   0             0       0  is_stmt
+0x00000000000305f0    882      0      1   0             0       0  is_stmt
+0x00000000000305f4    883      0      1   0             0       0  is_stmt
+0x00000000000305f8    885      0      1   0             0       0  is_stmt
+0x00000000000305fc    886      0      1   0             0       0  is_stmt
+0x0000000000030600    887      0      1   0             0       0  is_stmt
+0x0000000000030604    891      0      1   0             0       0  is_stmt
+0x0000000000030608    895      0      1   0             0       0  is_stmt
+0x000000000003060c    896      0      1   0             0       0  is_stmt
+0x0000000000030610    897      0      1   0             0       0  is_stmt
+0x0000000000030614    898      0      1   0             0       0  is_stmt
+0x0000000000030618    213      0      2   0             0       0  is_stmt
+0x000000000003061c    903      0      1   0             0       0  is_stmt
+0x0000000000030620    904      0      1   0             0       0  is_stmt
+0x0000000000030624    213      0      2   0             0       0  is_stmt
+0x0000000000030628    913      0      1   0             0       0  is_stmt
+0x000000000003062c    916      0      1   0             0       0  is_stmt
+0x0000000000030630    917      0      1   0             0       0  is_stmt
+0x0000000000030634    918      0      1   0             0       0  is_stmt
+0x0000000000030638    920      0      1   0             0       0  is_stmt
+0x000000000003063c    921      0      1   0             0       0  is_stmt
+0x0000000000030640    922      0      1   0             0       0  is_stmt
+0x0000000000030644    923      0      1   0             0       0  is_stmt
+0x0000000000030648    926      0      1   0             0       0  is_stmt
+0x000000000003064c    929      0      1   0             0       0  is_stmt
+0x0000000000030650    933      0      1   0             0       0  is_stmt
+0x0000000000030654    934      0      1   0             0       0  is_stmt
+0x0000000000030658    935      0      1   0             0       0  is_stmt
+0x000000000003065c    936      0      1   0             0       0  is_stmt
+0x0000000000030660    937      0      1   0             0       0  is_stmt
+0x0000000000030664    938      0      1   0             0       0  is_stmt
+0x0000000000030668    939      0      1   0             0       0  is_stmt
+0x000000000003066c    940      0      1   0             0       0  is_stmt
+0x0000000000030670    941      0      1   0             0       0  is_stmt
+0x0000000000030674    942      0      1   0             0       0  is_stmt
+0x0000000000030678    943      0      1   0             0       0  is_stmt
+0x000000000003067c    946      0      1   0             0       0  is_stmt
+0x0000000000030680    950      0      1   0             0       0  is_stmt
+0x0000000000030684    952      0      1   0             0       0  is_stmt
+0x0000000000030688    953      0      1   0             0       0  is_stmt
+0x000000000003068c    954      0      1   0             0       0  is_stmt
+0x0000000000030690    955      0      1   0             0       0  is_stmt
+0x0000000000030694    956      0      1   0             0       0  is_stmt
+0x0000000000030698    957      0      1   0             0       0  is_stmt
+0x000000000003069c    960      0      1   0             0       0  is_stmt
+0x00000000000306a0    961      0      1   0             0       0  is_stmt
+0x00000000000306a4    962      0      1   0             0       0  is_stmt
+0x00000000000306a8    963      0      1   0             0       0  is_stmt
+0x00000000000306ac    964      0      1   0             0       0  is_stmt
+0x00000000000306b0    965      0      1   0             0       0  is_stmt
+0x00000000000306b4    968      0      1   0             0       0  is_stmt
+0x00000000000306b8    969      0      1   0             0       0  is_stmt
+0x00000000000306bc    971      0      1   0             0       0  is_stmt
+0x00000000000306c0    972      0      1   0             0       0  is_stmt
+0x00000000000306c4    973      0      1   0             0       0  is_stmt
+0x00000000000306c8    974      0      1   0             0       0  is_stmt
+0x00000000000306cc    975      0      1   0             0       0  is_stmt
+0x00000000000306d0    976      0      1   0             0       0  is_stmt
+0x00000000000306d4    977      0      1   0             0       0  is_stmt
+0x00000000000306d8    979      0      1   0             0       0  is_stmt
+0x00000000000306dc    980      0      1   0             0       0  is_stmt
+0x00000000000306e0    981      0      1   0             0       0  is_stmt
+0x00000000000306e4    982      0      1   0             0       0  is_stmt
+0x00000000000306e8    983      0      1   0             0       0  is_stmt
+0x00000000000306ec    984      0      1   0             0       0  is_stmt
+0x00000000000306f0    985      0      1   0             0       0  is_stmt
+0x00000000000306f4    987      0      1   0             0       0  is_stmt
+0x00000000000306f8    988      0      1   0             0       0  is_stmt
+0x00000000000306fc    989      0      1   0             0       0  is_stmt
+0x0000000000030700    990      0      1   0             0       0  is_stmt
+0x0000000000030704    991      0      1   0             0       0  is_stmt
+0x0000000000030708    992      0      1   0             0       0  is_stmt
+0x000000000003070c    993      0      1   0             0       0  is_stmt
+0x0000000000030710    995      0      1   0             0       0  is_stmt
+0x0000000000030714    996      0      1   0             0       0  is_stmt
+0x0000000000030718    997      0      1   0             0       0  is_stmt
+0x000000000003071c    999      0      1   0             0       0  is_stmt
+0x0000000000030720   1000      0      1   0             0       0  is_stmt
+0x0000000000030724   1001      0      1   0             0       0  is_stmt
+0x0000000000030728   1002      0      1   0             0       0  is_stmt
+0x000000000003072c   1003      0      1   0             0       0  is_stmt
+0x0000000000030730   1004      0      1   0             0       0  is_stmt
+0x0000000000030734   1005      0      1   0             0       0  is_stmt
+0x0000000000030738   1006      0      1   0             0       0  is_stmt
+0x000000000003073c   1007      0      1   0             0       0  is_stmt
+0x0000000000030740   1008      0      1   0             0       0  is_stmt
+0x0000000000030744   1012      0      1   0             0       0  is_stmt
+0x0000000000030748   1013      0      1   0             0       0  is_stmt
+0x000000000003074c   1014      0      1   0             0       0  is_stmt
+0x0000000000030750   1015      0      1   0             0       0  is_stmt
+0x0000000000030754   1016      0      1   0             0       0  is_stmt
+0x0000000000030758   1017      0      1   0             0       0  is_stmt
+0x000000000003075c   1020      0      1   0             0       0  is_stmt
+0x0000000000030760   1022      0      1   0             0       0  is_stmt
+0x0000000000030764   1023      0      1   0             0       0  is_stmt
+0x0000000000030768   1026      0      1   0             0       0  is_stmt
+0x000000000003076c   1028      0      1   0             0       0  is_stmt
+0x0000000000030770   1029      0      1   0             0       0  is_stmt
+0x0000000000030774   1032      0      1   0             0       0  is_stmt
+0x0000000000030778   1034      0      1   0             0       0  is_stmt
+0x000000000003077c   1035      0      1   0             0       0  is_stmt
+0x0000000000030780   1036      0      1   0             0       0  is_stmt
+0x0000000000030784   1037      0      1   0             0       0  is_stmt
+0x0000000000030788    213      0      2   0             0       0  is_stmt
+0x000000000003078c   1042      0      1   0             0       0  is_stmt
+0x0000000000030790   1043      0      1   0             0       0  is_stmt
+0x0000000000030794   1044      0      1   0             0       0  is_stmt
+0x0000000000030798   1046      0      1   0             0       0  is_stmt
+0x000000000003079c   1047      0      1   0             0       0  is_stmt
+0x00000000000307a0    213      0      2   0             0       0  is_stmt
+0x00000000000307a4   1050      0      1   0             0       0  is_stmt
+0x00000000000307a8   1051      0      1   0             0       0  is_stmt
+0x00000000000307ac   1052      0      1   0             0       0  is_stmt
+0x00000000000307b0   1053      0      1   0             0       0  is_stmt
+0x00000000000307b4   1058      0      1   0             0       0  is_stmt
+0x00000000000307b8   1059      0      1   0             0       0  is_stmt
+0x00000000000307bc   1063      0      1   0             0       0  is_stmt
+0x00000000000307c0   1064      0      1   0             0       0  is_stmt
+0x00000000000307c4   1066      0      1   0             0       0  is_stmt
+0x00000000000307c8   1067      0      1   0             0       0  is_stmt
+0x00000000000307cc   1068      0      1   0             0       0  is_stmt
+0x00000000000307d0   1069      0      1   0             0       0  is_stmt
+0x00000000000307d4   1070      0      1   0             0       0  is_stmt
+0x00000000000307d8   1071      0      1   0             0       0  is_stmt
+0x00000000000307dc   1072      0      1   0             0       0  is_stmt
+0x00000000000307e0   1073      0      1   0             0       0  is_stmt
+0x00000000000307e4   1074      0      1   0             0       0  is_stmt
+0x00000000000307e8   1075      0      1   0             0       0  is_stmt
+0x00000000000307ec   1076      0      1   0             0       0  is_stmt
+0x00000000000307f0   1077      0      1   0             0       0  is_stmt
+0x00000000000307f4   1078      0      1   0             0       0  is_stmt
+0x00000000000307f8   1079      0      1   0             0       0  is_stmt
+0x00000000000307fc   1080      0      1   0             0       0  is_stmt
+0x0000000000030800   1081      0      1   0             0       0  is_stmt
+0x0000000000030804   1082      0      1   0             0       0  is_stmt
+0x0000000000030808   1083      0      1   0             0       0  is_stmt
+0x000000000003080c   1085      0      1   0             0       0  is_stmt
+0x0000000000030810   1087      0      1   0             0       0  is_stmt
+0x0000000000030814   1088      0      1   0             0       0  is_stmt
+0x0000000000030818   1090      0      1   0             0       0  is_stmt
+0x000000000003081c   1091      0      1   0             0       0  is_stmt
+0x0000000000030820   1092      0      1   0             0       0  is_stmt
+0x0000000000030824   1093      0      1   0             0       0  is_stmt
+0x0000000000030828   1094      0      1   0             0       0  is_stmt
+0x000000000003082c   1094      0      1   0             0       0  is_stmt end_sequence
+
+debug_line[0x0000051a]
+Line table prologue:
+    total_length: 0x000000f2
+          format: DWARF32
+         version: 2
+ prologue_length: 0x0000005a
+ min_inst_length: 2
+ default_is_stmt: 1
+       line_base: -5
+      line_range: 14
+     opcode_base: 13
+standard_opcode_lengths[DW_LNS_copy] = 0
+standard_opcode_lengths[DW_LNS_advance_pc] = 1
+standard_opcode_lengths[DW_LNS_advance_line] = 1
+standard_opcode_lengths[DW_LNS_set_file] = 1
+standard_opcode_lengths[DW_LNS_set_column] = 1
+standard_opcode_lengths[DW_LNS_negate_stmt] = 0
+standard_opcode_lengths[DW_LNS_set_basic_block] = 0
+standard_opcode_lengths[DW_LNS_const_add_pc] = 0
+standard_opcode_lengths[DW_LNS_fixed_advance_pc] = 1
+standard_opcode_lengths[DW_LNS_set_prologue_end] = 0
+standard_opcode_lengths[DW_LNS_set_epilogue_begin] = 0
+standard_opcode_lengths[DW_LNS_set_isa] = 1
+include_directories[  1] = "../../../gcc/libgcc/../gcc/config/arm"
+file_names[  1]:
+           name: "ieee754-df.S"
+      dir_index: 1
+       mod_time: 0x00000000
+         length: 0x00000000
+file_names[  2]:
+           name: "lib1funcs.asm"
+      dir_index: 1
+       mod_time: 0x00000000
+         length: 0x00000000
+
+Address            Line   Column File   ISA Discriminator OpIndex Flags
+------------------ ------ ------ ------ --- ------------- ------- -------------
+0x000000000003082c   1107      0      1   0             0       0  is_stmt
+0x0000000000030830   1108      0      1   0             0       0  is_stmt
+0x0000000000030834   1112      0      1   0             0       0  is_stmt
+0x0000000000030838   1113      0      1   0             0       0  is_stmt
+0x000000000003083c   1118      0      1   0             0       0  is_stmt
+0x0000000000030840   1120      0      1   0             0       0  is_stmt
+0x0000000000030844   1123      0      1   0             0       0  is_stmt
+0x0000000000030848   1124      0      1   0             0       0  is_stmt
+0x000000000003084c   1125      0      1   0             0       0  is_stmt
+0x0000000000030850   1127      0      1   0             0       0  is_stmt
+0x0000000000030854   1128      0      1   0             0       0  is_stmt
+0x0000000000030858   1132      0      1   0             0       0  is_stmt
+0x000000000003085c   1134      0      1   0             0       0  is_stmt
+0x0000000000030860   1135      0      1   0             0       0  is_stmt
+0x0000000000030864   1137      0      1   0             0       0  is_stmt
+0x0000000000030868   1138      0      1   0             0       0  is_stmt
+0x000000000003086c   1139      0      1   0             0       0  is_stmt
+0x0000000000030870   1142      0      1   0             0       0  is_stmt
+0x0000000000030874   1145      0      1   0             0       0  is_stmt
+0x0000000000030878   1149      0      1   0             0       0  is_stmt
+0x000000000003087c   1151      0      1   0             0       0  is_stmt
+0x0000000000030880   1155      0      1   0             0       0  is_stmt
+0x0000000000030884   1156      0      1   0             0       0  is_stmt
+0x0000000000030888   1157      0      1   0             0       0  is_stmt
+0x000000000003088c   1158      0      1   0             0       0  is_stmt
+0x0000000000030890   1161      0      1   0             0       0  is_stmt
+0x0000000000030894   1162      0      1   0             0       0  is_stmt
+0x0000000000030898   1163      0      1   0             0       0  is_stmt
+0x000000000003089c   1164      0      1   0             0       0  is_stmt
+0x00000000000308a0   1165      0      1   0             0       0  is_stmt
+0x00000000000308a4   1166      0      1   0             0       0  is_stmt
+0x00000000000308a8   1167      0      1   0             0       0  is_stmt
+0x00000000000308ac   1168      0      1   0             0       0  is_stmt
+0x00000000000308b0   1169      0      1   0             0       0  is_stmt
+0x00000000000308b4   1170      0      1   0             0       0  is_stmt
+0x00000000000308b8   1171      0      1   0             0       0  is_stmt
+0x00000000000308bc   1172      0      1   0             0       0  is_stmt
+0x00000000000308c0   1184      0      1   0             0       0  is_stmt
+0x00000000000308c4   1185      0      1   0             0       0  is_stmt
+0x00000000000308c8   1186      0      1   0             0       0  is_stmt
+0x00000000000308cc   1187      0      1   0             0       0  is_stmt
+0x00000000000308d0   1188      0      1   0             0       0  is_stmt
+0x00000000000308d4   1189      0      1   0             0       0  is_stmt
+0x00000000000308d8   1190      0      1   0             0       0  is_stmt
+0x00000000000308dc   1197      0      1   0             0       0  is_stmt
+0x00000000000308e0   1198      0      1   0             0       0  is_stmt
+0x00000000000308e4   1200      0      1   0             0       0  is_stmt
+0x00000000000308e8   1204      0      1   0             0       0  is_stmt
+0x00000000000308ec    213      0      2   0             0       0  is_stmt
+0x00000000000308f0   1213      0      1   0             0       0  is_stmt
+0x00000000000308f4   1214      0      1   0             0       0  is_stmt
+0x00000000000308f8   1216      0      1   0             0       0  is_stmt
+0x00000000000308fc   1217      0      1   0             0       0  is_stmt
+0x0000000000030900    213      0      2   0             0       0  is_stmt
+0x0000000000030904   1224      0      1   0             0       0  is_stmt
+0x0000000000030908   1225      0      1   0             0       0  is_stmt
+0x000000000003090c   1227      0      1   0             0       0  is_stmt
+0x0000000000030910   1228      0      1   0             0       0  is_stmt
+0x0000000000030914    213      0      2   0             0       0  is_stmt
+0x0000000000030918   1235      0      1   0             0       0  is_stmt
+0x000000000003091c   1236      0      1   0             0       0  is_stmt
+0x0000000000030920   1238      0      1   0             0       0  is_stmt
+0x0000000000030924   1239      0      1   0             0       0  is_stmt
+0x0000000000030928    213      0      2   0             0       0  is_stmt
+0x000000000003092c   1246      0      1   0             0       0  is_stmt
+0x0000000000030930   1247      0      1   0             0       0  is_stmt
+0x0000000000030934   1249      0      1   0             0       0  is_stmt
+0x0000000000030938   1250      0      1   0             0       0  is_stmt
+0x000000000003093c    213      0      2   0             0       0  is_stmt
+0x0000000000030940   1257      0      1   0             0       0  is_stmt
+0x0000000000030944   1258      0      1   0             0       0  is_stmt
+0x0000000000030948   1260      0      1   0             0       0  is_stmt
+0x000000000003094c   1261      0      1   0             0       0  is_stmt
+0x0000000000030950    213      0      2   0             0       0  is_stmt
+0x0000000000030954    213      0      2   0             0       0  is_stmt end_sequence
+
+debug_line[0x00000610]
+Line table prologue:
+    total_length: 0x00000075
+          format: DWARF32
+         version: 2
+ prologue_length: 0x00000049
+ min_inst_length: 2
+ default_is_stmt: 1
+       line_base: -5
+      line_range: 14
+     opcode_base: 13
+standard_opcode_lengths[DW_LNS_copy] = 0
+standard_opcode_lengths[DW_LNS_advance_pc] = 1
+standard_opcode_lengths[DW_LNS_advance_line] = 1
+standard_opcode_lengths[DW_LNS_set_file] = 1
+standard_opcode_lengths[DW_LNS_set_column] = 1
+standard_opcode_lengths[DW_LNS_negate_stmt] = 0
+standard_opcode_lengths[DW_LNS_set_basic_block] = 0
+standard_opcode_lengths[DW_LNS_const_add_pc] = 0
+standard_opcode_lengths[DW_LNS_fixed_advance_pc] = 1
+standard_opcode_lengths[DW_LNS_set_prologue_end] = 0
+standard_opcode_lengths[DW_LNS_set_epilogue_begin] = 0
+standard_opcode_lengths[DW_LNS_set_isa] = 1
+include_directories[  1] = "../../../gcc/libgcc/../gcc/config/arm"
+file_names[  1]:
+           name: "ieee754-df.S"
+      dir_index: 1
+       mod_time: 0x00000000
+         length: 0x00000000
+
+Address            Line   Column File   ISA Discriminator OpIndex Flags
+------------------ ------ ------ ------ --- ------------- ------- -------------
+0x0000000000030954   1301      0      1   0             0       0  is_stmt
+0x0000000000030958   1302      0      1   0             0       0  is_stmt
+0x000000000003095c   1303      0      1   0             0       0  is_stmt
+0x0000000000030960   1304      0      1   0             0       0  is_stmt
+0x0000000000030964   1305      0      1   0             0       0  is_stmt
+0x0000000000030968   1306      0      1   0             0       0  is_stmt
+0x000000000003096c   1307      0      1   0             0       0  is_stmt
+0x0000000000030970   1310      0      1   0             0       0  is_stmt
+0x0000000000030974   1311      0      1   0             0       0  is_stmt
+0x0000000000030978   1312      0      1   0             0       0  is_stmt
+0x000000000003097c   1313      0      1   0             0       0  is_stmt
+0x0000000000030980   1314      0      1   0             0       0  is_stmt
+0x0000000000030984   1316      0      1   0             0       0  is_stmt
+0x0000000000030988   1317      0      1   0             0       0  is_stmt
+0x000000000003098c   1319      0      1   0             0       0  is_stmt
+0x0000000000030990   1320      0      1   0             0       0  is_stmt
+0x0000000000030994   1322      0      1   0             0       0  is_stmt
+0x0000000000030998   1323      0      1   0             0       0  is_stmt
+0x000000000003099c   1324      0      1   0             0       0  is_stmt
+0x00000000000309a0   1326      0      1   0             0       0  is_stmt
+0x00000000000309a4   1327      0      1   0             0       0  is_stmt
+0x00000000000309a8   1329      0      1   0             0       0  is_stmt
+0x00000000000309ac   1330      0      1   0             0       0  is_stmt
+0x00000000000309b0   1330      0      1   0             0       0  is_stmt end_sequence
+
+debug_line[0x00000689]
+Line table prologue:
+    total_length: 0x00000086
+          format: DWARF32
+         version: 2
+ prologue_length: 0x00000049
+ min_inst_length: 2
+ default_is_stmt: 1
+       line_base: -5
+      line_range: 14
+     opcode_base: 13
+standard_opcode_lengths[DW_LNS_copy] = 0
+standard_opcode_lengths[DW_LNS_advance_pc] = 1
+standard_opcode_lengths[DW_LNS_advance_line] = 1
+standard_opcode_lengths[DW_LNS_set_file] = 1
+standard_opcode_lengths[DW_LNS_set_column] = 1
+standard_opcode_lengths[DW_LNS_negate_stmt] = 0
+standard_opcode_lengths[DW_LNS_set_basic_block] = 0
+standard_opcode_lengths[DW_LNS_const_add_pc] = 0
+standard_opcode_lengths[DW_LNS_fixed_advance_pc] = 1
+standard_opcode_lengths[DW_LNS_set_prologue_end] = 0
+standard_opcode_lengths[DW_LNS_set_epilogue_begin] = 0
+standard_opcode_lengths[DW_LNS_set_isa] = 1
+include_directories[  1] = "../../../gcc/libgcc/../gcc/config/arm"
+file_names[  1]:
+           name: "ieee754-df.S"
+      dir_index: 1
+       mod_time: 0x00000000
+         length: 0x00000000
+
+Address            Line   Column File   ISA Discriminator OpIndex Flags
+------------------ ------ ------ ------ --- ------------- ------- -------------
+0x00000000000309b0   1381      0      1   0             0       0  is_stmt
+0x00000000000309b4   1382      0      1   0             0       0  is_stmt
+0x00000000000309b8   1384      0      1   0             0       0  is_stmt
+0x00000000000309bc   1385      0      1   0             0       0  is_stmt
+0x00000000000309c0   1386      0      1   0             0       0  is_stmt
+0x00000000000309c4   1389      0      1   0             0       0  is_stmt
+0x00000000000309c8   1390      0      1   0             0       0  is_stmt
+0x00000000000309cc   1391      0      1   0             0       0  is_stmt
+0x00000000000309d0   1392      0      1   0             0       0  is_stmt
+0x00000000000309d4   1393      0      1   0             0       0  is_stmt
+0x00000000000309d8   1395      0      1   0             0       0  is_stmt
+0x00000000000309dc   1396      0      1   0             0       0  is_stmt
+0x00000000000309e0   1399      0      1   0             0       0  is_stmt
+0x00000000000309e4   1400      0      1   0             0       0  is_stmt
+0x00000000000309e8   1403      0      1   0             0       0  is_stmt
+0x00000000000309ec   1405      0      1   0             0       0  is_stmt
+0x00000000000309f0   1406      0      1   0             0       0  is_stmt
+0x00000000000309f4   1409      0      1   0             0       0  is_stmt
+0x00000000000309f8   1410      0      1   0             0       0  is_stmt
+0x00000000000309fc   1411      0      1   0             0       0  is_stmt
+0x0000000000030a00   1412      0      1   0             0       0  is_stmt
+0x0000000000030a04   1416      0      1   0             0       0  is_stmt
+0x0000000000030a08   1418      0      1   0             0       0  is_stmt
+0x0000000000030a0c   1420      0      1   0             0       0  is_stmt
+0x0000000000030a10   1421      0      1   0             0       0  is_stmt
+0x0000000000030a14   1422      0      1   0             0       0  is_stmt
+0x0000000000030a18   1423      0      1   0             0       0  is_stmt
+0x0000000000030a1c   1424      0      1   0             0       0  is_stmt
+0x0000000000030a20   1425      0      1   0             0       0  is_stmt
+0x0000000000030a24   1426      0      1   0             0       0  is_stmt
+0x0000000000030a28   1429      0      1   0             0       0  is_stmt
+0x0000000000030a2c   1430      0      1   0             0       0  is_stmt
+0x0000000000030a30   1431      0      1   0             0       0  is_stmt
+0x0000000000030a34   1433      0      1   0             0       0  is_stmt
+0x0000000000030a38   1434      0      1   0             0       0  is_stmt
+0x0000000000030a3c   1435      0      1   0             0       0  is_stmt
+0x0000000000030a40   1438      0      1   0             0       0  is_stmt
+0x0000000000030a44   1439      0      1   0             0       0  is_stmt
+0x0000000000030a48   1440      0      1   0             0       0  is_stmt
+0x0000000000030a4c   1441      0      1   0             0       0  is_stmt
+0x0000000000030a50   1441      0      1   0             0       0  is_stmt end_sequence
+
+debug_line[0x00000713]
+Line table prologue:
+    total_length: 0x000000ff
+          format: DWARF32
+         version: 2
+ prologue_length: 0x00000049
+ min_inst_length: 2
+ default_is_stmt: 1
+       line_base: -5
+      line_range: 14
+     opcode_base: 13
+standard_opcode_lengths[DW_LNS_copy] = 0
+standard_opcode_lengths[DW_LNS_advance_pc] = 1
+standard_opcode_lengths[DW_LNS_advance_line] = 1
+standard_opcode_lengths[DW_LNS_set_file] = 1
+standard_opcode_lengths[DW_LNS_set_column] = 1
+standard_opcode_lengths[DW_LNS_negate_stmt] = 0
+standard_opcode_lengths[DW_LNS_set_basic_block] = 0
+standard_opcode_lengths[DW_LNS_const_add_pc] = 0
+standard_opcode_lengths[DW_LNS_fixed_advance_pc] = 1
+standard_opcode_lengths[DW_LNS_set_prologue_end] = 0
+standard_opcode_lengths[DW_LNS_set_epilogue_begin] = 0
+standard_opcode_lengths[DW_LNS_set_isa] = 1
+include_directories[  1] = "../../../gcc/libgcc/../gcc/config/arm"
+file_names[  1]:
+           name: "ieee754-sf.S"
+      dir_index: 1
+       mod_time: 0x00000000
+         length: 0x00000000
+
+Address            Line   Column File   ISA Discriminator OpIndex Flags
+------------------ ------ ------ ------ --- ------------- ------- -------------
+0x0000000000030a50     53      0      1   0             0       0  is_stmt
+0x0000000000030a54     54      0      1   0             0       0  is_stmt
+0x0000000000030a58     59      0      1   0             0       0  is_stmt
+0x0000000000030a5c     68      0      1   0             0       0  is_stmt
+0x0000000000030a60     70      0      1   0             0       0  is_stmt
+0x0000000000030a64     71      0      1   0             0       0  is_stmt
+0x0000000000030a68     72      0      1   0             0       0  is_stmt
+0x0000000000030a6c     73      0      1   0             0       0  is_stmt
+0x0000000000030a70     74      0      1   0             0       0  is_stmt
+0x0000000000030a74     78      0      1   0             0       0  is_stmt
+0x0000000000030a78     79      0      1   0             0       0  is_stmt
+0x0000000000030a7c     81      0      1   0             0       0  is_stmt
+0x0000000000030a80     82      0      1   0             0       0  is_stmt
+0x0000000000030a84     83      0      1   0             0       0  is_stmt
+0x0000000000030a88     84      0      1   0             0       0  is_stmt
+0x0000000000030a8c     86      0      1   0             0       0  is_stmt
+0x0000000000030a90     91      0      1   0             0       0  is_stmt
+0x0000000000030a94     93      0      1   0             0       0  is_stmt
+0x0000000000030a98     96      0      1   0             0       0  is_stmt
+0x0000000000030a9c     97      0      1   0             0       0  is_stmt
+0x0000000000030aa0     98      0      1   0             0       0  is_stmt
+0x0000000000030aa4    100      0      1   0             0       0  is_stmt
+0x0000000000030aa8    101      0      1   0             0       0  is_stmt
+0x0000000000030aac    102      0      1   0             0       0  is_stmt
+0x0000000000030ab0    103      0      1   0             0       0  is_stmt
+0x0000000000030ab4    105      0      1   0             0       0  is_stmt
+0x0000000000030ab8    109      0      1   0             0       0  is_stmt
+0x0000000000030abc    110      0      1   0             0       0  is_stmt
+0x0000000000030ac0    114      0      1   0             0       0  is_stmt
+0x0000000000030ac4    118      0      1   0             0       0  is_stmt
+0x0000000000030ac8    119      0      1   0             0       0  is_stmt
+0x0000000000030acc    120      0      1   0             0       0  is_stmt
+0x0000000000030ad0    123      0      1   0             0       0  is_stmt
+0x0000000000030ad4    124      0      1   0             0       0  is_stmt
+0x0000000000030ad8    129      0      1   0             0       0  is_stmt
+0x0000000000030adc    130      0      1   0             0       0  is_stmt
+0x0000000000030ae0    135      0      1   0             0       0  is_stmt
+0x0000000000030ae4    136      0      1   0             0       0  is_stmt
+0x0000000000030ae8    137      0      1   0             0       0  is_stmt
+0x0000000000030aec    138      0      1   0             0       0  is_stmt
+0x0000000000030af0    141      0      1   0             0       0  is_stmt
+0x0000000000030af4    142      0      1   0             0       0  is_stmt
+0x0000000000030af8    143      0      1   0             0       0  is_stmt
+0x0000000000030afc    146      0      1   0             0       0  is_stmt
+0x0000000000030b00    147      0      1   0             0       0  is_stmt
+0x0000000000030b04    154      0      1   0             0       0  is_stmt
+0x0000000000030b08    155      0      1   0             0       0  is_stmt
+0x0000000000030b0c    157      0      1   0             0       0  is_stmt
+0x0000000000030b10    158      0      1   0             0       0  is_stmt
+0x0000000000030b14    159      0      1   0             0       0  is_stmt
+0x0000000000030b18    163      0      1   0             0       0  is_stmt
+0x0000000000030b1c    164      0      1   0             0       0  is_stmt
+0x0000000000030b20    165      0      1   0             0       0  is_stmt
+0x0000000000030b24    166      0      1   0             0       0  is_stmt
+0x0000000000030b28    167      0      1   0             0       0  is_stmt
+0x0000000000030b2c    192      0      1   0             0       0  is_stmt
+0x0000000000030b30    193      0      1   0             0       0  is_stmt
+0x0000000000030b34    194      0      1   0             0       0  is_stmt
+0x0000000000030b38    195      0      1   0             0       0  is_stmt
+0x0000000000030b3c    202      0      1   0             0       0  is_stmt
+0x0000000000030b40    203      0      1   0             0       0  is_stmt
+0x0000000000030b44    204      0      1   0             0       0  is_stmt
+0x0000000000030b48    210      0      1   0             0       0  is_stmt
+0x0000000000030b4c    212      0      1   0             0       0  is_stmt
+0x0000000000030b50    217      0      1   0             0       0  is_stmt
+0x0000000000030b54    218      0      1   0             0       0  is_stmt
+0x0000000000030b58    220      0      1   0             0       0  is_stmt
+0x0000000000030b5c    221      0      1   0             0       0  is_stmt
+0x0000000000030b60    222      0      1   0             0       0  is_stmt
+0x0000000000030b64    223      0      1   0             0       0  is_stmt
+0x0000000000030b68    226      0      1   0             0       0  is_stmt
+0x0000000000030b6c    228      0      1   0             0       0  is_stmt
+0x0000000000030b70    230      0      1   0             0       0  is_stmt
+0x0000000000030b74    231      0      1   0             0       0  is_stmt
+0x0000000000030b78    233      0      1   0             0       0  is_stmt
+0x0000000000030b7c    234      0      1   0             0       0  is_stmt
+0x0000000000030b80    237      0      1   0             0       0  is_stmt
+0x0000000000030b84    239      0      1   0             0       0  is_stmt
+0x0000000000030b88    240      0      1   0             0       0  is_stmt
+0x0000000000030b8c    242      0      1   0             0       0  is_stmt
+0x0000000000030b90    246      0      1   0             0       0  is_stmt
+0x0000000000030b94    247      0      1   0             0       0  is_stmt
+0x0000000000030b98    250      0      1   0             0       0  is_stmt
+0x0000000000030b9c    251      0      1   0             0       0  is_stmt
+0x0000000000030ba0    252      0      1   0             0       0  is_stmt
+0x0000000000030ba4    254      0      1   0             0       0  is_stmt
+0x0000000000030ba8    255      0      1   0             0       0  is_stmt
+0x0000000000030bac    256      0      1   0             0       0  is_stmt
+0x0000000000030bb0    258      0      1   0             0       0  is_stmt
+0x0000000000030bb4    259      0      1   0             0       0  is_stmt
+0x0000000000030bb8    260      0      1   0             0       0  is_stmt
+0x0000000000030bbc    264      0      1   0             0       0  is_stmt
+0x0000000000030bc0    265      0      1   0             0       0  is_stmt
+0x0000000000030bc4    266      0      1   0             0       0  is_stmt
+0x0000000000030bc8    275      0      1   0             0       0  is_stmt
+0x0000000000030bcc    277      0      1   0             0       0  is_stmt
+0x0000000000030bd0    278      0      1   0             0       0  is_stmt
+0x0000000000030bd4    279      0      1   0             0       0  is_stmt
+0x0000000000030bd8    280      0      1   0             0       0  is_stmt
+0x0000000000030bdc    282      0      1   0             0       0  is_stmt
+0x0000000000030be0    283      0      1   0             0       0  is_stmt
+0x0000000000030be4    284      0      1   0             0       0  is_stmt
+0x0000000000030be8    285      0      1   0             0       0  is_stmt
+0x0000000000030bec    296      0      1   0             0       0  is_stmt
+0x0000000000030bf0    297      0      1   0             0       0  is_stmt
+0x0000000000030bf4    302      0      1   0             0       0  is_stmt
+0x0000000000030bf8    304      0      1   0             0       0  is_stmt
+0x0000000000030bfc    306      0      1   0             0       0  is_stmt
+0x0000000000030c00    308      0      1   0             0       0  is_stmt
+0x0000000000030c04    311      0      1   0             0       0  is_stmt
+0x0000000000030c08    314      0      1   0             0       0  is_stmt
+0x0000000000030c0c    316      0      1   0             0       0  is_stmt
+0x0000000000030c10    317      0      1   0             0       0  is_stmt
+0x0000000000030c14    327      0      1   0             0       0  is_stmt
+0x0000000000030c18    334      0      1   0             0       0  is_stmt
+0x0000000000030c1c    336      0      1   0             0       0  is_stmt
+0x0000000000030c20    337      0      1   0             0       0  is_stmt
+0x0000000000030c24    342      0      1   0             0       0  is_stmt
+0x0000000000030c28    349      0      1   0             0       0  is_stmt
+0x0000000000030c2c    351      0      1   0             0       0  is_stmt
+0x0000000000030c30    352      0      1   0             0       0  is_stmt
+0x0000000000030c34    357      0      1   0             0       0  is_stmt
+0x0000000000030c38    358      0      1   0             0       0  is_stmt
+0x0000000000030c3c    369      0      1   0             0       0  is_stmt
+0x0000000000030c40    371      0      1   0             0       0  is_stmt
+0x0000000000030c44    372      0      1   0             0       0  is_stmt
+0x0000000000030c48    373      0      1   0             0       0  is_stmt
+0x0000000000030c4c    376      0      1   0             0       0  is_stmt
+0x0000000000030c50    378      0      1   0             0       0  is_stmt
+0x0000000000030c54    379      0      1   0             0       0  is_stmt
+0x0000000000030c58    404      0      1   0             0       0  is_stmt
+0x0000000000030c5c    405      0      1   0             0       0  is_stmt
+0x0000000000030c60    409      0      1   0             0       0  is_stmt
+0x0000000000030c64    410      0      1   0             0       0  is_stmt
+0x0000000000030c68    412      0      1   0             0       0  is_stmt
+0x0000000000030c6c    413      0      1   0             0       0  is_stmt
+0x0000000000030c70    414      0      1   0             0       0  is_stmt
+0x0000000000030c74    415      0      1   0             0       0  is_stmt
+0x0000000000030c78    416      0      1   0             0       0  is_stmt
+0x0000000000030c7c    418      0      1   0             0       0  is_stmt
+0x0000000000030c80    419      0      1   0             0       0  is_stmt
+0x0000000000030c84    421      0      1   0             0       0  is_stmt
+0x0000000000030c88    422      0      1   0             0       0  is_stmt
+0x0000000000030c8c    423      0      1   0             0       0  is_stmt
+0x0000000000030c90    424      0      1   0             0       0  is_stmt
+0x0000000000030c94    425      0      1   0             0       0  is_stmt
+0x0000000000030c98    427      0      1   0             0       0  is_stmt
+0x0000000000030c9c    428      0      1   0             0       0  is_stmt
+0x0000000000030ca0    428      0      1   0             0       0  is_stmt end_sequence
+
+debug_line[0x00000816]
+Line table prologue:
+    total_length: 0x00000120
+          format: DWARF32
+         version: 2
+ prologue_length: 0x00000049
+ min_inst_length: 2
+ default_is_stmt: 1
+       line_base: -5
+      line_range: 14
+     opcode_base: 13
+standard_opcode_lengths[DW_LNS_copy] = 0
+standard_opcode_lengths[DW_LNS_advance_pc] = 1
+standard_opcode_lengths[DW_LNS_advance_line] = 1
+standard_opcode_lengths[DW_LNS_set_file] = 1
+standard_opcode_lengths[DW_LNS_set_column] = 1
+standard_opcode_lengths[DW_LNS_negate_stmt] = 0
+standard_opcode_lengths[DW_LNS_set_basic_block] = 0
+standard_opcode_lengths[DW_LNS_const_add_pc] = 0
+standard_opcode_lengths[DW_LNS_fixed_advance_pc] = 1
+standard_opcode_lengths[DW_LNS_set_prologue_end] = 0
+standard_opcode_lengths[DW_LNS_set_epilogue_begin] = 0
+standard_opcode_lengths[DW_LNS_set_isa] = 1
+include_directories[  1] = "../../../gcc/libgcc/../gcc/config/arm"
+file_names[  1]:
+           name: "ieee754-sf.S"
+      dir_index: 1
+       mod_time: 0x00000000
+         length: 0x00000000
+
+Address            Line   Column File   ISA Discriminator OpIndex Flags
+------------------ ------ ------ ------ --- ------------- ------- -------------
+0x0000000000030ca0    452      0      1   0             0       0  is_stmt
+0x0000000000030ca4    453      0      1   0             0       0  is_stmt
+0x0000000000030ca8    455      0      1   0             0       0  is_stmt
+0x0000000000030cac    456      0      1   0             0       0  is_stmt
+0x0000000000030cb0    457      0      1   0             0       0  is_stmt
+0x0000000000030cb4    458      0      1   0             0       0  is_stmt
+0x0000000000030cb8    462      0      1   0             0       0  is_stmt
+0x0000000000030cbc    465      0      1   0             0       0  is_stmt
+0x0000000000030cc0    470      0      1   0             0       0  is_stmt
+0x0000000000030cc4    472      0      1   0             0       0  is_stmt
+0x0000000000030cc8    473      0      1   0             0       0  is_stmt
+0x0000000000030ccc    474      0      1   0             0       0  is_stmt
+0x0000000000030cd0    475      0      1   0             0       0  is_stmt
+0x0000000000030cd4    476      0      1   0             0       0  is_stmt
+0x0000000000030cd8    500      0      1   0             0       0  is_stmt
+0x0000000000030cdc    503      0      1   0             0       0  is_stmt
+0x0000000000030ce0    508      0      1   0             0       0  is_stmt
+0x0000000000030ce4    510      0      1   0             0       0  is_stmt
+0x0000000000030ce8    511      0      1   0             0       0  is_stmt
+0x0000000000030cec    512      0      1   0             0       0  is_stmt
+0x0000000000030cf0    515      0      1   0             0       0  is_stmt
+0x0000000000030cf4    518      0      1   0             0       0  is_stmt
+0x0000000000030cf8    519      0      1   0             0       0  is_stmt
+0x0000000000030cfc    520      0      1   0             0       0  is_stmt
+0x0000000000030d00    523      0      1   0             0       0  is_stmt
+0x0000000000030d04    524      0      1   0             0       0  is_stmt
+0x0000000000030d08    526      0      1   0             0       0  is_stmt
+0x0000000000030d0c    527      0      1   0             0       0  is_stmt
+0x0000000000030d10    531      0      1   0             0       0  is_stmt
+0x0000000000030d14    532      0      1   0             0       0  is_stmt
+0x0000000000030d18    534      0      1   0             0       0  is_stmt
+0x0000000000030d1c    535      0      1   0             0       0  is_stmt
+0x0000000000030d20    536      0      1   0             0       0  is_stmt
+0x0000000000030d24    537      0      1   0             0       0  is_stmt
+0x0000000000030d28    539      0      1   0             0       0  is_stmt
+0x0000000000030d2c    540      0      1   0             0       0  is_stmt
+0x0000000000030d30    541      0      1   0             0       0  is_stmt
+0x0000000000030d34    544      0      1   0             0       0  is_stmt
+0x0000000000030d38    545      0      1   0             0       0  is_stmt
+0x0000000000030d3c    546      0      1   0             0       0  is_stmt
+0x0000000000030d40    550      0      1   0             0       0  is_stmt
+0x0000000000030d44    553      0      1   0             0       0  is_stmt
+0x0000000000030d48    555      0      1   0             0       0  is_stmt
+0x0000000000030d4c    556      0      1   0             0       0  is_stmt
+0x0000000000030d50    559      0      1   0             0       0  is_stmt
+0x0000000000030d54    560      0      1   0             0       0  is_stmt
+0x0000000000030d58    561      0      1   0             0       0  is_stmt
+0x0000000000030d5c    562      0      1   0             0       0  is_stmt
+0x0000000000030d60    563      0      1   0             0       0  is_stmt
+0x0000000000030d64    564      0      1   0             0       0  is_stmt
+0x0000000000030d68    565      0      1   0             0       0  is_stmt
+0x0000000000030d6c    566      0      1   0             0       0  is_stmt
+0x0000000000030d70    568      0      1   0             0       0  is_stmt
+0x0000000000030d74    569      0      1   0             0       0  is_stmt
+0x0000000000030d78    574      0      1   0             0       0  is_stmt
+0x0000000000030d7c    575      0      1   0             0       0  is_stmt
+0x0000000000030d80    577      0      1   0             0       0  is_stmt
+0x0000000000030d84    578      0      1   0             0       0  is_stmt
+0x0000000000030d88    579      0      1   0             0       0  is_stmt
+0x0000000000030d8c    580      0      1   0             0       0  is_stmt
+0x0000000000030d90    581      0      1   0             0       0  is_stmt
+0x0000000000030d94    582      0      1   0             0       0  is_stmt
+0x0000000000030d98    583      0      1   0             0       0  is_stmt
+0x0000000000030d9c    585      0      1   0             0       0  is_stmt
+0x0000000000030da0    586      0      1   0             0       0  is_stmt
+0x0000000000030da4    587      0      1   0             0       0  is_stmt
+0x0000000000030da8    588      0      1   0             0       0  is_stmt
+0x0000000000030dac    589      0      1   0             0       0  is_stmt
+0x0000000000030db0    590      0      1   0             0       0  is_stmt
+0x0000000000030db4    594      0      1   0             0       0  is_stmt
+0x0000000000030db8    595      0      1   0             0       0  is_stmt
+0x0000000000030dbc    597      0      1   0             0       0  is_stmt
+0x0000000000030dc0    598      0      1   0             0       0  is_stmt
+0x0000000000030dc4    601      0      1   0             0       0  is_stmt
+0x0000000000030dc8    603      0      1   0             0       0  is_stmt
+0x0000000000030dcc    604      0      1   0             0       0  is_stmt
+0x0000000000030dd0    608      0      1   0             0       0  is_stmt
+0x0000000000030dd4    609      0      1   0             0       0  is_stmt
+0x0000000000030dd8    610      0      1   0             0       0  is_stmt
+0x0000000000030ddc    613      0      1   0             0       0  is_stmt
+0x0000000000030de0    615      0      1   0             0       0  is_stmt
+0x0000000000030de4    616      0      1   0             0       0  is_stmt
+0x0000000000030de8    617      0      1   0             0       0  is_stmt
+0x0000000000030dec    618      0      1   0             0       0  is_stmt
+0x0000000000030df0    619      0      1   0             0       0  is_stmt
+0x0000000000030df4    620      0      1   0             0       0  is_stmt
+0x0000000000030df8    621      0      1   0             0       0  is_stmt
+0x0000000000030dfc    622      0      1   0             0       0  is_stmt
+0x0000000000030e00    623      0      1   0             0       0  is_stmt
+0x0000000000030e04    624      0      1   0             0       0  is_stmt
+0x0000000000030e08    625      0      1   0             0       0  is_stmt
+0x0000000000030e0c    626      0      1   0             0       0  is_stmt
+0x0000000000030e10    628      0      1   0             0       0  is_stmt
+0x0000000000030e14    629      0      1   0             0       0  is_stmt
+0x0000000000030e18    633      0      1   0             0       0  is_stmt
+0x0000000000030e1c    637      0      1   0             0       0  is_stmt
+0x0000000000030e20    638      0      1   0             0       0  is_stmt
+0x0000000000030e24    639      0      1   0             0       0  is_stmt
+0x0000000000030e28    640      0      1   0             0       0  is_stmt
+0x0000000000030e2c    644      0      1   0             0       0  is_stmt
+0x0000000000030e30    645      0      1   0             0       0  is_stmt
+0x0000000000030e34    646      0      1   0             0       0  is_stmt
+0x0000000000030e38    655      0      1   0             0       0  is_stmt
+0x0000000000030e3c    656      0      1   0             0       0  is_stmt
+0x0000000000030e40    658      0      1   0             0       0  is_stmt
+0x0000000000030e44    659      0      1   0             0       0  is_stmt
+0x0000000000030e48    660      0      1   0             0       0  is_stmt
+0x0000000000030e4c    661      0      1   0             0       0  is_stmt
+0x0000000000030e50    665      0      1   0             0       0  is_stmt
+0x0000000000030e54    668      0      1   0             0       0  is_stmt
+0x0000000000030e58    672      0      1   0             0       0  is_stmt
+0x0000000000030e5c    673      0      1   0             0       0  is_stmt
+0x0000000000030e60    674      0      1   0             0       0  is_stmt
+0x0000000000030e64    675      0      1   0             0       0  is_stmt
+0x0000000000030e68    676      0      1   0             0       0  is_stmt
+0x0000000000030e6c    677      0      1   0             0       0  is_stmt
+0x0000000000030e70    680      0      1   0             0       0  is_stmt
+0x0000000000030e74    684      0      1   0             0       0  is_stmt
+0x0000000000030e78    686      0      1   0             0       0  is_stmt
+0x0000000000030e7c    687      0      1   0             0       0  is_stmt
+0x0000000000030e80    690      0      1   0             0       0  is_stmt
+0x0000000000030e84    691      0      1   0             0       0  is_stmt
+0x0000000000030e88    693      0      1   0             0       0  is_stmt
+0x0000000000030e8c    694      0      1   0             0       0  is_stmt
+0x0000000000030e90    695      0      1   0             0       0  is_stmt
+0x0000000000030e94    697      0      1   0             0       0  is_stmt
+0x0000000000030e98    698      0      1   0             0       0  is_stmt
+0x0000000000030e9c    699      0      1   0             0       0  is_stmt
+0x0000000000030ea0    701      0      1   0             0       0  is_stmt
+0x0000000000030ea4    702      0      1   0             0       0  is_stmt
+0x0000000000030ea8    703      0      1   0             0       0  is_stmt
+0x0000000000030eac    705      0      1   0             0       0  is_stmt
+0x0000000000030eb0    706      0      1   0             0       0  is_stmt
+0x0000000000030eb4    707      0      1   0             0       0  is_stmt
+0x0000000000030eb8    709      0      1   0             0       0  is_stmt
+0x0000000000030ebc    710      0      1   0             0       0  is_stmt
+0x0000000000030ec0    713      0      1   0             0       0  is_stmt
+0x0000000000030ec4    714      0      1   0             0       0  is_stmt
+0x0000000000030ec8    717      0      1   0             0       0  is_stmt
+0x0000000000030ecc    718      0      1   0             0       0  is_stmt
+0x0000000000030ed0    720      0      1   0             0       0  is_stmt
+0x0000000000030ed4    721      0      1   0             0       0  is_stmt
+0x0000000000030ed8    725      0      1   0             0       0  is_stmt
+0x0000000000030edc    726      0      1   0             0       0  is_stmt
+0x0000000000030ee0    727      0      1   0             0       0  is_stmt
+0x0000000000030ee4    729      0      1   0             0       0  is_stmt
+0x0000000000030ee8    730      0      1   0             0       0  is_stmt
+0x0000000000030eec    731      0      1   0             0       0  is_stmt
+0x0000000000030ef0    733      0      1   0             0       0  is_stmt
+0x0000000000030ef4    734      0      1   0             0       0  is_stmt
+0x0000000000030ef8    735      0      1   0             0       0  is_stmt
+0x0000000000030efc    736      0      1   0             0       0  is_stmt
+0x0000000000030f00    741      0      1   0             0       0  is_stmt
+0x0000000000030f04    742      0      1   0             0       0  is_stmt
+0x0000000000030f08    744      0      1   0             0       0  is_stmt
+0x0000000000030f0c    745      0      1   0             0       0  is_stmt
+0x0000000000030f10    746      0      1   0             0       0  is_stmt
+0x0000000000030f14    747      0      1   0             0       0  is_stmt
+0x0000000000030f18    748      0      1   0             0       0  is_stmt
+0x0000000000030f1c    749      0      1   0             0       0  is_stmt
+0x0000000000030f20    750      0      1   0             0       0  is_stmt
+0x0000000000030f24    752      0      1   0             0       0  is_stmt
+0x0000000000030f28    753      0      1   0             0       0  is_stmt
+0x0000000000030f2c    754      0      1   0             0       0  is_stmt
+0x0000000000030f30    755      0      1   0             0       0  is_stmt
+0x0000000000030f34    756      0      1   0             0       0  is_stmt
+0x0000000000030f38    757      0      1   0             0       0  is_stmt
+0x0000000000030f3c    761      0      1   0             0       0  is_stmt
+0x0000000000030f40    762      0      1   0             0       0  is_stmt
+0x0000000000030f44    763      0      1   0             0       0  is_stmt
+0x0000000000030f48    764      0      1   0             0       0  is_stmt
+0x0000000000030f4c    765      0      1   0             0       0  is_stmt
+0x0000000000030f50    766      0      1   0             0       0  is_stmt
+0x0000000000030f54    767      0      1   0             0       0  is_stmt
+0x0000000000030f58    768      0      1   0             0       0  is_stmt
+0x0000000000030f5c    769      0      1   0             0       0  is_stmt
+0x0000000000030f60    770      0      1   0             0       0  is_stmt
+0x0000000000030f64    771      0      1   0             0       0  is_stmt
+0x0000000000030f68    772      0      1   0             0       0  is_stmt
+0x0000000000030f6c    773      0      1   0             0       0  is_stmt
+0x0000000000030f70    774      0      1   0             0       0  is_stmt
+0x0000000000030f74    775      0      1   0             0       0  is_stmt
+0x0000000000030f78    777      0      1   0             0       0  is_stmt
+0x0000000000030f7c    779      0      1   0             0       0  is_stmt
+0x0000000000030f80    780      0      1   0             0       0  is_stmt
+0x0000000000030f84    782      0      1   0             0       0  is_stmt
+0x0000000000030f88    783      0      1   0             0       0  is_stmt
+0x0000000000030f8c    784      0      1   0             0       0  is_stmt
+0x0000000000030f90    785      0      1   0             0       0  is_stmt
+0x0000000000030f94    786      0      1   0             0       0  is_stmt
+0x0000000000030f98    786      0      1   0             0       0  is_stmt end_sequence
+
+debug_line[0x0000093a]
+Line table prologue:
+    total_length: 0x00000060
+          format: DWARF32
+         version: 2
+ prologue_length: 0x00000044
+ min_inst_length: 2
+ default_is_stmt: 1
+       line_base: -5
+      line_range: 14
+     opcode_base: 13
+standard_opcode_lengths[DW_LNS_copy] = 0
+standard_opcode_lengths[DW_LNS_advance_pc] = 1
+standard_opcode_lengths[DW_LNS_advance_line] = 1
+standard_opcode_lengths[DW_LNS_set_file] = 1
+standard_opcode_lengths[DW_LNS_set_column] = 1
+standard_opcode_lengths[DW_LNS_negate_stmt] = 0
+standard_opcode_lengths[DW_LNS_set_basic_block] = 0
+standard_opcode_lengths[DW_LNS_const_add_pc] = 0
+standard_opcode_lengths[DW_LNS_fixed_advance_pc] = 1
+standard_opcode_lengths[DW_LNS_set_prologue_end] = 0
+standard_opcode_lengths[DW_LNS_set_epilogue_begin] = 0
+standard_opcode_lengths[DW_LNS_set_isa] = 1
+include_directories[  1] = "../../../gcc/libgcc/../gcc/config/arm"
+file_names[  1]:
+           name: "bpabi.S"
+      dir_index: 1
+       mod_time: 0x00000000
+         length: 0x00000000
+
+Address            Line   Column File   ISA Discriminator OpIndex Flags
+------------------ ------ ------ ------ --- ------------- ------- -------------
+0x0000000000030f98     88      0      1   0             0       0  is_stmt
+0x0000000000030f9c     93      0      1   0             0       0  is_stmt
+0x0000000000030fa0     95      0      1   0             0       0  is_stmt
+0x0000000000030fa4     96      0      1   0             0       0  is_stmt
+0x0000000000030fa8     97      0      1   0             0       0  is_stmt
+0x0000000000030fac     98      0      1   0             0       0  is_stmt
+0x0000000000030fb0     99      0      1   0             0       0  is_stmt
+0x0000000000030fb4     99      0      1   0             0       0  is_stmt end_sequence
+
+debug_line[0x0000099e]
+Line table prologue:
+    total_length: 0x00000066
+          format: DWARF32
+         version: 2
+ prologue_length: 0x0000004a
+ min_inst_length: 2
+ default_is_stmt: 1
+       line_base: -5
+      line_range: 14
+     opcode_base: 13
+standard_opcode_lengths[DW_LNS_copy] = 0
+standard_opcode_lengths[DW_LNS_advance_pc] = 1
+standard_opcode_lengths[DW_LNS_advance_line] = 1
+standard_opcode_lengths[DW_LNS_set_file] = 1
+standard_opcode_lengths[DW_LNS_set_column] = 1
+standard_opcode_lengths[DW_LNS_negate_stmt] = 0
+standard_opcode_lengths[DW_LNS_set_basic_block] = 0
+standard_opcode_lengths[DW_LNS_const_add_pc] = 0
+standard_opcode_lengths[DW_LNS_fixed_advance_pc] = 1
+standard_opcode_lengths[DW_LNS_set_prologue_end] = 0
+standard_opcode_lengths[DW_LNS_set_epilogue_begin] = 0
+standard_opcode_lengths[DW_LNS_set_isa] = 1
+include_directories[  1] = "../../../gcc/libgcc/../gcc/config/arm"
+file_names[  1]:
+           name: "lib1funcs.asm"
+      dir_index: 1
+       mod_time: 0x00000000
+         length: 0x00000000
+
+Address            Line   Column File   ISA Discriminator OpIndex Flags
+------------------ ------ ------ ------ --- ------------- ------- -------------
+0x0000000000030fb4   1091      0      1   0             0       0  is_stmt
+0x0000000000030fb8   1092      0      1   0             0       0  is_stmt
+0x0000000000030fbc   1093      0      1   0             0       0  is_stmt
+0x0000000000030fc0    213      0      1   0             0       0  is_stmt
+0x0000000000030fc4    213      0      1   0             0       0  is_stmt end_sequence
+
+debug_line[0x00000a08]
+Line table prologue:
+    total_length: 0x00000064
+          format: DWARF32
+         version: 2
+ prologue_length: 0x00000044
+ min_inst_length: 2
+ default_is_stmt: 1
+       line_base: -5
+      line_range: 14
+     opcode_base: 13
+standard_opcode_lengths[DW_LNS_copy] = 0
+standard_opcode_lengths[DW_LNS_advance_pc] = 1
+standard_opcode_lengths[DW_LNS_advance_line] = 1
+standard_opcode_lengths[DW_LNS_set_file] = 1
+standard_opcode_lengths[DW_LNS_set_column] = 1
+standard_opcode_lengths[DW_LNS_negate_stmt] = 0
+standard_opcode_lengths[DW_LNS_set_basic_block] = 0
+standard_opcode_lengths[DW_LNS_const_add_pc] = 0
+standard_opcode_lengths[DW_LNS_fixed_advance_pc] = 1
+standard_opcode_lengths[DW_LNS_set_prologue_end] = 0
+standard_opcode_lengths[DW_LNS_set_epilogue_begin] = 0
+standard_opcode_lengths[DW_LNS_set_isa] = 1
+include_directories[  1] = "../../../gcc/libgcc/../gcc/config/arm"
+file_names[  1]:
+           name: "bpabi.c"
+      dir_index: 1
+       mod_time: 0x00000000
+         length: 0x00000000
+
+Address            Line   Column File   ISA Discriminator OpIndex Flags
+------------------ ------ ------ ------ --- ------------- ------- -------------
+0x0000000000030fc4     50      0      1   0             0       0  is_stmt
+0x0000000000030fc8     50      0      1   0             0       0  is_stmt
+0x0000000000030fd8     53      0      1   0             0       0  is_stmt
+0x0000000000030fdc     54      0      1   0             0       0  is_stmt
+0x0000000000030ffc     56      0      1   0             0       0  is_stmt
+0x0000000000031000     38      0      1   0             0       0  is_stmt
+0x0000000000031004     38      0      1   0             0       0  is_stmt
+0x0000000000031014     41      0      1   0             0       0  is_stmt
+0x0000000000031018     42      0      1   0             0       0  is_stmt
+0x0000000000031038     44      0      1   0             0       0  is_stmt
+0x000000000003103c     44      0      1   0             0       0  is_stmt end_sequence
+
+debug_line[0x00000a70]
+Line table prologue:
+    total_length: 0x000001ce
+          format: DWARF32
+         version: 2
+ prologue_length: 0x00000146
+ min_inst_length: 2
+ default_is_stmt: 1
+       line_base: -5
+      line_range: 14
+     opcode_base: 13
+standard_opcode_lengths[DW_LNS_copy] = 0
+standard_opcode_lengths[DW_LNS_advance_pc] = 1
+standard_opcode_lengths[DW_LNS_advance_line] = 1
+standard_opcode_lengths[DW_LNS_set_file] = 1
+standard_opcode_lengths[DW_LNS_set_column] = 1
+standard_opcode_lengths[DW_LNS_negate_stmt] = 0
+standard_opcode_lengths[DW_LNS_set_basic_block] = 0
+standard_opcode_lengths[DW_LNS_const_add_pc] = 0
+standard_opcode_lengths[DW_LNS_fixed_advance_pc] = 1
+standard_opcode_lengths[DW_LNS_set_prologue_end] = 0
+standard_opcode_lengths[DW_LNS_set_epilogue_begin] = 0
+standard_opcode_lengths[DW_LNS_set_isa] = 1
+include_directories[  1] = "../../../gcc/libgcc/../gcc"
+include_directories[  2] = "/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/./gcc/include"
+include_directories[  3] = "/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/include/bits"
+include_directories[  4] = "/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/include"
+file_names[  1]:
+           name: "libgcc2.c"
+      dir_index: 1
+       mod_time: 0x00000000
+         length: 0x00000000
+file_names[  2]:
+           name: "stddef.h"
+      dir_index: 2
+       mod_time: 0x00000000
+         length: 0x00000000
+file_names[  3]:
+           name: "types.h"
+      dir_index: 3
+       mod_time: 0x00000000
+         length: 0x00000000
+file_names[  4]:
+           name: "libio.h"
+      dir_index: 4
+       mod_time: 0x00000000
+         length: 0x00000000
+file_names[  5]:
+           name: "stdio.h"
+      dir_index: 4
+       mod_time: 0x00000000
+         length: 0x00000000
+file_names[  6]:
+           name: "libgcc2.h"
+      dir_index: 1
+       mod_time: 0x00000000
+         length: 0x00000000
+
+Address            Line   Column File   ISA Discriminator OpIndex Flags
+------------------ ------ ------ ------ --- ------------- ------- -------------
+0x000000000003103c   1080      0      1   0             0       0  is_stmt
+0x0000000000031044   1086      0      1   0             0       0  is_stmt
+0x0000000000031050   1089      0      1   0             0       0  is_stmt
+0x0000000000031058    913      0      1   0             0       0  is_stmt
+0x000000000003105c    876      0      1   0             0       0  is_stmt
+0x0000000000031060    873      0      1   0             0       0  is_stmt
+0x0000000000031064    875      0      1   0             0       0  is_stmt
+0x0000000000031068    913      0      1   0             0       0  is_stmt
+0x000000000003106c    915      0      1   0             0       0  is_stmt
+0x0000000000031074    919      0      1   0             0       0  is_stmt
+0x0000000000031078    921      0      1   0             0       0  is_stmt
+0x000000000003107c    927      0      1   0             0       0  is_stmt
+0x0000000000031084    926      0      1   0             0       0  is_stmt
+0x0000000000031088    927      0      1   0             0       0  is_stmt
+0x000000000003108c    931      0      1   0             0       0  is_stmt
+0x0000000000031090    928      0      1   0             0       0  is_stmt
+0x0000000000031094    931      0      1   0             0       0  is_stmt
+0x0000000000031140    989      0      1   0             0       0  is_stmt
+0x0000000000031148   1055      0      1   0             0       0  is_stmt
+0x0000000000031150   1094      0      1   0             0       0  is_stmt
+0x0000000000031154   1072      0      1   0             0       0  is_stmt
+0x000000000003115c   1094      0      1   0             0       0  is_stmt
+0x0000000000031160   1095      0      1   0             0       0  is_stmt
+0x0000000000031168   1098      0      1   0             0       0  is_stmt
+0x0000000000031178    940      0      1   0             0       0  is_stmt
+0x0000000000031180    941      0      1   0             0       0  is_stmt
+0x0000000000031190    943      0      1   0             0       0  is_stmt
+0x0000000000031194    945      0      1   0             0       0  is_stmt
+0x000000000003119c    954      0      1   0             0       0  is_stmt
+0x00000000000311b4    973      0      1   0             0       0  is_stmt
+0x0000000000031258   1008      0      1   0             0       0  is_stmt
+0x000000000003125c   1009      0      1   0             0       0  is_stmt
+0x0000000000031264   1043      0      1   0             0       0  is_stmt
+0x000000000003126c   1046      0      1   0             0       0  is_stmt
+0x0000000000031270   1043      0      1   0             0       0  is_stmt
+0x0000000000031274   1045      0      1   0             0       0  is_stmt
+0x0000000000031278   1046      0      1   0             0       0  is_stmt
+0x000000000003127c   1049      0      1   0             0       0  is_stmt
+0x0000000000031288   1046      0      1   0             0       0  is_stmt
+0x000000000003128c   1049      0      1   0             0       0  is_stmt
+0x00000000000312c8   1044      0      1   0             0       0  is_stmt
+0x00000000000312cc   1049      0      1   0             0       0  is_stmt
+0x000000000003133c   1050      0      1   0             0       0  is_stmt
+0x000000000003136c   1052      0      1   0             0       0  is_stmt
+0x0000000000031390   1055      0      1   0             0       0  is_stmt
+0x000000000003139c   1091      0      1   0             0       0  is_stmt
+0x00000000000313a4   1090      0      1   0             0       0  is_stmt
+0x00000000000313ac   1088      0      1   0             0       0  is_stmt
+0x00000000000313bc    964      0      1   0             0       0  is_stmt
+0x00000000000313c0    965      0      1   0             0       0  is_stmt
+0x00000000000313c4    963      0      1   0             0       0  is_stmt
+0x00000000000313c8    964      0      1   0             0       0  is_stmt
+0x00000000000313cc    965      0      1   0             0       0  is_stmt
+0x00000000000313d0    968      0      1   0             0       0  is_stmt
+0x00000000000313dc    965      0      1   0             0       0  is_stmt
+0x00000000000313e0    968      0      1   0             0       0  is_stmt
+0x0000000000031484    966      0      1   0             0       0  is_stmt
+0x0000000000031488    968      0      1   0             0       0  is_stmt
+0x0000000000031494   1019      0      1   0             0       0  is_stmt
+0x000000000003149c   1022      0      1   0             0       0  is_stmt
+0x00000000000314a0   1019      0      1   0             0       0  is_stmt
+0x00000000000314a8   1049      0      1   0             0       0  is_stmt
+0x00000000000314c8    968      0      1   0             0       0  is_stmt
+0x00000000000314d8    968      0      1   0             0       0  is_stmt end_sequence
+
+debug_line[0x00000c42]
+Line table prologue:
+    total_length: 0x000001c2
+          format: DWARF32
+         version: 2
+ prologue_length: 0x00000146
+ min_inst_length: 2
+ default_is_stmt: 1
+       line_base: -5
+      line_range: 14
+     opcode_base: 13
+standard_opcode_lengths[DW_LNS_copy] = 0
+standard_opcode_lengths[DW_LNS_advance_pc] = 1
+standard_opcode_lengths[DW_LNS_advance_line] = 1
+standard_opcode_lengths[DW_LNS_set_file] = 1
+standard_opcode_lengths[DW_LNS_set_column] = 1
+standard_opcode_lengths[DW_LNS_negate_stmt] = 0
+standard_opcode_lengths[DW_LNS_set_basic_block] = 0
+standard_opcode_lengths[DW_LNS_const_add_pc] = 0
+standard_opcode_lengths[DW_LNS_fixed_advance_pc] = 1
+standard_opcode_lengths[DW_LNS_set_prologue_end] = 0
+standard_opcode_lengths[DW_LNS_set_epilogue_begin] = 0
+standard_opcode_lengths[DW_LNS_set_isa] = 1
+include_directories[  1] = "../../../gcc/libgcc/../gcc"
+include_directories[  2] = "/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/src/gcc-build/./gcc/include"
+include_directories[  3] = "/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/include/bits"
+include_directories[  4] = "/usr/local/mtk-toolchain/gnuarm-4.4.1/sysroot/usr/include"
+file_names[  1]:
+           name: "libgcc2.c"
+      dir_index: 1
+       mod_time: 0x00000000
+         length: 0x00000000
+file_names[  2]:
+           name: "stddef.h"
+      dir_index: 2
+       mod_time: 0x00000000
+         length: 0x00000000
+file_names[  3]:
+           name: "types.h"
+      dir_index: 3
+       mod_time: 0x00000000
+         length: 0x00000000
+file_names[  4]:
+           name: "libio.h"
+      dir_index: 4
+       mod_time: 0x00000000
+         length: 0x00000000
+file_names[  5]:
+           name: "stdio.h"
+      dir_index: 4
+       mod_time: 0x00000000
+         length: 0x00000000
+file_names[  6]:
+           name: "libgcc2.h"
+      dir_index: 1
+       mod_time: 0x00000000
+         length: 0x00000000
+
+Address            Line   Column File   ISA Discriminator OpIndex Flags
+------------------ ------ ------ ------ --- ------------- ------- -------------
+0x00000000000314d8   1139      0      1   0             0       0  is_stmt
+0x00000000000314e0    913      0      1   0             0       0  is_stmt
+0x00000000000314e4   1139      0      1   0             0       0  is_stmt
+0x00000000000314e8    875      0      1   0             0       0  is_stmt
+0x00000000000314ec    873      0      1   0             0       0  is_stmt
+0x00000000000314f0    876      0      1   0             0       0  is_stmt
+0x00000000000314f4    913      0      1   0             0       0  is_stmt
+0x00000000000314f8    915      0      1   0             0       0  is_stmt
+0x0000000000031500    919      0      1   0             0       0  is_stmt
+0x0000000000031504    921      0      1   0             0       0  is_stmt
+0x0000000000031508    927      0      1   0             0       0  is_stmt
+0x0000000000031510    926      0      1   0             0       0  is_stmt
+0x0000000000031514    927      0      1   0             0       0  is_stmt
+0x0000000000031518    931      0      1   0             0       0  is_stmt
+0x000000000003151c    928      0      1   0             0       0  is_stmt
+0x0000000000031520    931      0      1   0             0       0  is_stmt
+0x00000000000315cc    989      0      1   0             0       0  is_stmt
+0x00000000000315d4   1008      0      1   0             0       0  is_stmt
+0x00000000000315d8   1009      0      1   0             0       0  is_stmt
+0x00000000000315e0   1043      0      1   0             0       0  is_stmt
+0x00000000000315ec   1046      0      1   0             0       0  is_stmt
+0x00000000000315f0   1045      0      1   0             0       0  is_stmt
+0x00000000000315f4   1049      0      1   0             0       0  is_stmt
+0x00000000000315f8   1046      0      1   0             0       0  is_stmt
+0x00000000000315fc   1049      0      1   0             0       0  is_stmt
+0x000000000003163c   1044      0      1   0             0       0  is_stmt
+0x0000000000031640   1049      0      1   0             0       0  is_stmt
+0x00000000000316ac   1050      0      1   0             0       0  is_stmt
+0x00000000000316dc   1052      0      1   0             0       0  is_stmt
+0x0000000000031700   1055      0      1   0             0       0  is_stmt
+0x000000000003170c    940      0      1   0             0       0  is_stmt
+0x0000000000031714    941      0      1   0             0       0  is_stmt
+0x0000000000031724    943      0      1   0             0       0  is_stmt
+0x0000000000031728    945      0      1   0             0       0  is_stmt
+0x0000000000031730    954      0      1   0             0       0  is_stmt
+0x0000000000031744    973      0      1   0             0       0  is_stmt
+0x00000000000317e8   1019      0      1   0             0       0  is_stmt
+0x00000000000317f0   1022      0      1   0             0       0  is_stmt
+0x00000000000317f8   1019      0      1   0             0       0  is_stmt
+0x00000000000317fc   1055      0      1   0             0       0  is_stmt
+0x0000000000031804   1141      0      1   0             0       0  is_stmt
+0x0000000000031810    964      0      1   0             0       0  is_stmt
+0x0000000000031814    963      0      1   0             0       0  is_stmt
+0x0000000000031818    965      0      1   0             0       0  is_stmt
+0x000000000003181c    964      0      1   0             0       0  is_stmt
+0x0000000000031820    968      0      1   0             0       0  is_stmt
+0x000000000003182c    965      0      1   0             0       0  is_stmt
+0x0000000000031830    968      0      1   0             0       0  is_stmt
+0x00000000000318c8    966      0      1   0             0       0  is_stmt
+0x00000000000318cc    968      0      1   0             0       0  is_stmt
+0x00000000000318d8   1049      0      1   0             0       0  is_stmt
+0x00000000000318f8    968      0      1   0             0       0  is_stmt
+0x0000000000031908    968      0      1   0             0       0  is_stmt end_sequence
+
+debug_line[0x00000e08]
+Line table prologue:
+    total_length: 0x000000c3
+          format: DWARF32
+         version: 2
+ prologue_length: 0x0000009d
+ min_inst_length: 2
+ default_is_stmt: 1
+       line_base: -5
+      line_range: 14
+     opcode_base: 13
+standard_opcode_lengths[DW_LNS_copy] = 0
+standard_opcode_lengths[DW_LNS_advance_pc] = 1
+standard_opcode_lengths[DW_LNS_advance_line] = 1
+standard_opcode_lengths[DW_LNS_set_file] = 1
+standard_opcode_lengths[DW_LNS_set_column] = 1
+standard_opcode_lengths[DW_LNS_negate_stmt] = 0
+standard_opcode_lengths[DW_LNS_set_basic_block] = 0
+standard_opcode_lengths[DW_LNS_const_add_pc] = 0
+standard_opcode_lengths[DW_LNS_fixed_advance_pc] = 1
+standard_opcode_lengths[DW_LNS_set_prologue_end] = 0
+standard_opcode_lengths[DW_LNS_set_epilogue_begin] = 0
+standard_opcode_lengths[DW_LNS_set_isa] = 1
+include_directories[  1] = "/usr/local/mtk-toolchain/gnuarm-4.4.1/cross-tools/usr/local/lib/gcc/armv6z-mediatek-linux-gnueabi/4.4.1/include"
+file_names[  1]:
+           name: "elf-init.c"
+      dir_index: 0
+       mod_time: 0x00000000
+         length: 0x00000000
+file_names[  2]:
+           name: "stddef.h"
+      dir_index: 1
+       mod_time: 0x00000000
+         length: 0x00000000
+
+Address            Line   Column File   ISA Discriminator OpIndex Flags
+------------------ ------ ------ ------ --- ------------- ------- -------------
+0x0000000000031908     91      0      1   0             0       0  is_stmt
+0x0000000000031908     99      0      1   0             0       0  is_stmt
+0x000000000003190c     65      0      1   0             0       0  is_stmt
+0x0000000000031910     82      0      1   0             0       0  is_stmt
+0x0000000000031918     65      0      1   0             0       0  is_stmt
+0x0000000000031924     79      0      1   0             0       0  is_stmt
+0x0000000000031928     82      0      1   0             0       0  is_stmt
+0x0000000000031944     83      0      1   0             0       0  is_stmt
+0x0000000000031958     82      0      1   0             0       0  is_stmt
+0x0000000000031974     82      0      1   0             0       0  is_stmt end_sequence
+
+debug_line[0x00000ecf]
+Line table prologue:
+    total_length: 0x00000087
+          format: DWARF32
+         version: 2
+ prologue_length: 0x0000006e
+ min_inst_length: 2
+ default_is_stmt: 1
+       line_base: -5
+      line_range: 14
+     opcode_base: 13
+standard_opcode_lengths[DW_LNS_copy] = 0
+standard_opcode_lengths[DW_LNS_advance_pc] = 1
+standard_opcode_lengths[DW_LNS_advance_line] = 1
+standard_opcode_lengths[DW_LNS_set_file] = 1
+standard_opcode_lengths[DW_LNS_set_column] = 1
+standard_opcode_lengths[DW_LNS_negate_stmt] = 0
+standard_opcode_lengths[DW_LNS_set_basic_block] = 0
+standard_opcode_lengths[DW_LNS_const_add_pc] = 0
+standard_opcode_lengths[DW_LNS_fixed_advance_pc] = 1
+standard_opcode_lengths[DW_LNS_set_prologue_end] = 0
+standard_opcode_lengths[DW_LNS_set_epilogue_begin] = 0
+standard_opcode_lengths[DW_LNS_set_isa] = 1
+include_directories[  1] = "../bits"
+include_directories[  2] = "../time"
+include_directories[  3] = "../sysdeps/unix/sysv/linux/bits"
+file_names[  1]:
+           name: "stat64.c"
+      dir_index: 0
+       mod_time: 0x00000000
+         length: 0x00000000
+file_names[  2]:
+           name: "types.h"
+      dir_index: 1
+       mod_time: 0x00000000
+         length: 0x00000000
+file_names[  3]:
+           name: "time.h"
+      dir_index: 2
+       mod_time: 0x00000000
+         length: 0x00000000
+file_names[  4]:
+           name: "stat.h"
+      dir_index: 3
+       mod_time: 0x00000000
+         length: 0x00000000
+
+Address            Line   Column File   ISA Discriminator OpIndex Flags
+------------------ ------ ------ ------ --- ------------- ------- -------------
+0x0000000000031974     51      0      1   0             0       0  is_stmt
+0x0000000000031974     51      0      1   0             0       0  is_stmt
+0x0000000000031978     52      0      1   0             0       0  is_stmt
+0x0000000000031980     53      0      1   0             0       0  is_stmt
+0x0000000000031980     52      0      1   0             0       0  is_stmt
+0x0000000000031984     52      0      1   0             0       0  is_stmt end_sequence
+
+debug_line[0x00000f5a]
+Line table prologue:
+    total_length: 0x00000088
+          format: DWARF32
+         version: 2
+ prologue_length: 0x0000006f
+ min_inst_length: 2
+ default_is_stmt: 1
+       line_base: -5
+      line_range: 14
+     opcode_base: 13
+standard_opcode_lengths[DW_LNS_copy] = 0
+standard_opcode_lengths[DW_LNS_advance_pc] = 1
+standard_opcode_lengths[DW_LNS_advance_line] = 1
+standard_opcode_lengths[DW_LNS_set_file] = 1
+standard_opcode_lengths[DW_LNS_set_column] = 1
+standard_opcode_lengths[DW_LNS_negate_stmt] = 0
+standard_opcode_lengths[DW_LNS_set_basic_block] = 0
+standard_opcode_lengths[DW_LNS_const_add_pc] = 0
+standard_opcode_lengths[DW_LNS_fixed_advance_pc] = 1
+standard_opcode_lengths[DW_LNS_set_prologue_end] = 0
+standard_opcode_lengths[DW_LNS_set_epilogue_begin] = 0
+standard_opcode_lengths[DW_LNS_set_isa] = 1
+include_directories[  1] = "../bits"
+include_directories[  2] = "../time"
+include_directories[  3] = "../sysdeps/unix/sysv/linux/bits"
+file_names[  1]:
+           name: "fstat64.c"
+      dir_index: 0
+       mod_time: 0x00000000
+         length: 0x00000000
+file_names[  2]:
+           name: "types.h"
+      dir_index: 1
+       mod_time: 0x00000000
+         length: 0x00000000
+file_names[  3]:
+           name: "time.h"
+      dir_index: 2
+       mod_time: 0x00000000
+         length: 0x00000000
+file_names[  4]:
+           name: "stat.h"
+      dir_index: 3
+       mod_time: 0x00000000
+         length: 0x00000000
+
+Address            Line   Column File   ISA Discriminator OpIndex Flags
+------------------ ------ ------ ------ --- ------------- ------- -------------
+0x0000000000031984     51      0      1   0             0       0  is_stmt
+0x0000000000031984     51      0      1   0             0       0  is_stmt
+0x0000000000031988     52      0      1   0             0       0  is_stmt
+0x0000000000031990     53      0      1   0             0       0  is_stmt
+0x0000000000031990     52      0      1   0             0       0  is_stmt
+0x0000000000031994     52      0      1   0             0       0  is_stmt end_sequence
+

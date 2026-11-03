@@ -184,6 +184,10 @@ static int read_response(int fd, uint64_t *type, int64_t *result,
 int main(int argc, char **argv)
 {
     const char *host = argc > 1 ? argv[1] : "127.0.0.1";
+    /* argv[3] == "big": the 5 GiB boundary-sentinel battery
+     * (docs/large-image-interface.md) instead of the 86200-sector
+     * fixture steps. CLOSE/reconnect/sweep tail is shared. */
+    int big = (argc > 3 && strcmp(argv[3], "big") == 0);
     int port = argc > 2 ? atoi(argv[1]) : 2002;
     struct sockaddr_in a;
     struct timeval tv = { 20, 0 };
@@ -220,6 +224,38 @@ int main(int argc, char **argv)
         goto fail;
     printf("GC: SIZE  -> type=%llu result=%lld (sectors)\n",
            (unsigned long long)type, (long long)result);
+
+    if (big) {
+        /* ---- 5 GiB battery: sentinels straddling the 2 GiB and 4 GiB
+         * byte-offset boundaries, final sector, clamp at the new
+         * track range, and beyond-capacity. All data sectors carry
+         * per-LSN distinct patterns (one generator family: the mock
+         * decrypt is a verbatim copy, so the same bytes are expected
+         * on the wire regardless of path). */
+        static const struct { long lsn, cnt; const char *tag; } steps[] = {
+            { 1048575, 1,  "lsn=1048575 cnt=1 (2GiB-low)" },
+            { 1048576, 1,  "lsn=1048576 cnt=1 (2GiB-high)" },
+            { 2097151, 1,  "lsn=2097151 cnt=1 (4GiB-low)" },
+            { 2097152, 1,  "lsn=2097152 cnt=1 (4GiB-high)" },
+            { 2621439, 1,  "lsn=2621439 cnt=1 (final)" },
+            { 1048512, 128, "lsn=1048512 cnt=128 (2GiB-straddle)" },
+            { 2097136, 128, "lsn=2097136 cnt=128 (4GiB-straddle)" },
+            { 1048494, 20, "lsn=1048494 cnt=20 (clamp)" },
+            { 80000,   2,  "lsn=80000 cnt=2 (encrypted)" },
+            { 2621440, 1,  "lsn=2621440 cnt=1 (beyond EOF)" },
+        };
+        long si;
+        for (si = 0; si < (long)(sizeof(steps) / sizeof(steps[0])); si++) {
+            if (send_request(fd, REQ_DISC_READ, steps[si].lsn, steps[si].cnt) ||
+                read_response(fd, &type, &result, &datalen))
+                goto fail;
+            printf("GC: READ %s -> type=%llu result=%lld datalen=%ld fnv1a64=%016llx\n",
+                   steps[si].tag, (unsigned long long)type,
+                   (long long)result, datalen,
+                   datalen > 0 ? fnv1a64(rbuf + g_payload_off, datalen) : 0ULL);
+        }
+        goto tail;
+    }
 
     if (send_request(fd, REQ_DISC_READ, 0, 1) ||
         read_response(fd, &type, &result, &datalen))
@@ -290,6 +326,7 @@ int main(int argc, char **argv)
     printf("GC: READ lsn=86300 (beyond EOF) -> type=%llu result=%lld datalen=%ld\n",
            (unsigned long long)type, (long long)result, datalen);
 
+tail:
     if (send_request(fd, REQ_DISC_CLOSE, 0, 0) ||
         read_response(fd, &type, &result, &datalen))
         goto fail;
@@ -318,12 +355,17 @@ int main(int argc, char **argv)
         goto fail2;
     printf("GC: OPEN#2 -> type=%llu result=%lld\n",
            (unsigned long long)type, (long long)result);
-    if (send_request(fd, REQ_DISC_READ, 43100, 1) ||
-        read_response(fd, &type, &result, &datalen))
-        goto fail2;
-    printf("GC: READ#2 lsn=43100 -> type=%llu result=%lld datalen=%ld fnv1a64=%016llx\n",
-           (unsigned long long)type, (long long)result, datalen,
-           datalen > 0 ? fnv1a64(rbuf + g_payload_off, datalen) : 0ULL);
+    {
+        long r2 = big ? 1048576 : 43100;   /* big: the 2GiB-high sentinel
+                                           * (43100 is not written in the
+                                           * 5 GiB image) */
+        if (send_request(fd, REQ_DISC_READ, r2, 1) ||
+            read_response(fd, &type, &result, &datalen))
+            goto fail2;
+        printf("GC: READ#2 lsn=%ld -> type=%llu result=%lld datalen=%ld fnv1a64=%016llx\n",
+               r2, (unsigned long long)type, (long long)result, datalen,
+               datalen > 0 ? fnv1a64(rbuf + g_payload_off, datalen) : 0ULL);
+    }
     if (send_request(fd, REQ_DISC_CLOSE, 0, 0) ||
         read_response(fd, &type, &result, &datalen))
         goto fail2;

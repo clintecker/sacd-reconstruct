@@ -242,6 +242,12 @@ sacd-hdhost-smoke: sacd-stage sacd-hdhost-mod
 	$(VM_SSH) 'sh /tmp/bx510_hdsmoke.sh' | tee /tmp/hdsmoke-local.out | tail -12
 	-$(VM_SSH) 'ls -dt /tmp/hdsmoke-* | head -1' | xargs -I{} $(VM_SCP) -r "$(VM_USER)@$(VM_HOST):{}" experiments/sacd_reconstruct/evidence/bx510-guest/hdhost/ 2>/dev/null
 
+## SACD gates :: sacd-gate4 :: (no arguments) :: the 5 GiB boundary-sentinel battery — the team's final large-image validation :: both pinned daemons serve hash-verified sectors straddling the 2 GiB and 4 GiB byte-offset boundaries from a host-backed sparse image through BOTH read paths; clamp at the new track range, final sector, beyond-capacity; byte-identity, raw-frame verification, self-pairs in the verdict; image is regenerable (SHA-recorded manifest kept, binaries dropped)
+.PHONY: sacd-gate4
+sacd-gate4: sacd-stage
+	$(VM_SSH) 'sh /tmp/bx510_gate4.sh' 2>/dev/null || { $(VM_SCP) experiments/sacd_reconstruct/tools/bx510_gate4.sh $(VM_USER)@$(VM_HOST):/tmp/; $(VM_SSH) 'sh /tmp/bx510_gate4.sh'; }
+	-OUT=$$($(VM_SSH) 'ls -dt /tmp/gate4v-* 2>/dev/null | head -1'); if [ -n "$$OUT" ]; then mkdir -p experiments/sacd_reconstruct/evidence/bx510-guest/gates4; $(VM_SCP) -r "$(VM_USER)@$(VM_HOST):$$OUT" experiments/sacd_reconstruct/evidence/bx510-guest/gates4/ >/dev/null 2>&1; echo "evidence pulled: gates4/$$(basename $$OUT)"; fi
+
 ## SACD gates :: sacd-gate3 :: (no arguments) :: HDHOST intermediate gate: the canonical 6-boot validation with the disc served through the host-image interface :: reuses the existing fixture content and gate expectations UNCHANGED — only the transport differs (tmpfs file -> HDHOST block node), so a PASS proves the whole large-image path with known expectations; per-boot C-vs-PY byte-identity asserted; negative control corrupts the host image variant; pulls evidence into evidence/bx510-guest/gates3/
 .PHONY: sacd-gate3
 sacd-gate3: sacd-stage

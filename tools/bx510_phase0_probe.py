@@ -87,6 +87,11 @@ def main():
                    help="HDHOST guest block-driver module (hdhost.ko) to "
                         "stage and load; enables the in-guest device "
                         "verification commands")
+    p.add_argument("--big", action="store_true",
+                   help="5 GiB battery: the in-guest client runs its 'big' "
+                        "step set (boundary sentinels, straddle reads, "
+                        "clamp at the new track range) instead of the "
+                        "86200-sector fixture steps")
     p.add_argument("--sr0-target", type=str, default=None,
                    help="HDHOST rig: reroute the daemon's /dev/sr0 to this "
                         "guest node (tmpredir TMPREDIR_SR0_TARGET env + "
@@ -150,8 +155,10 @@ def main():
         + ("corrupt" if a.corrupt_toc else "") + "; echo P0_FIXT=$?",
         "dd if=/res/dev/sr0 bs=2048 skip=510 count=1 of=/res/t510 2>/res/e",
         "echo TDB; /usr/bin/hexdump -v -e '1/1 \"%02x\"' /res/t510 | head -c 352; echo",
-        "LD_PRELOAD= /res/shim/gclient 127.0.0.1 2002 >/res/client.out 2>&1; "
-        "echo P0_GC=$?",
+        ("LD_PRELOAD= /res/shim/gclient 127.0.0.1 2002 big"
+         if a.big else
+         "LD_PRELOAD= /res/shim/gclient 127.0.0.1 2002")
+        + " >/res/client.out 2>&1; echo P0_GC=$?",
         "echo P0_CLIENT_BEGIN; cat /res/client.out; echo P0_CLIENT_END",
         "echo P0_RL_BEGIN; cat /res/readlog; echo P0_RL_END",
     ] + ([
@@ -164,7 +171,7 @@ def main():
         "echo P0_RAWFULL_BEGIN",
         "wc -c /res/gc-raw.bin /res/gc-tx.bin; md5sum /res/gc-raw.bin /res/gc-tx.bin",
         "gzip -c /res/gc-raw.bin > /res/gc-raw.gz 2>/res/e && echo P0_GZ=yes || { echo P0_GZ=no; rm -f /res/gc-raw.gz; }",
-        "if [ -f /res/gc-raw.gz ]; then hexdump -v -e '16/1 \"%02x\" \"\n\"' /res/gc-raw.gz | head -20000; else hexdump -v -e '16/1 \"%02x\" \"\n\"' /res/gc-raw.bin | head -20000; fi",
+        "if [ -f /res/gc-raw.gz ]; then hexdump -v -e '16/1 \"%02x\" \"\n\"' /res/gc-raw.gz | head -80000; else hexdump -v -e '16/1 \"%02x\" \"\n\"' /res/gc-raw.bin | head -80000; fi",
         "echo P0_TX_BEGIN; hexdump -v -e '16/1 \"%02x\" \"\n\"' /res/gc-tx.bin; echo P0_TX_END",
         "echo P0_RAWFULL_END",
     ] if a.rawdump else []) + [
@@ -187,6 +194,16 @@ def main():
             "dd if=/res/dev/hdhost bs=2048 skip=8191 count=1 2>/res/e | md5sum",
             "dd if=/res/dev/hdhost bs=2048 skip=4000000 count=1 2>/res/e >/dev/null; echo P0_HDOOB=$?",
             *([
+                # 5 GiB battery: single-node sentinel identity — the
+                # guest reads the big image's sentinel sectors through
+                # HDHOST; the checker compares against the generator.
+                "echo P0_HDBIG_BEGIN",
+                "dd if=/res/dev/hdhost bs=2048 skip=510 count=1 2>/res/e | md5sum",
+                "dd if=/res/dev/hdhost bs=2048 skip=1048575 count=2 2>/res/e | md5sum",
+                "dd if=/res/dev/hdhost bs=2048 skip=2097151 count=2 2>/res/e | md5sum",
+                "dd if=/res/dev/hdhost bs=2048 skip=2621439 count=1 2>/res/e | md5sum",
+                "echo P0_HDBIG_END",
+            ] if a.big else [
                 # C-generator (guest tmpfs fixture) vs PY-generator
                 # (host image through HDHOST): must agree byte-for-byte
                 "echo P0_HDID_BEGIN",

@@ -194,6 +194,7 @@ above. Techniques that live only in session history are lost techniques.
 | `sacd-hdhost-qemu` | `(no arguments)` | (no arguments) — rebuild QEMU on the VM from the tracked kit state |
 | `sacd-hdhost-mod` | `(no arguments)` | (no arguments) — build the HDHOST guest block-driver module through the proven pipeline |
 | `sacd-hdhost-smoke` | `(no arguments)` | (no arguments) — HDHOST end-to-end smoke: sentinel image, guest boot with device checks, host-vs-guest md5 verdict |
+| `sacd-gate4` | `(no arguments)` | (no arguments) — the 5 GiB boundary-sentinel battery — the team's final large-image validation |
 | `sacd-gate3` | `(no arguments)` | (no arguments) — HDHOST intermediate gate: the canonical 6-boot validation with the disc served through the host-image interface |
 | `sacd-gate` | `(no arguments)` | (no arguments) — the canonical 6-boot gate from tracked sources, end to end |
 | `tests` | `(no arguments)` | the verbatim finished-unit test gate — uv run pytest -m "not smoke"; un-piped, exit-code-checked |

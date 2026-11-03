@@ -1,0 +1,345 @@
+Uncompressing Linux... done, booting the kernel.
+Linux version 2.6.35 (aokino@rvds241) (gcc version 4.5.1 (GCC) ) #1 PREEMPT Thu Sep 20 09:03:01 JST 2018
+CPU: ARMv6-compatible processor [410fb767] revision 7 (ARMv7), cr=00c5387f
+CPU: VIPT aliasing data cache, VIPT aliasing instruction cache
+Machine: mt85xx
+Memory policy: ECC disabled, Data cache writeback
+[kernel zone size]DMA: 110592KB, NORMAL: 381952KB, MOVABLE: 31744KB
+enable log
+enable cli input
+Built 1 zonelists in Zone order, mobility grouping on.  Total pages: 130048
+Kernel command line: console=ttyMT0,115200 mem=512M root=/dev/mtdblock17 rootfstype=squashfs ro init=/bin/sh
+PID hash table entries: 2048 (order: 1, 8192 bytes)
+Dentry cache hash table entries: 65536 (order: 6, 262144 bytes)
+Inode-cache hash table entries: 32768 (order: 5, 131072 bytes)
+Memory: 512MB = 512MB total
+Memory: 512460k/512460k available, 11828k reserved, 0K highmem
+Virtual kernel memory layout:
+    vector  : 0xffff0000 - 0xffff1000   (   4 kB)
+    fixmap  : 0xfff00000 - 0xfffe0000   ( 896 kB)
+    DMA     : 0xffc00000 - 0xffe00000   (   2 MB)
+    vmalloc : 0xe0800000 - 0xf8000000   ( 376 MB)
+    lowmem  : 0xc0000000 - 0xe0000000   ( 512 MB)
+    modules : 0xbf000000 - 0xc0000000   (  16 MB)
+      .init : 0xc0008000 - 0xc0022000   ( 104 kB)
+      .text : 0xc0022000 - 0xc043a000   (4192 kB)
+      .data : 0xc0456000 - 0xc047dce0   ( 160 kB)
+SLUB: Genslabs=11, HWalign=32, Order=0-3, MinObjects=0, CPUs=1, Nodes=1
+Hierarchical RCU implementation.
+	RCU-based detection of stalled CPUs is disabled.
+	Verbose stalled-CPUs detection is disabled.
+NR_IRQS:128
+Console: colour dummy device 80x30
+console [ttyMT0] enabled
+_mt85xx_uart_console_init:register console ok
+Calibrating delay loop... 315.39 BogoMIPS (lpj=157696)
+pid_max: default: 32768 minimum: 301
+Mount-cache hash table entries: 512
+CPU: Testing write buffer coherency: ok
+NET: Registered protocol family 16
+=== mt8560_init === 
+IC Version = A
+Serial: MT85XX driver $Revision: #25 $
+Serial : add uart port 0
+ttyMT0 at MMIO 0x7000c000 (irq = 14) is a MT85XX Serial
+Serial: driver_register 0
+bio: create slab <bio-0> at 0
+SCSI subsystem initialized
+Advanced Linux Sound Architecture Driver Version 1.0.23.
+<Bluetooth> Info: func:bt_init line:419 Core ver 2.15
+NET: Registered protocol family 31
+<Bluetooth> Info: func:bt_init line:431 HCI device and connection manager initialized
+<Bluetooth> Info: func:hci_sock_init line:810 HCI socket layer initialized
+cfg80211: Calling CRDA to update world regulatory domain
+NET: Registered protocol family 2
+IP route cache hash table entries: 4096 (order: 2, 16384 bytes)
+TCP established hash table entries: 16384 (order: 5, 131072 bytes)
+TCP bind hash table entries: 16384 (order: 4, 65536 bytes)
+TCP: Hash tables configured (established 16384 bind 16384)
+TCP reno registered
+UDP hash table entries: 256 (order: 0, 4096 bytes)
+UDP-Lite hash table entries: 256 (order: 0, 4096 bytes)
+NET: Registered protocol family 1
+RPC: Registered udp transport module.
+RPC: Registered tcp transport module.
+RPC: Registered tcp NFSv4.1 backchannel transport module.
+k_gpio module init success
+squashfs: version 4.0 (2009/01/31) Phillip Lougher
+Installing knfsd (copyright (C) 1996 okir@monad.swb.de).
+msgmni has been set to 1000
+alg: No test for stdrng (krng)
+Block layer SCSI generic (bsg) driver version 0.4 loaded (major 254)
+io scheduler noop registered
+io scheduler deadline registered (default)
+loop: module loaded
+svoif_int_ldr_dram = 0xdfc00000, size = 0x200000
+[_get_static_buffer]start...
+[_get_static_buffer]start_addr:0xdd8b8000, alloc_sz:0x28000, buf_sz:0x25000
+[sata_bltin_init_buffer]sata_int_ldr_fw:0xdd900000, sata_hw_seg_buf:0xdd8b8000, sata_mtd_read_buf:0xdd8b8000
+mt85xx_nand_alloc_memo1 address = 0xdda00000
+mt85xx_nand_alloc_memo2 address = 0xdda00020
+NAND device: Manufacturer ID: 0xec, Chip ID: 0xda (Samsung NAND 256MiB 3,3V 8-bit)
+Bad block table not found for chip 0
+Bad block table not found for chip 0
+Scanning device for bad blocks
+kernel adaptive mtd mechanism applied.
+mt85xx_part_tbl_init start.
+mt85xx_part_tbl_init success, v1 pit found !
+Creating 25 MTD partitions on "NAND 256MiB 3,3V 8-bit":
+0x000000000000-0x000000200000 : "boot_1"
+0x000000200000-0x000000400000 : "part_info_1"
+0x000000400000-0x000000600000 : "part_info_2"
+0x000000600000-0x000000700000 : "mac_addr_1"
+0x000000700000-0x000000800000 : "mac_addr_2"
+0x000000800000-0x000000900000 : "key_block_1"
+0x000000900000-0x000000a00000 : "key_block_2"
+0x000000a00000-0x000000c00000 : "fe_bin_1"
+0x000000c00000-0x000000e00000 : "fe_bin_2"
+0x000000e00000-0x000000f00000 : "fe_test_data"
+0x000000f00000-0x000001000000 : "fe_parameters"
+0x000001000000-0x000001100000 : "fe_power_curve"
+0x000001100000-0x000001400000 : "ifcon_fw_backup"
+0x000001400000-0x000001700000 : "kernel_1"
+0x000001700000-0x000001a00000 : "kernel_2"
+0x000001a00000-0x000001f00000 : "initrd_1"
+0x000001f00000-0x000008a00000 : "rootfs_normal_1"
+0x000008a00000-0x000008e00000 : "rootfs_enc_it_1"
+0x000008e00000-0x000009200000 : "initrd_2"
+0x000009200000-0x00000c200000 : "rootfs_normal_2"
+0x00000c200000-0x00000c700000 : "rootfs_enc_it_2"
+0x00000c700000-0x00000c800000 : "upg_status"
+0x00000c800000-0x00000c900000 : "init_wall_paper"
+0x00000c900000-0x00000cb00000 : "fast_init_param"
+0x00000cb00000-0x00000f700000 : "ubi0"
+star: eth_base=0xe0880000
+star: pinmux_base=0xe0884000
+star: pdwnc_base=0xe0888100
+star: eth_pdwnc_base=0xe088cc00
+star: eth_chksum_base=0xe0890000
+star: ipll_base1=0xe0894700
+star: ipll_base2=0xe0898300
+star: bsp_base=0xe089c000
+star: desc addr: 0xffc00000(virtual)/0x1d880000(physical)
+star: Ethernet disable powerdown!
+PLL VCO auto reset for 8580A 
+star: test page 0x1E=0x4000,count=1
+star: test page 0x1E=0x4000,count=1
+Star Ethernet: Internal Vitesse PHY
+star: PHY addr = 0x0000
+star: Get Mac from mac_addr_1 partID=4!
+[nand part read-1], u4DevId = 4, 		    u8Offset = 0x0, u4MemPtr = 0xc60e6a88, u4MemLen = 0x6 
+star: Get Mac from mac_addr is invalid:MAC Address:ff-ff-ff-ff-ff-ff
+star: set the default MAC:00-0C-E7-06-00-00
+star: Get Mac from mac_addr failed! 
+star: Star MAC init done
+mice: PS/2 mouse device common for all mice
+<mmc_bltin_init_buffer> init mmc buffers
+ALSA device list:
+  No soundcards found.
+TCP cubic registered
+NET: Registered protocol family 10
+lo: Disabled Privacy Extensions
+IPv6 over IPv4 tunneling driver
+sit0: Disabled Privacy Extensions
+ip6tnl0: Disabled Privacy Extensions
+NET: Registered protocol family 17
+<Bluetooth> Info: func:l2cap_init line:5015 L2CAP ver 2.15
+<Bluetooth> Info: func:l2cap_init line:5016 L2CAP socket layer initialized
+<Bluetooth> Info: func:sco_init line:1050 SCO (Voice Link) ver 0.6
+<Bluetooth> Info: func:sco_init line:1051 SCO socket layer initialized
+<Bluetooth> Info: func:rfcomm_init_ttys line:1181 RFCOMM TTY layer initialized
+<Bluetooth> Info: func:rfcomm_init_sockets line:1149 RFCOMM socket layer initialized
+<Bluetooth> Info: func:rfcomm_init line:2179 RFCOMM ver 1.11
+<Bluetooth> Info: func:bnep_init line:720 BNEP (Ethernet Emulation) ver 1.3
+<Bluetooth> Info: func:hidp_init line:1025 HIDP (Human Interface Emulation) ver 1.2
+lib80211: common routines for IEEE802.11 drivers
+PM Init
+VFP support v0.3: implementor 41 architecture 1 part 20 variant b rev 5
+_mt85xx_late_console_init:register console ok
+VFS: Mounted root (squashfs filesystem) readonly on device 31:17.
+Freeing init memory: 104K, pages: 26
+/bin/sh: can't access tty; job control turned off
+/ # mount -t tmpfs tmpfs /res; /bin/mknod /res/test-bdev b 31 10; /bin/mkdir /re
+s/tmp /res/dev /res/proc
+/ # /bin/dd if=/res/test-bdev bs=4096 count=108 2>/res/dd.err | /bin/tar -xf - -
+C /res
+/ # /bin/chmod 755 /res/original/sacd_extract_160 /res/shim/tmpredir.so
+/ # mount -t proc proc /res/proc; echo P0_PROC=$?
+P0_PROC=0
+/ # echo x > /res/zero
+/ # echo P0_EXEC_BEGIN; ls -l /res/original /res/shim; echo P0_EXEC_END
+P0_EXEC_BEGIN
+/res/original:
+-rwxr-xr-x    1 0        0           350830 Jan  1 00:00 [1;32msacd_extract_160[0m
+
+/res/shim:
+-rwxr-xr-x    1 0        0            32989 Jan  1 00:00 [1;32mbdpvirt.ko[0m
+-rwxr-xr-x    1 0        0            38170 Jan  1 00:00 [1;32mbgstart[0m
+-rwxr-xr-x    1 0        0             6585 Jan  1 00:00 [1;32mtmpredir.so[0m
+P0_EXEC_END
+/ # /bin/chmod 755 /res/shim/bgstart
+/ # /sbin/insmod /res/shim/bdpvirt.ko; echo P0_STUB=$?; cat /res/proc/modules
+bdpvirt: bdpdrv-stack provider loaded
+P0_STUB=0
+bx510_bdpvirt 3844 0 - Live 0xbf000000
+/ # echo P0_BDPDIR_BEGIN; ls -l /lib/modules/2.6.35/BDP/; echo P0_BDPDIR_END
+P0_BDPDIR_BEGIN
+-rw-rw-r--    1 0        0            23344 Sep 20  2018 [0;0madf.ko[0m
+-rw-rw-r--    1 0        0          8122068 Sep 20  2018 [0;0mbdpdrv.ko[0m
+-rw-rw-r--    1 0        0            20628 Sep 20  2018 [0;0mcbagent.ko[0m
+-rw-rw-r--    1 0        0             6284 Sep 20  2018 [0;0mcbagent_test_ker.ko[0m
+-rw-rw-r--    1 0        0            85276 Sep 20  2018 [0;0mcdrom.ko[0m
+-rw-rw-r--    1 0        0            25512 Sep 20  2018 [0;0mciphsv.ko[0m
+-rw-rw-r--    1 0        0            34760 Sep 20  2018 [0;0mdrvcli.ko[0m
+-rw-rw-r--    1 0        0            31588 Sep 20  2018 [0;0mdrvuart.ko[0m
+-rw-rw-r--    1 0        0           141380 Sep 20  2018 [0;0mext3.ko[0m
+-rw-rw-r--    1 0        0            69196 Sep 20  2018 [0;0mfat.ko[0m
+-rw-rw-r--    1 0        0            80824 Sep 20  2018 [0;0mfuse.ko[0m
+-rw-rw-r--    1 0        0            54468 Sep 20  2018 [0;0mfusion.ko[0m
+-rw-rw-r--    1 0        0           188704 Sep 20  2018 [0;0mhif_usb.ko[0m
+-rw-rw-r--    1 0        0             7788 Sep 20  2018 [0;0mhst_acl.ko[0m
+-rw-rw-r--    1 0        0           116596 Sep 20  2018 [0;0mhst_ath.ko[0m
+-rw-rw-r--    1 0        0             4580 Sep 20  2018 [0;0mhst_athwq.ko[0m
+-rw-rw-r--    1 0        0             4944 Sep 20  2018 [0;0mhst_ccmp.ko[0m
+-rw-rw-r--    1 0        0           209224 Sep 20  2018 [0;0mhst_hal.ko[0m
+-rw-rw-r--    1 0        0            23556 Sep 20  2018 [0;0mhst_htc.ko[0m
+-rw-rw-r--    1 0        0            26996 Sep 20  2018 [0;0mhst_rate.ko[0m
+-rw-rw-r--    1 0        0            12648 Sep 20  2018 [0;0mhst_scanap.ko[0m
+-rw-rw-r--    1 0        0            21064 Sep 20  2018 [0;0mhst_scansta.ko[0m
+-rw-rw-r--    1 0        0             7500 Sep 20  2018 [0;0mhst_tkip.ko[0m
+-rw-rw-r--    1 0        0            12456 Sep 20  2018 [0;0mhst_tx99.ko[0m
+-rw-rw-r--    1 0        0             5276 Sep 20  2018 [0;0mhst_wep.ko[0m
+-rw-rw-r--    1 0        0           207388 Sep 20  2018 [0;0mhst_wlan.ko[0m
+-rw-rw-r--    1 0        0             2792 Sep 20  2018 [0;0mhst_xauth.ko[0m
+-rw-rw-r--    1 0        0             4776 Sep 20  2018 [0;0mif_ath_usb.ko[0m
+-rw-rw-r--    1 0        0             4752 Sep 20  2018 [0;0minflate.ko[0m
+-rw-rw-r--    1 0        0            42584 Sep 20  2018 [0;0misofs.ko[0m
+-rw-rw-r--    1 0        0            61268 Sep 20  2018 [0;0mjbd.ko[0m
+-rw-rw-r--    1 0        0             5636 Sep 20  2018 [0;0mjdec.ko[0m
+-rw-rw-r--    1 0        0            13452 Sep 20  2018 [0;0mkmem.ko[0m
+lrwxrwxrwx    1 0        0               55 Sep 20  2018 [1;36mlangsupprt.ko[0m -> [1;31m/mnt/rootfs_enc_it/lib/modules/2.6.35/BDP/langsupprt.ko[0m
+-rw-rw-r--    1 0        0           193620 Sep 20  2018 [0;0mlibata.ko[0m
+-rw-rw-r--    1 0        0            10660 Sep 20  2018 [0;0mmbcache.ko[0m
+-rw-rw-r--    1 0        0            11332 Sep 20  2018 [0;0mmsdos.ko[0m
+-rw-rw-r--    1 0        0            67256 Sep 20  2018 [0;0mmtk_hcd.ko[0m
+-rw-rw-r--    1 0        0            67636 Sep 20  2018 [0;0mmusb_hdrc.ko[0m
+-rw-rw-r--    1 0        0             6048 Sep 20  2018 [0;0mnls_ascii.ko[0m
+-rw-rw-r--    1 0        0             9180 Sep 20  2018 [0;0mnls_base.ko[0m
+-rw-rw-r--    1 0        0             7772 Sep 20  2018 [0;0mnls_cp437.ko[0m
+-rw-rw-r--    1 0        0             6060 Sep 20  2018 [0;0mnls_iso8859_1.ko[0m
+-rw-rw-r--    1 0        0             3544 Sep 20  2018 [0;0mnls_utf8.ko[0m
+-rw-rw-r--    1 0        0           114052 Sep 20  2018 [0;0mntfs.ko[0m
+-rw-rw-r--    1 0        0            64848 Sep 20  2018 [0;0mosai.ko[0m
+-rw-rw-r--    1 0        0             8968 Sep 20  2018 [0;0mpdown.ko[0m
+-rw-rw-r--    1 0        0            21444 Sep 20  2018 [0;0mpl2303.ko[0m
+-rw-rw-r--    1 0        0             5816 Sep 20  2018 [0;0mpng.ko[0m
+-rw-rw-r--    1 0        0            14636 Sep 20  2018 [0;0mrm.ko[0m
+-rw-rw-r--    1 0        0           671460 Sep 20  2018 [0;0mrt3370sta.ko[0m
+-rw-rw-r--    1 0        0           114088 Sep 20  2018 [0;0mrtnet3370sta.ko[0m
+-rw-rw-r--    1 0        0            32340 Sep 20  2018 [0;0mrtutil3370sta.ko[0m
+-rw-rw-r--    1 0        0            69452 Sep 20  2018 [0;0msata_mt85xx_mod.ko[0m
+-rw-rw-r--    1 0        0            10664 Sep 20  2018 [0;0msnd-hwdep.ko[0m
+-rw-rw-r--    1 0        0            26416 Sep 20  2018 [0;0msnd-rawmidi.ko[0m
+-rw-rw-r--    1 0        0           121464 Sep 20  2018 [0;0msnd-usb-audio.ko[0m
+-rw-rw-r--    1 0        0            31364 Sep 20  2018 [0;0msnd-usb-caiaq.ko[0m
+-rw-rw-r--    1 0        0            22844 Sep 20  2018 [0;0msnd-usbmidi-lib.ko[0m
+-rw-rw-r--    1 0        0           819876 Sep 20  2018 [0;0msplitter.ko[0m
+-rw-rw-r--    1 0        0            34944 Sep 20  2018 [0;0msr_mod.ko[0m
+-rw-rw-r--    1 0        0           463152 Sep 20  2018 [0;0mtntfs.ko[0m
+-rw-rw-r--    1 0        0           106752 Sep 20  2018 [0;0mudf.ko[0m
+-rw-rw-r--    1 0        0            82196 Sep 20  2018 [0;0musb-storage.ko[0m
+-rw-rw-r--    1 0        0            16056 Sep 20  2018 [0;0musb_qmu_linux_native.ko[0m
+-rw-rw-r--    1 0        0           179496 Sep 20  2018 [0;0musbcore.ko[0m
+-rw-rw-r--    1 0        0            39840 Sep 20  2018 [0;0musbhid.ko[0m
+-rw-rw-r--    1 0        0            40712 Sep 20  2018 [0;0musbserial.ko[0m
+-rw-rw-r--    1 0        0            14384 Sep 20  2018 [0;0mvfat.ko[0m
+P0_BDPDIR_END
+/ # LD_PRELOAD=/res/shim/tmpredir.so /res/shim/bgstart /res/original/sacd_extrac
+t_160 -S
+BG_PID=514
+/ # sleep 20; echo P0_TCP_BEGIN; cat /res/proc/net/tcp; echo P0_TCP_END
+[SACDREAD] ========================================
+[SACDREAD] minor = 201
+[SACDREAD] compid = 0
+[SACDREAD] ========================================
+[SACDREAD]Symbol "i4CPSA_Inst_CPSMode_Ctrl" address is 0xbf0000d8
+[SACDREAD]Symbol "_IDECLI_OddRead" address is 0xbf0000b8
+[SACDREAD]Symbol "_i4CPSA_Inst_Decrypt" address is 0xbf0000a0
+[SACDREAD]Symbol "i4CPSA_Inst_SetSACDControl" address is 0xbf000000
+[SACDREAD]Symbol "u4CPSA_Inst_GetInstHandleFromCompId" address is 0xbf000084
+[SACDREAD]Symbol "i4CPSA_Inst_Connect" address is 0xbf000008
+[SACDREAD]Symbol "i4CPSA_Inst_Disconnect" address is 0xbf000010
+[SACDREAD]Symbol "vSacdDecryptEnable" address is 0xbf000018
+[SACDREAD]Symbol "_SACDCLI_TestPhy" address is 0xbf000068
+[SACDREAD]Symbol "eSacdGetVersion" address is 0xbf00001c
+[SACDREAD]Symbol "_SACDCLI_FindTag" address is 0xbf000024
+[SACDREAD]Symbol "_IDECLI_OddTestUnitReadyLoop" address is 0xbf00004c
+[SACDREAD]Symbol "_IDECLI_OddGetProfile" address is 0xbf000034
+[SACDREAD]Symbol "__ksymtab_disable_print" address is 0xc0420818
+bdpvirt: GetInstHandleFromCompId compid=0 -> free (-1)
+Unable to handle kernel paging request at virtual address 00004e20
+pgd = dda48000
+[00004e20] *pgd=1d8b6031, *pte=00000000, *ppte=00000000
+Internal error: Oops: 17 [#1] PREEMPT
+last sysfs file: 
+Modules linked in: sacd_read bx510_bdpvirt
+CPU: 0    Not tainted  (2.6.35 #1)
+PC is at strnlen+0x10/0x28
+LR is at string.clone.1+0x2c/0xc0
+pc : [<c0192aa0>]    lr : [<c019404c>]    psr: a00001d3
+sp : ddaabdd0  ip : 00000028  fp : 00000400
+r10: ddaabec0  r9 : 00000002  r8 : 00004e20
+r7 : 00000000  r6 : ffffffff  r5 : c047ec28  r4 : c047e846
+r3 : 00004e20  r2 : 00004e20  r1 : ffffffff  r0 : 00004e20
+Flags: NzCv  IRQs off  FIQs off  Mode SVC_32  ISA ARM  Segment user
+Control: 00c5387d  Table: 1da48008  DAC: 00000015
+Process sacd_extract_16 (pid: 514, stack limit = 0xddaaa268)
+Stack: (0xddaabdd0 to 0xddaac000)
+bdc0:                                     ddaabebc c047ec28 bf000379 c047e846
+bde0: c047e828 c0194d48 ffffffff ffffffff c045ffb8 c006aaf8 ff0a0004 ffffffff
+be00: 0000034f 00000400 c047e828 c047e780 ddaabebc bf000359 ddaaa000 ddaabe30
+be20: 00000004 c0194fa4 00000000 c003c5e4 c0482cac c0040a10 00000001 ddaaa000
+be40: 40025000 60000153 00000000 0000001b 00000000 08000000 00000002 00000001
+be60: ddaaa000 40025000 0000001b c0040e3c 00000000 c002206c 80000153 ffffffff
+be80: fd008000 bebfecf8 40105306 ddaabedc 40105306 c0023264 ddaaa000 40025000
+bea0: bebfed14 c03559d8 bf000359 ddaabebc fffffffc bf00005c bf000359 00004e20
+bec0: fffffffc bf007170 bebfecf8 bf006598 c006aeb0 00000001 c0482cac 00000000
+bee0: 00000000 00000000 00000000 00000002 c61d0380 00000000 bebfecf8 40105306
+bf00: c0023264 ddaaa000 40025000 c00a32dc c62716c0 c61d0380 bebfecf8 bebfecf8
+bf20: 00000005 c00a3d30 c61068a0 c0055b2c ddaaa000 c045b508 ddaabf64 c0355c44
+bf40: 40000000 ddaaa000 00000001 00000000 00000005 c0023264 ddaaa000 40025000
+bf60: ddaabf74 c0355e1c 00000002 c61d0380 bebfecf8 40105306 00000005 c0023264
+bf80: ddaaa000 c00a3dd0 00000005 00000001 bebfecf8 00000000 00000000 00000000
+bfa0: 00000036 c00230e0 00000000 00000000 00000005 40105306 bebfecf8 bebfecf8
+bfc0: 00000000 00000000 00000000 00000036 00000000 00000000 40025000 bebfed14
+bfe0: 00000000 bebfecf8 000212d4 401266cc 60000150 00000005 00000000 00000000
+[<c0192aa0>] (strnlen+0x10/0x28) from [<c019404c>] (string.clone.1+0x2c/0xc0)
+[<c019404c>] (string.clone.1+0x2c/0xc0) from [<c0194d48>] (vsnprintf+0x1c8/0x388)
+[<c0194d48>] (vsnprintf+0x1c8/0x388) from [<c0194fa4>] (vscnprintf+0xc/0x18)
+[<c0194fa4>] (vscnprintf+0xc/0x18) from [<c003c5e4>] (vprintk+0x154/0x3d4)
+[<c003c5e4>] (vprintk+0x154/0x3d4) from [<c03559d8>] (printk+0x2c/0x3c)
+[<c03559d8>] (printk+0x2c/0x3c) from [<bf00005c>] (_IDECLI_OddTestUnitReadyLoop+0x10/0x1c [bx510_bdpvirt])
+[<bf00005c>] (_IDECLI_OddTestUnitReadyLoop+0x10/0x1c [bx510_bdpvirt]) from [<bf006598>] (sacd_read_ioctl+0x36c/0x450 [sacd_read])
+[<bf006598>] (sacd_read_ioctl+0x36c/0x450 [sacd_read]) from [<c00a32dc>] (vfs_ioctl+0x7c/0xac)
+[<c00a32dc>] (vfs_ioctl+0x7c/0xac) from [<c00a3d30>] (do_vfs_ioctl+0x550/0x5bc)
+[<c00a3d30>] (do_vfs_ioctl+0x550/0x5bc) from [<c00a3dd0>] (sys_ioctl+0x34/0x54)
+[<c00a3dd0>] (sys_ioctl+0x34/0x54) from [<c00230e0>] (ret_fast_syscall+0x0/0x30)
+Code: e1a03000 e3510000 e1a02003 0a000003 (e4d3c001) 
+---[ end trace 6c45a69b2be08f30 ]---
+note: sacd_extract_16[514] exited with preempt_count 3
+P0_TCP_BEGIN
+  sl  local_address rem_address   st tx_queue rx_queue tr tm->when retrnsmt   uid  timeout inode                                                     
+   0: 00000000:07D2 00000000:0000 0A 00000000:00000000 00:00000000 00000000     0        0 56 1 c6274000 300 0 0 2 -1                                
+P0_TCP_END
+/ # echo P0_MOD_BEGIN; cat /res/proc/modules; ls -l /res/dev; echo P0_MOD_END
+P0_MOD_BEGIN
+sacd_read 4976 1 - Live 0xbf006000
+bx510_bdpvirt 3844 1 sacd_read, Live 0xbf000000
+crw-r--r--    1 0        0          10, 201 Jan  1 00:00 [1;35msacd_read[0m
+P0_MOD_END
+/ # echo P0_OUT_BEGIN; cat /res/daemon.out; echo P0_OUT_END
+P0_OUT_BEGIN
+mknod: /dev/sacd_read: No such file or directory
+P0_OUT_END
+/ # echo P0_F""INISHED
+P0_FINISHED

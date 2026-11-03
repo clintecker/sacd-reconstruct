@@ -94,3 +94,53 @@ the reference for what those paths must produce.
   module-gated serving pending the 9-symbol provider.
 - P2: **module executes in-guest past symbol resolution**; its full
   runtime dependency contract is now pinned with disassembly evidence.
+
+## Update (later same day): FULL HONEST CHAIN COMPLETE
+
+After three decoded gates, the daemon now serves in Sony's guest OS with
+the REAL kernel module loaded:
+
+    sacd_read 4976 1 - Live 0xbf006000
+    bx510_bdpvirt 3844 1 sacd_read, Live 0xbf000000
+    0: 00000000:07D2 00000000:0000 0A   (LISTEN 2002)
+
+Evidence: p0v12-uart.log (full transcript), daemon.out contains only the
+harmless static-mknod error (node pre-created by bgstart).
+
+Gates decoded along the way (all from live behavior + disassembly):
+
+1. **kallsyms table**: all 13 bdpdrv names resolved from the bdpvirt
+   provider module (kallsyms_lookup_name searches loaded modules'
+   symtabs — the seam works exactly as designed).
+2. **Sony kernel off-by-one (new hardware-behavior fact)**: 2.6.35's
+   layout_symtab/add_kallsyms run `for (ndst = i = 1; i < nsrc; ++i,
+   ++src)` with src starting at index 0 — they examine entries 0..nsrc-2
+   and DROP the LAST symtab entry of every loaded module from kallsyms.
+   Observed live: eSacdGetVersion (readelf index 113 = final entry)
+   vanished; /proc/kallsyms on real players loses bdpdrv's own last
+   symbol the same way. Fix: bdpswap.py swaps a sacrificial tail marker
+   into the final symtab slot post-link (symtab order is semantically
+   neutral; no duplicate names).
+3. **Init gate semantics**: init calls u4CPSA_Inst_GetInstHandleFromCompId
+   with the module's compid param (0 when the daemon insmods with only
+   minor=201) and requires **-1** ("compid free") to proceed to
+   misc_register; any other value prints "compid = %d is used. Try
+   another." and fails -EBUSY.
+
+Current bdpvirt behavior contract (tools/bx510_bdpvirt.c):
+  - x_memset: full implementation.
+  - GetInstHandleFromCompId: -1 (compid free).
+  - CPSMode_Ctrl: -1 (observed called with compid at init; keep -1).
+  - _IDECLI_OddRead / _i4CPSA_Inst_Decrypt: honest failure (-1) until
+    the virtual ODD exists — the daemon will report read errors, never
+    fabricated data.
+  - others: benign presence stubs (0) — contracts to be derived from
+    bdpdrv.ko as each is exercised by real ioctl traffic.
+
+Remaining ladder:
+  1. In-guest static client (port sacd_client.py's nanopb wire format to
+     C, run over 127.0.0.1:2002) → full-protocol differential inside the
+     real guest OS, original vs release daemon.
+  2. Virtual ODD: implement _IDECLI_OddRead (+ decrypt path) in bdpvirt
+     against a backing ISO serving raw 2064-byte frames — then the daemon
+     serves real sector data through the real module end to end.

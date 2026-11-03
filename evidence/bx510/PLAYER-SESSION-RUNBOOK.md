@@ -3,6 +3,22 @@
 Time on your side: ~45 minutes. Everything downstream (analysis, cross-checks,
 commits, the #6 close-out) is the assistant's job.
 
+This runbook is codified as make targets (see the SACD hardware section of the
+Makefile, driven by tools/sacd_hardware.sh). The quick path:
+
+    make sacd-hw-preflight                 # Mac prep, all checks
+    make sacd-usb-build DISK=/dev/diskN CONFIRM=ERASE   # blank stick -> baseline USB
+    # PLAYER: power off, Firebird in tray, USB in, power on
+    make sacd-hw-wait && make sacd-hw-baseline
+    make sacd-usb-pair-mode               # flip the stick to instrumented mode
+    # PLAYER: power off, power on
+    make sacd-hw-wait && make sacd-hw-pair
+    # PLAYER: power off, remove USB
+    make sacd-hw-analyze && make sacd-hw-collect   # -> ~/bx510-session
+
+The detailed steps below remain the authoritative reference for what each
+target does and what to check manually.
+
 Conventions:
 - `REPO` = your Mac checkout of this project (e.g. ~/code/aftermath-sacd)
 - `USB`  = the USB stick's mount point on the Mac (e.g. /Volumes/SONYUSB)

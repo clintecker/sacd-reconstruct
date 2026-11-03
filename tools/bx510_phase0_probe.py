@@ -34,7 +34,8 @@ RELEASE = "e91720fbbbd592505bde6630843b0495ff82a93e40c0e427aaa70a081ff9ae22"
 
 def build_tar(reference: Path, shim: Path, bgstart: Path, stub: Path,
               mkfixture: Path, gclient: Path, lo_up: Path,
-              sacdstat: Path, role: str, hdmod=None) -> bytes:
+              sacdstat: Path, role: str, hdmod=None, fbmod=None,
+              fbdraw=None) -> bytes:
     buf = io.BytesIO()
     with tarfile.open(fileobj=buf, mode="w", format=tarfile.USTAR_FORMAT) as arc:
         elf = reference.read_bytes()
@@ -58,7 +59,11 @@ def build_tar(reference: Path, shim: Path, bgstart: Path, stub: Path,
                            ("shim/lo_up", lo_up.read_bytes()),
                            ("shim/sacdstat", sacdstat.read_bytes()),
                            *([("shim/hdhost.ko", hdmod.read_bytes())]
-                             if hdmod else [])):
+                             if hdmod else []),
+                           *([("shim/fbvirt.ko", fbmod.read_bytes())]
+                             if fbmod else []),
+                           *([("shim/fbdraw", fbdraw.read_bytes())]
+                             if fbdraw else [])):
             entry = tarfile.TarInfo(name)
             entry.size, entry.mode = len(blob), 0o755
             arc.addfile(entry, io.BytesIO(blob))
@@ -83,6 +88,13 @@ def main():
                    help="HDHOST: VM-side path to the read-only host image; "
                         "passed to QEMU as the sony-bx510 machine property "
                         "(device at 0x70020000; see docs/large-image-interface.md)")
+    p.add_argument("--fbmod", type=Path,
+                   help="virtual framebuffer module (fbvirt.ko) to stage "
+                        "and load; enables the drawing-primitive checks "
+                        "(/dev/fb0 via register_framebuffer)")
+    p.add_argument("--fbdraw", type=Path,
+                   help="drawing test tool to stage and run against "
+                        "/dev/fb0 (bx510_fbdraw)")
     p.add_argument("--hdmod", type=Path,
                    help="HDHOST guest block-driver module (hdhost.ko) to "
                         "stage and load; enables the in-guest device "
@@ -109,7 +121,7 @@ def main():
     images = a.images.resolve(strict=True)
     payload = build_tar(a.reference, a.shim, a.bgstart, a.stub,
                         a.mkfixture, a.gclient, a.lo_up, a.sacdstat,
-                        a.role, a.hdmod)
+                        a.role, a.hdmod, a.fbmod, a.fbdraw)
     parts = json.loads((images / "manifest.json").read_text())["partitions"]
     part = next(x for x in parts if x["name"] == "fe_test_data")
     if part["records"] or part["offset"] != 0xe00000 or len(payload) > part["size"]:
@@ -150,6 +162,40 @@ def main():
         "sleep 8; echo P0_TCP_BEGIN; cat /res/proc/net/tcp; echo P0_TCP_END",
         "echo P0_MOD_BEGIN; cat /res/proc/modules; echo P0_MOD_END",
         "/bin/chmod 755 /res/shim/mkfixture /res/shim/gclient /res/shim/lo_up",
+        *([
+            # drawing-primitive rig: virtual framebuffer up, then the
+            # drawing tool (raw fbdev mmap; the directfb smoke is a
+            # second argv and only runs when the libs are present)
+            "/sbin/insmod /res/shim/fbvirt.ko; echo P0_FB=$?",
+            "grep fb /res/proc/fb; echo P0_FBREG=$?",
+            "/bin/mknod /res/dev/fb0 c 29 0; echo P0_FBNODE=$?",
+            # Fusion/SHM needs /dev/shm (tmpredir: /dev/shm ->
+            # /res/dev/shm) — create it inside the /res tmpfs
+            "/bin/mkdir -p /res/dev/shm; echo P0_SHM=$?",
+            # VT nodes for the DirectFB core (CONFIG_VT=y in the guest
+            # kernel): tty0 and vc/0
+            "/bin/mknod /res/dev/tty0 c 4 0; echo P0_TTY=$?",
+            "n=0; while [ $n -le 7 ]; do "
+            "/bin/mknod /res/dev/tty$n c 4 $n 2>/res/e; "
+            "n=$((n+1)); done; echo P0_TTYN=$?",
+            "n=0; /bin/mkdir -p /res/dev/vc; while [ $n -le 7 ]; do "
+            "/bin/mknod /res/dev/vc/$n c 4 $n 2>/res/e; "
+            "n=$((n+1)); done; echo P0_VCN=$?",
+            # DirectFB's multi-app core needs the Fusion IPC device;
+            # fusion.ko ships in the guest's OWN module dir (same
+            # kernel image as the real player) — load it and create
+            # the node with its registered major
+            "/sbin/insmod /lib/modules/2.6.35/BDP/fusion.ko; echo P0_FUSION=$?",
+            "set -- $(grep fusion /res/proc/devices); "
+            "/bin/mknod /res/dev/fusion0 c $1 0; echo P0_FUSNODE=$?",
+            "/bin/chmod 755 /res/shim/fbdraw",
+            # preloaded: DirectFB (and the fusion lib) open the
+            # literal /dev/fusion0 and /dev/fb0 — tmpredir's generic
+            # /dev/ rewrite maps them to the /res/dev nodes
+            "LD_PRELOAD=/res/shim/tmpredir.so /res/shim/fbdraw directfb "
+            ">/res/fbdraw.out 2>&1; echo P0_FBDRAW=$?",
+            "echo P0_FBDRAW_BEGIN; cat /res/fbdraw.out; echo P0_FBDRAW_END",
+        ] if a.fbmod else []),
         "LD_PRELOAD= /res/shim/lo_up; echo P0_LO=$?",
         "LD_PRELOAD= /res/shim/mkfixture /res/dev/sr0 "
         + ("corrupt" if a.corrupt_toc else "") + "; echo P0_FIXT=$?",

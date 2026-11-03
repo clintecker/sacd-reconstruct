@@ -125,6 +125,18 @@ def main():
          "/sbin/insmod /res/shim/bdpvirt.ko; echo P0_STUB=$?; cat /res/proc/modules"),
         "echo P0_BDPDIR_BEGIN; ls -l /lib/modules/2.6.35/BDP/; echo P0_BDPDIR_END",
 
+        *([
+            # HDHOST device up BEFORE the daemon starts: the daemon polls
+            # /dev/sr0 from launch, and in the HDHOST rig that path must
+            # already resolve to the block node. Ordering bug caught by
+            # gate3: with setup after the client session, the daemon
+            # stat'd a nonexistent node ("Can't stat /dev/sr0"). The
+            # guest busybox has no tr/cut — split with pure shell.
+            "/sbin/insmod /res/shim/hdhost.ko; echo P0_HD=$?",
+            "grep hdhost /res/proc/devices; echo P0_HDDEV=$?",
+            "set -- $(grep hdhost /res/proc/devices); "
+            "/bin/mknod /res/dev/hdhost b $1 0; echo P0_HDNODE=$?",
+        ] if a.hdmod else []),
         ("TMPREDIR_SR0_TARGET=%s LD_PRELOAD=/res/shim/tmpredir.so "
          "/res/shim/bgstart /res/original/sacd_extract_160 -S"
          % a.sr0_target) if a.sr0_target else
@@ -168,11 +180,6 @@ def main():
         "hexdump -v -e '16/1 \"%02x\" \"\n\"' /res/t510 | head -12",
         "echo P0_OUT_BEGIN; cat /res/daemon.out; echo P0_OUT_END",
         *([
-            "/sbin/insmod /res/shim/hdhost.ko; echo P0_HD=$?",
-            "grep hdhost /res/proc/devices; echo P0_HDDEV=$?",
-            # the guest busybox has no tr/cut — split with pure shell
-            "set -- $(grep hdhost /res/proc/devices); "
-            "/bin/mknod /res/dev/hdhost b $1 0; echo P0_HDNODE=$?",
             "dd if=/res/dev/hdhost bs=2048 skip=0 count=1 2>/res/e | md5sum",
             "dd if=/res/dev/hdhost bs=2048 skip=10 count=1 2>/res/e | md5sum",
             "dd if=/res/dev/hdhost bs=2048 skip=5000 count=1 2>/res/e | md5sum",

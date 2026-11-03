@@ -139,4 +139,11 @@ python3 /tmp/bx510_rawdecode.py --session-diff $OUT/g-orig-neg.log $OUT/g-rel-ne
   && [ ${rf1:-0} -eq 0 ] && [ ${rf2:-0} -eq 0 ] && [ $rcid -eq 0 ] \
   && echo "GATE3: OVERALL VERDICT: PASS (gates, self-pairs, raw-frame, byte-identity)" \
   || echo "GATE3: OVERALL VERDICT: FAIL"
-echo "GATE3: evidence in $OUT (pull before next run)"
+# The host disc images are REGENERABLE artifacts (fixture_gen.py + the
+# documented 8-byte corrupt patch) whose identity is recorded by SHA in
+# every transcript header and the verdict — remove them from the
+# evidence dir so pulls never drag multi-hundred-MB binaries into git
+# (GitHub's 100MB limit rejected the first push of this gate's
+# evidence; the 5GiB battery would be far worse).
+rm -f "$OUT"/hdfixture.bin "$OUT"/hdfixture-corrupt.bin
+echo "GATE3: evidence in $OUT (pull before next run; disc images removed — regenerable, SHA-recorded)"

@@ -1,0 +1,154 @@
+010008
+0110ffffffffffffffffff0100080110
+ffffffffffffffffff0100080110ffff
+ffffffffffffff0100              
+/ # echo P0_TX_BEGIN; hexdump -v -e '16/1 "%02x" "
+> "' /res/gc-tx.bin; echo P0_TX_END
+P0_TX_BEGIN
+08011000180000080410001800000803
+1000180100080310dcd0021801000803
+100018800100080310f6f00418140008
+031080f1041802000803109ca2051801
+00080210001800000801100018000008
+0310dcd0021801000802100018000008
+01100018000008011000180000080110
+00180000080110001800000801100018
+00000801100018000008011000180000
+08011000180000080110001800000801
+10001800000801100018000008011000
+180000                          
+P0_TX_END
+/ # echo P0_RAWFULL_END
+P0_RAWFULL_END
+/ # echo P0_P128_BEGIN
+P0_P128_BEGIN
+/ # hexdump -v -e '16/1 "%02x" "
+> "' /res/p128.bin | head -4
+hexdump: /res/p128.bin: No such file or directory
+/ # echo P0_P128_END
+P0_P128_END
+/ # LD_PRELOAD= /res/shim/sacdstat; echo P0_STAT=$?
+STAT: ioctl(5307) ret=0 errno=0 a=0 b=0 c=0 d=0
+P0_STAT=0
+/ # dd if=/res/dev/sr0 bs=2048 skip=510 count=1 2>/res/e | md5sum
+b00b6ea73582088a96ffefdd1f497765  -
+/ # echo P0_RAW_BEGIN; hexdump -v -e '1/1 "%02x"' /res/gc-raw.bin | head -c 48; 
+echo
+P0_RAW_BEGIN
+080110ffffffffffffffffff0100080410b8a10500080310
+/ # dd if=/res/gc-raw.bin bs=1 skip=2040 count=16 2>/res/e | hexdump -v -e '1/1 
+"%02x"'; echo P0_RAW_END
+P0_RAW_END
+/ # dd if=/res/dev/sr0 bs=2048 skip=510 count=1 2>/res/e | md5sum
+b00b6ea73582088a96ffefdd1f497765  -
+/ # dd if=/res/dev/sr0 bs=2048 skip=600 count=1 2>/res/e | md5sum
+88eb7b142c7cacd1540b89adabd19c95  -
+/ # hexdump -v -e '16/1 "%02x" "
+> "' /res/t510 | head -12
+aaaaaaaaaaaaaaaa0114000000000000
+00010001000000000000000000000000
+00000000000000000000000000000000
+00000000000000000000000000000000
+00000258000000000000000000000000
+00000000000a00000000000000000000
+00000000000000000000000000000000
+000000000000000007e90b0200000000
+0100000000000000656e0000656e0000
+656e0000656e0000656e0000656e0000
+656e0000656e00000000000000000000
+00000000000000000000000000000000
+/ # echo P0_OUT_BEGIN; cat /res/daemon.out; echo P0_OUT_END
+P0_OUT_BEGIN
+mknod: /dev/sacd_read: No such file or directory
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              libsacdread: Not a ScarletBook disc!
+libsacdread: Can't read Master TOC.
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              libsacdread: Not a ScarletBook disc!
+libsacdread: Can't read Master TOC.
+libsacdread: Not a ScarletBook disc!
+libsacdread: Can't read Master TOC.
+libsacdread: Not a ScarletBook disc!
+libsacdread: Can't read Master TOC.
+libsacdread: Not a ScarletBook disc!
+libsacdread: Can't read Master TOC.
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              libsacdread: Not a ScarletBook disc!
+libsacdread: Can't read Master TOC.
+libsacdread: Not a ScarletBook disc!
+libsacdread: Can't read Master TOC.
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              libsacdread: Not a ScarletBook disc!
+libsacdread: Can't read Master TOC.
+libsacdread: Not a ScarletBook disc!
+libsacdread: Can't read Master TOC.
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              libsacdread: Not a ScarletBook disc!
+libsacdread: Can't read Master TOC.
+libsacdread: Not a ScarletBook disc!
+libsacdread: Can't read Master TOC.
+libsacdread: Not a ScarletBook disc!
+libsacdread: Can't read Master TOC.
+libsacdread: Not a ScarletBook disc!
+libsacdread: Can't read Master TOC.
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              libsacdread: Not a ScarletBook disc!
+libsacdread: Can't read Master TOC.
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              P0_OUT_END
+/ # dd if=/res/dev/hdhost bs=2048 skip=0 count=1 2>/res/e | md5sum
+0e51baf7a8f535ab8c984149b5b6020a  -
+/ # dd if=/res/dev/hdhost bs=2048 skip=10 count=1 2>/res/e | md5sum
+33bc2283e6f6317f6670fe33feff8fca  -
+/ # dd if=/res/dev/hdhost bs=2048 skip=5000 count=1 2>/res/e | md5sum
+c99a74c555371a433d121f551d6c6398  -
+/ # dd if=/res/dev/hdhost bs=2048 skip=8190 count=2 2>/res/e | md5sum
+620f0b67a91f7f74151bc5be745b7110  -
+/ # dd if=/res/dev/hdhost bs=2048 skip=8191 count=1 2>/res/e | md5sum
+c99a74c555371a433d121f551d6c6398  -
+/ # dd if=/res/dev/hdhost bs=2048 skip=4000000 count=1 2>/res/e >/dev/null; echo
+ P0_HDOOB=$?
+P0_HDOOB=1
+/ # echo P0_HDID_BEGIN
+P0_HDID_BEGIN
+/ # dd if=/res/dev/sr0 bs=2048 skip=510 count=1 2>/res/e | md5sum
+b00b6ea73582088a96ffefdd1f497765  -
+/ # dd if=/res/dev/hdhost bs=2048 skip=510 count=1 2>/res/e | md5sum
+b00b6ea73582088a96ffefdd1f497765  -
+/ # dd if=/res/dev/sr0 bs=2048 skip=0 count=1 2>/res/e | md5sum
+0e51baf7a8f535ab8c984149b5b6020a  -
+/ # dd if=/res/dev/hdhost bs=2048 skip=0 count=1 2>/res/e | md5sum
+0e51baf7a8f535ab8c984149b5b6020a  -
+/ # dd if=/res/dev/sr0 bs=2048 skip=43100 count=1 2>/res/e | md5sum
+a22e23631f9573638370cdfe64c6d9e7  -
+/ # dd if=/res/dev/hdhost bs=2048 skip=43100 count=1 2>/res/e | md5sum
+a22e23631f9573638370cdfe64c6d9e7  -
+/ # dd if=/res/dev/sr0 bs=2048 skip=80000 count=2 2>/res/e | md5sum
+4bd5fa831bfa4fc0f4df45ac626c265f  -
+/ # dd if=/res/dev/hdhost bs=2048 skip=80000 count=2 2>/res/e | md5sum
+4bd5fa831bfa4fc0f4df45ac626c265f  -
+/ # echo P0_HDID_END
+P0_HDID_END
+/ # echo P0_HDDONE
+P0_HDDONE
+/ # echo P0_F""INISHED
+P0_FINISHED
+--- unimp: 29 lines ---
+     1  bx510: unimplemented read 0x70000070 (4)
+     1  bx510: unimplemented read 0x7000007c (4)
+     1  bx510: unimplemented read 0x7000811c (4)
+     1  bx510: unimplemented read 0x70008730 (4)
+     1  bx510: unimplemented read 0x70024080 (4)
+     1  bx510: unimplemented read 0x70024088 (4)
+     1  bx510: unimplemented read 0x700240c4 (4)
+     1  bx510: unimplemented read 0x70024144 (4)
+     2  bx510: unimplemented read 0x70024188 (4)
+     1  bx510: unimplemented read 0x700241cc (4)
+     1  bx510: unimplemented write 0x70000070 = 0x50000 (4)
+     2  bx510: unimplemented write 0x70008100 = 0xc047ec40 (4)
+     1  bx510: unimplemented write 0x7000811c = 0x0 (4)
+     1  bx510: unimplemented write 0x70008154 = 0xffffffff (4)
+     1  bx510: unimplemented write 0x70008158 = 0x0 (4)
+     1  bx510: unimplemented write 0x7000815c = 0xffffffff (4)
+     1  bx510: unimplemented write 0x7000c01c = 0x100 (4)
+     2  bx510: unimplemented write 0x70024080 = 0x0 (4)
+     1  bx510: unimplemented write 0x700240c4 = 0x0 (4)
+     2  bx510: unimplemented write 0x70024144 = 0x0 (4)
+     1  bx510: unimplemented write 0x70024144 = 0x100 (4)
+     1  bx510: unimplemented write 0x70024148 = 0xffffffff (4)
+     1  bx510: unimplemented write 0x70024188 = 0x0 (4)
+     1  bx510: unimplemented write 0x70024188 = 0x45 (4)
+     1  bx510: unimplemented write 0x700241cc = 0x4 (4)

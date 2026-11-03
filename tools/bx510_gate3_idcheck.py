@@ -15,7 +15,7 @@ Usage: bx510_gate3_idcheck.py LOG   (exit 0 = identity holds)
 import re
 import sys
 
-MD5 = re.compile(r"^([0-9a-f]{32})  -")
+MD5 = re.compile(r"^([0-9a-f]{32})  -", re.M)
 
 
 def main():
@@ -27,7 +27,7 @@ def main():
     if not m:
         print(f"{sys.argv[1]}: no P0_HDID block (not an HDHOST rig boot?)")
         return 1
-    hashes = [x.group(1) for x in re.finditer(MD5, m.group(1), re.M)]
+    hashes = [x.group(1) for x in MD5.finditer(m.group(1))]
     if len(hashes) % 2 or not hashes:
         print(f"{sys.argv[1]}: P0_HDID block malformed "
               f"({len(hashes)} md5 lines, want even > 0)")

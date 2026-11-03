@@ -104,26 +104,103 @@ Parallel paths: FFmpeg decode planes for video playback; freetype for
 text into surfaces; `logo*.bin` pre-rendered frames likely pushed
 straight to an OSD plane at boot.
 
-## Work phases
+## The operator's actual goal: a drawing primitive
+
+The refined objective (operator, 2026-11-03): secure a low-level
+interface to the framebuffer (or whatever the device uses) so our own
+software — a daemon, a tool, eventually reconstruction components —
+can draw graphics on the player. Survey result: the interface exists,
+is small, and is fully in-hand.
+
+### The discovered drawing stack (verified from the unpacked rootfs)
+
+- **`libdirectfb-1.2-0/systems/libdirectfb_mtk.so` — 31 KB.** The
+  MediaTek (MT85xx) DirectFB system provider: opens **`/dev/fb0`**,
+  issues the MT85xx-extended fbdev ioctls (`FBIO_INIT`,
+  `FBIO_GETIMAGEBUFFER`, `FBIO_GETMULTIPOOL`, `FBIO_GETCMDBUFLEN`,
+  `FBIO_RELCMDBUF`, `FBIO_SET`/`MT85FB_SET_MASK_SAFETY`,
+  `FBIOGET_FSCREENINFO`), maps the **GFX command buffer** and the
+  **multi image pool** — the classic MTK architecture: user space
+  writes blit commands + pixels into mapped buffers, the hardware
+  compositor executes. The provider's exported symbols are the whole
+  user-side contract: `mt85AdapterCmdBufInit/Uninit`,
+  `mt85xx_check_wait_vsync`, `_mapColorFormat`, surface-manager
+  allocation, VT management.
+- **`gfxdrivers/libdirectfb_mt85.so`** — the DirectFB *graphics
+  driver* tier (software/hardware accelerated draw ops).
+- **`wm/libdirectfbwm_sawman.so`** — SaWMan window manager: multi-app
+  DirectFB coexistence (our drawing tool can live alongside the X2
+  runtime rather than replacing it).
+- **`usr/etc/directfbrc`** — the platform's own config: video layer
+  (lower stacking, frontonly), graphics layer on top; documents the
+  layer model our drawing must respect.
+- The fbdev node `/dev/fb0` is registered by the kernel driver stack
+  at boot (devtmpfs — which is why it appears in no rootfs config;
+  bdpdrv or a sibling module owns it).
+
+### Three tiers to "our own pixels", ranked
+
+**Tier 1 — link and use the stack that ships on the device (fastest).**
+Our daemon/tool links `libdirectfb` + `libdirectfb_mtk.so` +
+`libdirectfb_mt85.so` (all in the rootfs, ARM soft-float, matching our
+gnuarm toolchain) and speaks the standard DirectFB API:
+`DirectFBInit -> CreateSurface -> DrawString/Blit -> Flip`. The
+provider handles the MT85xx ioctls. SaWMan handles coexistence. This
+could work TODAY on real hardware — no decoding required.
+
+**Tier 2 — decode the contract (the sacd_read playbook, small target).**
+Disassemble the **31 KB** provider (+ the gfxdriver if needed): exact
+ioctl numbers, command-buffer format, image-pool layout, color
+formats, layer setup, vsync protocol. Deliverable:
+`mt85xx-fbdev-graphics-contract.md`. This is a days-scale
+disassembly, not the 8.1 MB bdpdrv module — the provider is the
+compressed statement of everything user-space needs.
+
+**Tier 3 — dependency-free minimal client.** From the contract: our own
+tiny drawing library against raw `/dev/fb0` ioctls — no DirectFB
+dependency, suitable for embedding in the daemon itself.
+
+### Verification paths
+
+- **Real hardware (ground truth, cheap)**: the existing USB AutoScript
+  boot avenue (the hardware-session runbook) can run our DirectFB
+  hello-world on the actual player; a TV photograph is the evidence.
+  The player's UI need not even be running for a first proof.
+- **Emulator (later)**: model the MT85xx fbdev device in our QEMU
+  sonyy-bx510 machine from the Tier-2 contract (the HDHOST playbook)
+  and watch guest code draw into a virtual framebuffer.
+
+### Risks / honest notes
+
+- VT (virtual terminal) management: the provider manages
+  `/dev/tty%d`; on the real appliance the X2 runtime owns the session
+  — Tier 1 must coexist (SaWMan) or run when the UI is not active.
+- The command buffer is presumably shared with the running UI's
+  process; corrupting it affects the whole screen (that is the point
+  of the interface, and also the hazard).
+- Plane/laser-format details (UYVY vs RGB layer formats) come from
+  directfbrc + `_mapColorFormat` decode.
+
+## Work phases (refined for the drawing-primitive goal)
 
 **U0 — Survey deliverable** (days, mostly done): full inventory
 (this document), module classification by nm-exports, `.rel`/`.prml`
 format identification, asset format headers. Output: inventory tables
 + this doc.
 
-**U1 — X2 application format** (days): decode `.rel` (ARM ELF?
-relocatable object? custom container?) and `.prml`/XML — with a
-deterministic decoder tool per the house rules (never eyeball
-hexdumps). If `.rel` files are ELF relocatables, the Qt linkage and
-every screen's logic are directly disassemblable with the proven
-SACD workflow.
+**U1 — Drawing primitive (the operator's goal, now scoped)**:
+  - U1a (days): build the Tier-1 DirectFB hello-world against the
+    rootfs libs with the gnuarm toolchain; hardware proof via the USB
+    AutoScript avenue (TV photo as evidence).
+  - U1b (days): Tier-2 contract decode of the 31 KB
+    `libdirectfb_mtk.so` -> `mt85xx-fbdev-graphics-contract.md`
+    (deterministic decoder discipline; bytes through tools).
+  - U1c (optional, from U1b): Tier-3 minimal client library.
 
-**U2 — Display contract** (weeks): disassemble the display-facing
-functions of `bdpdrv.ko` (8.1 MB — by subsystem, never wholesale) +
-the DirectFB system driver + the Qt platform plugin. Deliverable: a
-`display-contract.md` — the ioctl table, plane/pixel formats, and
-register semantics, the same way the module init contract was decoded
-for `sacd_read.ko`.
+**U2 — X2 application format** (lower priority for the drawing goal,
+still valuable for "how does the main UI work"): decode `.rel` and
+`.prml`/XML; bdpdrv.ko's display subsystem is only needed beyond
+U1b for plane/register semantics the provider leaves implicit.
 
 **U3 — Asset decoders** (days): `tools/` decoders for font.bin,
 logo*.bin, osdmsg.bin, X2 img/ assets → PNG/text. Verification:

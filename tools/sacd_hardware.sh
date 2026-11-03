@@ -35,6 +35,7 @@ EXP="$(cd "$(dirname "$0")/.." && pwd)"
 ORIGINAL="$EXP/original/sacd_extract_160"
 RELEASE="$EXP/reconstruct/release/sacd_extract_160_release"
 OPTICAL="$EXP/emulator-handoff/optical"
+HWMON_DIR="${HWMON_DIR:-$(repo)/evidence/bx510/hwmon-payload}"
 
 SHA_ORIG="0fdcefdb84ae818be7385657eaf0960053f6e4452a82f19cbe6777f9c8cddb45"
 SHA_REL="e91720fbbbd592505bde6630843b0495ff82a93e40c0e427aaa70a081ff9ae22"
@@ -64,7 +65,12 @@ check_elf() {
 }
 
 auto_baseline() {
+    # daemon + the standby watcher: the watcher snapshots process/
+    # module/display state to the stick continuously, so the power-press
+    # transition (is bdpprog alive in standby? who holds /dev/fb0?) is
+    # captured as runtime evidence (docs/ui-graphics-reconstruction.md)
     printf '/bin/sh %s/sacd_extract_160 -S &\n' "$PLAYER_MOUNT"
+    printf '/bin/sh %s/hwmon_start.sh &\n' "$PLAYER_MOUNT"
 }
 
 auto_pair() {
@@ -112,6 +118,8 @@ cmd_usb_build() {
     [ -d "$USB" ] || die "USB did not mount at $USB — check the volume name (expected SONYUSB) and pass USB=/Volumes/<name>"
     cp "$ORIGINAL" "$USB/sacd_extract_160"
     cp -R "$OPTICAL" "$USB/optical"
+    cp "$HWMON_DIR/hwmon" "$USB/hwmon"
+    cp "$HWMON_DIR/hwmon_start.sh" "$USB/hwmon_start.sh"
     auto_baseline > "$USB/AutoScript"
     cmd_usb_check
     echo
@@ -132,6 +140,8 @@ cmd_usb_check() {
     esac
     [ -f "$USB/optical/trace-launch.sh" ] || die "observer kit missing on stick ($USB/optical)"
     echo "OK  observer kit present"
+    [ -f "$USB/hwmon" ] || die "hwmon watcher missing on stick ($USB/hwmon)"
+    echo "OK  hwmon watcher present (standby-transition snapshots -> <stick>/hwmon/)"
     echo "AutoScript ($(USB)/AutoScript):"
     sed 's/^/    /' "$USB/AutoScript"
     case "$(cat "$USB/AutoScript")" in

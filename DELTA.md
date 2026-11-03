@@ -296,3 +296,40 @@ Behavior note (both binaries, confirmed in the rig): the listener binds
 port 2002 hardcoded and sets no SO_REUSEADDR, so a fast daemon restart
 after active client sessions fails to bind with EADDRINUSE until the
 TIME_WAIT sockets clear (~60s). The rig waits for port-free between legs.
+
+## Module-contract integration from the full-system team (2026-11-03)
+
+The BX510-Handoff emulator work (full-system QEMU 9.2.4 "sony-bx510",
+boots Sony's Linux 2.6.35 + real SquashFS; both daemons run inside the
+real guest OS against Sony's shipped loader/libc — 1,059 identical
+--help bytes) independently disassembled the embedded sacd_read.ko
+(SHA-256 b3d7a383e45d3bbe1a987a4a2e15ab7a68dd55e88d0319f7a0fd2e9cf0246dfa)
+and pinned the real ioctl contract:
+  - SACD_IOC_READ serves RAW 2064-byte frames (12-byte header + 2048
+    logical + 4 trailing; .text+0x318/+0x368/_IDECLI_OddRead);
+  - SACD_IOC_DECRYPT packs 2048 bytes from offset 12 of each frame
+    (CPSA_SACDCmdDecrypt output path, .text+0x4b4/+0x4e4/+0x500);
+  - hence 0x40800 raw / 0x40000 logical at 128 sectors.
+The qemu-user shim (tools/qemu_rig.c) now models that shape: READ
+synthesizes deterministic raw frames around the fixture's logical bytes,
+DECRYPT performs the module's offset-12 packing (still NOT CPSA crypto —
+the on-player optical/ pair capture covers real raw metadata). The
+sequential replay verdict stays IDENTICAL through the real striding.
+
+Also from that handoff: the compare defect they demonstrated (altered
+OPEN result + wire hash still compared IDENTICAL) is fixed — compare now
+checks every frame (request bytes, response type/result/length, frame
+hashes) before the read table. Their optical/media_check.py remains the
+independent strict verifier with negative controls.
+
+Overlap (&conn_s race) verdicts: the starved-session tail class
+(timeout vs reset/EOF) is scheduler timing — the SAME binary produces
+both across runs — so starved exchanges compare as one class; successful
+exchanges still compare exactly. Both replays IDENTICAL
+(evidence/qemu-rig/20261103-rawframe/, daemon SHAs stamped in manifests:
+0fdcefdb… original, e91720fb… release).
+
+Player: BDP-S5100/BX510 family unit at 10.20.1.236 (M15.R.0257),
+pinned into evidence/bx510/BASELINE-RUNBOOK.md. Physical baseline still
+outstanding: the one on-player attempt received zero reply bytes to
+DISC_OPEN.

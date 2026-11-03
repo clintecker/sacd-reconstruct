@@ -96,6 +96,14 @@ int ioctl(int fd, unsigned long request, ...)
     {
     case SACD_IOC_READ:
     {
+        /* Real contract (module disassembly, SHA b3d7a383...): the module
+         * fills the caller's buffer with RAW 2064-byte frames -- 12-byte
+         * header, 2048 logical bytes, 4 trailing bytes (.text+0x318 loads
+         * 2064, +0x368 calls _IDECLI_OddRead, +0x3cc copies to the user
+         * pointer). We synthesize header/trailer deterministically and
+         * take the logical bytes from the fixture at 2048-byte stride, so
+         * the daemon's buffer striding (0x40800 raw / 0x40000 logical)
+         * is exercised exactly as on hardware. */
         uint32_t lsn = (uint32_t)ioc->b;
         uint32_t blocks = (uint32_t)ioc->c;
         uint8_t *dst = (uint8_t *)ioc->d;
@@ -114,8 +122,9 @@ int ioctl(int fd, unsigned long request, ...)
         }
         while (done < blocks)
         {
-            ssize_t n = pread(dfd, dst + done * 2048, 2048,
-                              (off_t)(lsn + done) * 2048);
+            uint8_t *frame = dst + done * 2064;
+            ssize_t n = pread(dfd, frame + 12, 2048,
+                             (off_t)(lsn + done) * 2048);
             if (n < 0)
             {
                 ioc->a = (unsigned long)-1;
@@ -123,19 +132,52 @@ int ioctl(int fd, unsigned long request, ...)
             }
             if (n < 2048)
             {
-                /* short read (past sparse tail): deterministic zeros */
-                memset(dst + done * 2048 + n, 0, 2048 - n);
-                break;
+                if (done == 0)
+                {
+                    /* first sector already past EOF: a read failure,
+                     * like the real module at end-of-disc */
+                    ioc->a = (unsigned long)-1;
+                    return 0;
+                }
+                /* short mid-block read (sparse tail): deterministic zeros */
+                memset(frame + 12 + n, 0, 2048 - n);
             }
+            /* deterministic synthetic frame header/trailer */
+            frame[0] = (uint8_t)(lsn + done);
+            frame[1] = (uint8_t)((lsn + done) >> 8);
+            frame[2] = (uint8_t)((lsn + done) >> 16);
+            frame[3] = 0x5a;
+            memset(frame + 4, 0, 8);          /* header bytes 4..11 */
+            memset(frame + 2060, 0, 4);       /* trailing check bytes */
+            if (n < 2048)
+                break;
             done++;
         }
         ioc->a = 0;             /* success: wrapper reports `blocks` read */
         return 0;
     }
     case SACD_IOC_DECRYPT:
-        /* plaintext fixture: leave the buffer untouched, report success */
+    {
+        /* Real contract (module .text+0x4b4/+0x4e4/+0x500,
+         * CPSA_SACDCmdDecrypt output path): pack 2048 logical bytes from
+         * offset 12 of each 2064-byte frame to the front of the buffer.
+         * Raw metadata is synthetic here; the logical payload equals the
+         * fixture bytes. NOT a CPSA crypto implementation -- the
+         * on-player pair capture (optical/ trace-launch) covers real
+         * raw metadata and authentication behavior. */
+        uint32_t blocks = (uint32_t)ioc->c;
+        uint8_t *buf = (uint8_t *)ioc->d;
+        uint32_t i;
+        if (!buf || !blocks)
+        {
+            ioc->a = (unsigned long)-1;
+            return 0;
+        }
+        for (i = 0; i < blocks; i++)
+            memcpy(buf + i * 2048, buf + i * 2064 + 12, 2048);
         ioc->a = 0;
         return 0;
+    }
     default:
         /* INIT, AUTH, DISC, SACD, UNINIT: present + is-SACD + ok */
         ioc->a = 0;

@@ -165,6 +165,24 @@ class Connection:
         except OSError:
             pass
 
+    def try_request(self, req_type, sector_offset=0, sector_count=0):
+        """request() that records failures instead of raising."""
+        try:
+            return self.request(req_type, sector_offset, sector_count), None
+        except (RuntimeError, OSError) as exc:
+            err = {
+                "type": req_type,
+                "sector_offset": sector_offset,
+                "sector_count": sector_count,
+                "error": str(exc),
+            }
+            self.frames.append({"request": dict(err), "response": None,
+                                "error": str(exc)})
+            if self.frame_sink is not None:
+                self.frame_sink[-1:]  # sink gets the failure record below
+                self.frame_sink.append(self.frames[-1])
+            return None, err
+
     def request(self, req_type, sector_offset=0, sector_count=0):
         wire = encode_request(req_type, sector_offset, sector_count)
         self.sock.sendall(wire)
@@ -252,6 +270,9 @@ def run_sequence(host, port, log, frame_sink=None):
         # 1-sector read at mid-disc
         mid = max(0, (size or 0) // 2)
         do_read(conn, mid, 1, "one-sector @ mid(%d)" % mid)
+        # read-failure probe: a read starting past end-of-disc must fail
+        # identically in both binaries (issue #5 checklist)
+        do_read(conn, (size or 0) + 100, 1, "beyond-EOF read (failure probe)")
         # reconnect test: close, reconnect, open, repeat the mid read
         resp = conn.request(REQ_DISC_CLOSE)
         log("  CLOSE result=%s" % resp["result"])
@@ -314,16 +335,161 @@ def cmd_capture(args):
     return 0
 
 
+# ---------------------------------------------------------------- overlap
+
+def run_overlap(host, port, log, frame_sink=None):
+    """Two concurrent sessions, exercising the listener's &conn_s stack-slot
+    reuse (the original daemon passes the SAME local slot address to every
+    client thread). Session A stays open across B's full lifecycle; if A's
+    thread lost its fd to the slot race, A's later requests time out while
+    B was served — that behavior is expected in BOTH binaries and must
+    match.
+    """
+    import json as _json
+    mid = [None]
+
+    def do(conn, entries, req_type, off=0, cnt=0):
+        resp, err = conn.try_request(req_type, off, cnt)
+        if err is not None:
+            entries.append({"request": {"type": req_type,
+                                        "sector_offset": off,
+                                        "sector_count": cnt},
+                            "error": err["error"]})
+        else:
+            entries.append({"request": {"type": req_type,
+                                        "sector_offset": off,
+                                        "sector_count": cnt},
+                            "result": resp["result"],
+                            "data_len": len(resp["data"]),
+                            "payload_sha256": hashlib.sha256(
+                                resp["data"]).hexdigest()
+                            if resp["has_data"] else None})
+        return resp
+
+    A = Connection(host, port, frame_sink=frame_sink)
+    B = Connection(host, port, frame_sink=frame_sink)
+    ea, eb = [], []
+    try:
+        # A opens and reads while B is not yet connected
+        do(A, ea, REQ_DISC_OPEN)
+        do(A, ea, REQ_DISC_READ, 532104, 1)
+        # B's full lifecycle, concurrent with the open A session
+        do(B, eb, REQ_DISC_OPEN)
+        size_resp = do(B, eb, REQ_DISC_SIZE)
+        if size_resp is not None:
+            mid[0] = max(0, (size_resp["result"] or 0) // 2)
+        do(B, eb, REQ_DISC_READ, mid[0] or 532104, 1)
+        # A continues after B's session existed — the slot-race window
+        do(A, ea, REQ_DISC_SIZE)
+        do(A, ea, REQ_DISC_READ, mid[0] or 532104, 1)
+        # close B, then A
+        do(B, eb, REQ_DISC_CLOSE)
+        do(A, ea, REQ_DISC_CLOSE)
+    finally:
+        A.close()
+        B.close()
+
+    log("  A: %s" % _json.dumps(ea))
+    log("  B: %s" % _json.dumps(eb))
+    return {"session_a": ea, "session_b": eb}
+
+
+def cmd_overlap(args):
+    def log(msg):
+        print(msg)
+        with open(os.path.join(args.out, "overlap.log"), "a") as f:
+            f.write(msg + "\n")
+
+    os.makedirs(args.out, exist_ok=True)
+    stamp = datetime.datetime.now(datetime.timezone.utc).strftime(
+        "%Y-%m-%dT%H:%M:%SZ")
+    log("sacd overlap %s -> %s:%d" % (stamp, args.host, args.port))
+    all_frames = []
+    res = run_overlap(args.host, args.port, log, frame_sink=all_frames)
+    manifest = {
+        "client": CLIENT_VERSION,
+        "captured_at": stamp,
+        "target": {"host": args.host, "port": args.port},
+        "firmware": args.firmware,
+        "disc_id": args.disc_id,
+        "label": args.label,
+        "reference_daemon_sha256": args.daemon_sha,
+        "mode": "overlap",
+        "sessions": res,
+        "frames": all_frames,
+    }
+    path = os.path.join(args.out, "manifest.json")
+    with open(path, "w") as f:
+        json.dump(manifest, f, indent=2)
+    log("wrote %s" % path)
+    return 0
+
+
 # ---------------------------------------------------------------- compare
+
+def _norm_overlap(manifest):
+    """normalize an overlap manifest for comparison.
+
+    The &conn_s stack-slot race is genuinely nondeterministic: whether a
+    starved session's socket sits silent for 20s (timeout) or dies early
+    (reset/EOF/EPIPE) depends on millisecond-level thread scheduling, not
+    on which binary is running — the same binary produces both across
+    runs (see the 20261103 rig evidence). Starved exchanges therefore
+    normalize to a single class; successful exchanges must still match
+    exactly (result + payload hash).
+    """
+    out = {}
+    for sess in ("session_a", "session_b"):
+        entries = []
+        for e in manifest.get("sessions", {}).get(sess, []):
+            e = dict(e)
+            if "error" in e:
+                e["error"] = "starved"
+            entries.append(e)
+        out[sess] = entries
+    return out
+
 
 def cmd_compare(args):
     a = json.load(open(args.a))
     b = json.load(open(args.b))
+    if a.get("mode") == "overlap" or b.get("mode") == "overlap":
+        if a.get("mode") != b.get("mode"):
+            print("VERDICT: DIFFERS (mode mismatch)")
+            return 1
+        import itertools
+        na, nb = _norm_overlap(a), _norm_overlap(b)
+        ok = na == nb
+        for sess in ("session_a", "session_b"):
+            print("== %s" % sess)
+            for x, y in itertools.zip_longest(na[sess], nb[sess]):
+                same = x == y
+                ok &= same
+                if same:
+                    print("  %-28s IDENTICAL" %
+                          (x or {}).get("request", {}).get("type"))
+                else:
+                    print("  DIFFERS\n    A: %s\n    B: %s" % (x, y))
+        print("VERDICT:", "IDENTICAL" if ok else "DIFFERS")
+        return 0 if ok else 1
     print("A: %s  (firmware=%s disc=%s)" %
           (args.a, a.get("firmware"), a.get("disc_id")))
     print("B: %s  (firmware=%s disc=%s)" %
           (args.b, b.get("firmware"), b.get("disc_id")))
     ok = True
+    # full-transcript check first: every exchange must match — request
+    # bytes, response type/result/length, and response frame hash
+    fa, fb = a.get("frames", []), b.get("frames", [])
+    if len(fa) != len(fb):
+        ok = False
+        print("FRAME COUNT DIFFERS: %d vs %d" % (len(fa), len(fb)))
+    for i, (x, y) in enumerate(zip(fa, fb)):
+        if x != y:
+            ok = False
+            print("FRAME %d DIFFERS:\n  A: %s\n  B: %s" % (i, x, y))
+    print("frames: %d exchanges, %s" %
+          (len(fa), "IDENTICAL" if fa == fb else "DIFFER"))
+
     ra = {(r["label"], r["lsn"], r["requested_sectors"]): r for r in a["reads"]}
     rb = {(r["label"], r["lsn"], r["requested_sectors"]): r for r in b["reads"]}
     if set(ra) != set(rb):
@@ -478,6 +644,12 @@ def cmd_selftest(args):
     ok = True
     seen = {}
     for r in manifest["reads"]:
+        if r["label"] == "beyond-EOF read (failure probe)":
+            # the fake server clamps out-of-range reads to a negative result
+            if r["returned_sectors"] >= 0 or r["payload_sha256"] is not None:
+                ok = False
+                print("SELFTEST FAIL: failure probe not a failure: %s" % r)
+            continue
         want = hashlib.sha256(
             fake_sector(r["lsn"], r["requested_sectors"])).hexdigest()
         if r["payload_sha256"] != want or r["returned_sectors"] < 1:
@@ -520,6 +692,16 @@ def main():
     m.add_argument("a")
     m.add_argument("b")
     m.set_defaults(func=cmd_compare)
+
+    o = sub.add_parser("overlap", help="two concurrent sessions (conn_s race)")
+    o.add_argument("--host", required=True)
+    o.add_argument("--port", type=int, default=2002)
+    o.add_argument("--out", required=True)
+    o.add_argument("--firmware", default=None)
+    o.add_argument("--disc-id", default=None)
+    o.add_argument("--label", default="overlap")
+    o.add_argument("--daemon-sha", default=None)
+    o.set_defaults(func=cmd_overlap)
 
     s = sub.add_parser("selftest", help="validate client against a fake server")
     s.add_argument("--out", default="/tmp")

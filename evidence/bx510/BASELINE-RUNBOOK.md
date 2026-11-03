@@ -24,9 +24,9 @@ cd <repo>/experiments/sacd_reconstruct
 python3 tools/sacd_client.py selftest --out /tmp/sacd-self
 # expect: SELFTEST: PASS
 
-# 1. capture the baseline (player IP in place of 192.168.x.x)
+# 1. capture the baseline (player IP: 10.20.1.236, the BDP-S5100/BX510 family unit)
 python3 tools/sacd_client.py capture \
-    --host 192.168.x.x --port 2002 \
+    --host 10.20.1.236 --port 2002 \
     --out evidence/bx510-baseline \
     --firmware "BX510 <fw version or unknown>" \
     --disc-id "<album> — <catalog no.>" \

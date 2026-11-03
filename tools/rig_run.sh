@@ -80,20 +80,49 @@ stop_daemon() {
 }
 
 echo "=== original daemon under rig (port $PORT)"
+ORIG_SHA=$(sha256sum "$ORIG" | cut -d" " -f1)
 run_daemon "$ORIG" orig "$PORT"
 $PY "$HERE/sacd_client.py" capture --host 127.0.0.1 --port "$PORT" \
     --out "$OUT/capture-orig" --label orig-rig \
-    --firmware "qemu-rig" --disc-id "rig-fixture" || { stop_daemon $DPID; exit 1; }
+    --firmware "qemu-rig" --disc-id "rig-fixture" \
+    --daemon-sha "$ORIG_SHA" || { stop_daemon $DPID; exit 1; }
 stop_daemon $DPID
 wait_port_free || { echo "port $PORT stuck in TIME_WAIT past 150s"; exit 1; }
 
 echo "=== release candidate under rig (port $PORT)"
+CAND_SHA=$(sha256sum "$CAND" | cut -d" " -f1)
 run_daemon "$CAND" cand "$PORT"
 $PY "$HERE/sacd_client.py" capture --host 127.0.0.1 --port "$PORT" \
     --out "$OUT/capture-cand" --label cand-rig \
-    --firmware "qemu-rig" --disc-id "rig-fixture" || { stop_daemon $DPID; exit 1; }
+    --firmware "qemu-rig" --disc-id "rig-fixture" \
+    --daemon-sha "$CAND_SHA" || { stop_daemon $DPID; exit 1; }
 stop_daemon $DPID
 
-echo "=== comparing"
+echo "=== overlap phase (conn_s stack-slot race, original)"
+wait_port_free || { echo "port $PORT stuck in TIME_WAIT past 150s"; exit 1; }
+run_daemon "$ORIG" orig2 "$PORT"
+$PY "$HERE/sacd_client.py" overlap --host 127.0.0.1 --port "$PORT" \
+    --out "$OUT/overlap-orig" --label orig-overlap \
+    --firmware "qemu-rig" --disc-id "rig-fixture" \
+    --daemon-sha "$ORIG_SHA" || { stop_daemon $DPID; exit 1; }
+stop_daemon $DPID
+
+echo "=== overlap phase (conn_s stack-slot race, candidate)"
+wait_port_free || { echo "port $PORT stuck in TIME_WAIT past 150s"; exit 1; }
+run_daemon "$CAND" cand2 "$PORT"
+$PY "$HERE/sacd_client.py" overlap --host 127.0.0.1 --port "$PORT" \
+    --out "$OUT/overlap-cand" --label cand-overlap \
+    --firmware "qemu-rig" --disc-id "rig-fixture" \
+    --daemon-sha "$CAND_SHA" || { stop_daemon $DPID; exit 1; }
+stop_daemon $DPID
+
+echo "=== comparing sequential replay"
 $PY "$HERE/sacd_client.py" compare \
     "$OUT/capture-orig/manifest.json" "$OUT/capture-cand/manifest.json"
+rc1=$?
+echo "=== comparing overlap replay"
+$PY "$HERE/sacd_client.py" compare \
+    "$OUT/overlap-orig/manifest.json" "$OUT/overlap-cand/manifest.json"
+rc2=$?
+[ $rc1 -eq 0 ] && [ $rc2 -eq 0 ] || exit 1
+echo "=== both replays IDENTICAL"

@@ -1,0 +1,183 @@
+{
+  "client": "sacd_client.py 1.0",
+  "captured_at": "2026-11-03T04:09:22Z",
+  "target": {
+    "host": "127.0.0.1",
+    "port": 2002
+  },
+  "firmware": "qemu-rig",
+  "disc_id": "rig-fixture",
+  "label": "orig-overlap",
+  "reference_daemon_sha256": "0fdcefdb84ae818be7385657eaf0960053f6e4452a82f19cbe6777f9c8cddb45",
+  "mode": "overlap",
+  "sessions": {
+    "session_a": [
+      {
+        "request": {
+          "type": 1,
+          "sector_offset": 0,
+          "sector_count": 0
+        },
+        "error": "timeout waiting for response frame (got 0 bytes so far)"
+      },
+      {
+        "request": {
+          "type": 3,
+          "sector_offset": 532104,
+          "sector_count": 1
+        },
+        "error": "timeout waiting for response frame (got 0 bytes so far)"
+      },
+      {
+        "request": {
+          "type": 4,
+          "sector_offset": 0,
+          "sector_count": 0
+        },
+        "error": "timeout waiting for response frame (got 0 bytes so far)"
+      },
+      {
+        "request": {
+          "type": 3,
+          "sector_offset": 532104,
+          "sector_count": 1
+        },
+        "error": "timeout waiting for response frame (got 0 bytes so far)"
+      },
+      {
+        "request": {
+          "type": 2,
+          "sector_offset": 0,
+          "sector_count": 0
+        },
+        "error": "timeout waiting for response frame (got 0 bytes so far)"
+      }
+    ],
+    "session_b": [
+      {
+        "request": {
+          "type": 1,
+          "sector_offset": 0,
+          "sector_count": 0
+        },
+        "error": "timeout waiting for response frame (got 0 bytes so far)"
+      },
+      {
+        "request": {
+          "type": 4,
+          "sector_offset": 0,
+          "sector_count": 0
+        },
+        "error": "[Errno 104] Connection reset by peer"
+      },
+      {
+        "request": {
+          "type": 3,
+          "sector_offset": 532104,
+          "sector_count": 1
+        },
+        "error": "[Errno 32] Broken pipe"
+      },
+      {
+        "request": {
+          "type": 2,
+          "sector_offset": 0,
+          "sector_count": 0
+        },
+        "error": "[Errno 32] Broken pipe"
+      }
+    ]
+  },
+  "frames": [
+    {
+      "request": {
+        "type": 1,
+        "sector_offset": 0,
+        "sector_count": 0,
+        "error": "timeout waiting for response frame (got 0 bytes so far)"
+      },
+      "response": null,
+      "error": "timeout waiting for response frame (got 0 bytes so far)"
+    },
+    {
+      "request": {
+        "type": 3,
+        "sector_offset": 532104,
+        "sector_count": 1,
+        "error": "timeout waiting for response frame (got 0 bytes so far)"
+      },
+      "response": null,
+      "error": "timeout waiting for response frame (got 0 bytes so far)"
+    },
+    {
+      "request": {
+        "type": 1,
+        "sector_offset": 0,
+        "sector_count": 0,
+        "error": "timeout waiting for response frame (got 0 bytes so far)"
+      },
+      "response": null,
+      "error": "timeout waiting for response frame (got 0 bytes so far)"
+    },
+    {
+      "request": {
+        "type": 4,
+        "sector_offset": 0,
+        "sector_count": 0,
+        "error": "[Errno 104] Connection reset by peer"
+      },
+      "response": null,
+      "error": "[Errno 104] Connection reset by peer"
+    },
+    {
+      "request": {
+        "type": 3,
+        "sector_offset": 532104,
+        "sector_count": 1,
+        "error": "[Errno 32] Broken pipe"
+      },
+      "response": null,
+      "error": "[Errno 32] Broken pipe"
+    },
+    {
+      "request": {
+        "type": 4,
+        "sector_offset": 0,
+        "sector_count": 0,
+        "error": "timeout waiting for response frame (got 0 bytes so far)"
+      },
+      "response": null,
+      "error": "timeout waiting for response frame (got 0 bytes so far)"
+    },
+    {
+      "request": {
+        "type": 3,
+        "sector_offset": 532104,
+        "sector_count": 1,
+        "error": "timeout waiting for response frame (got 0 bytes so far)"
+      },
+      "response": null,
+      "error": "timeout waiting for response frame (got 0 bytes so far)"
+    },
+    {
+      "request": {
+        "type": 2,
+        "sector_offset": 0,
+        "sector_count": 0,
+        "error": "[Errno 32] Broken pipe"
+      },
+      "response": null,
+      "error": "[Errno 32] Broken pipe"
+    },
+    {
+      "request": {
+        "type": 2,
+        "sector_offset": 0,
+        "sector_count": 0,
+        "error": "timeout waiting for response frame (got 0 bytes so far)"
+      },
+      "response": null,
+      "error": "timeout waiting for response frame (got 0 bytes so far)"
+    }
+  ]
+}

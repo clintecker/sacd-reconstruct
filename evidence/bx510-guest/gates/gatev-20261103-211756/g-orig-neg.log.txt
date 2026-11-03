@@ -1,0 +1,39 @@
+# role=original
+# reference=/home/aftermath/sacd-verify/original/sacd_extract_160
+# sha256(original)=0fdcefdb84ae818be7385657eaf0960053f6e4452a82f19cbe6777f9c8cddb45
+# sha256(original)=0fdcefdb84ae818be7385657eaf0960053f6e4452a82f19cbe6777f9c8cddb45
+# sha256(release)=e91720fbbbd592505bde6630843b0495ff82a93e40c0e427aaa70a081ff9ae22
+# runner sha256=441dab7e3da57c0b83ccc788ef2746de6d646c7e5fc99cfb25e50548b02e1f8c
+# invocation: bx510_phase0_probe.py --role original --reference /home/aftermath/sacd-verify/original/sacd_extract_160 --corrupt-toc --rawdump
+/ # echo P0_CLIENT_BEGIN; cat /res/client.out; echo P0_CLIENT_END
+P0_CLIENT_BEGIN
+GC: connected 127.0.0.1:2002
+GC: OPEN  -> type=1 result=-1 datalen=-1
+GC: SIZE  -> type=4 result=86200 (sectors)
+GC: READ lsn=0 cnt=1 -> type=3 result=-1 datalen=-1 fnv1a64=0000000000000000
+GC: READ lsn=43100 cnt=1 -> type=3 result=-1 datalen=-1 fnv1a64=0000000000000000
+GC: READ lsn=0 cnt=128 -> type=3 result=-1 datalen=-1 fnv1a64=0000000000000000
+GC: READ lsn=79990 cnt=20 (boundary) -> type=3 result=-1 datalen=-1 fnv1a64=0000000000000000
+GC: READ lsn=80000 cnt=2 (encrypted) -> type=3 result=-1 datalen=-1 fnv1a64=0000000000000000
+GC: READ lsn=86300 (beyond EOF) -> type=3 result=-1 datalen=-1
+GC: CLOSE -> type=2 result=0
+GC: post-close read -> 0 (EOF)
+GC: reconnected
+GC: OPEN#2 -> type=1 result=-1
+GC: READ#2 lsn=43100 -> type=3 result=-1 datalen=-1 fnv1a64=0000000000000000
+GC: CLOSE#2 -> type=2 result=0
+GC: SWEEP delay=0ms att=0 port=N CLASS=eof
+GC: SWEEP delay=100ms att=0 port=N CLASS=ok OPEN type=1 result=-1
+GC: SWEEP delay=300ms att=0 port=N CLASS=ok OPEN type=1 result=-1
+GC: SWEEP delay=1000ms att=0 port=N CLASS=ok OPEN type=1 result=-1
+GC: SWEEP delay=0ms att=1 port=N CLASS=eof
+GC: SWEEP delay=100ms att=1 port=N CLASS=ok OPEN type=1 result=-1
+GC: SWEEP delay=300ms att=1 port=N CLASS=ok OPEN type=1 result=-1
+GC: SWEEP delay=1000ms att=1 port=N CLASS=ok OPEN type=1 result=-1
+GC: SWEEP delay=0ms att=2 port=N CLASS=eof
+GC: SWEEP delay=100ms att=2 port=N CLASS=ok OPEN type=1 result=-1
+GC: SWEEP delay=300ms att=2 port=N CLASS=ok OPEN type=1 result=-1
+GC: SWEEP delay=1000ms att=2 port=N CLASS=ok OPEN type=1 result=-1
+GC: DONE
+P0_CLIENT_END
+STAT: ioctl(5307) ret=0 errno=0 a=0 b=0 c=0 d=0

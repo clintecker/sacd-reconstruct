@@ -164,6 +164,22 @@ def synthetic_sector(lsn):
     return bytes(s)
 
 
+def enc_sector(lsn):
+    # distinct nonzero pattern for the encrypted range: same xorshift
+    # family as synthetic_sector() but a different salt, so a wrong-sector
+    # read or a packing failure cannot hide in zero-filled holes (team
+    # review finding). The mock decrypt is a verbatim copy, so these are
+    # also the expected wire bytes for encrypted-range reads.
+    s = bytearray(LSN)
+    x = (lsn ^ 0xDEAD5ACD) & 0xFFFFFFFF
+    for i in range(0, LSN, 4):
+        x ^= (x << 13) & 0xFFFFFFFF
+        x ^= x >> 17
+        x ^= (x << 5) & 0xFFFFFFFF
+        s[i:i + 4] = struct.pack("<I", x)
+    return bytes(s)
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("out", nargs="?", default="rig_disc.bin", type=Path)
@@ -181,8 +197,11 @@ def main():
         put_sector(i, sacd_text_sector())
     put_sector(519, sacd_man_sector())
     put_sector(AREA_LSN, area_toc_sector())
-    for lsn in list(range(0, 128)) + [MID_LSN, MID_LSN + 1]:
+    for lsn in list(range(0, 128)) + [MID_LSN, MID_LSN + 1] + list(range(79990, 80000)):
         put_sector(lsn, synthetic_sector(lsn))
+    # encrypted range: distinct nonzero data at the sectors the tests read
+    for lsn in range(ENCRYPTED_START, ENCRYPTED_START + 2):
+        put_sector(lsn, enc_sector(lsn))
     f.close()
     print("wrote %s (%d sectors, sparse)" % (args.out, TOTAL_SECTORS))
 

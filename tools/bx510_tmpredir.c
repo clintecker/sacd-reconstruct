@@ -17,6 +17,7 @@
  */
 #define _GNU_SOURCE
 #include <dlfcn.h>
+#include <errno.h>
 #include <fcntl.h>
 #include <unistd.h>
 #include <stdarg.h>
@@ -210,7 +211,12 @@ ssize_t read(int fd, void *buf, size_t count)
         real = dlsym(RTLD_NEXT, "read");
     r = real(fd, buf, count);
     if (fd == sr0_fd && sr0_fd >= 0 && r > 0) {
-        off_t here = lseek(fd, 0, SEEK_CUR);
+        /* preserve errno across instrumentation: the seek and logging
+         * below must not clobber the real read's error state, and the
+         * offset must be recorded 64-bit (lseek64) or it overflows past
+         * 2 GiB images. */
+        int saved_errno = errno;
+        off64_t here = lseek64(fd, 0, SEEK_CUR);
         readlog("R", (long)here - (long)r, (long)r);
         /* hex of first 176 received bytes: reveals any striding/shift */
         {
@@ -224,6 +230,7 @@ ssize_t read(int fd, void *buf, size_t count)
             if (log_fd >= 0)
                 write(log_fd, hex, n), write(log_fd, "\n", 1);
         }
+        errno = saved_errno;
     }
     return r;
 }

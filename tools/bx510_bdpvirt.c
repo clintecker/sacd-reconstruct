@@ -108,7 +108,11 @@ int _IDECLI_OddRead(unsigned lsn, unsigned blocks, void *buf,
     if (len < blocks * FRAME_SIZE)
         return -1;
     if (!fix) {
-        fix = filp_open("/res/dev/sr0", O_RDONLY, 0);
+        /* O_LARGEFILE is REQUIRED: 2.6.35 generic_file_open rejects images
+         * over MAX_NON_LFS (2 GiB) without it (fs/open.c:1083) — the real
+         * Firebird ISO is 2.03 GiB. Caught via the virtual-drive team's
+         * review before any large-image run. */
+        fix = filp_open("/res/dev/sr0", O_RDONLY | O_LARGEFILE, 0);
         if (IS_ERR(fix)) {
             printk(KERN_ERR "bdpvirt: OddRead: no fixture (%ld)\n",
                    PTR_ERR(fix));
@@ -128,7 +132,11 @@ int _IDECLI_OddRead(unsigned lsn, unsigned blocks, void *buf,
         frame[1] = (uint8_t)(l >> 8);
         frame[2] = (uint8_t)(l >> 16);
         frame[3] = 0x5a;
-        got = kernel_read(fix, (unsigned long)((loff_t)l * LOGICAL_SIZE),
+        /* Sony's tree backported the loff_t-offset kernel_read
+         * (include/linux/fs.h: kernel_read(struct file *, loff_t, char *,
+         * unsigned long)) — pass the 64-bit offset directly; a 32-bit
+         * cast truncates past 2 GiB. */
+        got = kernel_read(fix, (loff_t)l * LOGICAL_SIZE,
                           (char *)(frame + 12), LOGICAL_SIZE);
         if (got != LOGICAL_SIZE) {
             printk(KERN_ERR "bdpvirt: OddRead: got %lu at lsn %u\n", got, l);
@@ -202,7 +210,15 @@ EXPORT_SYMBOL(_IDECLI_OddTestUnitReadyLoop);
 
 int _IDECLI_OddGetProfile(void *out)
 {
-    printk(KERN_INFO "bdpvirt: GetProfile(out=%p)\n", out);
+    /* Team finding: sacd_read.ko's 5307 (SACD status) handler passes an
+     * output pointer and subsequently compares the value with 0x10 (the
+     * SACD profile). Returning success without writing the output left
+     * the comparison reading uninitialized memory. Write the
+     * SACD-present profile consistently; the direct 5307 ioctl check
+     * (sacdstat) covers this contract on every run. */
+    if (out)
+        *(unsigned int *)out = 0x10;
+    printk(KERN_INFO "bdpvirt: GetProfile(out=%p) -> profile 0x10\n", out);
     return 0;
 }
 EXPORT_SYMBOL(_IDECLI_OddGetProfile);

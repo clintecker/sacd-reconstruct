@@ -56,6 +56,8 @@ static int wvarint(uint8_t *out, uint64_t v)
     return n;
 }
 
+static int tx_fd = -1;
+
 static int send_request(int fd, uint64_t type, uint64_t off, uint64_t cnt)
 {
     uint8_t req[32];
@@ -64,6 +66,12 @@ static int send_request(int fd, uint64_t type, uint64_t off, uint64_t cnt)
     req[n++] = 0x10; n += wvarint(req + n, off);
     req[n++] = 0x18; n += wvarint(req + n, cnt);
     req[n++] = 0x00;
+    /* full both-direction raw capture: log transmitted bytes too
+     * (received bytes go to gc-raw.bin via raw_fd in read_response) */
+    if (tx_fd < 0)
+        tx_fd = open("/res/gc-tx.bin", O_WRONLY | O_CREAT | O_TRUNC, 0644);
+    if (tx_fd >= 0)
+        write(tx_fd, req, n);
     return (int)write(fd, req, n) == n ? 0 : -1;
 }
 
@@ -86,6 +94,11 @@ static long rvarint(const uint8_t *buf, long pos, long len, uint64_t *out)
 }
 
 static int raw_fd = -1;
+/* offset of the data payload within rbuf for the most recent response —
+ * NOT constant: the header length varies with the result/length varint
+ * sizes (result=128 encodes as 2 bytes -> 9-byte header). Hashing or
+ * dumping from a hardcoded offset corrupts the check, not the data. */
+static long g_payload_off = 7;
 
 static int read_response(int fd, uint64_t *type, int64_t *result,
                          long *datalen)
@@ -144,6 +157,7 @@ static int read_response(int fd, uint64_t *type, int64_t *result,
              * here made the parser eat the length varint as data and
              * choke on a mid-payload "tag"). */
             pos = r;
+            g_payload_off = r;
             while (len < pos + (long)v) {
                 long n = read(fd, rbuf + len, sizeof(rbuf) - len);
                 if (n <= 0)
@@ -210,21 +224,24 @@ int main(int argc, char **argv)
     if (send_request(fd, REQ_DISC_READ, 0, 1) ||
         read_response(fd, &type, &result, &datalen))
         goto fail;
-    printf("GC: READ lsn=0 cnt=1 -> type=%llu result=%lld datalen=%ld\n",
-           (unsigned long long)type, (long long)result, datalen);
+    printf("GC: READ lsn=0 cnt=1 -> type=%llu result=%lld datalen=%ld fnv1a64=%016llx\n",
+           (unsigned long long)type, (long long)result, datalen,
+           datalen > 0 ? fnv1a64(rbuf + g_payload_off, datalen) : 0ULL);
     if (datalen > 0) {
         long i;
         printf("GC: data[0..15]:");
-        for (i = 7; i < 7 + 16 && i < 512 * 1024; i++)
+        for (i = g_payload_off; i < g_payload_off + 16 && i < 512 * 1024; i++)
             printf(" %02x", rbuf[i]);
-        printf(" fnv1a64=%016llx\n", fnv1a64(rbuf + 7, datalen));
+        printf(" fnv1a64=%016llx\n", fnv1a64(rbuf + g_payload_off, datalen));
     }
+    /* (hash also appears on the READ line for uniform gate parsing) */
 
     if (send_request(fd, REQ_DISC_READ, 43100, 1) ||
         read_response(fd, &type, &result, &datalen))
         goto fail;
-    printf("GC: READ lsn=43100 cnt=1 -> type=%llu result=%lld datalen=%ld\n",
-           (unsigned long long)type, (long long)result, datalen);
+    printf("GC: READ lsn=43100 cnt=1 -> type=%llu result=%lld datalen=%ld fnv1a64=%016llx\n",
+           (unsigned long long)type, (long long)result, datalen,
+           datalen > 0 ? fnv1a64(rbuf + g_payload_off, datalen) : 0ULL);
 
     /* 128-sector read at the start of the unencrypted zone: exercises
      * MAX_PROCESSING_BLOCK_SIZE and the module's multi-block frame path
@@ -234,7 +251,16 @@ int main(int argc, char **argv)
         goto fail;
     printf("GC: READ lsn=0 cnt=128 -> type=%llu result=%lld datalen=%ld fnv1a64=%016llx\n",
            (unsigned long long)type, (long long)result, datalen,
-           datalen > 0 ? fnv1a64(rbuf + 7, datalen) : 0ULL);
+           datalen > 0 ? fnv1a64(rbuf + g_payload_off, datalen) : 0ULL);
+
+    /* dump the 128-block payload for offline analysis */
+    if (datalen > 0) {
+        int df = open("/res/p128.bin", O_WRONLY | O_CREAT | O_TRUNC, 0644);
+        if (df >= 0) {
+            write(df, rbuf + g_payload_off, datalen);
+            close(df);
+        }
+    }
 
     /* encryption-boundary clamp: the fixture's encrypted range starts at
      * 80000, so a 20-sector read at 79990 must return exactly 10 blocks
@@ -244,7 +270,7 @@ int main(int argc, char **argv)
         goto fail;
     printf("GC: READ lsn=79990 cnt=20 (boundary) -> type=%llu result=%lld datalen=%ld fnv1a64=%016llx\n",
            (unsigned long long)type, (long long)result, datalen,
-           datalen > 0 ? fnv1a64(rbuf + 7, datalen) : 0ULL);
+           datalen > 0 ? fnv1a64(rbuf + g_payload_off, datalen) : 0ULL);
 
     /* encrypted-range read: 80000 is inside the fixture's encrypted
      * range; the module's decrypt path fires (mock plaintext copy) and
@@ -254,7 +280,7 @@ int main(int argc, char **argv)
         goto fail;
     printf("GC: READ lsn=80000 cnt=2 (encrypted) -> type=%llu result=%lld datalen=%ld fnv1a64=%016llx\n",
            (unsigned long long)type, (long long)result, datalen,
-           datalen > 0 ? fnv1a64(rbuf + 7, datalen) : 0ULL);
+           datalen > 0 ? fnv1a64(rbuf + g_payload_off, datalen) : 0ULL);
 
     /* beyond-EOF probe (module-level failure test): 86200 sectors, so
      * LSN 86300 is past the end; expect a non-positive result */
@@ -295,14 +321,65 @@ int main(int argc, char **argv)
     if (send_request(fd, REQ_DISC_READ, 43100, 1) ||
         read_response(fd, &type, &result, &datalen))
         goto fail2;
-    printf("GC: READ#2 lsn=43100 -> type=%llu result=%lld datalen=%ld\n",
-           (unsigned long long)type, (long long)result, datalen);
+    printf("GC: READ#2 lsn=43100 -> type=%llu result=%lld datalen=%ld fnv1a64=%016llx\n",
+           (unsigned long long)type, (long long)result, datalen,
+           datalen > 0 ? fnv1a64(rbuf + g_payload_off, datalen) : 0ULL);
     if (send_request(fd, REQ_DISC_CLOSE, 0, 0) ||
         read_response(fd, &type, &result, &datalen))
         goto fail2;
     printf("GC: CLOSE#2 -> type=%llu result=%lld\n",
            (unsigned long long)type, (long long)result);
     close(fd);
+
+    /* reconnect sweep (distinct from daemon-restart/TIME_WAIT): fresh
+     * connections to the SAME listener, varying the delay after close,
+     * recording source ports to characterize session cleanup and the
+     * conn_s race without address-reuse effects. */
+    {
+        int delays_ms[4] = { 0, 100, 300, 1000 };
+        int k;
+        int att;
+        for (att = 0; att < 3; att++) {
+        for (k = 0; k < 4; k++) {
+            struct sockaddr_in me;
+            socklen_t melen = sizeof(me);
+            int f2 = socket(AF_INET, SOCK_STREAM, 0);
+            uint64_t t;
+            int64_t rr;
+            long dl;
+            setsockopt(f2, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv));
+            usleep(delays_ms[k] * 1000);
+            if (connect(f2, (struct sockaddr *)&a, sizeof(a)) < 0) {
+                printf("GC: SWEEP delay=%dms att=%d CLASS=connect-err errno=%d (%s)\n",
+                       delays_ms[k], att, errno, strerror(errno));
+                close(f2);
+                continue;
+            }
+            memset(&me, 0, sizeof(me));
+            getsockname(f2, (struct sockaddr *)&me, &melen);
+            if (send_request(f2, REQ_DISC_OPEN, 0, 0)) {
+                printf("GC: SWEEP delay=%dms att=%d port=%u CLASS=send-err errno=%d (%s)\n",
+                       delays_ms[k], att, ntohs(me.sin_port), errno, strerror(errno));
+            } else if (read_response(f2, &t, &rr, &dl)) {
+                long n = recv(f2, rbuf, 16, MSG_DONTWAIT);
+                if (n == 0)
+                    printf("GC: SWEEP delay=%dms att=%d port=%u CLASS=eof\n",
+                           delays_ms[k], att, ntohs(me.sin_port));
+                else if (n < 0)
+                    printf("GC: SWEEP delay=%dms att=%d port=%u CLASS=read-err errno=%d (%s)\n",
+                           delays_ms[k], att, ntohs(me.sin_port), errno, strerror(errno));
+                else
+                    printf("GC: SWEEP delay=%dms att=%d port=%u CLASS=parse-fail head=%02x%02x%02x%02x\n",
+                           delays_ms[k], att, ntohs(me.sin_port),
+                           rbuf[0], rbuf[1], rbuf[2], rbuf[3]);
+            } else {
+                printf("GC: SWEEP delay=%dms att=%d port=%u CLASS=ok OPEN type=%lld result=%lld\n",
+                       delays_ms[k], att, ntohs(me.sin_port), (long long)t, (long long)rr);
+            }
+            close(f2);
+        }
+        }
+    }
     printf("GC: DONE\n");
     return 0;
 fail2:

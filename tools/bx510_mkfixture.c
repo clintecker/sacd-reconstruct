@@ -167,6 +167,24 @@ static void synthetic(uint8_t *s, uint32_t lsn)
     }
 }
 
+static void encsynth(uint8_t *s, uint32_t lsn)
+{
+    /* distinct nonzero pattern for the encrypted range: same xorshift
+     * family as synthetic() with a different salt, so wrong-sector reads
+     * and packing failures cannot hide in zero-filled holes (team review
+     * finding). Mock decrypt is a verbatim copy, so these are also the
+     * expected wire bytes for encrypted-range reads. Byte-identical to
+     * fixture_gen.py's enc_sector(). */
+    uint32_t x = lsn ^ 0xDEAD5ACDu;
+    memset(s, 0, LSN);
+    for (int i = 0; i < LSN; i += 4) {
+        x ^= x << 13;
+        x ^= x >> 17;
+        x ^= x << 5;
+        memcpy(s + i, &x, 4);
+    }
+}
+
 static int emit(int fd, long lsn)
 {
     if (lseek(fd, lsn * LSN, SEEK_SET) < 0)
@@ -177,6 +195,13 @@ static int emit(int fd, long lsn)
 int main(int argc, char **argv)
 {
     const char *path = argc > 1 ? argv[1] : "/res/dev/sr0";
+    /* argv[2] == "corrupt": deterministic malformed-TOC negative control —
+     * patch reserved06 (sector 510, bytes 129..136) to 0xAA AFTER building
+     * the valid TOC, so every open (poll and client) sees the malformed
+     * disc. The daemon's poll loop opens within ~1s of file creation, so
+     * corrupting after mkfixture returned is racy; corrupting inside the
+     * builder closes that window. */
+    int corrupt = (argc > 2 && strcmp(argv[2], "corrupt") == 0);
     int fd = open(path, O_WRONLY | O_CREAT | O_TRUNC, 0644);
     long i;
 
@@ -196,6 +221,20 @@ int main(int argc, char **argv)
     if (emit(fd, 519) < 0) { perror("write"); return 1; }
     area_toc(sec);
     if (emit(fd, AREA_LSN) < 0) { perror("write"); return 1; }
+    if (corrupt) {
+        /* Deterministic negative control: destroy the SACDMTOC magic
+         * itself. Corrupting reserved06 left hidden couplings (the
+         * daemon poll's open attempts, in-memory handles, and the
+         * OPEN-result default) that could still yield a valid session;
+         * with the magic gone, NO validator can ever pass, from the
+         * very first read, in any path. */
+        if (lseek(fd, 510 * LSN, SEEK_SET) < 0 ||
+            write(fd, "\xAA\xAA\xAA\xAA\xAA\xAA\xAA\xAA", 8) != 8) {
+            perror("corrupt");
+            return 1;
+        }
+        printf("mkfixture: NEGATIVE control applied (SACDMTOC magic = 0xAA x8)\n");
+    }
     for (i = 0; i < 128; i++) {
         synthetic(sec, (uint32_t)i);
         if (emit(fd, i) < 0) { perror("write"); return 1; }
@@ -204,8 +243,21 @@ int main(int argc, char **argv)
         synthetic(sec, (uint32_t)i);
         if (emit(fd, i) < 0) { perror("write"); return 1; }
     }
+    /* boundary sectors 79990..79999: nonzero synthetic data (was sparse
+     * zeros); the encrypted-range test sectors 80000..80001 get the
+     * distinct enc pattern. Different LSNs than the corrupt patch, so
+     * ordering does not interact. */
+    for (i = 79990; i < 80000; i++) {
+        synthetic(sec, (uint32_t)i);
+        if (emit(fd, i) < 0) { perror("write"); return 1; }
+    }
+    for (i = ENCRYPTED_START; i < ENCRYPTED_START + 2; i++) {
+        encsynth(sec, (uint32_t)i);
+        if (emit(fd, i) < 0) { perror("write"); return 1; }
+    }
     close(fd);
-    printf("mkfixture: %s, %d sectors, area LSN %d, mid %d\n",
-           path, TOTAL_SECTORS, AREA_LSN, MID_LSN);
+    printf("mkfixture: %s, %d sectors, area LSN %d, mid %d%s\n",
+           path, TOTAL_SECTORS, AREA_LSN, MID_LSN,
+           corrupt ? " [MALFORMED]" : "");
     return 0;
 }

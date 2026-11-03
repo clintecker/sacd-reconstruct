@@ -311,7 +311,7 @@ def cmd_capture(args):
     with open(path, "w") as f:
         json.dump(manifest, f, indent=2)
     log("wrote %s" % path)
-    return manifest
+    return 0
 
 
 # ---------------------------------------------------------------- compare
@@ -465,11 +465,12 @@ def cmd_selftest(args):
     srv.start()
     out = os.path.join(args.out, "selftest")
     os.makedirs(out, exist_ok=True)
-    manifest = cmd_capture(argparse.Namespace(
+    cmd_capture(argparse.Namespace(
         host="127.0.0.1", port=srv.port, out=out,
         firmware="fake", disc_id="selftest", label="selftest",
         daemon_sha=None))
     srv.stop = True
+    manifest = json.load(open(os.path.join(out, "manifest.json")))
     expected = {
         "one-sector @ 0": hashlib.sha256(fake_sector(0, 1)).hexdigest(),
         "128-sector @ 0": hashlib.sha256(fake_sector(0, 128)).hexdigest(),

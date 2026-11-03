@@ -260,3 +260,39 @@ the original's ReadTableSegmentData straddles the ABS symbol
 _binary_sacd_read_ko_size, so intra-function branch anchors differ
 between disassembler layouts (verified: identical code, different
 symbol anchoring).
+
+## QEMU protocol rig (2026-11-03): replay verdict IDENTICAL (issue #5)
+
+tools/qemu_rig.c (ARM LD_PRELOAD shim) substitutes the sacd_read.ko device
+layer under qemu-arm-static: system() no-ops for mknod/insmod, /dev/sr0 +
+/dev/sacd_read open the fixture image (RIG_DEVFILE), the seven module
+ioctls served per the reconstructed sacd_read.c ABI; both device read
+paths (plain lseek64+read for TOCs, the READ ioctl for payloads) draw from
+the same file. Fixture: a real Scarlet Book ISO (user's own rip,
+firebird.iso, SHA-256 1d8f0697...) — genuine SACDMTOC@510, real area TOC,
+real encryption ranges. See docs/RIG-ARCHITECTURE.md.
+
+Replay (sacd_client.py capture, identical request sequence):
+  original          -> OPEN=0 SIZE=1064208 4 reads + reconnect-repeat
+  release candidate -> same sequence
+  compare verdict:  IDENTICAL — every result code, payload SHA-256, frame
+                    hash and the disc size match (evidence/qemu-rig/<stamp>).
+
+Codified as make targets (root Makefile, docs-sync'd):
+  sacd-sync  stage repo + build sources to the VM (never extract a
+             directory member through the ~/sacd-verify/reconstruct symlink
+             — GNU tar replaces the symlink with a real dir and orphans the
+             build tree; cost the release ELF once)
+  sacd-verify  clean release build + all checks
+  sacd-rig   orig-vs-candidate replay + evidence pull + compare
+  sacd-parity  Mac-side fn_diff/pool_audit/regressions (accepted residuals
+             _start + call_gmon_start only)
+  sacd-selftest  client self-check against an in-process fake server
+  vm-script  stage-and-run a local script on the VM — complex VM
+             operations never go through vm-exec one-liners (nested-quote
+             breakage cost three debug round-trips)
+
+Behavior note (both binaries, confirmed in the rig): the listener binds
+port 2002 hardcoded and sets no SO_REUSEADDR, so a fast daemon restart
+after active client sessions fails to bind with EADDRINUSE until the
+TIME_WAIT sockets clear (~60s). The rig waits for port-free between legs.

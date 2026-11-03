@@ -1,0 +1,245 @@
+
+
+U-Boot 2009.08 (Oct 15 2012 - 12:27:41)
+
+DRAM:  512 MB
+NAND:  256 MiB
+u-boot adaptive mtd mechanism applied.
+Bad block table not found for chip 0
+Bad block table not found for chip 0
+Bad block table written to 0x0ffe0000, version 0x01
+Bad block table written to 0x0ffc0000, version 0x01
+[_i_find_part_tbl] version is 1!!
+diag boot mode! 
+[NAND][part read]u4DevId = 0, u8Offset = 0xc900142, u4MemPtr = 0x1efdf48, u4MemLen = 0x1 
+[NAND][part read]u4DevId = 0, u8Offset = 0xc900143, u4MemPtr = 0x1efdf44, u4MemLen = 0x1 
+[NAND][part read]u4DevId = 0, u8Offset = 0xc900144, u4MemPtr = 0x1efdf40, u4MemLen = 0x1 
+[_i_init_upg_status] check sig FAIL.
+[_i_get_upg_status_in_nand] no upg_status in nand.
+[mtk_nand_write] src=0x01f45ff4, size=0x00040000, noffset=0x0c700000
+Using default environment
+
+In:    serial
+Out:   serial
+Err:   serial
+r_args_to_uboot:
+	head sig	: 0xa0b0ead1
+	version	: 1
+	boot type	: 0
+	dram ch1	: 0x10000000
+	dram ch2	: 0x10000000
+	kern addr	: 0x0d9fffc0
+	initrd addr	: 0x1c000000
+	initrd size	: 0x000821f0
+enable bim two way write.
+boot type:[0]
+Bootloader version 10009
+PHY reset fail
+De\xf4De\xf4part_inf
+Hit any key to stop autoboot:  0 
+[NAND][part read]u4DevId = 0, u8Offset = 0xc9003e3, u4MemPtr = 0x1efd2a0, u4MemLen = 0x1 
+Not Force UPG mode! 
+## Booting kernel from Legacy Image at 0d9fffc0 ...
+   Image Name:   
+   Image Type:   ARM Linux Kernel Image (uncompressed)
+   Data Size:    2285568 Bytes =  2.2 MB
+   Load Address: 0da00000
+   Entry Point:  0da00000
+   Loading Kernel Image ... OK
+OK
+
+Starting kernel ...
+
+Uncompressing Linux... done, booting the kernel.
+Linux version 2.6.35 (aokino@rvds241) (gcc version 4.5.1 (GCC) ) #1 PREEMPT Thu Sep 20 09:03:01 JST 2018
+CPU: ARMv6-compatible processor [410fb767] revision 7 (ARMv7), cr=00c5387f
+CPU: VIPT aliasing data cache, VIPT aliasing instruction cache
+Machine: mt85xx
+Memory policy: ECC disabled, Data cache writeback
+[kernel zone size]DMA: 110592KB, NORMAL: 381952KB, MOVABLE: 31744KB
+enable log
+enable cli input
+Built 1 zonelists in Zone order, mobility grouping on.  Total pages: 130048
+Kernel command line: root=/dev/ram0 rw initrd=0x1c000000,0x000821f0 console=ttyMT0 kgdboc=ttyMT0 mem=512M mt85xx_reserve=0M,0M drvmem=198M,133M BL_Ver=10009 
+PID hash table entries: 2048 (order: 1, 8192 bytes)
+Dentry cache hash table entries: 65536 (order: 6, 262144 bytes)
+Inode-cache hash table entries: 32768 (order: 5, 131072 bytes)
+Memory: 512MB = 512MB total
+Memory: 375744k/375744k available, 148544k reserved, 0K highmem
+Virtual kernel memory layout:
+    vector  : 0xffff0000 - 0xffff1000   (   4 kB)
+    fixmap  : 0xfff00000 - 0xfffe0000   ( 896 kB)
+    DMA     : 0xffc00000 - 0xffe00000   (   2 MB)
+    vmalloc : 0xe0800000 - 0xf8000000   ( 376 MB)
+    lowmem  : 0xc0000000 - 0xe0000000   ( 512 MB)
+    modules : 0xbf000000 - 0xc0000000   (  16 MB)
+      .init : 0xc0008000 - 0xc0022000   ( 104 kB)
+      .text : 0xc0022000 - 0xc043a000   (4192 kB)
+      .data : 0xc0456000 - 0xc047dce0   ( 160 kB)
+SLUB: Genslabs=11, HWalign=32, Order=0-3, MinObjects=0, CPUs=1, Nodes=1
+Hierarchical RCU implementation.
+	RCU-based detection of stalled CPUs is disabled.
+	Verbose stalled-CPUs detection is disabled.
+NR_IRQS:128
+Console: colour dummy device 80x30
+console [ttyMT0] enabled
+_mt85xx_uart_console_init:register console ok
+Calibrating delay loop... 178.68 BogoMIPS (lpj=89344)
+pid_max: default: 32768 minimum: 301
+Mount-cache hash table entries: 512
+CPU: Testing write buffer coherency: ok
+NET: Registered protocol family 16
+=== mt8560_init === 
+IC Version = A
+Serial: MT85XX driver $Revision: #25 $
+Serial : add uart port 0
+ttyMT0 at MMIO 0x7000c000 (irq = 14) is a MT85XX Serial
+Serial: driver_register 0
+bio: create slab <bio-0> at 0
+SCSI subsystem initialized
+Advanced Linux Sound Architecture Driver Version 1.0.23.
+<Bluetooth> Info: func:bt_init line:419 Core ver 2.15
+NET: Registered protocol family 31
+<Bluetooth> Info: func:bt_init line:431 HCI device and connection manager initialized
+<Bluetooth> Info: func:hci_sock_init line:810 HCI socket layer initialized
+cfg80211: Calling CRDA to update world regulatory domain
+NET: Registered protocol family 2
+IP route cache hash table entries: 4096 (order: 2, 16384 bytes)
+TCP established hash table entries: 16384 (order: 5, 131072 bytes)
+TCP bind hash table entries: 16384 (order: 4, 65536 bytes)
+TCP: Hash tables configured (established 16384 bind 16384)
+TCP reno registered
+UDP hash table entries: 256 (order: 0, 4096 bytes)
+UDP-Lite hash table entries: 256 (order: 0, 4096 bytes)
+NET: Registered protocol family 1
+RPC: Registered udp transport module.
+RPC: Registered tcp transport module.
+RPC: Registered tcp NFSv4.1 backchannel transport module.
+Unpacking initramfs...
+Initramfs unpacking failed: junk in compressed archive
+Freeing initrd memory: 520K, pages: 130
+k_gpio module init success
+squashfs: version 4.0 (2009/01/31) Phillip Lougher
+Installing knfsd (copyright (C) 1996 okir@monad.swb.de).
+msgmni has been set to 734
+alg: No test for stdrng (krng)
+Block layer SCSI generic (bsg) driver version 0.4 loaded (major 254)
+io scheduler noop registered
+io scheduler deadline registered (default)
+kgdb: Registered I/O driver kgdboc.
+loop: module loaded
+svoif_int_ldr_dram = 0xdfc00000, size = 0x200000
+[_get_static_buffer]start...
+[_get_static_buffer]start_addr:0xdd8a4000, alloc_sz:0x28000, buf_sz:0x25000
+[sata_bltin_init_buffer]sata_int_ldr_fw:0xdd900000, sata_hw_seg_buf:0xdd8a4000, sata_mtd_read_buf:0xdd8a4000
+mt85xx_nand_alloc_memo1 address = 0xdd8d0000
+mt85xx_nand_alloc_memo2 address = 0xdd8d0020
+NAND device: Manufacturer ID: 0xec, Chip ID: 0xda (Samsung NAND 256MiB 3,3V 8-bit)
+kernel adaptive mtd mechanism applied.
+mt85xx_part_tbl_init start.
+mt85xx_part_tbl_init success, v1 pit found !
+Creating 25 MTD partitions on "NAND 256MiB 3,3V 8-bit":
+0x000000000000-0x000000200000 : "boot_1"
+0x000000200000-0x000000400000 : "part_info_1"
+0x000000400000-0x000000600000 : "part_info_2"
+0x000000600000-0x000000700000 : "mac_addr_1"
+0x000000700000-0x000000800000 : "mac_addr_2"
+0x000000800000-0x000000900000 : "key_block_1"
+0x000000900000-0x000000a00000 : "key_block_2"
+0x000000a00000-0x000000c00000 : "fe_bin_1"
+0x000000c00000-0x000000e00000 : "fe_bin_2"
+0x000000e00000-0x000000f00000 : "fe_test_data"
+0x000000f00000-0x000001000000 : "fe_parameters"
+0x000001000000-0x000001100000 : "fe_power_curve"
+0x000001100000-0x000001400000 : "ifcon_fw_backup"
+0x000001400000-0x000001700000 : "kernel_1"
+0x000001700000-0x000001a00000 : "kernel_2"
+0x000001a00000-0x000001f00000 : "initrd_1"
+0x000001f00000-0x000008a00000 : "rootfs_normal_1"
+0x000008a00000-0x000008e00000 : "rootfs_enc_it_1"
+0x000008e00000-0x000009200000 : "initrd_2"
+0x000009200000-0x00000c200000 : "rootfs_normal_2"
+0x00000c200000-0x00000c700000 : "rootfs_enc_it_2"
+0x00000c700000-0x00000c800000 : "upg_status"
+0x00000c800000-0x00000c900000 : "init_wall_paper"
+0x00000c900000-0x00000cb00000 : "fast_init_param"
+0x00000cb00000-0x00000f700000 : "ubi0"
+star: eth_base=0xe0880000
+star: pinmux_base=0xe0884000
+star: pdwnc_base=0xe0888100
+star: eth_pdwnc_base=0xe088cc00
+star: eth_chksum_base=0xe0890000
+star: ipll_base1=0xe0894700
+star: ipll_base2=0xe0898300
+star: bsp_base=0xe089c000
+star: desc addr: 0xffc00000(virtual)/0x1d87e000(physical)
+star: Ethernet disable powerdown!
+PLL VCO auto reset for 8580A 
+star: test page 0x1E=0x4000,count=1
+star: test page 0x1E=0x4000,count=1
+Star Ethernet: Internal Vitesse PHY
+star: PHY addr = 0x0000
+star: Get Mac from mac_addr_1 partID=4!
+[nand part read-1], u4DevId = 4, 		    u8Offset = 0x0, u4MemPtr = 0xc60e6a48, u4MemLen = 0x6 
+star: Get Mac from mac_addr is invalid:MAC Address:ff-ff-ff-ff-ff-ff
+star: set the default MAC:00-0C-E7-06-00-00
+star: Get Mac from mac_addr failed! 
+star: Star MAC init done
+mice: PS/2 mouse device common for all mice
+<mmc_bltin_init_buffer> init mmc buffers
+ALSA device list:
+  No soundcards found.
+TCP cubic registered
+NET: Registered protocol family 10
+lo: Disabled Privacy Extensions
+IPv6 over IPv4 tunneling driver
+sit0: Disabled Privacy Extensions
+ip6tnl0: Disabled Privacy Extensions
+NET: Registered protocol family 17
+<Bluetooth> Info: func:l2cap_init line:5015 L2CAP ver 2.15
+<Bluetooth> Info: func:l2cap_init line:5016 L2CAP socket layer initialized
+<Bluetooth> Info: func:sco_init line:1050 SCO (Voice Link) ver 0.6
+<Bluetooth> Info: func:sco_init line:1051 SCO socket layer initialized
+<Bluetooth> Info: func:rfcomm_init_ttys line:1181 RFCOMM TTY layer initialized
+<Bluetooth> Info: func:rfcomm_init_sockets line:1149 RFCOMM socket layer initialized
+<Bluetooth> Info: func:rfcomm_init line:2179 RFCOMM ver 1.11
+<Bluetooth> Info: func:bnep_init line:720 BNEP (Ethernet Emulation) ver 1.3
+<Bluetooth> Info: func:hidp_init line:1025 HIDP (Human Interface Emulation) ver 1.2
+lib80211: common routines for IEEE802.11 drivers
+PM Init
+VFP support v0.3: implementor 41 architecture 1 part 20 variant b rev 5
+_mt85xx_late_console_init:register console ok
+VFS: Cannot open root device "ram0" or unknown-block(0,0)
+Please append a correct "root=" boot option; here are the available partitions:
+1f00          262144 mtdblock0 (driver?)
+1f01            2048 mtdblock1 (driver?)
+1f02            2048 mtdblock2 (driver?)
+1f03            2048 mtdblock3 (driver?)
+1f04            1024 mtdblock4 (driver?)
+1f05            1024 mtdblock5 (driver?)
+1f06            1024 mtdblock6 (driver?)
+1f07            1024 mtdblock7 (driver?)
+1f08            2048 mtdblock8 (driver?)
+1f09            2048 mtdblock9 (driver?)
+1f0a            1024 mtdblock10 (driver?)
+1f0b            1024 mtdblock11 (driver?)
+1f0c            1024 mtdblock12 (driver?)
+1f0d            3072 mtdblock13 (driver?)
+1f0e            3072 mtdblock14 (driver?)
+1f0f            3072 mtdblock15 (driver?)
+1f10            5120 mtdblock16 (driver?)
+1f11          109568 mtdblock17 (driver?)
+1f12            4096 mtdblock18 (driver?)
+1f13            4096 mtdblock19 (driver?)
+1f14           49152 mtdblock20 (driver?)
+1f15            5120 mtdblock21 (driver?)
+1f16            1024 mtdblock22 (driver?)
+1f17            1024 mtdblock23 (driver?)
+1f18            2048 mtdblock24 (driver?)
+1f19           45056 mtdblock25 (driver?)
+Kernel panic - not syncing: VFS: Unable to mount root fs on unknown-block(0,0)
+[<c0027980>] (unwind_backtrace+0x0/0xe4) from [<c0355938>] (panic+0x68/0xdc)
+[<c0355938>] (panic+0x68/0xdc) from [<c0008e5c>] (mount_block_root+0x238/0x288)
+[<c0008e5c>] (mount_block_root+0x238/0x288) from [<c0009038>] (prepare_namespace+0x128/0x17c)
+[<c0009038>] (prepare_namespace+0x128/0x17c) from [<c0008ad4>] (kernel_init+0x120/0x16c)
+[<c0008ad4>] (kernel_init+0x120/0x16c) from [<c0023b5c>] (kernel_thread_exit+0x0/0x8)

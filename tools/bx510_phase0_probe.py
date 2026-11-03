@@ -30,7 +30,8 @@ from smoke import observe
 REFERENCE = "0fdcefdb84ae818be7385657eaf0960053f6e4452a82f19cbe6777f9c8cddb45"
 
 
-def build_tar(reference: Path, shim: Path, bgstart: Path, stub: Path) -> bytes:
+def build_tar(reference: Path, shim: Path, bgstart: Path, stub: Path,
+              mkfixture: Path, gclient: Path, lo_up: Path) -> bytes:
     buf = io.BytesIO()
     with tarfile.open(fileobj=buf, mode="w", format=tarfile.USTAR_FORMAT) as arc:
         elf = reference.read_bytes()
@@ -41,7 +42,10 @@ def build_tar(reference: Path, shim: Path, bgstart: Path, stub: Path) -> bytes:
         arc.addfile(entry, io.BytesIO(elf))
         for name, blob in (("shim/tmpredir.so", shim.read_bytes()),
                            ("shim/bgstart", bgstart.read_bytes()),
-                           ("shim/osai_mini.ko", stub.read_bytes())):
+                           ("shim/bdpvirt.ko", stub.read_bytes()),
+                           ("shim/mkfixture", mkfixture.read_bytes()),
+                           ("shim/gclient", gclient.read_bytes()),
+                           ("shim/lo_up", lo_up.read_bytes())):
             entry = tarfile.TarInfo(name)
             entry.size, entry.mode = len(blob), 0o755
             arc.addfile(entry, io.BytesIO(blob))
@@ -50,14 +54,16 @@ def build_tar(reference: Path, shim: Path, bgstart: Path, stub: Path) -> bytes:
 
 def main():
     p = argparse.ArgumentParser(description=__doc__)
-    for opt in ("qemu", "images", "reference", "shim", "bgstart", "stub"):
+    for opt in ("qemu", "images", "reference", "shim", "bgstart", "stub",
+                "mkfixture", "gclient", "lo_up"):
         p.add_argument("--" + opt, required=True, type=Path)
     p.add_argument("--timeout", type=float, default=300.0)
     p.add_argument("--log", type=Path)
     a = p.parse_args()
 
     images = a.images.resolve(strict=True)
-    payload = build_tar(a.reference, a.shim, a.bgstart, a.stub)
+    payload = build_tar(a.reference, a.shim, a.bgstart, a.stub,
+                        a.mkfixture, a.gclient, a.lo_up)
     parts = json.loads((images / "manifest.json").read_text())["partitions"]
     part = next(x for x in parts if x["name"] == "fe_test_data")
     if part["records"] or part["offset"] != 0xe00000 or len(payload) > part["size"]:
@@ -73,13 +79,27 @@ def main():
         "echo x > /res/zero",
         "echo P0_EXEC_BEGIN; ls -l /res/original /res/shim; echo P0_EXEC_END",
         "/bin/chmod 755 /res/shim/bgstart",
-        "/sbin/insmod /res/shim/osai_mini.ko; echo P0_STUB=$?; cat /res/proc/modules",
+        "/sbin/insmod /res/shim/bdpvirt.ko; echo P0_STUB=$?; cat /res/proc/modules",
         "echo P0_BDPDIR_BEGIN; ls -l /lib/modules/2.6.35/BDP/; echo P0_BDPDIR_END",
 
         "LD_PRELOAD=/res/shim/tmpredir.so /res/shim/bgstart "
         "/res/original/sacd_extract_160 -S",
-        "sleep 20; echo P0_TCP_BEGIN; cat /res/proc/net/tcp; echo P0_TCP_END",
-        "echo P0_MOD_BEGIN; cat /res/proc/modules; ls -l /res/dev; echo P0_MOD_END",
+        "sleep 8; echo P0_TCP_BEGIN; cat /res/proc/net/tcp; echo P0_TCP_END",
+        "echo P0_MOD_BEGIN; cat /res/proc/modules; echo P0_MOD_END",
+        "/bin/chmod 755 /res/shim/mkfixture /res/shim/gclient /res/shim/lo_up",
+        "LD_PRELOAD= /res/shim/lo_up; echo P0_LO=$?",
+        "LD_PRELOAD= /res/shim/mkfixture /res/dev/sr0; echo P0_FIXT=$?",
+        "dd if=/res/dev/sr0 bs=2048 skip=510 count=1 of=/res/t510 2>/res/e",
+        "echo TDB; /usr/bin/hexdump -v -e '1/1 \"%02x\"' /res/t510 | head -c 352; echo",
+        "LD_PRELOAD= /res/shim/gclient 127.0.0.1 2002 >/res/client.out 2>&1; "
+        "echo P0_GC=$?",
+        "echo P0_CLIENT_BEGIN; cat /res/client.out; echo P0_CLIENT_END",
+        "echo P0_RL_BEGIN; cat /res/readlog; echo P0_RL_END",
+        "echo P0_RAW_BEGIN; hexdump -v -e '1/1 \"%02x\"' /res/gc-raw.bin | head -c 48; echo",
+        "dd if=/res/gc-raw.bin bs=1 skip=2040 count=16 2>/res/e | hexdump -v -e '1/1 \"%02x\"'; echo P0_RAW_END",
+        "dd if=/res/dev/sr0 bs=2048 skip=510 count=1 2>/res/e | md5sum",
+        "dd if=/res/dev/sr0 bs=2048 skip=600 count=1 2>/res/e | md5sum",
+        "hexdump -v -e '16/1 \"%02x\" \"\n\"' /res/t510 | head -12",
         "echo P0_OUT_BEGIN; cat /res/daemon.out; echo P0_OUT_END",
         'echo P0_F""INISHED',
     ]

@@ -2,26 +2,36 @@
  *
  * The real sacd_read.ko resolves 13 functions from the bdpdrv stack at
  * module init via kallsyms_lookup_name (loose coupling; full contract
- * decoded from its init disassembly, evidence/bx510-guest/PHASE0-RESULTS.md).
- * On a real player those live in the 8 MB bdpdrv.ko, which needs the
- * initramfs-provided OSAL base we cannot load. kallsyms_lookup_name also
- * searches loaded modules' symbol tables, so THIS module satisfies the
- * lookups — the kernel-space seam for the virtual optical front-end.
+ * decoded from its init + ioctl disassembly and live behavior; see
+ * evidence/bx510-guest/PHASE0-RESULTS.md). On a real player those live in
+ * the 8 MB bdpdrv.ko, which needs the initramfs-provided OSAL base we
+ * cannot load. kallsyms_lookup_name also searches loaded modules'
+ * symbol tables, so THIS module satisfies the lookups — the kernel-space
+ * seam for the virtual optical front-end.
  *
- * Behavior status (honest, minimal):
- *  - x_memset: full implementation, instruction-identical to osai.ko's.
- *  - i4CPSA_Inst_CPSMode_Ctrl: the init gate — called with the module
- *    `minor` param (201); must return -1 for the module to proceed to
- *    misc_register (decoded: cmp r0 == -1 sentinel).
- *  - _IDECLI_OddRead / _i4CPSA_Inst_Decrypt: return failure (-1) until
- *    the real virtual-ODD implementation exists — the daemon reports
- *    read errors rather than fabricated data. HONEST FAILURE ONLY.
- *  - the rest: benign presence stubs (return 0 / a handle) so the
- *    lookups resolve; their call-site contracts get derived from
- *    bdpdrv.ko as each is exercised.
+ * Decoded contracts (from sacd_read.ko disassembly + live call logs):
+ *  - init_module gate: GetInstHandleFromCompId(compid=0) must return -1
+ *    ("compid free"; anything else -> "compid = %d is used. Try
+ *    another." + -EBUSY).
+ *  - CPSA_SACDCmdEnable (5301 INIT): i4CPSA_Inst_Connect(363, 201, 360,
+ *    201) must be >= 0; then GetInstHandleFromCompId(minor=201) ->
+ *    handle; then CPSMode_Ctrl(handle, 64, 1) must be >= 0.
+ *  - CPSA_SACDCmdDecrypt: GetInstHandleFromCompId(minor) -> handle;
+ *    _i4CPSA_Inst_Decrypt(handle, src, dst, len) must be >= 0.
+ *  - CPSA_SACDCmdSetCtrl (5302 AUTH): calls eSacdGetVersion then
+ *    vSacdDecryptEnable.
+ *  - 5306 DISC: _IDECLI_OddTestUnitReadyLoop(a=0x4e20, &out) — arg0 is
+ *    NOT a string (a %s printk of it oopsed the kernel live); return 0
+ *    with the daemon's poll reporting "Disc inserted".
  *
- * Build: Sony GPL linux-2.6.35, mediatek_defconfig, SMP off, -march=armv6,
- * vermagic token patched ARMv7->ARMv6 (same length). this_module 0x148.
+ * Behavior status: x_memset full; data path (_IDECLI_OddRead,
+ * _i4CPSA_Inst_Decrypt) returns honest failure (-1) until the virtual
+ * ODD exists — the daemon reports read errors, never fabricated data.
+ *
+ * Build: Sony GPL linux-2.6.35, mediatek_defconfig, SMP off,
+ * -march=armv6, vermagic token patched ARMv7->ARMv6 (same length);
+ * bdpswap.py moves a sacrificial tail marker into the final symtab slot
+ * (Sony's 2.6.35 kallsyms off-by-one drops the last module symtab entry).
  */
 #include <linux/module.h>
 #include <linux/string.h>
@@ -34,60 +44,32 @@ void *x_memset(void *s, int c, size_t n)
 }
 EXPORT_SYMBOL(x_memset);
 
-/* ---- init gate ----
- * Called at module init with the module's compid param (the daemon
- * insmods with only minor=201, so compid=0) and must return -1 for the
- * module to accept the component id and proceed to misc_register
- * (decoded from init_module: cmn r0,#1 -> beq success; failure prints
- * "compid = %d is used. Try another." and returns -EBUSY). Observed live.
- */
-int i4CPSA_Inst_CPSMode_Ctrl(int compid)
+/* ---- CPSA mode control ---- */
+int i4CPSA_Inst_CPSMode_Ctrl(unsigned handle, unsigned a, unsigned b)
 {
-    printk(KERN_INFO "bdpvirt: CPSMode_Ctrl compid=%d\n", compid);
-    return -1;
+    printk(KERN_INFO "bdpvirt: CPSMode_Ctrl handle=%u a=%u b=%u -> 0\n",
+           handle, a, b);
+    return 0;
 }
 EXPORT_SYMBOL(i4CPSA_Inst_CPSMode_Ctrl);
 
-/* ---- data path: honest failure until the virtual ODD exists ---- */
-int _IDECLI_OddRead(unsigned lsn, unsigned blocks, void *buf,
-                    unsigned len, unsigned flag)
-{
-    printk(KERN_INFO "bdpvirt: OddRead lsn=%u blocks=%u -> not implemented\n",
-           lsn, blocks);
-    return -1;
-}
-EXPORT_SYMBOL(_IDECLI_OddRead);
-
-int _i4CPSA_Inst_Decrypt(unsigned a, void *b, void *c, unsigned d)
-{
-    printk(KERN_INFO "bdpvirt: Inst_Decrypt -> not implemented\n");
-    return -1;
-}
-EXPORT_SYMBOL(_i4CPSA_Inst_Decrypt);
-
-/* ---- presence stubs ---- */
-int i4CPSA_Inst_SetSACDControl(int x)
-{
-    return 0;
-}
-EXPORT_SYMBOL(i4CPSA_Inst_SetSACDControl);
-
+/* ---- instance handles ---- */
 unsigned u4CPSA_Inst_GetInstHandleFromCompId(unsigned compid)
 {
-    /* Decisive live evidence: sacd_read's init gate calls THIS function
-     * with the module's compid param (0 when the daemon insmods with only
-     * minor=201) and requires -1 to accept the compid and proceed to
-     * misc_register (init_module: cmn r0,#1 -> beq success). Any other
-     * value prints "compid = %d is used. Try another." and fails -EBUSY.
-     */
-    printk(KERN_INFO "bdpvirt: GetInstHandleFromCompId compid=%u -> free (-1)\n",
-           compid);
-    return (unsigned)-1;
+    if (compid == 0) {
+        /* module-init gate: compid 0 must read as "free" (-1) */
+        printk(KERN_INFO "bdpvirt: GetInstHandle compid=0 -> free (-1)\n");
+        return (unsigned)-1;
+    }
+    printk(KERN_INFO "bdpvirt: GetInstHandle compid=%u -> handle 1\n", compid);
+    return 1;
 }
 EXPORT_SYMBOL(u4CPSA_Inst_GetInstHandleFromCompId);
 
-int i4CPSA_Inst_Connect(unsigned a, unsigned b, unsigned c)
+/* ---- component connect/disconnect ---- */
+int i4CPSA_Inst_Connect(unsigned a, unsigned b, unsigned c, unsigned d)
 {
+    printk(KERN_INFO "bdpvirt: Connect(%u, %u, %u, %u) -> 0\n", a, b, c, d);
     return 0;
 }
 EXPORT_SYMBOL(i4CPSA_Inst_Connect);
@@ -97,6 +79,93 @@ int i4CPSA_Inst_Disconnect(unsigned a, unsigned b, unsigned c)
     return 0;
 }
 EXPORT_SYMBOL(i4CPSA_Inst_Disconnect);
+
+/* ---- virtual ODD: raw 2064-byte frame service ----
+ * The real _IDECLI_OddRead (bdpdrv) reads raw frames from the optical
+ * drive: 12-byte header + 2048 logical bytes + 4 trailing, per the
+ * module-contract disassembly (.text+0x318) and the on-player pair
+ * capture design. This implementation serves the same shape from the
+ * tmpfs fixture (/res/dev/sr0 — the same bytes userspace reads through
+ * the tmpredir map), with the synthetic header proven accepted by the
+ * daemon in the qemu-user rig: 3-byte LE LSN, 0x5a marker, zero pad.
+ * Return 0 on success (decoded: ioctl 5303 checks result == 0).
+ */
+#include <linux/fs.h>
+#include <linux/slab.h>
+
+#define FRAME_SIZE 2064
+#define LOGICAL_SIZE 2048
+
+int _IDECLI_OddRead(unsigned lsn, unsigned blocks, void *buf,
+                    unsigned len, unsigned flag)
+{
+    static struct file *fix;
+    unsigned i;
+    int err = 0;
+
+    if (blocks == 0 || !buf)
+        return -1;
+    if (len < blocks * FRAME_SIZE)
+        return -1;
+    if (!fix) {
+        fix = filp_open("/res/dev/sr0", O_RDONLY, 0);
+        if (IS_ERR(fix)) {
+            printk(KERN_ERR "bdpvirt: OddRead: no fixture (%ld)\n",
+                   PTR_ERR(fix));
+            fix = NULL;
+            return -1;
+        }
+    }
+    /* kernel_read performs the KERNEL_DS set_fs internally (2.6.35), so
+     * no uaccess.h is needed here — pulling it in would compile V7-only
+     * barriers (isb) into this ARMv6 module. */
+    for (i = 0; i < blocks; i++) {
+        uint8_t *frame = (uint8_t *)buf + i * FRAME_SIZE;
+        unsigned l = lsn + i;
+        unsigned long got;
+        memset(frame, 0, FRAME_SIZE);
+        frame[0] = (uint8_t)(l);
+        frame[1] = (uint8_t)(l >> 8);
+        frame[2] = (uint8_t)(l >> 16);
+        frame[3] = 0x5a;
+        got = kernel_read(fix, (unsigned long)((loff_t)l * LOGICAL_SIZE),
+                          (char *)(frame + 12), LOGICAL_SIZE);
+        if (got != LOGICAL_SIZE) {
+            printk(KERN_ERR "bdpvirt: OddRead: got %lu at lsn %u\n", got, l);
+            err = -1;
+            break;
+        }
+    }
+    printk(KERN_INFO "bdpvirt: OddRead lsn=%u blocks=%u -> %d\n",
+           lsn, blocks, err);
+    return err;
+}
+EXPORT_SYMBOL(_IDECLI_OddRead);
+
+/* Decoded from CPSA_SACDCmdDecrypt: called as Decrypt(handle, src_frame,
+ * slab, 2064) after GetInstHandleFromCompId(minor); must be >= 0. The
+ * module then copies slab+12 (2048 logical bytes) — the offset-12 packing
+ * the real CPSA hardware performs. A verbatim frame copy preserves the
+ * header and leaves the logical payload exactly where the module's
+ * memcpy takes it from. This is NOT real CPSA crypto: plaintext fixtures
+ * only; real-hardware decrypt output remains the on-player pair
+ * capture's ground truth.
+ */
+int _i4CPSA_Inst_Decrypt(unsigned handle, void *src, void *dst, unsigned len)
+{
+    if (len != FRAME_SIZE || !src || !dst)
+        return -1;
+    memcpy(dst, src, FRAME_SIZE);
+    return 0;
+}
+EXPORT_SYMBOL(_i4CPSA_Inst_Decrypt);
+
+/* ---- presence stubs ---- */
+int i4CPSA_Inst_SetSACDControl(int x)
+{
+    return 0;
+}
+EXPORT_SYMBOL(i4CPSA_Inst_SetSACDControl);
 
 void vSacdDecryptEnable(void)
 {
@@ -122,26 +191,27 @@ int _SACDCLI_FindTag(unsigned a, unsigned b, unsigned c, unsigned d)
 }
 EXPORT_SYMBOL(_SACDCLI_FindTag);
 
-int _IDECLI_OddTestUnitReadyLoop(const char *what, void *out)
+int _IDECLI_OddTestUnitReadyLoop(unsigned long a, void *out)
 {
-    printk(KERN_INFO "bdpvirt: TestUnitReadyLoop(%s)\n", what);
+    /* arg0 is NOT a string (live kernel oops from a %s printk of it);
+     * return 0 -> daemon poll reports "Disc inserted" (observed). */
+    printk(KERN_INFO "bdpvirt: TestUnitReadyLoop(a=0x%lx)\n", a);
     return 0;
 }
 EXPORT_SYMBOL(_IDECLI_OddTestUnitReadyLoop);
 
 int _IDECLI_OddGetProfile(void *out)
 {
-    printk(KERN_INFO "bdpvirt: GetProfile\n");
+    printk(KERN_INFO "bdpvirt: GetProfile(out=%p)\n", out);
     return 0;
 }
 EXPORT_SYMBOL(_IDECLI_OddGetProfile);
 
-/* Sony's 2.6.35 layout_symtab/add_kallsyms contain an off-by-one: the loops
- * run 'for (ndst = i = 1; i < nsrc; ++i, ++src)' starting src at index 0, so
- * they examine entries 0..nsrc-2 and DROP THE LAST symtab entry of every
- * loaded module (observed live: eSacdGetVersion, readelf index 113 = final
- * entry, vanished from /proc/kallsyms while every neighbor resolved).
- * Tail markers guarantee no provider symbol is ever the victim. */
+/* ---- sacrificial tail markers ----
+ * Sony's 2.6.35 layout_symtab/add_kallsyms off-by-one drops the LAST
+ * symtab entry of every loaded module from kallsyms; bdpswap.py moves
+ * marker_2 into that slot so every provider symbol survives.
+ */
 void bdpvirt_tail_marker_1(void)
 {
 }

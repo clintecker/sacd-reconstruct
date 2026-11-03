@@ -59,7 +59,8 @@ def master_toc_sector():
     put(be16(1))                        # album_sequence_number
     put(b"\x00" * 4)                    # reserved02
     put(b"\x00" * 16)                   # album_catalog_number
-    put(b"\x00" * 20)                   # album_genre[4]
+    put(b"\x00" * 16)                   # album_genre[4] (4-byte genre_table_t:
+                                      # category u8 + reserved u16 + genre u8)
     put(b"\x00" * 8)                    # reserved03
     put(be32(AREA_LSN))                 # area_1_toc_1_start
     put(be32(0))                        # area_1_toc_2_start
@@ -70,7 +71,7 @@ def master_toc_sector():
     put(be16(10))                       # area_1_toc_size (LSNs)
     put(be16(0))                        # area_2_toc_size
     put(b"\x00" * 16)                   # disc_catalog_number
-    put(b"\x00" * 20)                   # disc_genre[4]
+    put(b"\x00" * 16)                   # disc_genre[4] (4-byte genre_table_t)
     put(be16(2025))                     # disc_date_year
     put(bytes([11, 2]))                 # month, day
     put(b"\x00" * 4)                    # reserved05
@@ -78,13 +79,30 @@ def master_toc_sector():
     put(b"\x00" * 7)                    # reserved06
     for _ in range(8):                  # locales[8]
         put(b"en" + bytes([0, 0]))
-    assert off == 176, off
+    # 4-byte genre tables (real-disc ground truth: Firebird's master TOC
+    # has year at 120, text_area_count at 128, reserved06 at 129-136,
+    # locales at 136-168). The previous 20-byte genre arrays shifted the
+    # tail 8 bytes late and failed the original daemon's reserved06
+    # zero-check in the full-system guest (the qemu-user rig never caught
+    # it: both binaries failed OPEN identically, so the differential was
+    # equal-failure-equal).
+    assert off == 168, off
     return bytes(s)
 
 
 def sacd_text_sector():
     s = bytearray(LSN)
     s[0:8] = b"SACDText"
+    return bytes(s)
+
+
+def sacd_man_sector():
+    """master_man_t: id 'SACD_Man' + zeros (real Firebird LSN 519 ground
+    truth; scarletbook_read_master_toc requires it at the end of the
+    10-sector master read or fails with a SILENT return 0 -> the daemon's
+    'Can't read Master TOC' without any diagnostic)."""
+    s = bytearray(LSN)
+    s[0:8] = b"SACD_Man"
     return bytes(s)
 
 
@@ -161,6 +179,7 @@ def main():
     put_sector(510, master_toc_sector())
     for i in range(511, 519):
         put_sector(i, sacd_text_sector())
+    put_sector(519, sacd_man_sector())
     put_sector(AREA_LSN, area_toc_sector())
     for lsn in list(range(0, 128)) + [MID_LSN, MID_LSN + 1]:
         put_sector(lsn, synthetic_sector(lsn))

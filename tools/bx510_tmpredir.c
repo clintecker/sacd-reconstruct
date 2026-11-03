@@ -18,12 +18,16 @@
 #define _GNU_SOURCE
 #include <dlfcn.h>
 #include <fcntl.h>
+#include <unistd.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
+
+/* redirected /dev/sr0 descriptor, for read-path instrumentation */
+static int sr0_fd = -1;
 
 static const char *redirect(const char *path, char *out, size_t n)
 {
@@ -60,6 +64,8 @@ int open64(const char *path, int flags, ...)
 {
     static int (*real)(const char *, int, ...) = 0;
     char buf[512];
+    int fd;
+    const char *orig = path;
     if (!real)
         real = dlsym(RTLD_NEXT, "open64");
     path = redirect(path, buf, sizeof(buf));
@@ -69,15 +75,21 @@ int open64(const char *path, int flags, ...)
         va_start(ap, flags);
         mode = va_arg(ap, mode_t);
         va_end(ap);
-        return real(path, flags, mode);
+        fd = real(path, flags, mode);
+    } else {
+        fd = real(path, flags);
     }
-    return real(path, flags);
+    if (fd >= 0 && strcmp(orig, "/dev/sr0") == 0)
+        sr0_fd = fd;
+    return fd;
 }
 
 int open(const char *path, int flags, ...)
 {
     static int (*real)(const char *, int, ...) = 0;
     char buf[512];
+    int fd;
+    const char *orig = path;
     if (!real)
         real = dlsym(RTLD_NEXT, "open");
     path = redirect(path, buf, sizeof(buf));
@@ -87,9 +99,13 @@ int open(const char *path, int flags, ...)
         va_start(ap, flags);
         mode = va_arg(ap, mode_t);
         va_end(ap);
-        return real(path, flags, mode);
+        fd = real(path, flags, mode);
+    } else {
+        fd = real(path, flags);
     }
-    return real(path, flags);
+    if (fd >= 0 && strcmp(orig, "/dev/sr0") == 0)
+        sr0_fd = fd;
+    return fd;
 }
 
 /* glibc's tmpnam ignores TMPDIR (__path_search called with try_tmpdir=0)
@@ -116,6 +132,131 @@ char *tmpnam(char *s)
         snprintf(out, 64, "/tmp/m%06lu", counter++);
     }
     return out;
+}
+
+/* the daemon's sacd input path stats /dev/sr0 before opening it
+ * ("libsacdread: Can't stat /dev/sr0" observed live with only open()
+ * redirected), so the stat family needs the same mapping. */
+#include <sys/stat.h>
+
+static int redir_call_stat(int (*real)(int, const char *, void *),
+                           int ver, const char *path, void *st)
+{
+    char buf[512];
+    return real(ver, redirect(path, buf, sizeof(buf)), st);
+}
+
+int __xstat64(int ver, const char *path, struct stat64 *st)
+{
+    static int (*real)(int, const char *, struct stat64 *) = 0;
+    if (!real)
+        real = dlsym(RTLD_NEXT, "__xstat64");
+    return redir_call_stat((int (*)(int, const char *, void *))real, ver, path, st);
+}
+
+int __xstat(int ver, const char *path, struct stat *st)
+{
+    static int (*real)(int, const char *, struct stat *) = 0;
+    if (!real)
+        real = dlsym(RTLD_NEXT, "__xstat");
+    return redir_call_stat((int (*)(int, const char *, void *))real, ver, path, st);
+}
+
+int stat64(const char *path, struct stat64 *st)
+{
+    static int (*real)(const char *, struct stat64 *) = 0;
+    if (!real)
+        real = dlsym(RTLD_NEXT, "stat64");
+    {
+        char buf[512];
+        return real(redirect(path, buf, sizeof(buf)), st);
+    }
+}
+
+int stat(const char *path, struct stat *st)
+{
+    static int (*real)(const char *, struct stat *) = 0;
+    if (!real)
+        real = dlsym(RTLD_NEXT, "stat");
+    {
+        char buf[512];
+        return real(redirect(path, buf, sizeof(buf)), st);
+    }
+}
+
+/* read-path instrumentation: the master-TOC zero check fails in the
+ * guest against a fixture whose on-disk md5 is verified correct, so log
+ * every read on the redirected sr0 fd (offset via SEEK_CUR, requested
+ * and actual length) to /res/readlog for offline analysis. */
+static int log_fd = -1;
+
+static void readlog(const char *msg, long a, long b)
+{
+    char line[128];
+    int n;
+    if (log_fd < 0)
+        log_fd = open("/res/readlog", O_WRONLY | O_CREAT | O_APPEND, 0644);
+    if (log_fd < 0)
+        return;
+    n = snprintf(line, sizeof(line), "%s %ld %ld\n", msg, a, b);
+    write(log_fd, line, n);
+}
+
+ssize_t read(int fd, void *buf, size_t count)
+{
+    static ssize_t (*real)(int, void *, size_t) = 0;
+    ssize_t r;
+    if (!real)
+        real = dlsym(RTLD_NEXT, "read");
+    r = real(fd, buf, count);
+    if (fd == sr0_fd && sr0_fd >= 0 && r > 0) {
+        off_t here = lseek(fd, 0, SEEK_CUR);
+        readlog("R", (long)here - (long)r, (long)r);
+        /* hex of first 176 received bytes: reveals any striding/shift */
+        {
+            unsigned char *p = (unsigned char *)buf;
+            char hex[360];
+            int i, n = 0;
+            int lim = r < 176 ? (int)r : 176;
+            for (i = 0; i < lim; i++)
+                n += snprintf(hex + n, sizeof(hex) - n, "%02x", p[i]);
+            readlog("H", 0, 0);
+            if (log_fd >= 0)
+                write(log_fd, hex, n), write(log_fd, "\n", 1);
+        }
+    }
+    return r;
+}
+
+off64_t lseek64(int fd, off64_t off, int whence)
+{
+    static off64_t (*real)(int, off64_t, int) = 0;
+    if (!real)
+        real = dlsym(RTLD_NEXT, "lseek64");
+    return real(fd, off, whence);
+}
+
+/* stdio: fopen's internal open bypasses the PLT shim, so the paths need
+ * mapping at the fopen layer too ("Can't open /dev/sr0 for reading"
+ * observed live with only open/stat redirected). */
+#include <stdio.h>
+
+FILE *fopen64(const char *path, const char *mode)
+{
+    static FILE *(*real)(const char *, const char *) = 0;
+    char buf[512];
+    if (!real)
+        real = dlsym(RTLD_NEXT, "fopen64");
+    return real(redirect(path, buf, sizeof(buf)), mode);
+}
+
+FILE *fopen(const char *path, const char *mode)
+{
+    static FILE *(*real)(const char *, const char *) = 0;
+    char buf[512];
+    if (!real)
+        real = dlsym(RTLD_NEXT, "fopen");
+    return real(redirect(path, buf, sizeof(buf)), mode);
 }
 
 int unlink(const char *path)

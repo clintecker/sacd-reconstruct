@@ -40,7 +40,9 @@ def sym_name(idx):
 
 count = sym_size // 16
 last = count - 1
-assert sym_name(last) != marker, 'marker already last'
+if sym_name(last) == marker:
+    print('marker already last; nothing to do')
+    raise SystemExit(0)
 midx = None
 for idx in range(count):
     if sym_name(idx) == marker:

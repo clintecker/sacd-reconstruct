@@ -144,3 +144,60 @@ Remaining ladder:
   2. Virtual ODD: implement _IDECLI_OddRead (+ decrypt path) in bdpvirt
      against a backing ISO serving raw 2064-byte frames — then the daemon
      serves real sector data through the real module end to end.
+
+## FINAL UPDATE (same day): FULL END-TO-END PROTOCOL IN THE GUEST — with two real findings
+
+The complete chain now works inside Sony's guest OS:
+
+    client (loopback) -> daemon -> ScarletBook validators -> REAL sacd_read.ko
+    -> bdpvirt virtual ODD -> raw 2064-byte frames -> decrypt-pack -> wire
+
+v36 transcript (p0v36-uart.log):
+
+    GC: connected 127.0.0.1:2002
+    GC: OPEN  -> type=1 result=0
+    GC: SIZE  -> type=4 result=86200 (sectors)
+    GC: READ lsn=0 cnt=1     -> type=3 result=1 datalen=2048
+    GC: data[0..15]: e7 c2 04 c3 2b e6 59 30 c5 8c 0c 9f 6f 5a 11 dc
+    GC: READ lsn=43100 cnt=1 -> type=3 result=1 datalen=2048
+    GC: CLOSE -> type=2 result=0
+    GC: post-close read -> 0 (EOF)          <- daemon closes after DISC_CLOSE
+    GC: DONE
+
+data[0..15] is BYTE-IDENTICAL to the fixture's synthetic(0) logical sector
+(verified by regeneration), proving the payload path end to end.
+
+### Finding 1 (latent fixture bug caught by the third leg):
+The original daemon's master-TOC validator failed reserved06 with the
+year bytes in it. Root cause: fixture_gen.py (and its C port) used
+20-byte genre arrays (5-byte genre_table_t), but the real struct uses
+4-byte genre_table_t (category u8 + reserved u16 + genre u8) — confirmed
+against the real Firebird disc: year at 120-123, text_area_count at 128,
+reserved06 at 129-136, locales at 136-168. The qemu-user rig NEVER caught
+this because both binaries failed OPEN identically — equal failures
+compare identical. The full-system guest exposed it via the daemon's
+own validator. Both generators fixed (master TOC = 168 bytes, + the
+required 'SACD_Man' block at LSN 519 — the validator's silent final
+check, also real-disc confirmed).
+
+### Finding 2 (client port bug, mine):
+My in-guest C client's protobuf parser mis-consumed the data field (used
+the pre-varint position), making GOOD daemon frames look corrupt. The
+daemon was correct all along; raw-byte logging (gc-raw.bin) proved the
+frames were perfect: 08 03 10 01 1a 80 10 + 2048 + 00.
+
+### Session bugs fixed along the way (all documented in source):
+- guest UART line length (~62 chars safe; long lines garble via the
+  64-byte ring), observe marker-in-echo trip, stale-probe-copy runs,
+  non-idempotent patch scripts, implicit-isb from asm/uaccess.h (use
+  kernel_read's internal set_fs instead), static-binary partition limits.
+
+### Rig seam inventory (what stands between this and hardware truth):
+- bdpvirt: 13 kallsyms-provided bdpdrv functions (contracts decoded for
+  GetInstHandleFromCompId, CPSMode_Ctrl, Connect, OddRead(=implemented),
+  Inst_Decrypt(=verbatim copy), TestUnitReadyLoop, GetProfile; the rest
+  are presence stubs until traffic exercises them).
+- The virtual ODD serves plaintext fixtures only; real CPSA decrypt
+  output remains the on-player pair capture's ground truth.
+- Remaining next rung: the in-guest DIFFERENTIAL — same session against
+  the release candidate, transcript-for-transcript.

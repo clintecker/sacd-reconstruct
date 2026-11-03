@@ -18,6 +18,7 @@
 #define _GNU_SOURCE
 #include <dlfcn.h>
 #include <errno.h>
+#include <stdlib.h>
 #include <fcntl.h>
 #include <unistd.h>
 #include <stdarg.h>
@@ -32,6 +33,17 @@ static int sr0_fd = -1;
 
 static const char *redirect(const char *path, char *out, size_t n)
 {
+    /* HDHOST seam knob (large-image rig, docs/large-image-interface.md):
+     * TMPREDIR_SR0_TARGET reroutes ONLY /dev/sr0 — the daemon's hardcoded
+     * disc path — to an arbitrary node (e.g. /res/dev/hdhost), while
+     * every other /dev and /tmp rewrite keeps its existing semantics. */
+    if (path && strcmp(path, "/dev/sr0") == 0) {
+        const char *t = getenv("TMPREDIR_SR0_TARGET");
+        if (t && *t) {
+            snprintf(out, n, "%s", t);
+            return out;
+        }
+    }
     if (path && strncmp(path, "/tmp/", 5) == 0) {
         snprintf(out, n, "/res/tmp/%s", path + 5);
         return out;

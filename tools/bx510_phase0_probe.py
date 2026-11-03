@@ -87,6 +87,11 @@ def main():
                    help="HDHOST guest block-driver module (hdhost.ko) to "
                         "stage and load; enables the in-guest device "
                         "verification commands")
+    p.add_argument("--sr0-target", type=str, default=None,
+                   help="HDHOST rig: reroute the daemon's /dev/sr0 to this "
+                        "guest node (tmpredir TMPREDIR_SR0_TARGET env + "
+                        "bdpvirt target= module param), e.g. /res/dev/hdhost. "
+                        "Default None = the tmpfs-fixture regression rig.")
     p.add_argument("--rawdump", action="store_true",
                    help="dump the full both-direction raw capture "
                         "(gc-raw.bin + gc-tx.bin) through the UART as "
@@ -115,9 +120,14 @@ def main():
         "echo x > /res/zero",
         "echo P0_EXEC_BEGIN; ls -l /res/original /res/shim; echo P0_EXEC_END",
         "/bin/chmod 755 /res/shim/bgstart",
-        "/sbin/insmod /res/shim/bdpvirt.ko; echo P0_STUB=$?; cat /res/proc/modules",
+        (("/sbin/insmod /res/shim/bdpvirt.ko target=%s; echo P0_STUB=$?; "
+          "cat /res/proc/modules" % a.sr0_target) if a.sr0_target else
+         "/sbin/insmod /res/shim/bdpvirt.ko; echo P0_STUB=$?; cat /res/proc/modules"),
         "echo P0_BDPDIR_BEGIN; ls -l /lib/modules/2.6.35/BDP/; echo P0_BDPDIR_END",
 
+        ("TMPREDIR_SR0_TARGET=%s LD_PRELOAD=/res/shim/tmpredir.so "
+         "/res/shim/bgstart /res/original/sacd_extract_160 -S"
+         % a.sr0_target) if a.sr0_target else
         "LD_PRELOAD=/res/shim/tmpredir.so /res/shim/bgstart "
         "/res/original/sacd_extract_160 -S",
         "sleep 8; echo P0_TCP_BEGIN; cat /res/proc/net/tcp; echo P0_TCP_END",
@@ -169,6 +179,20 @@ def main():
             "dd if=/res/dev/hdhost bs=2048 skip=8190 count=2 2>/res/e | md5sum",
             "dd if=/res/dev/hdhost bs=2048 skip=8191 count=1 2>/res/e | md5sum",
             "dd if=/res/dev/hdhost bs=2048 skip=4000000 count=1 2>/res/e >/dev/null; echo P0_HDOOB=$?",
+            *([
+                # C-generator (guest tmpfs fixture) vs PY-generator
+                # (host image through HDHOST): must agree byte-for-byte
+                "echo P0_HDID_BEGIN",
+                "dd if=/res/dev/sr0 bs=2048 skip=510 count=1 2>/res/e | md5sum",
+                "dd if=/res/dev/hdhost bs=2048 skip=510 count=1 2>/res/e | md5sum",
+                "dd if=/res/dev/sr0 bs=2048 skip=0 count=1 2>/res/e | md5sum",
+                "dd if=/res/dev/hdhost bs=2048 skip=0 count=1 2>/res/e | md5sum",
+                "dd if=/res/dev/sr0 bs=2048 skip=43100 count=1 2>/res/e | md5sum",
+                "dd if=/res/dev/hdhost bs=2048 skip=43100 count=1 2>/res/e | md5sum",
+                "dd if=/res/dev/sr0 bs=2048 skip=80000 count=2 2>/res/e | md5sum",
+                "dd if=/res/dev/hdhost bs=2048 skip=80000 count=2 2>/res/e | md5sum",
+                "echo P0_HDID_END",
+            ] if a.sr0_target else []),
             "echo P0_HDDONE",
         ] if a.hdmod else []),
         'echo P0_F""INISHED',

@@ -192,6 +192,27 @@ rig-restart-recontrol:
 
 # ── Unit-of-work gates ──────────────────────────────────────────────────────
 
+## SACD session :: sacd-py SCRIPT=path :: run a local python script with CWD pinned to the repo root :: THE CWD-reset fix for edit scripts — every bash call in this session starts at the session root (the MAIN security repo), and heredoc edits with relative paths kept failing or worse; write the script to /tmp (absolute path), reference repo files by repo-relative paths, and run it through this target so make -C guarantees the working directory
+.PHONY: sacd-py
+sacd-py:
+	@test -n "$(SCRIPT)" || (echo "usage: make sacd-py SCRIPT=/tmp/edit.py (repo-relative paths inside)" && exit 2)
+	python3 "$(SCRIPT)"
+
+## SACD session :: sacd-commit MSGFILE=path [PATHS=...] :: commit and push THIS repo through the identity gates :: asserts the git top-level is the canonical SACD checkout AND origin is git@github.com:clintecker/aftermath.git before anything is staged — the a490e51 incident (a sacd sync commit landed in the main security repo from a reset CWD) is structurally impossible when commits only ever happen through this target; refuses on unclean prerequisites loudly
+.PHONY: sacd-commit
+sacd-commit:
+	@test -n "$(MSGFILE)" || (echo "usage: make sacd-commit MSGFILE=/tmp/msg.txt [PATHS=...]" && exit 2)
+	@test "$$(git rev-parse --show-toplevel)" = "$$(pwd)" || (echo "FATAL: repo top-level mismatch: $$(git rev-parse --show-toplevel) vs $$(pwd)" && exit 1)
+	@test "$$(git remote get-url origin)" = "git@github.com:clintecker/aftermath.git" || (echo "FATAL: origin is $$(git remote get-url origin), not the canonical aftermath remote" && exit 1)
+	$(if $(PATHS),git add $(PATHS),git add -A)
+	@git status --short | head -20
+	git commit -q -F "$(MSGFILE)" && git push -q origin HEAD && echo "canonical pushed: $$(git rev-parse HEAD)"
+
+## SACD session :: sacd-sync-standalone [MSG=...] :: mirror the canonical tree into the standalone review repo (tests there, commit, push) :: the dual-repo discipline as one command — stages tools + gate/hdhost evidence + docs + kit + Makefile/AGENTS into clintecker/sacd-reconstruct, verifies ITS origin remote and top-level, runs the 11 alteration controls in that tree, and commits with the canonical hash; refuses if either repo has the wrong identity or the canonical tree is dirty
+.PHONY: sacd-sync-standalone
+sacd-sync-standalone:
+	bash experiments/sacd_reconstruct/tools/sacd_sync_standalone.sh "$(MSG)"
+
 ## SACD vm-tools :: sacd-stage :: (no arguments) :: stage every tracked guest-tool source to the VM in one shot :: the stale-copy killer — the tree is the single source of truth; VM copies are disposable and re-staged before every consuming run (the stale-probe trap bit three times: an old probe/runner silently produced old-format evidence that only the hardened gate caught)
 .PHONY: sacd-stage
 sacd-stage:
@@ -220,6 +241,12 @@ sacd-hdhost-smoke: sacd-stage sacd-hdhost-mod
 	$(VM_SCP) experiments/sacd_reconstruct/tools/bx510_hdsmoke.sh $(VM_USER)@$(VM_HOST):/tmp/bx510_hdsmoke.sh
 	$(VM_SSH) 'sh /tmp/bx510_hdsmoke.sh' | tee /tmp/hdsmoke-local.out | tail -12
 	-$(VM_SSH) 'ls -dt /tmp/hdsmoke-* | head -1' | xargs -I{} $(VM_SCP) -r "$(VM_USER)@$(VM_HOST):{}" experiments/sacd_reconstruct/evidence/bx510-guest/hdhost/ 2>/dev/null
+
+## SACD gates :: sacd-gate3 :: (no arguments) :: HDHOST intermediate gate: the canonical 6-boot validation with the disc served through the host-image interface :: reuses the existing fixture content and gate expectations UNCHANGED — only the transport differs (tmpfs file -> HDHOST block node), so a PASS proves the whole large-image path with known expectations; per-boot C-vs-PY byte-identity asserted; negative control corrupts the host image variant; pulls evidence into evidence/bx510-guest/gates3/
+.PHONY: sacd-gate3
+sacd-gate3: sacd-stage
+	$(VM_SSH) 'cp /tmp/bx510_gate3.sh /tmp/gate3.sh; sh /tmp/gate3.sh' | tail -30
+	-OUT=$$($(VM_SSH) 'ls -dt /tmp/gate3v-* 2>/dev/null | head -1'); if [ -n "$$OUT" ]; then mkdir -p experiments/sacd_reconstruct/evidence/bx510-guest/gates3; $(VM_SCP) -r "$(VM_USER)@$(VM_HOST):$$OUT" experiments/sacd_reconstruct/evidence/bx510-guest/gates3/ >/dev/null 2>&1; echo "evidence pulled: gates3/$$(basename $$OUT)"; fi
 
 ## SACD gates :: sacd-gate :: (no arguments) :: the canonical 6-boot gate from tracked sources, end to end :: stages every tracked tool first (kills the stale-copies class), runs tools/bx510_gate2.sh (fresh timestamped dir, probe-failure propagation, raw-frame verification in the verdict), then pulls the evidence dir into evidence/bx510-guest/gates/
 .PHONY: sacd-gate

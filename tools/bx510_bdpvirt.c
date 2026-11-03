@@ -93,6 +93,13 @@ EXPORT_SYMBOL(i4CPSA_Inst_Disconnect);
 #include <linux/fs.h>
 #include <linux/slab.h>
 
+/* HDHOST seam knob (large-image rig, docs/large-image-interface.md):
+ * the OddRead source node, switchable at insmod time
+ * (insmod bdpvirt.ko target=/res/dev/hdhost). Default = the tmpfs
+ * fixture path, so the regression rig is unchanged. */
+static char *target = "/res/dev/sr0";
+module_param(target, charp, 0444);
+
 #define FRAME_SIZE 2064
 #define LOGICAL_SIZE 2048
 
@@ -112,7 +119,7 @@ int _IDECLI_OddRead(unsigned lsn, unsigned blocks, void *buf,
          * over MAX_NON_LFS (2 GiB) without it (fs/open.c:1083) — the real
          * Firebird ISO is 2.03 GiB. Caught via the virtual-drive team's
          * review before any large-image run. */
-        fix = filp_open("/res/dev/sr0", O_RDONLY | O_LARGEFILE, 0);
+        fix = filp_open(target, O_RDONLY | O_LARGEFILE, 0);
         if (IS_ERR(fix)) {
             printk(KERN_ERR "bdpvirt: OddRead: no fixture (%ld)\n",
                    PTR_ERR(fix));

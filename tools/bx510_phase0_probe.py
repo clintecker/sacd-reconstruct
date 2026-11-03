@@ -28,6 +28,7 @@ from run import command
 from smoke import observe
 
 REFERENCE = "0fdcefdb84ae818be7385657eaf0960053f6e4452a82f19cbe6777f9c8cddb45"
+RELEASE = "e91720fbbbd592505bde6630843b0495ff82a93e40c0e427aaa70a081ff9ae22"
 
 
 def build_tar(reference: Path, shim: Path, bgstart: Path, stub: Path,
@@ -35,8 +36,9 @@ def build_tar(reference: Path, shim: Path, bgstart: Path, stub: Path,
     buf = io.BytesIO()
     with tarfile.open(fileobj=buf, mode="w", format=tarfile.USTAR_FORMAT) as arc:
         elf = reference.read_bytes()
-        if hashlib.sha256(elf).hexdigest() != REFERENCE:
-            raise ValueError(f"unexpected SHA-256 for {reference}")
+        got = hashlib.sha256(elf).hexdigest()
+        if got not in (REFERENCE, RELEASE):
+            raise ValueError(f"unexpected SHA-256 for {reference}: {got}")
         entry = tarfile.TarInfo("original/sacd_extract_160")
         entry.size, entry.mode = len(elf), 0o755
         arc.addfile(entry, io.BytesIO(elf))

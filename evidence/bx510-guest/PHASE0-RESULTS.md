@@ -201,3 +201,27 @@ frames were perfect: 08 03 10 01 1a 80 10 + 2048 + 00.
   output remains the on-player pair capture's ground truth.
 - Remaining next rung: the in-guest DIFFERENTIAL — same session against
   the release candidate, transcript-for-transcript.
+
+## THE COMBINED MILESTONE (agreed with the virtual-drive team): in-guest differential — IDENTICAL
+
+Both pinned ELFs ran the complete guest session — each loading its own
+real embedded sacd_read.ko through its own install path, against the same
+ISO-backed fixture, inside Sony's kernel and libc:
+
+    original  0fdcefdb84ae818b...  -> transcript-orig.txt
+    release   e91720fbbbd59250...  -> transcript-rel.txt
+    diff -> TRANSCRIPTS: IDENTICAL (17 steps each, payload hashes equal)
+
+Steps covered: OPEN=0, SIZE=86200, 1-sector reads (byte-verified logical
+payloads), 128-sector read (result=128, 262144 bytes), encryption-boundary
+clamp (79990/20 -> result=10 exactly per the daemon's boundary logic),
+encrypted-range read (80000/2 -> decrypt path fired, mock plaintext),
+beyond-EOF (graceful result=0), CLOSE=0, post-close EOF, reconnect after
+1s (OPEN#2/READ#2/CLOSE#2 all clean).
+
+This is the fourth verification dimension for the release decision:
+  1. sacd-verify: clean build + 388/390 fn + interface + pool audit
+  2. sacd-rig: qemu-user protocol replay, both replays IDENTICAL
+  3. sacd-emu-*: guest execution (--help identical) + THIS differential
+  4. pending: hardware baseline + pair capture (the only ground truth
+     for real CPSA decrypt output)

@@ -1,4 +1,8 @@
 /* bx510_guest_client.c — in-guest SACD daemon protocol client (loopback).
+ * Every data payload is hashed (FNV-1a 64) so a transcript diff between
+ * runs IS the strict comparison: same steps, same results, same lengths,
+ * same payload hashes.
+ *
  *
  * Drives the daemon on 127.0.0.1:2002 with the verified nanopb wire format
  * (byte-identical to real nanopb, cross-checked against sacd_client.py in
@@ -30,6 +34,17 @@
 #define REQ_DISC_SIZE 4
 
 static uint8_t rbuf[512 * 1024];
+
+static unsigned long long fnv1a64(const uint8_t *p, long n)
+{
+    unsigned long long h = 0xcbf29ce484222325ULL;
+    long i;
+    for (i = 0; i < n; i++) {
+        h ^= p[i];
+        h *= 0x100000001b3ULL;
+    }
+    return h;
+}
 
 static int wvarint(uint8_t *out, uint64_t v)
 {
@@ -202,13 +217,51 @@ int main(int argc, char **argv)
         printf("GC: data[0..15]:");
         for (i = 7; i < 7 + 16 && i < 512 * 1024; i++)
             printf(" %02x", rbuf[i]);
-        printf("\n");
+        printf(" fnv1a64=%016llx\n", fnv1a64(rbuf + 7, datalen));
     }
 
     if (send_request(fd, REQ_DISC_READ, 43100, 1) ||
         read_response(fd, &type, &result, &datalen))
         goto fail;
     printf("GC: READ lsn=43100 cnt=1 -> type=%llu result=%lld datalen=%ld\n",
+           (unsigned long long)type, (long long)result, datalen);
+
+    /* 128-sector read at the start of the unencrypted zone: exercises
+     * MAX_PROCESSING_BLOCK_SIZE and the module's multi-block frame path
+     * (2064*128 raw -> 128 logical on the wire). */
+    if (send_request(fd, REQ_DISC_READ, 0, 128) ||
+        read_response(fd, &type, &result, &datalen))
+        goto fail;
+    printf("GC: READ lsn=0 cnt=128 -> type=%llu result=%lld datalen=%ld fnv1a64=%016llx\n",
+           (unsigned long long)type, (long long)result, datalen,
+           datalen > 0 ? fnv1a64(rbuf + 7, datalen) : 0ULL);
+
+    /* encryption-boundary clamp: the fixture's encrypted range starts at
+     * 80000, so a 20-sector read at 79990 must return exactly 10 blocks
+     * (unencrypted side) per the daemon's boundary logic. */
+    if (send_request(fd, REQ_DISC_READ, 79990, 20) ||
+        read_response(fd, &type, &result, &datalen))
+        goto fail;
+    printf("GC: READ lsn=79990 cnt=20 (boundary) -> type=%llu result=%lld datalen=%ld fnv1a64=%016llx\n",
+           (unsigned long long)type, (long long)result, datalen,
+           datalen > 0 ? fnv1a64(rbuf + 7, datalen) : 0ULL);
+
+    /* encrypted-range read: 80000 is inside the fixture's encrypted
+     * range; the module's decrypt path fires (mock plaintext copy) and
+     * the wire payload must equal the fixture's logical bytes. */
+    if (send_request(fd, REQ_DISC_READ, 80000, 2) ||
+        read_response(fd, &type, &result, &datalen))
+        goto fail;
+    printf("GC: READ lsn=80000 cnt=2 (encrypted) -> type=%llu result=%lld datalen=%ld fnv1a64=%016llx\n",
+           (unsigned long long)type, (long long)result, datalen,
+           datalen > 0 ? fnv1a64(rbuf + 7, datalen) : 0ULL);
+
+    /* beyond-EOF probe (module-level failure test): 86200 sectors, so
+     * LSN 86300 is past the end; expect a non-positive result */
+    if (send_request(fd, REQ_DISC_READ, 86300, 1) ||
+        read_response(fd, &type, &result, &datalen))
+        goto fail;
+    printf("GC: READ lsn=86300 (beyond EOF) -> type=%llu result=%lld datalen=%ld\n",
            (unsigned long long)type, (long long)result, datalen);
 
     if (send_request(fd, REQ_DISC_CLOSE, 0, 0) ||
@@ -224,8 +277,38 @@ int main(int argc, char **argv)
                n == 0 ? "EOF" : n < 0 ? strerror(errno) : "data?");
     }
     close(fd);
+    sleep(1);
+
+    /* reconnect: the daemon must accept a fresh session after CLOSE */
+    fd = socket(AF_INET, SOCK_STREAM, 0);
+    setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv));
+    if (connect(fd, (struct sockaddr *)&a, sizeof(a)) < 0) {
+        perror("GC: reconnect connect");
+        return 1;
+    }
+    printf("GC: reconnected\n");
+    if (send_request(fd, REQ_DISC_OPEN, 0, 0) ||
+        read_response(fd, &type, &result, &datalen))
+        goto fail2;
+    printf("GC: OPEN#2 -> type=%llu result=%lld\n",
+           (unsigned long long)type, (long long)result);
+    if (send_request(fd, REQ_DISC_READ, 43100, 1) ||
+        read_response(fd, &type, &result, &datalen))
+        goto fail2;
+    printf("GC: READ#2 lsn=43100 -> type=%llu result=%lld datalen=%ld\n",
+           (unsigned long long)type, (long long)result, datalen);
+    if (send_request(fd, REQ_DISC_CLOSE, 0, 0) ||
+        read_response(fd, &type, &result, &datalen))
+        goto fail2;
+    printf("GC: CLOSE#2 -> type=%llu result=%lld\n",
+           (unsigned long long)type, (long long)result);
+    close(fd);
     printf("GC: DONE\n");
     return 0;
+fail2:
+    printf("GC: FAIL at reconnect step (%s)\n", strerror(errno));
+    close(fd);
+    return 1;
 fail:
     printf("GC: FAIL at step (errno=%s)\n", strerror(errno));
     {

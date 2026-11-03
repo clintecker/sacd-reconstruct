@@ -1,0 +1,118 @@
+6e0000656e0000656e0000656e0000656e0000656e0000656e0000656e00000000000000000000
+R 1228800 20480
+H 0 0
+54574f4348544f43011400010000000000000000040000000000000000000000020002000000000000000000000000000000000000000000000000000000000000000000000100000001388000014ff0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+R 1044480 20480
+H 0 0
+534143444d544f4301140000000000000001000100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000025800000000000000000000000000000000000a0000000000000000000000000000000000000000000000000000000000000000000007e90b02000000000100000000000000656e0000656e0000656e0000656e0000656e0000656e0000656e0000656e00000000000000000000
+R 1228800 20480
+H 0 0
+54574f4348544f43011400010000000000000000040000000000000000000000020002000000000000000000000000000000000000000000000000000000000000000000000100000001388000014ff0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+R 1044480 20480
+H 0 0
+534143444d544f4301140000000000000001000100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000025800000000000000000000000000000000000a0000000000000000000000000000000000000000000000000000000000000000000007e90b02000000000100000000000000656e0000656e0000656e0000656e0000656e0000656e0000656e0000656e00000000000000000000
+R 1228800 20480
+H 0 0
+54574f4348544f43011400010000000000000000040000000000000000000000020002000000000000000000000000000000000000000000000000000000000000000000000100000001388000014ff0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+P0_RL_END
+/ # echo P0_P128_BEGIN
+P0_P128_BEGIN
+/ # hexdump -v -e '16/1 "%02x" "
+> "' /res/p128.bin | head -4
+e7c204c32be65930c58c0c9f6f5a11dc
+e1f9c41cbd9bebfc13f2137c5bf46348
+cf6af9eb7fdabd1246bebf97dd819e6e
+6faf0a6a1c430dc3cb23b0064f17e15b
+/ # echo P0_P128_END
+P0_P128_END
+/ # LD_PRELOAD= /res/shim/sacdstat; echo P0_STAT=$?
+bdpvirt: GetProfile(out=dda3feec) -> profile 0x10
+STAT: ioctl(5307) ret=0 errno=0 a=0 b=0 c=0 d=0
+P0_STAT=0
+/ # dd if=/res/dev/sr0 bs=2048 skip=510 count=1 2>/res/e | md5sum
+549c7a36a0050f23788a156c4578e998  -
+/ # echo P0_RAW_BEGIN; hexdump -v -e '1/1 "%02x"' /res/gc-raw.bin | head -c 48; 
+echo
+P0_RAW_BEGIN
+0801100000080410b8a10500080310011a8010e7c204c32b
+/ # dd if=/res/gc-raw.bin bs=1 skip=2040 count=16 2>/res/e | hexdump -v -e '1/1 
+"%02x"'; echo P0_RAW_END
+0546db6120d4652d61d6dad4808ac81cP0_RAW_END
+/ # dd if=/res/dev/sr0 bs=2048 skip=510 count=1 2>/res/e | md5sum
+bdpvirt: TestUnitReadyLoop(a=0x4e20)
+bdpvirt: GetProfile(out=ddaabeec) -> profile 0x10
+549c7a36a0050f23788a156c4578e998  -
+/ # dd if=/res/dev/sr0 bs=2048 skip=600 count=1 2>/res/e | md5sum
+88eb7b142c7cacd1540b89adabd19c95  -
+/ # hexdump -v -e '16/1 "%02x" "
+> "' /res/t510 | head -12
+534143444d544f430114000000000000
+00010001000000000000000000000000
+00000000000000000000000000000000
+00000000000000000000000000000000
+00000258000000000000000000000000
+00000000000a00000000000000000000
+00000000000000000000000000000000
+000000000000000007e90b0200000000
+0100000000000000656e0000656e0000
+656e0000656e0000656e0000656e0000
+656e0000656e00000000000000000000
+00000000000000000000000000000000
+/ # echo P0_OUT_BEGIN; cat /res/daemon.out; echo P0_OUT_END
+P0_OUT_BEGIN
+mknod: /dev/sacd_read: No such file or directory
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              P0_OUT_END
+/ # /sbin/insmod /res/shim/hdhost.ko; echo P0_HD=$?
+hdhost: read-only host image, 8192 sectors x 2048 bytes (major 254)
+P0_HD=0
+/ # grep hdhost /res/proc/devices; echo P0_HDDEV=$?
+254 hdhost
+P0_HDDEV=0
+/ # set -- $(grep hdhost /res/proc/devices); /bin/mknod /res/dev/hdhost b $1 0; 
+echo P0_HDNODE=$?
+P0_HDNODE=0
+/ # dd if=/res/dev/hdhost bs=2048 skip=0 count=1 2>/res/e | md5sum
+579820d0db7a05284ccdd8ed0c7bdb14  -
+/ # dd if=/res/dev/hdhost bs=2048 skip=10 count=1 2>/res/e | md5sum
+16c01e13ce71a27b74b36346bbad9373  -
+/ # dd if=/res/dev/hdhost bs=2048 skip=5000 count=1 2>/res/e | mdbdpvirt: TestUnitReadyLoop(a=0x4e20)
+bdpvirt: GetProfile(out=ddaabeec) -> profile 0x10
+5sum
+77ae8a69d2543f03bb0aba6956117acf  -
+/ # dd if=/res/dev/hdhost bs=2048 skip=8190 count=2 2>/res/e | md5sum
+8e307f29baf8cea0d0e524bf154f8d1c  -
+/ # dd if=/res/dev/hdhost bs=2048 skip=8191 count=1 2>/res/e | md5sum
+bd478dccba837b6f5cadfb1c59ec92b2  -
+/ # dd if=/res/dev/hdhost bs=2048 skip=4000000 count=1 2>/res/e >/dev/null; echo
+ P0_HDOOB=$?
+P0_HDOOB=1
+/ # echo P0_HDDONE
+P0_HDDONE
+/ # echo P0_F""INISHED
+P0_FINISHED
+--- unimp: 29 lines ---
+     1  bx510: unimplemented read 0x70000070 (4)
+     1  bx510: unimplemented read 0x7000007c (4)
+     1  bx510: unimplemented read 0x7000811c (4)
+     1  bx510: unimplemented read 0x70008730 (4)
+     1  bx510: unimplemented read 0x70024080 (4)
+     1  bx510: unimplemented read 0x70024088 (4)
+     1  bx510: unimplemented read 0x700240c4 (4)
+     1  bx510: unimplemented read 0x70024144 (4)
+     2  bx510: unimplemented read 0x70024188 (4)
+     1  bx510: unimplemented read 0x700241cc (4)
+     1  bx510: unimplemented write 0x70000070 = 0x50000 (4)
+     2  bx510: unimplemented write 0x70008100 = 0xc047ec40 (4)
+     1  bx510: unimplemented write 0x7000811c = 0x0 (4)
+     1  bx510: unimplemented write 0x70008154 = 0xffffffff (4)
+     1  bx510: unimplemented write 0x70008158 = 0x0 (4)
+     1  bx510: unimplemented write 0x7000815c = 0xffffffff (4)
+     1  bx510: unimplemented write 0x7000c01c = 0x100 (4)
+     2  bx510: unimplemented write 0x70024080 = 0x0 (4)
+     1  bx510: unimplemented write 0x700240c4 = 0x0 (4)
+     2  bx510: unimplemented write 0x70024144 = 0x0 (4)
+     1  bx510: unimplemented write 0x70024144 = 0x100 (4)
+     1  bx510: unimplemented write 0x70024148 = 0xffffffff (4)
+     1  bx510: unimplemented write 0x70024188 = 0x0 (4)
+     1  bx510: unimplemented write 0x70024188 = 0x45 (4)
+     1  bx510: unimplemented write 0x700241cc = 0x4 (4)

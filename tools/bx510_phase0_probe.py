@@ -34,7 +34,7 @@ RELEASE = "e91720fbbbd592505bde6630843b0495ff82a93e40c0e427aaa70a081ff9ae22"
 
 def build_tar(reference: Path, shim: Path, bgstart: Path, stub: Path,
               mkfixture: Path, gclient: Path, lo_up: Path,
-              sacdstat: Path, role: str) -> bytes:
+              sacdstat: Path, role: str, hdmod=None) -> bytes:
     buf = io.BytesIO()
     with tarfile.open(fileobj=buf, mode="w", format=tarfile.USTAR_FORMAT) as arc:
         elf = reference.read_bytes()
@@ -56,7 +56,9 @@ def build_tar(reference: Path, shim: Path, bgstart: Path, stub: Path,
                            ("shim/mkfixture", mkfixture.read_bytes()),
                            ("shim/gclient", gclient.read_bytes()),
                            ("shim/lo_up", lo_up.read_bytes()),
-                           ("shim/sacdstat", sacdstat.read_bytes())):
+                           ("shim/sacdstat", sacdstat.read_bytes()),
+                           *([("shim/hdhost.ko", hdmod.read_bytes())]
+                             if hdmod else [])):
             entry = tarfile.TarInfo(name)
             entry.size, entry.mode = len(blob), 0o755
             arc.addfile(entry, io.BytesIO(blob))
@@ -77,6 +79,14 @@ def main():
                    help="which pinned binary this run exercises; the "
                         "reference's SHA-256 must equal that role's "
                         "digest exactly")
+    p.add_argument("--hdhost", type=Path,
+                   help="HDHOST: VM-side path to the read-only host image; "
+                        "passed to QEMU as the sony-bx510 machine property "
+                        "(device at 0x70020000; see docs/large-image-interface.md)")
+    p.add_argument("--hdmod", type=Path,
+                   help="HDHOST guest block-driver module (hdhost.ko) to "
+                        "stage and load; enables the in-guest device "
+                        "verification commands")
     p.add_argument("--rawdump", action="store_true",
                    help="dump the full both-direction raw capture "
                         "(gc-raw.bin + gc-tx.bin) through the UART as "
@@ -89,7 +99,7 @@ def main():
     images = a.images.resolve(strict=True)
     payload = build_tar(a.reference, a.shim, a.bgstart, a.stub,
                         a.mkfixture, a.gclient, a.lo_up, a.sacdstat,
-                        a.role)
+                        a.role, a.hdmod)
     parts = json.loads((images / "manifest.json").read_text())["partitions"]
     part = next(x for x in parts if x["name"] == "fe_test_data")
     if part["records"] or part["offset"] != 0xe00000 or len(payload) > part["size"]:
@@ -147,6 +157,20 @@ def main():
         "dd if=/res/dev/sr0 bs=2048 skip=600 count=1 2>/res/e | md5sum",
         "hexdump -v -e '16/1 \"%02x\" \"\n\"' /res/t510 | head -12",
         "echo P0_OUT_BEGIN; cat /res/daemon.out; echo P0_OUT_END",
+        *([
+            "/sbin/insmod /res/shim/hdhost.ko; echo P0_HD=$?",
+            "grep hdhost /res/proc/devices; echo P0_HDDEV=$?",
+            # the guest busybox has no tr/cut — split with pure shell
+            "set -- $(grep hdhost /res/proc/devices); "
+            "/bin/mknod /res/dev/hdhost b $1 0; echo P0_HDNODE=$?",
+            "dd if=/res/dev/hdhost bs=2048 skip=0 count=1 2>/res/e | md5sum",
+            "dd if=/res/dev/hdhost bs=2048 skip=10 count=1 2>/res/e | md5sum",
+            "dd if=/res/dev/hdhost bs=2048 skip=5000 count=1 2>/res/e | md5sum",
+            "dd if=/res/dev/hdhost bs=2048 skip=8190 count=2 2>/res/e | md5sum",
+            "dd if=/res/dev/hdhost bs=2048 skip=8191 count=1 2>/res/e | md5sum",
+            "dd if=/res/dev/hdhost bs=2048 skip=4000000 count=1 2>/res/e >/dev/null; echo P0_HDOOB=$?",
+            "echo P0_HDDONE",
+        ] if a.hdmod else []),
         'echo P0_F""INISHED',
     ]
     wanted = [b"P0_FINISHED"]
@@ -160,6 +184,12 @@ def main():
         argv = command(a.qemu.resolve(strict=True), images, "shell", nand)
         unimp = Path(temp) / "unimp.log"
         argv[1:1] = ["-d", "unimp", "-D", str(unimp)]
+        if a.hdhost:
+            try:
+                i = argv.index("-M")
+            except ValueError:
+                i = argv.index("-machine")
+            argv[i + 1] = f"sony-bx510,hdhost={a.hdhost.resolve()}"
         log = observe(argv, commands, wanted, a.timeout, a.log)
         # An expected negative protocol response lives INSIDE a completed
         # run (the client prints result=-1). A probe that never reaches

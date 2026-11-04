@@ -80,13 +80,13 @@ cli_head() {
     printf 'CLI(CLI_drv.sacd.tray 0)\n'
     printf 'CLI(CLI_exec /bin/sh /mnt/sd*/AutoScript/hwmon_restore.sh)\n'
     printf 'CLI(CLI_exec cp /mnt/sd*/AutoScript/sacd_extract_160 /sacd_extract_160)\n'
-    printf 'CLI(CLI_exec cp /mnt/sd*/AutoScript/hwmon /tmp/hwmon)\n'
-    printf 'CLI(CLI_exec chmod 755 /sacd_extract_160 /tmp/hwmon)\n'
+    printf 'CLI(CLI_exec cp /mnt/sd*/AutoScript/hwmon /tmp/hwmon.bin)\n'
+    printf 'CLI(CLI_exec chmod 755 /sacd_extract_160 /tmp/hwmon.bin)\n'
 }
 cli_tail() {
     # hwmon: primary snapshots to the stick, RAM backup to /tmp/hwmon
     # (the stick may unmount at sleep; hwmon_restore recovers the backup)
-    printf 'CLI(CLI_exec /tmp/hwmon /mnt/sd*/AutoScript/hwmon /tmp/hwmon &)\n'
+    printf 'CLI(CLI_exec /tmp/hwmon.bin /mnt/sd*/AutoScript/hwmon-data /tmp/hwmon-data &)\n'
 }
 auto_baseline() {
     cli_head
@@ -95,13 +95,12 @@ auto_baseline() {
 }
 auto_pair() {
     cli_head
-    printf 'CLI(CLI_exec /bin/sh /mnt/sd*/optical/trace-launch.sh /sacd_extract_160 %s /mnt/sd*/AutoScript/firebird.pair -S &)\n' "$PAIR_LSN"
+    # pair capture goes to RAM (/tmp) — the stick may unmount in the
+    # serving state (the scene recipe runs the daemon from RAM for this
+    # reason); hwmon_restore.sh recovers it to the stick at the next
+    # trigger (reinsertion)
+    printf 'CLI(CLI_exec /bin/sh /mnt/sd*/optical/trace-launch.sh /sacd_extract_160 %s /tmp/firebird.pair -S &)\n' "$PAIR_LSN"
     cli_tail
-}
-
-auto_pair() {
-    printf '/bin/sh %s/optical/trace-launch.sh %s/sacd_extract_160 %s %s/firebird.pair -S\n' \
-        "$PLAYER_MOUNT" "$PLAYER_MOUNT" "$PAIR_LSN" "$PLAYER_MOUNT"
 }
 
 cmd_preflight() {
@@ -150,9 +149,10 @@ cmd_usb_build() {
     auto_baseline > "$USB/AutoScript/AutoScript"
     cmd_usb_check
     echo
-    echo "USB built. Next:"
-    echo "  PLAYER: power off, Firebird in tray, USB in, power on (~60-90s),"
-    echo "  then:  make sacd-hw-wait && make sacd-hw-baseline"
+    echo "USB built (MTK CLI format). Next (sleep-trigger protocol):"
+    echo "  PLAYER: check Quick Start Mode is ON; player ON, disc in tray,"
+    echo "  insert USB -> tray opens BY ITSELF (= AutoScript firing),"
+    echo "  power OFF -> sleep -> then: make sacd-hw-wait && make sacd-hw-baseline"
 }
 
 cmd_usb_check() {
@@ -175,7 +175,7 @@ cmd_usb_check() {
     echo "OK  hwmon watcher + restore present"
     echo "AutoScript (${USB}/AutoScript):"
     sed 's/^/    /' "$USB/AutoScript"
-    case "$(cat "$USB/AutoScript")" in
+    case "$(cat "$USB/AutoScript/AutoScript")" in
         *trace-launch*) echo "MODE: pair-capture (instrumented)" ;;
         *) echo "MODE: baseline (normal daemon)" ;;
     esac

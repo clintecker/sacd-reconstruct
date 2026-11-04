@@ -86,10 +86,13 @@ check_elf() {
 # empty hwmon/, daemon never bound). The daemon is copied to / (RAM) and
 # run from there — the stick can be removed once serving (scene recipe).
 cli_head() {
+    # IR squelch lines REMOVED (learning from the 2026-11-04 session: after
+    # a script with CLI_drv.ir.rx.sq ran, the appliance UI wedged in an
+    # OFF-flash loop with an unresponsive power button — leading hypothesis
+    # is persistent IR suppression; the operator's original proven 2-line
+    # script had no squelch lines. Hypothesis-driven removal, labeled.)
     printf '#MTKAT 0.xx script\n'
     printf 'CLI(CLI_drv.sacd.tray 1)\n'
-    printf 'CLI(CLI_drv.ir.rx.sq 0xaf000)\n'
-    printf 'CLI(CLI_drv.ir.rx.sq 0x8f000)\n'
     printf 'CLI(CLI_exec sleep 10s)\n'
     printf 'CLI(CLI_drv.sacd.tray 0)\n'
     printf 'CLI(CLI_exec /bin/sh /mnt/sd*/AutoScript/hwmon_restore.sh)\n'

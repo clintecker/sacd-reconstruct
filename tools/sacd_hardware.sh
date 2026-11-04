@@ -12,7 +12,8 @@
 #   usb-build        DESTRUCTIVE: DISK=/dev/diskN CONFIRM=ERASE — build the
 #                    baseline USB (FAT32, original daemon, observer kit,
 #                    baseline AutoScript)
-#   usb-check        verify the stick's contents (daemon SHA, AutoScript, kit)
+#   usb-check        verify the stick's contents (daemon SHA, AutoScript, kit,
+#                    hwmon watcher, Phase-0 inventory collector)
 #   usb-baseline-mode   write the normal daemon AutoScript line (also
 #                    restores the SILENT pair observer to the stick)
 #   usb-pair-mode       write the pairlaunch AutoScript line (PAIR_LSN) and
@@ -167,6 +168,7 @@ cmd_usb_build() {
     cp "$ORIGINAL" "$USB/AutoScript/sacd_extract_160"
     cp -R "$OPTICAL" "$USB/optical"
     cp "$HWMON_DIR/hwmon" "$USB/AutoScript/hwmon"
+    cp "$HWMON_DIR/inventory" "$USB/AutoScript/inventory"
     cp "$HWMON_DIR/hwmon_restore.sh" "$USB/AutoScript/hwmon_restore.sh"
     cp "$HWMON_DIR/pairlaunch.sh" "$USB/AutoScript/pairlaunch.sh"
     auto_baseline > "$USB/AutoScript/AutoScript"
@@ -204,7 +206,14 @@ cmd_usb_check() {
     [ -f "$USB/AutoScript/hwmon_restore.sh" ] || die "hwmon_restore.sh missing on stick"
     [ -f "$USB/AutoScript/pairlaunch.sh" ] || die "pairlaunch.sh missing on stick"
     echo "OK  hwmon watcher + restore + pairlaunch present"
-    for f in pairlaunch.sh hwmon_restore.sh; do
+    # Phase-0 runtime inventory (plan §4 remainder): static ARM collector,
+    # launched once per boot by hwmon_restore.sh
+    [ -f "$USB/AutoScript/inventory" ] || die "inventory collector missing on stick ($USB/AutoScript/inventory — staged from $HWMON_DIR/inventory)"
+    case "$(file "$USB/AutoScript/inventory" 2>/dev/null)" in
+        *"ELF 32-bit"*ARM*) echo "OK  inventory collector present (ARM)" ;;
+        *) echo "WARN inventory collector is not an ARM ELF — expected the static arm-none-linux-gnueabi build" ;;
+    esac
+    for f in pairlaunch.sh hwmon_restore.sh inventory; do
         if [ -f "$HWMON_DIR/$f" ] && ! cmp -s "$HWMON_DIR/$f" "$USB/AutoScript/$f"; then
             echo "WARN $f on stick differs from the repo copy — a mode flip"
             echo "     (sacd-usb-baseline-mode / sacd-usb-pair-mode) refreshes it"
@@ -227,6 +236,12 @@ cmd_usb_mode() { # $1 = baseline|pair
     # pairlaunch/hwmon_restore (the debug-observer log wiring lives in them)
     cp "$HWMON_DIR/pairlaunch.sh" "$USB/AutoScript/pairlaunch.sh"
     cp "$HWMON_DIR/hwmon_restore.sh" "$USB/AutoScript/hwmon_restore.sh"
+    # keep the Phase-0 inventory collector current too (hwmon_restore now
+    # runs it once per boot)
+    if [ -f "$HWMON_DIR/inventory" ]; then
+        cp "$HWMON_DIR/inventory" "$USB/AutoScript/inventory"
+        echo "refreshed AutoScript/inventory (Phase-0 collector)"
+    fi
     echo "refreshed AutoScript/pairlaunch.sh + hwmon_restore.sh from the repo"
     if [ "$1" = "pair" ]; then
         if [ -f "$USB/AutoScript/firebird.pair" ]; then
@@ -358,6 +373,10 @@ cmd_collect() {
     echo "== collect $(stamp) =="
     mkdir -p "$SESSION_DIR"
     if [ -f "$USB/AutoScript/firebird.pair" ]; then cp "$USB/AutoScript/firebird.pair" "$SESSION_DIR/"; fi
+    # Phase-0 runtime inventories (one per boot; see INVENTORY-SPEC.md)
+    for f in "$USB"/AutoScript/inventory-*.txt; do
+        [ -f "$f" ] && cp "$f" "$SESSION_DIR/"
+    done
     for d in bx510-baseline bx510-baseline-retry bx510-candidate bx510-candidate-retry; do
         if [ -d "$EXP/evidence/$d" ]; then cp -R "$EXP/evidence/$d" "$SESSION_DIR/"; fi
     done

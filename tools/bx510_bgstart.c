@@ -42,6 +42,16 @@ int main(int argc, char **argv)
     }
     if (pid == 0) {
         setenv("TMPDIR", "/res/tmp", 1);
+        /* The release-next daemon's run_loader() execvp("insmod", ...)
+         * resolves through the environment's PATH; the minimal
+         * init=/bin/sh console exports no PATH (busybox finds commands via
+         * its internal default, which is why the frozen original's
+         * system()-through-sh install works), so execvp fails ENOENT and
+         * install_modules reports "insmod did not load the module"
+         * (observed live in the gate4-enhanced battery). A real player's
+         * init scripts export PATH; give the daemon busybox's default.
+         * setenv overwrite=0: an inherited PATH wins. */
+        setenv("PATH", "/sbin:/usr/sbin:/bin:/usr/bin", 0);
         /* Sony's /bin/mknod is statically linked (no LD_PRELOAD), so the
          * daemon's own `mknod /dev/sacd_read` cannot be redirected to
          * tmpfs. Create the misc 10:201 node here; install_modules ignores

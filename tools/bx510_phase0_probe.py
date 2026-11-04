@@ -30,6 +30,9 @@ from smoke import observe
 
 REFERENCE = "0fdcefdb84ae818be7385657eaf0960053f6e4452a82f19cbe6777f9c8cddb45"
 RELEASE = "e91720fbbbd592505bde6630843b0495ff82a93e40c0e427aaa70a081ff9ae22"
+# release-next tree: the B05-B09 fix stack (per-request sizing, checked
+# decrypt, transactional OPEN) — third pinned role, gates as "enhanced".
+ENHANCED = "9aa4b4b4585b742af9d26ad4007e6141b2ef397d299e5359f98b6442067b6792"
 
 
 def build_tar(reference: Path, shim: Path, bgstart: Path, stub: Path,
@@ -44,7 +47,8 @@ def build_tar(reference: Path, shim: Path, bgstart: Path, stub: Path,
         # exercises, and only that binary's digest is accepted. Accepting
         # either digest let an accidental original-vs-original run pass
         # as a cross-binary comparison (team review finding).
-        want = {"original": REFERENCE, "release": RELEASE}[role]
+        want = {"original": REFERENCE, "release": RELEASE,
+                "enhanced": ENHANCED}[role]
         if got != want:
             raise ValueError(f"role {role!r} requires SHA-256 {want}, "
                              f"got {got} for {reference}")
@@ -82,10 +86,11 @@ def main():
                    help="malformed-TOC negative control: corrupt reserved06 "
                         "after mkfixture (both binaries must fail OPEN "
                         "identically; the gate refuses success-parity)")
-    p.add_argument("--role", choices=("original", "release"), required=True,
+    p.add_argument("--role", choices=("original", "release", "enhanced"), required=True,
                    help="which pinned binary this run exercises; the "
                         "reference's SHA-256 must equal that role's "
-                        "digest exactly")
+                        "digest exactly (enhanced = the release-next "
+                        "B05-B09 fix stack)")
     p.add_argument("--hdhost", type=Path,
                    help="HDHOST: VM-side path to the read-only host image; "
                         "passed to QEMU as the sony-bx510 machine property "

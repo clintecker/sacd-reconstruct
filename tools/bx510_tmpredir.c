@@ -73,6 +73,21 @@ int mknodat(int dirfd, const char *path, mode_t mode, dev_t dev)
     return real(dirfd, redirect(path, buf, sizeof(buf)), mode, dev);
 }
 
+/* __xmknod is glibc's mknod backend (plain mknod is only a weak alias
+ * to it); the release-next tree's toolchain emits direct __xmknod PLT
+ * calls, which the mknod hook above does not interpose — observed live
+ * in the guest as "install_modules: mknod failed fffffffe" (ENOENT: no
+ * /dev in the RO root). dev is passed by pointer per the toolchain's
+ * sys/stat.h; only the path is rewritten. */
+int __xmknod(int ver, const char *path, mode_t mode, dev_t *dev)
+{
+    static int (*real)(int, const char *, mode_t, dev_t *) = 0;
+    char buf[512];
+    if (!real)
+        real = dlsym(RTLD_NEXT, "__xmknod");
+    return real(ver, redirect(path, buf, sizeof(buf)), mode, dev);
+}
+
 int open64(const char *path, int flags, ...)
 {
     static int (*real)(const char *, int, ...) = 0;
@@ -285,4 +300,38 @@ int unlink(const char *path)
     if (!real)
         real = dlsym(RTLD_NEXT, "unlink");
     return real(redirect(path, buf, sizeof(buf)));
+}
+
+/* install_modules in the release-next tree builds its temp-module path with
+ * mkstemp("/tmp/sacdXXXXXX") (resolved to the mkstemp64@@GLIBC_2.4 symbol
+ * by its newer toolchain headers), and glibc's internal open inside
+ * mkstemp does NOT go through this shim's interceptable open()/open64() —
+ * observed live in the guest: "install_modules: mkstemp failed fffffffe"
+ * (ENOENT: the RO squashfs root has no /tmp; a real player gets /tmp from
+ * its initramfs). The frozen original uses the tmpnam path, which is why
+ * only the enhanced binary trips this. Intercept at the mkstemp64 boundary
+ * and rewrite the template like any other /tmp path — rig parity only, the
+ * daemon's own logic runs unmodified. */
+int mkstemp64(char *template)
+{
+    static int (*real)(char *) = 0;
+    char buf[512];
+    const char *path;
+    int fd;
+    if (!real)
+        real = dlsym(RTLD_NEXT, "mkstemp64");
+    path = redirect(template, buf, sizeof(buf));
+    fd = real((char *)path);
+    /* mkstemp writes the generated name into the buffer it is given —
+     * ours is the local redirect buffer, so the caller's template would
+     * keep the literal X's and every later use of it (insmod, unlink)
+     * would target a nonexistent file (observed live: "insmod did not
+     * load the module" / "unlink of module image failed"). Write the
+     * generated name back into the caller's template in its ORIGINAL
+     * /tmp form — same length, NUL included — so later calls flow
+     * through redirect() like any other /tmp path. */
+    if (fd >= 0 && path == buf)
+        snprintf(template, strlen(template) + 1, "/tmp/%s",
+                 strrchr(buf, '/') + 1);
+    return fd;
 }

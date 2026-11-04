@@ -95,12 +95,15 @@ auto_baseline() {
 }
 auto_pair() {
     cli_head
-    # pair capture goes to RAM (/tmp) — the stick may unmount in the
-    # serving state (the scene recipe runs the daemon from RAM for this
-    # reason); hwmon_restore.sh recovers it to the stick at the next
-    # trigger (reinsertion)
-    printf 'CLI(CLI_exec /bin/sh /mnt/sd*/optical/trace-launch.sh /sacd_extract_160 %s /tmp/firebird.pair -S &)\n' "$PAIR_LSN"
-    cli_tail
+    # the trace-launch line was the longest in the script and the daemon
+    # never came up (suspected CLI_exec command-length/parse limits —
+    # the parser dump warns of bounded command handling). Everything
+    # complex now lives in pairlaunch.sh (full shell, full logging);
+    # the CLI lines below mirror the proven baseline shapes.
+    printf 'CLI(CLI_exec cp /mnt/sd*/AutoScript/pairlaunch.sh /tmp/pairlaunch.sh)\n'
+    printf 'CLI(CLI_exec /bin/sh /tmp/pairlaunch.sh &)\n'
+    # no cli_tail: pairlaunch.sh starts hwmon with RESOLVED paths (the
+    # CLI-line glob arg was observed left literal by nullglob)
 }
 
 cmd_preflight() {
@@ -146,6 +149,7 @@ cmd_usb_build() {
     cp -R "$OPTICAL" "$USB/optical"
     cp "$HWMON_DIR/hwmon" "$USB/AutoScript/hwmon"
     cp "$HWMON_DIR/hwmon_restore.sh" "$USB/AutoScript/hwmon_restore.sh"
+    cp "$HWMON_DIR/pairlaunch.sh" "$USB/AutoScript/pairlaunch.sh"
     auto_baseline > "$USB/AutoScript/AutoScript"
     cmd_usb_check
     echo
@@ -172,7 +176,8 @@ cmd_usb_check() {
     echo "OK  observer kit present"
     [ -f "$USB/AutoScript/hwmon" ] || die "hwmon watcher missing on stick ($USB/AutoScript/hwmon)"
     [ -f "$USB/AutoScript/hwmon_restore.sh" ] || die "hwmon_restore.sh missing on stick"
-    echo "OK  hwmon watcher + restore present"
+    [ -f "$USB/AutoScript/pairlaunch.sh" ] || die "pairlaunch.sh missing on stick"
+    echo "OK  hwmon watcher + restore + pairlaunch present"
     echo "AutoScript (${USB}/AutoScript):"
     sed 's/^/    /' "$USB/AutoScript"
     case "$(cat "$USB/AutoScript/AutoScript")" in

@@ -35,7 +35,7 @@ EXP="$(cd "$(dirname "$0")/.." && pwd)"
 ORIGINAL="$EXP/original/sacd_extract_160"
 RELEASE="$EXP/reconstruct/release/sacd_extract_160_release"
 OPTICAL="$EXP/emulator-handoff/optical"
-HWMON_DIR="${HWMON_DIR:-$(repo)/evidence/bx510/hwmon-payload}"
+HWMON_DIR="${HWMON_DIR:-$EXP/evidence/bx510/hwmon-payload}"
 
 SHA_ORIG="0fdcefdb84ae818be7385657eaf0960053f6e4452a82f19cbe6777f9c8cddb45"
 SHA_REL="e91720fbbbd592505bde6630843b0495ff82a93e40c0e427aaa70a081ff9ae22"
@@ -64,13 +64,39 @@ check_elf() {
     echo "OK  $1 ($2)"
 }
 
+# --- MTK CLI AutoScript format (saramibreak/SacdImageCreator, proven on
+# BDP-S5100/BX510; scene guides): AutoScript is a DIRECTORY on the stick
+# root containing the ASCII CLI script named "AutoScript", the daemon,
+# hwmon, hwmon_restore.sh. The player's launcher parses "#MTKAT" CLI
+# lines — plain shell text never executes (tonight's failure, evidenced:
+# empty hwmon/, daemon never bound). The daemon is copied to / (RAM) and
+# run from there — the stick can be removed once serving (scene recipe).
+cli_head() {
+    printf '#MTKAT 0.xx script\n'
+    printf 'CLI(CLI_drv.sacd.tray 1)\n'
+    printf 'CLI(CLI_drv.ir.rx.sq 0xaf000)\n'
+    printf 'CLI(CLI_drv.ir.rx.sq 0x8f000)\n'
+    printf 'CLI(CLI_exec sleep 10s)\n'
+    printf 'CLI(CLI_drv.sacd.tray 0)\n'
+    printf 'CLI(CLI_exec /bin/sh /mnt/sd*/AutoScript/hwmon_restore.sh)\n'
+    printf 'CLI(CLI_exec cp /mnt/sd*/AutoScript/sacd_extract_160 /sacd_extract_160)\n'
+    printf 'CLI(CLI_exec cp /mnt/sd*/AutoScript/hwmon /tmp/hwmon)\n'
+    printf 'CLI(CLI_exec chmod 755 /sacd_extract_160 /tmp/hwmon)\n'
+}
+cli_tail() {
+    # hwmon: primary snapshots to the stick, RAM backup to /tmp/hwmon
+    # (the stick may unmount at sleep; hwmon_restore recovers the backup)
+    printf 'CLI(CLI_exec /tmp/hwmon /mnt/sd*/AutoScript/hwmon /tmp/hwmon &)\n'
+}
 auto_baseline() {
-    # daemon + the standby watcher: the watcher snapshots process/
-    # module/display state to the stick continuously, so the power-press
-    # transition (is bdpprog alive in standby? who holds /dev/fb0?) is
-    # captured as runtime evidence (docs/ui-graphics-reconstruction.md)
-    printf '/bin/sh %s/sacd_extract_160 -S &\n' "$PLAYER_MOUNT"
-    printf '/bin/sh %s/hwmon_start.sh &\n' "$PLAYER_MOUNT"
+    cli_head
+    printf 'CLI(CLI_exec /sacd_extract_160 -S &)\n'
+    cli_tail
+}
+auto_pair() {
+    cli_head
+    printf 'CLI(CLI_exec /bin/sh /mnt/sd*/optical/trace-launch.sh /sacd_extract_160 %s /mnt/sd*/AutoScript/firebird.pair -S &)\n' "$PAIR_LSN"
+    cli_tail
 }
 
 auto_pair() {
@@ -116,11 +142,12 @@ cmd_usb_build() {
     i=0
     while [ ! -d "$USB" ] && [ $i -lt 30 ]; do sleep 1; i=$((i+1)); done
     [ -d "$USB" ] || die "USB did not mount at $USB — check the volume name (expected SONYUSB) and pass USB=/Volumes/<name>"
-    cp "$ORIGINAL" "$USB/sacd_extract_160"
+    mkdir -p "$USB/AutoScript"
+    cp "$ORIGINAL" "$USB/AutoScript/sacd_extract_160"
     cp -R "$OPTICAL" "$USB/optical"
-    cp "$HWMON_DIR/hwmon" "$USB/hwmon"
-    cp "$HWMON_DIR/hwmon_start.sh" "$USB/hwmon_start.sh"
-    auto_baseline > "$USB/AutoScript"
+    cp "$HWMON_DIR/hwmon" "$USB/AutoScript/hwmon"
+    cp "$HWMON_DIR/hwmon_restore.sh" "$USB/AutoScript/hwmon_restore.sh"
+    auto_baseline > "$USB/AutoScript/AutoScript"
     cmd_usb_check
     echo
     echo "USB built. Next:"
@@ -131,8 +158,11 @@ cmd_usb_build() {
 cmd_usb_check() {
     echo "== usb-check $(stamp) =="
     [ -d "$USB" ] || die "USB not mounted at $USB (pass USB=/Volumes/<name>)"
-    [ -f "$USB/sacd_extract_160" ] || die "no daemon on the stick"
-    got=$(sha_of "$USB/sacd_extract_160")
+    [ -d "$USB/AutoScript" ] || die "no AutoScript DIRECTORY on the stick (the MTK launcher requires AutoScript/ with the CLI script inside)"
+    [ -f "$USB/AutoScript/AutoScript" ] || die "no CLI script at AutoScript/AutoScript"
+    head -1 "$USB/AutoScript/AutoScript" | grep -q "#MTKAT" || die "AutoScript/AutoScript is not an MTK CLI script (missing '#MTKAT 0.xx script' header)"
+    [ -f "$USB/AutoScript/sacd_extract_160" ] || die "no daemon at AutoScript/sacd_extract_160"
+    got=$(sha_of "$USB/AutoScript/sacd_extract_160")
     case "$got" in
         "$SHA_ORIG") echo "OK  daemon = ORIGINAL (0fdcefdb…)" ;;
         "$SHA_REL")  echo "OK  daemon = RELEASE CANDIDATE (e91720fb…)" ;;
@@ -140,33 +170,36 @@ cmd_usb_check() {
     esac
     [ -f "$USB/optical/trace-launch.sh" ] || die "observer kit missing on stick ($USB/optical)"
     echo "OK  observer kit present"
-    [ -f "$USB/hwmon" ] || die "hwmon watcher missing on stick ($USB/hwmon)"
-    echo "OK  hwmon watcher present (standby-transition snapshots -> <stick>/hwmon/)"
-    echo "AutoScript ($(USB)/AutoScript):"
+    [ -f "$USB/AutoScript/hwmon" ] || die "hwmon watcher missing on stick ($USB/AutoScript/hwmon)"
+    [ -f "$USB/AutoScript/hwmon_restore.sh" ] || die "hwmon_restore.sh missing on stick"
+    echo "OK  hwmon watcher + restore present"
+    echo "AutoScript (${USB}/AutoScript):"
     sed 's/^/    /' "$USB/AutoScript"
     case "$(cat "$USB/AutoScript")" in
         *trace-launch*) echo "MODE: pair-capture (instrumented)" ;;
         *) echo "MODE: baseline (normal daemon)" ;;
     esac
-    [ -f "$USB/firebird.pair" ] && echo "NOTE: firebird.pair already on stick (trace-launch will refuse; make sacd-usb-pair-mode removes it on mode switch)"
+    if [ -f "$USB/firebird.pair" ]; then
+        echo "NOTE: firebird.pair already on stick (trace-launch will refuse; make sacd-usb-pair-mode removes it on mode switch)"
+    fi
 }
 
 cmd_usb_mode() { # $1 = baseline|pair
     [ -d "$USB" ] || die "USB not mounted at $USB"
     if [ "$1" = "pair" ]; then
-        if [ -f "$USB/firebird.pair" ]; then
-            rm "$USB/firebird.pair"
-            echo "removed stale $USB/firebird.pair (trace-launch refuses to overwrite)"
+        if [ -f "$USB/AutoScript/firebird.pair" ]; then
+            rm "$USB/AutoScript/firebird.pair"
+            echo "removed stale firebird.pair (trace-launch refuses to overwrite)"
         fi
-        auto_pair > "$USB/AutoScript"
+        auto_pair > "$USB/AutoScript/AutoScript"
         echo "AutoScript set to PAIR mode at LSN $PAIR_LSN."
         echo "  PLAYER: power off, (disc in, USB in), power on, then:"
         echo "          make sacd-hw-wait && make sacd-hw-pair"
     else
-        auto_baseline > "$USB/AutoScript"
+        auto_baseline > "$USB/AutoScript/AutoScript"
         echo "AutoScript set to BASELINE mode (normal daemon)."
     fi
-    sed 's/^/    /' "$USB/AutoScript"
+    sed 's/^/    /' "$USB/AutoScript/AutoScript"
 }
 
 cmd_usb_use() { # $1 = path $2 = sha $3 = name
@@ -236,9 +269,9 @@ cmd_analyze() {
 cmd_collect() {
     echo "== collect $(stamp) =="
     mkdir -p "$SESSION_DIR"
-    [ -f "$USB/firebird.pair" ] && cp "$USB/firebird.pair" "$SESSION_DIR/"
+    if [ -f "$USB/AutoScript/firebird.pair" ]; then cp "$USB/AutoScript/firebird.pair" "$SESSION_DIR/"; fi
     for d in bx510-baseline bx510-baseline-retry; do
-        [ -d "$EXP/evidence/$d" ] && cp -R "$EXP/evidence/$d" "$SESSION_DIR/"
+        if [ -d "$EXP/evidence/$d" ]; then cp -R "$EXP/evidence/$d" "$SESSION_DIR/"; fi
     done
     if [ ! -f "$SESSION_DIR/notes.txt" ]; then
         {
@@ -278,7 +311,7 @@ PY
     done
     for f in baseline-capture-console.txt baseline-retry-capture-console.txt \
              request-pair-console.txt notes.txt; do
-        [ -f "$SESSION_DIR/$f" ] && echo "console/notes: $f present"
+        if [ -f "$SESSION_DIR/$f" ]; then echo "console/notes: $f present"; fi
     done
     [ "$found" -gt 0 ] || die "no artifacts found in $SESSION_DIR — did the captures run?"
     echo "verification done: $found artifact set(s) present"

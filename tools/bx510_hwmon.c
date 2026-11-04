@@ -135,6 +135,12 @@ static int snapshot(const char *outdir, int seq)
 int main(int argc, char **argv)
 {
     const char *outdir = argc > 1 ? argv[1] : "/mnt/sda1/hwmon";
+    /* argv[2]: optional RAM backup dir (/tmp/hwmon). The stick may UNMOUNT
+     * at sleep on real players (the scene recipe copies the daemon to /
+     * for exactly this reason), so every snapshot is also written to a
+     * RAM dir that survives sleep; hwmon_restore.sh copies it back to the
+     * stick on the next AutoScript trigger. */
+    const char *bakdir = argc > 2 ? argv[2] : NULL;
     int seq = 0;
     char pidfile[512];
 
@@ -147,11 +153,14 @@ int main(int argc, char **argv)
     }
     fprintf(stderr, "hwmon: watching, snapshots -> %s every %ds\n",
             outdir, SNAP_INTERVAL);
+    if (bakdir)
+        mkdir(bakdir, 0755);
     for (;;) {
-        snapshot(outdir, seq++);
+        snapshot(outdir, seq);
+        if (bakdir)
+            snapshot(bakdir, seq);
+        seq++;
         sleep(SNAP_INTERVAL);
-        /* prune: keep at most ~12 snapshots (1 minute) plus every 12th
-         * for a coarse long-term record */
     }
     return 0;
 }

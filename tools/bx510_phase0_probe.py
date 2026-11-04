@@ -35,7 +35,7 @@ RELEASE = "e91720fbbbd592505bde6630843b0495ff82a93e40c0e427aaa70a081ff9ae22"
 def build_tar(reference: Path, shim: Path, bgstart: Path, stub: Path,
               mkfixture: Path, gclient: Path, lo_up: Path,
               sacdstat: Path, role: str, hdmod=None, fbmod=None,
-              fbdraw=None) -> bytes:
+              fbdraw=None, cyberdraw=None) -> bytes:
     buf = io.BytesIO()
     with tarfile.open(fileobj=buf, mode="w", format=tarfile.USTAR_FORMAT) as arc:
         elf = reference.read_bytes()
@@ -63,7 +63,9 @@ def build_tar(reference: Path, shim: Path, bgstart: Path, stub: Path,
                            *([("shim/fbvirt.ko", fbmod.read_bytes())]
                              if fbmod else []),
                            *([("shim/fbdraw", fbdraw.read_bytes())]
-                             if fbdraw else [])):
+                             if fbdraw else []),
+                           *([("shim/cyberdraw", cyberdraw.read_bytes())]
+                             if cyberdraw else [])):
             entry = tarfile.TarInfo(name)
             entry.size, entry.mode = len(blob), 0o755
             arc.addfile(entry, io.BytesIO(blob))
@@ -92,6 +94,9 @@ def main():
                    help="virtual framebuffer module (fbvirt.ko) to stage "
                         "and load; enables the drawing-primitive checks "
                         "(/dev/fb0 via register_framebuffer)")
+    p.add_argument("--cyberdraw", type=Path,
+                   help="also run the cyberpunk test-pattern tool against "
+                        "/dev/fb0 (bx510_cyberdraw)")
     p.add_argument("--fbdraw", type=Path,
                    help="drawing test tool to stage and run against "
                         "/dev/fb0 (bx510_fbdraw)")
@@ -121,7 +126,8 @@ def main():
     images = a.images.resolve(strict=True)
     payload = build_tar(a.reference, a.shim, a.bgstart, a.stub,
                         a.mkfixture, a.gclient, a.lo_up, a.sacdstat,
-                        a.role, a.hdmod, a.fbmod, a.fbdraw)
+                        a.role, a.hdmod, a.fbmod, a.fbdraw,
+                        a.cyberdraw)
     parts = json.loads((images / "manifest.json").read_text())["partitions"]
     part = next(x for x in parts if x["name"] == "fe_test_data")
     if part["records"] or part["offset"] != 0xe00000 or len(payload) > part["size"]:
@@ -195,6 +201,14 @@ def main():
             "LD_PRELOAD=/res/shim/tmpredir.so /res/shim/fbdraw directfb "
             ">/res/fbdraw.out 2>&1; echo P0_FBDRAW=$?",
             "echo P0_FBDRAW_BEGIN; cat /res/fbdraw.out; echo P0_FBDRAW_END",
+            *([
+                "/bin/chmod 755 /res/shim/cyberdraw",
+                # deterministic frame: the pattern + md5 is the evidence;
+                # --anim is for hardware TV video, not for the gate
+                "LD_PRELOAD=/res/shim/tmpredir.so /res/shim/cyberdraw "
+                "--static >/res/cyber.out 2>&1; echo P0_CYBER=$?",
+                "echo P0_CYBER_BEGIN; cat /res/cyber.out; echo P0_CYBER_END",
+            ] if a.cyberdraw else []),
         ] if a.fbmod else []),
         "LD_PRELOAD= /res/shim/lo_up; echo P0_LO=$?",
         "LD_PRELOAD= /res/shim/mkfixture /res/dev/sr0 "

@@ -186,8 +186,12 @@ int main(int argc, char **argv)
     const char *host = argc > 1 ? argv[1] : "127.0.0.1";
     /* argv[3] == "big": the 5 GiB boundary-sentinel battery
      * (docs/large-image-interface.md) instead of the 86200-sector
-     * fixture steps. CLOSE/reconnect/sweep tail is shared. */
+     * fixture steps. CLOSE/reconnect/sweep tail is shared.
+     * argv[3] == "pair": pair-observer repro mode — argv[4..] are
+     * decimal LSNs, each read with count 2 (the observer's SECTORS);
+     * OPEN is done, CLOSE follows, then exit. Additive only. */
     int big = (argc > 3 && strcmp(argv[3], "big") == 0);
+    int pair = (argc > 3 && strcmp(argv[3], "pair") == 0);
     int port = argc > 2 ? atoi(argv[1]) : 2002;
     struct sockaddr_in a;
     struct timeval tv = { 20, 0 };
@@ -224,6 +228,27 @@ int main(int argc, char **argv)
         goto fail;
     printf("GC: SIZE  -> type=%llu result=%lld (sectors)\n",
            (unsigned long long)type, (long long)result);
+
+    if (pair) {
+        int ai;
+        for (ai = 4; ai < argc; ai++) {
+            long lsn = strtol(argv[ai], NULL, 10);
+            if (send_request(fd, REQ_DISC_READ, (uint64_t)lsn, 2) ||
+                read_response(fd, &type, &result, &datalen))
+                goto fail;
+            printf("GC: READ pair lsn=%ld cnt=2 -> type=%llu result=%lld datalen=%ld fnv1a64=%016llx\n",
+                   lsn, (unsigned long long)type, (long long)result, datalen,
+                   datalen > 0 ? fnv1a64(rbuf + g_payload_off, datalen) : 0ULL);
+        }
+        if (send_request(fd, REQ_DISC_CLOSE, 0, 0) ||
+            read_response(fd, &type, &result, &datalen))
+            goto fail;
+        printf("GC: CLOSE pair -> type=%llu result=%lld\n",
+               (unsigned long long)type, (long long)result);
+        close(fd);
+        printf("GC: DONE pair\n");
+        return 0;
+    }
 
     if (big) {
         /* ---- 5 GiB battery: sentinels straddling the 2 GiB and 4 GiB

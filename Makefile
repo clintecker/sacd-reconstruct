@@ -192,6 +192,11 @@ rig-restart-recontrol:
 
 # ── Unit-of-work gates ──────────────────────────────────────────────────────
 
+## SACD session :: sacd-decode ERRNO=... :: deterministic errno decode (decimal/hex/two's-complement log residue like fffffff3) — never by mental arithmetic (the fffffff3 incident: errno eyeballed in prose mid-debug); name+meaning from the host errno module, the canonical source; bare hex residues (printf %x of a negative int) accepted; selftest: make sacd-decode ERRNO=-- --selftest
+.PHONY: sacd-decode
+sacd-decode:
+	python3 $(SACD)/tools/decode_errno.py $(ERRNO)
+
 ## SACD session :: sacd-py SCRIPT=path :: run a local python script with CWD pinned to the repo root :: THE CWD-reset fix for edit scripts — every bash call in this session starts at the session root (the MAIN security repo), and heredoc edits with relative paths kept failing or worse; write the script to /tmp (absolute path), reference repo files by repo-relative paths, and run it through this target so make -C guarantees the working directory
 .PHONY: sacd-py
 sacd-py:

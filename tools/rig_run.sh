@@ -117,12 +117,36 @@ $PY "$HERE/sacd_client.py" overlap --host 127.0.0.1 --port "$PORT" \
 stop_daemon $DPID
 
 echo "=== comparing sequential replay"
+rc1=0
 $PY "$HERE/sacd_client.py" compare \
-    "$OUT/capture-orig/manifest.json" "$OUT/capture-cand/manifest.json"
-rc1=$?
+    "$OUT/capture-orig/manifest.json" "$OUT/capture-cand/manifest.json" || rc1=1
 echo "=== comparing overlap replay"
+rc2=0
 $PY "$HERE/sacd_client.py" compare \
-    "$OUT/overlap-orig/manifest.json" "$OUT/overlap-cand/manifest.json"
-rc2=$?
-[ $rc1 -eq 0 ] && [ $rc2 -eq 0 ] || exit 1
-echo "=== both replays IDENTICAL"
+    "$OUT/overlap-orig/manifest.json" "$OUT/overlap-cand/manifest.json" || rc2=1
+# Enhanced-era acceptance (enhanced/DELTA.md): the two phases carry
+# OPPOSITE requirements. The sequential replay is the healthy-path oracle:
+# it MUST be identical (wire-compat). The overlap phase is the B01
+# demonstration: vs the FROZEN reference it must be identical (same bug),
+# vs an ENHANCED candidate it must differ in the DOCUMENTED direction —
+# original sessions corrupt (starve/reset), enhanced sessions complete.
+# MODE=parity (default): both phases must match (frozen-candidate era).
+# MODE=enhanced: sequential must match; overlap must differ with the
+# enhanced side CLEAN (no session errors) — the B01 acceptance criteria.
+if [ "${RIG_MODE:-parity}" = "parity" ]; then
+    [ $rc1 -eq 0 ] && [ $rc2 -eq 0 ] || { echo "VERDICT: FAIL (parity mode)"; exit 1; }
+    echo "=== both replays IDENTICAL (parity mode)"
+else
+    [ $rc1 -eq 0 ] || { echo "VERDICT: FAIL — sequential replay DIFFERS (healthy-path regression!)"; exit 1; }
+    if [ $rc2 -eq 0 ]; then
+        echo "VERDICT: FAIL (enhanced mode) — overlap phase IDENTICAL; the B01 fix is not present in the candidate"
+        exit 1
+    fi
+    # overlap must differ in the right direction: the ENHANCED side clean
+    if grep -q "error" "$OUT/overlap-cand/manifest.json"; then
+        echo "VERDICT: FAIL (enhanced mode) — overlap differs but the candidate side has errors"
+        exit 1
+    fi
+    echo "=== sequential IDENTICAL + overlap differs in the documented (B01-fixed) direction"
+    echo "VERDICT: PASS (enhanced mode)"
+fi

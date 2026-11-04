@@ -65,6 +65,11 @@ def main():
     p.add_argument("--ld", default=os.path.expanduser("~/gnuarm/bin/arm-none-linux-gnueabi-ld"), type=Path)
     p.add_argument("--ar", default="ar")
     p.add_argument("--out", default=repo / "reconstruct/release", type=Path)
+    p.add_argument("--profile", choices=("parity", "enhanced"), default="parity",
+                   help="parity: the frozen reference build (asserts the legacy "
+                        "verified installer/status shapes). enhanced: the "
+                        "sacd-enhanced branch build (asserts the B01-B12 fixed "
+                        "shapes instead — regressions still fail the build).")
     args = p.parse_args()
 
     gcc_src, gcc_build = args.gcc_src.resolve(), args.gcc_build.resolve()
@@ -114,11 +119,26 @@ def main():
         raise SystemExit("Expected the 45 C sources enumerated by the Makefile, got %d" % len(names))
 
     # Regression guards (review directive): the tracked sources must already
-    # carry the fixes — never repair them here.
+    # carry the fixes — never repair them here. Profile selects which shape:
+    # parity guards the frozen reference tree; enhanced guards the fixed tree.
     install_src = (recon / "tool/install.c").read_text()
-    if 'strcpy(mod_file, "/tmp/")' not in install_src or "mod_file[26]" not in install_src:
-        raise SystemExit("tool/install.c lost the verified installer shape")
     main_src = (recon / "tool/main.c").read_text()
+    if args.profile == "parity":
+        if 'strcpy(mod_file, "/tmp/")' not in install_src or "mod_file[26]" not in install_src:
+            raise SystemExit("tool/install.c lost the verified installer shape")
+    else:
+        # The B10/B11 fixed installer shapes (enhanced/DELTA.md): atomic
+        # temp creation, shell-free loader, device-interface validation.
+        for marker in ("mkstemp", "execvp", "S_ISCHR", "SACD_IOC_INIT"):
+            if marker not in install_src:
+                raise SystemExit("tool/install.c lost the ENHANCED installer "
+                                 f"shape (missing: {marker})")
+        # The wave-1/2 fixed main.c shapes: send-all, owned connections,
+        # detached workers, async-signal-safe handler.
+        for marker in ("socket_send_all", "pthread_detach", "volatile sig_atomic_t"):
+            if marker not in main_src:
+                raise SystemExit("tool/main.c lost the ENHANCED shape "
+                                 f"(missing: {marker})")
     if main_src.count('L"connected" : L"none"') != 1:
         raise SystemExit("tool/main.c lost the L\"connected\"/L\"none\" status strings")
 

@@ -28,6 +28,8 @@
 #include <stdint.h>
 #include <string.h>
 #include <sys/ioctl.h>
+#include <sys/stat.h>
+#include <sys/sysmacros.h>
 #include <unistd.h>
 
 #define SACD_IOC_INIT    0x40105301UL
@@ -48,6 +50,136 @@ struct sacd_read_ioc
 
 static int (*real_open64)(const char *, int, ...);
 static int disc_fd = -1;
+static int (*real_fstat64)(int, struct stat64 *);
+static int (*real_execvp)(const char *, char *const argv[]);
+
+/* The enhanced installer (sacd-enhanced, B10/B11) VALIDATES its
+ * environment instead of trusting it: fstat on the device fd must
+ * show the expected character device (major 10 — the module registers
+ * as a misc device, minor 201), and the loader call must succeed. In
+ * this rig the device fd is the fixture file and no real insmod runs,
+ * so the two seams are modeled here: the rig presents the disc fd AS
+ * the module's misc device, and loader invocations succeed without
+ * executing (the module protocol is answered by the ioctl seam). This
+ * is the acceptance environment, not a bypass — the original binary
+ * accepted the rig because it ignored shell results (that is B11
+ * itself); the enhanced binary demands what real hardware provides. */
+static int is_disc_fd(int fd)
+{
+    return fd >= 0 && fd == disc_fd;
+}
+
+int fstat64(int fd, struct stat64 *st)
+{
+    if (!real_fstat64)
+        real_fstat64 = (int (*)(int, struct stat64 *))
+            dlsym(RTLD_NEXT, "fstat64");
+    int rc = real_fstat64(fd, st);
+    if (rc == 0 && is_disc_fd(fd))
+    {
+        st->st_mode = (st->st_mode & ~S_IFMT) | S_IFCHR;
+        st->st_rdev = makedev(10, 201);
+    }
+    return rc;
+}
+
+int fstat(int fd, struct stat *st)
+{
+    /* glibc maps fstat->fstat64 internally with hidden aliases, so this
+     * interposition only affects direct application calls (which is
+     * what the installer makes). Keep it for completeness. */
+    struct stat64 st64;
+    int rc = fstat64(fd, &st64);
+    if (rc == 0)
+    {
+        /* copy back the fields the caller can see */
+        st->st_mode = st64.st_mode;
+        st->st_rdev = st64.st_rdev;
+        st->st_size = st64.st_size;
+    }
+    return rc;
+}
+
+static int (*real_mknod)(const char *, mode_t, dev_t);
+static int (*real_unlink)(const char *);
+
+/* glibc's headers compile mknod/fstat64 into inline wrappers that call
+ * the __x- internal symbols (verified from the enhanced binary's dynamic
+ * symbol table: it imports __xmknod@GLIBC_2.4 and calls __fxstat64 via a
+ * LOCAL HIDDEN inline fstat64 — the plain mknod/fstat64 interpositions
+ * below are never reached by it). The __x- forms are the real seams. */
+int __xmknod(int ver, const char *path, mode_t mode, dev_t *dev)
+{
+    if (path && strcmp(path, "/dev/sacd_read") == 0)
+        return 0;
+    {
+        static int (*real)(int, const char *, mode_t, dev_t *);
+        if (!real)
+            real = (int (*)(int, const char *, mode_t, dev_t *))
+                dlsym(RTLD_NEXT, "__xmknod");
+        return real(ver, path, mode, dev);
+    }
+}
+
+int __fxstat64(int ver, int fd, struct stat64 *st)
+{
+    {
+        static int (*real)(int, int, struct stat64 *);
+        if (!real)
+            real = (int (*)(int, int, struct stat64 *))
+                dlsym(RTLD_NEXT, "__fxstat64");
+        int rc = real(ver, fd, st);
+        if (rc == 0 && is_disc_fd(fd))
+        {
+            st->st_mode = (st->st_mode & ~S_IFMT) | S_IFCHR;
+            st->st_rdev = makedev(10, 201);
+        }
+        return rc;
+    }
+}
+
+int mknod(const char *path, mode_t mode, dev_t dev)
+{
+    /* The enhanced installer creates the device node directly (no shell)
+     * and CHECKS the result — the original's shell mknod failed silently
+     * in this rig (that is finding B11). Model the node's existence. */
+    if (path && strcmp(path, "/dev/sacd_read") == 0)
+        return 0;
+    if (!real_mknod)
+        real_mknod = (int (*)(const char *, mode_t, dev_t))
+            dlsym(RTLD_NEXT, "mknod");
+    return real_mknod(path, mode, dev);
+}
+
+int unlink(const char *path)
+{
+    /* remove_modules tears the node down on exit; model it. */
+    if (path && strcmp(path, "/dev/sacd_read") == 0)
+        return 0;
+    if (!real_unlink)
+        real_unlink = (int (*)(const char *))dlsym(RTLD_NEXT, "unlink");
+    return real_unlink(path);
+}
+
+int execvp(const char *file, char *const argv[])
+{
+    /* Model the module loader accepting the staged module. Real insmod
+     * cannot run under qemu-user here (and the original binary never
+     * checked its result — B11). Arguments are inspected only to keep
+     * the seam honest: it answers only insmod-shaped invocations. */
+    if (file && strstr(file, "insmod"))
+    {
+        /* execvp semantics: success NEVER returns. run_loader waits for
+         * the child, so the model of "loader accepted the module" is the
+         * child exiting 0. Returning would fall through to _exit(127)
+         * and read as a failed load (found via -d strace: waitpid 127). */
+        _exit(0);
+    }
+    if (!real_execvp)
+        real_execvp = (int (*)(const char *, char *const []))
+            dlsym(RTLD_NEXT, "execvp");
+    return real_execvp(file, argv);
+}
 static pthread_mutex_t disc_lock = PTHREAD_MUTEX_INITIALIZER;
 
 static void init_hooks(void)
@@ -94,6 +226,11 @@ int ioctl(int fd, unsigned long request, ...)
 
     switch (request)
     {
+    case SACD_IOC_INIT:
+        /* the enhanced installer's validate_device probe (B11): the
+         * module answers init with success */
+        ioc->a = 0;
+        return 0;
     case SACD_IOC_READ:
     {
         /* Real contract (module disassembly, SHA b3d7a383...): the module
@@ -194,7 +331,17 @@ int open64(const char *path, int flags, ...)
         const char *devfile = getenv("RIG_DEVFILE");
         if (!devfile)
             return -1;
-        return real_open64(devfile, O_RDONLY);
+        {
+            int fd = real_open64(devfile, O_RDONLY);
+            if (fd >= 0)
+            {
+                /* every redirected open presents the SAME fixture resource;
+                 * record the latest as the device fd so the fstat seam
+                 * (validate_device checks S_ISCHR + major on ITS fd) applies */
+                disc_fd = fd;
+            }
+            return fd;
+        }
     }
     if ((flags & O_CREAT) == 0)
         return real_open64(path, flags);

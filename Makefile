@@ -437,6 +437,7 @@ sacd-emu-daemons:
 # Env knobs: HW_HOST (10.20.1.236) HW_PORT (2002) USB (/Volumes/SONYUSB)
 #            PLAYER_MOUNT (/mnt/sda1) PAIR_LSN (600) SESSION_DIR (~/bx510-session)
 #            HW_ISO (the Firebird rip) DISK (/dev/diskN for usb-build)
+#            DISPLAY_ANIM (45, the display leg's anim window in seconds)
 
 ## SACD hardware :: sacd-hw-preflight :: Mac preflight for the on-player session :: ISO present + both pinned ELF SHAs + client selftest + next-steps checklist
 .PHONY: sacd-hw-preflight
@@ -462,6 +463,11 @@ sacd-usb-baseline-mode:
 .PHONY: sacd-usb-pair-mode
 sacd-usb-pair-mode:
 	PAIR_LSN="$(PAIR_LSN)" sh experiments/sacd_reconstruct/tools/sacd_hardware.sh usb-pair-mode
+
+## SACD hardware :: sacd-usb-display-mode :: set the AutoScript to the display leg :: cyberdraw --anim on /dev/fb0 through displaylaunch.sh (DISPLAY_ANIM=45 default) — the TV photo/video test; the log names the cause when the screen stays black
+.PHONY: sacd-usb-display-mode
+sacd-usb-display-mode:
+	DISPLAY_ANIM="$(DISPLAY_ANIM)" sh experiments/sacd_reconstruct/tools/sacd_hardware.sh usb-display-mode
 
 ## SACD hardware :: sacd-usb-original :: put the ORIGINAL ELF on the stick :: SHA-verified 0fdcefdb… — the baseline daemon
 .PHONY: sacd-usb-original

@@ -346,8 +346,41 @@ static int mt85_pool_capture(int *ret_w, int *ret_h)
         return 1;
     }
     pix = (uint32_t *)pool;
-    /* the primary surface is the first allocation in pool 0 (the
-     * published surface manager allocates chunk 0 at offset 0) */
+    /* Locate the primary layer surface inside pool 0: the retail
+     * split_chunk carves occupied chunks from the END of the free
+     * chunk, so the first primary allocation sits at offset
+     * pool_size - alloc_length — which MEASURES the retail core's
+     * calculated buffer length (pitch*h + 16 overrun slack if it
+     * matches the published calc). The chunk is memset to 0 at
+     * occupy time, so everything before the surface is zero and the
+     * first word equal to the fill color IS the surface start (the
+     * fill is a distinctive nonzero color). */
+    {
+        unsigned int pool_words = mpw[MT85_RETAIL_MP_OFF_SIZE / 4] / 4;
+        int off = -1;
+        if (pool_words > (unsigned)bytes / 4) {
+            for (i = 0; i <= (int)(pool_words - bytes / 4); i++) {
+                if (pix[i] == want) {
+                    off = i * 4;
+                    break;
+                }
+            }
+        }
+        printf("FBMT85: capture located surface at pool0+%d bytes "
+               "(pool0=%u B, surface=%d B => retail alloc length = "
+               "%u B)\n", off,
+               mpw[MT85_RETAIL_MP_OFF_SIZE / 4], bytes,
+               off >= 0 ? mpw[MT85_RETAIL_MP_OFF_SIZE / 4] - (unsigned)off
+                       : 0);
+        if (off < 0) {
+            printf("FBMT85: capture FAILED to locate the fill in "
+                   "pool 0 — no rung-(e) verdict\n");
+            munmap(pool, mpw[MT85_RETAIL_MP_OFF_SIZE / 4]);
+            close(fd);
+            return 1;
+        }
+        pix = (uint32_t *)((char *)pool + off);
+    }
     got = pix[0];
     printf("FBMT85: capture pixels(0,0)=0x%08x (0,1)=0x%08x "
            "(w/2,h/2)=0x%08x (w-1,h-1)=0x%08x; expected uniform "
@@ -367,7 +400,7 @@ static int mt85_pool_capture(int *ret_w, int *ret_h)
     {
         FILE *f = fopen("/res/poolcap.bin", "wb");
         if (f) {
-            fwrite(pool, 1, bytes, f);
+            fwrite(pix, 1, bytes, f);
             fclose(f);
         }
     }

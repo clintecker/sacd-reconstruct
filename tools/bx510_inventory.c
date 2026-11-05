@@ -537,6 +537,105 @@ static void probe_net(void)
     cat_file("/proc/net/arp", 0);
 }
 
+/* Fusion participant identity resolution — THE display-takeover
+ * adjudicator (incoming/display-takeover-evidence/ANALYSIS.md):
+ * a surviving participant PID + start-time with a live fusionees
+ * entry supports a Fusion world (ID 1 = master) the takeover could
+ * join; the same PID with no Fusion entry supports the native-route /
+ * no-master reading. Resolves Tgid because the recorded PID can be a
+ * thread. Layout-agnostic: while dumping /proc/fusion, any small-file
+ * content that parses as a live PID is collected, then each such PID's
+ * /proc/<pid>/stat (field 22 = start time) and Tgid are printed. */
+static int fusion_pids[64];
+static int n_fusion_pids = 0;
+
+static int record_live_pid(long v)
+{
+    char p[512];
+    int i;
+    if (v < 1 || v > 999999) return 0;
+    snprintf(p, sizeof p, "/proc/%ld", v);
+    if (access(p, F_OK) != 0) return 0;
+    for (i = 0; i < n_fusion_pids; i++)
+        if (fusion_pids[i] == (int)v) return 1;
+    if (n_fusion_pids < 64)
+        fusion_pids[n_fusion_pids++] = (int)v;
+    return 1;
+}
+
+static void note_fusion_pid(const char *path)
+{
+    FILE *in = fopen(path, "r");
+    char buf[4096];
+    size_t n;
+    char *s, *end;
+    long v;
+    int found_pid_word = 0;
+
+    if (!in) return;
+    n = fread(buf, 1, sizeof buf - 1, in);
+    fclose(in);
+    buf[n] = 0;
+
+    /* Strong: integer following the word "pid" (fusion procfs prints a
+     * per-fusionee TABLE: "... pid 743 ..." — the takeover analysis's
+     * "<world>/fusionees" layout). */
+    s = buf;
+    while ((s = strstr(s, "pid")) != NULL) {
+        v = strtol(s + 3, &end, 10);
+        if (end != s + 3 && record_live_pid(v))
+            found_pid_word = 1;
+        s = (end > s) ? end : s + 3;
+    }
+    /* Weak fallback: any live-resolving integer token (bare-ID lists).
+     * May note incidental IDs whose values collide with live PIDs (e.g.
+     * fusionee ID 1 == init) — the raw file content is dumped alongside,
+     * so the report reader can tell. */
+    if (!found_pid_word) {
+        s = buf;
+        for (;;) {
+            while (*s && (*s < '0' || *s > '9')) s++;
+            if (!*s) break;
+            v = strtol(s, &end, 10);
+            record_live_pid(v);
+            s = end;
+        }
+    }
+}
+
+static void dump_fusion_participants(void)
+{
+    int i;
+    char p[512];
+    FILE *in;
+    char buf[1024];
+
+    printf("  -- participant identity resolution (PID + start time; ID 1 = master) --\n");
+    if (n_fusion_pids == 0) {
+        printf("  (no live PIDs found in /proc/fusion content — supports the no-master reading)\n");
+        return;
+    }
+    for (i = 0; i < n_fusion_pids; i++) {
+        snprintf(p, sizeof p, "/proc/%d/stat", fusion_pids[i]);
+        printf("  [fusion pid %d] stat: ", fusion_pids[i]);
+        in = fopen(p, "r");
+        if (in && fgets(buf, sizeof buf, in)) {
+            printf("%s", buf);
+        } else {
+            printf("UNKNOWN (cannot read %s)\n", p);
+        }
+        if (in) fclose(in);
+        snprintf(p, sizeof p, "/proc/%d/status", fusion_pids[i]);
+        in = fopen(p, "r");
+        if (in) {
+            while (fgets(buf, sizeof buf, in))
+                if (strncmp(buf, "Tgid:", 5) == 0 || strncmp(buf, "Name:", 5) == 0)
+                    printf("    %s", buf);
+            fclose(in);
+        }
+    }
+}
+
 static void probe_fusion(void)
 {
     DIR *d = opendir("/dev");
@@ -578,18 +677,39 @@ static void probe_fusion(void)
                         char q[600];
                         if (se->d_name[0] == '.') continue;
                         snprintf(q, sizeof q, "%s/%s", p, se->d_name);
-                        printf("  [%s]\n", q);
-                        cat_file(q, 4096);
+                        if (se->d_type == DT_DIR) {
+                            /* three-level walk: some fusion procfs
+                             * versions nest per-fusionee dirs */
+                            DIR *td = opendir(q);
+                            struct dirent *te;
+                            if (td) {
+                                while ((te = readdir(td))) {
+                                    char r[700];
+                                    if (te->d_name[0] == '.') continue;
+                                    snprintf(r, sizeof r, "%s/%s", q, te->d_name);
+                                    printf("  [%s]\n", r);
+                                    cat_file(r, 4096);
+                                    note_fusion_pid(r);
+                                }
+                                closedir(td);
+                            }
+                        } else {
+                            printf("  [%s]\n", q);
+                            cat_file(q, 4096);
+                            note_fusion_pid(q);
+                        }
                     }
                     closedir(sd);
                 }
             } else {
                 printf("  [%s]\n", p);
                 cat_file(p, 4096);
+                note_fusion_pid(p);
             }
         }
         closedir(d);
     }
+    dump_fusion_participants();
 }
 
 /* find the first existing path among candidates (the player's actual
@@ -623,7 +743,7 @@ int main(void)
     char *bb_uname[] = { (char*)"busybox", (char*)"uname", (char*)"-a", NULL };
 
     printf("=== BX510 runtime inventory (bx510_inventory v1) ===\n");
-    printf("collector: %s\n", "bx510_inventory v1 (read-only)");
+    printf("collector: %s\n", "bx510_inventory v2 (read-only, +fusion adjudicator)");
     printf("note: x86-test values may appear when this binary is run on the"
            " lab VM; player values come only from the player run\n");
 

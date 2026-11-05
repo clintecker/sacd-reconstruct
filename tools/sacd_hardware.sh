@@ -19,6 +19,9 @@
 #   usb-pair-mode       write the pairlaunch AutoScript line (PAIR_LSN) and
 #                    stage the DEBUG pair observer (bx510_pair_dbg.so) as
 #                    the stick's optical/bx510_pair.so for the session
+#   usb-display-mode    write the DISPLAY AutoScript line (cyberdraw --anim on
+#                    /dev/fb0 via displaylaunch.sh; DISPLAY_ANIM seconds,
+#                    default 45) — the TV photo/video leg
 #   usb-original        put the original ELF on the stick
 #   usb-candidate       put the release-candidate ELF on the stick
 #   candidate        run the candidate capture (out dir evidence/bx510-candidate
@@ -34,7 +37,7 @@
 #
 # Environment overrides:
 #   HW_HOST (10.20.1.236)  HW_PORT (2002)  USB (/Volumes/SONYUSB)
-#   PLAYER_MOUNT (/mnt/sda1)  PAIR_LSN (600)
+#   PLAYER_MOUNT (/mnt/sda1)  PAIR_LSN (600)  DISPLAY_ANIM (45)
 #   SESSION_DIR (~/bx510-session)  HW_ISO (the Firebird rip)
 set -eu
 
@@ -43,6 +46,7 @@ ORIGINAL="$EXP/original/sacd_extract_160"
 RELEASE="$EXP/reconstruct/release/sacd_extract_160_release"
 OPTICAL="$EXP/emulator-handoff/optical"
 HWMON_DIR="${HWMON_DIR:-$EXP/evidence/bx510/hwmon-payload}"
+DISPLAY_DIR="${DISPLAY_DIR:-$EXP/evidence/bx510/display-payload}"
 
 SHA_ORIG="0fdcefdb84ae818be7385657eaf0960053f6e4452a82f19cbe6777f9c8cddb45"
 SHA_REL="e91720fbbbd592505bde6630843b0495ff82a93e40c0e427aaa70a081ff9ae22"
@@ -54,6 +58,9 @@ SHA_REL="e91720fbbbd592505bde6630843b0495ff82a93e40c0e427aaa70a081ff9ae22"
 SHA_PAIR_SILENT="cabe9f4f9d1e0194fd2627d29c456d1959881f251267a5882d45a881b364abf2"
 SHA_PAIR_DBG="e23c482ddcad4e62945af3cb722a1609479e70e58f89dffc6d37ee36a2e4938c"
 DBG_SO="$EXP/evidence/bx510-guest/pair-observer/bx510_pair_dbg.so"
+# display payload: cyberdraw (ARM, built from tools/bx510_cyberdraw.c with
+# the gnuarm toolchain — recipe + source SHA in DISPLAY-SPEC.md)
+SHA_CYBER="17d0c2cb7ba7fd4ae43fa499124d099a7ec4b42c1ac7290d2f6cbcf0856fde13"
 ISO_SIZE_EXPECTED=2179497984
 
 HW_HOST="${HW_HOST:-10.20.1.236}"
@@ -61,6 +68,7 @@ HW_PORT="${HW_PORT:-2002}"
 USB="${USB:-/Volumes/SONYUSB}"
 PLAYER_MOUNT="${PLAYER_MOUNT:-/mnt/sda1}"
 PAIR_LSN="${PAIR_LSN:-600}"
+DISPLAY_ANIM="${DISPLAY_ANIM:-}"
 SESSION_DIR="${SESSION_DIR:-$HOME/bx510-session}"
 HW_ISO="${HW_ISO:-/Volumes/1TB - WD/tomita/iso/Firebird/Firebird.iso}"
 DISK="${DISK:-}"
@@ -123,6 +131,22 @@ auto_pair() {
     # no cli_tail: pairlaunch.sh starts hwmon with RESOLVED paths (the
     # CLI-line glob arg was observed left literal by nullglob)
 }
+auto_display() {
+    cli_head
+    # Same proven shape as auto_pair: copy the wrapper + the tool to RAM with
+    # SHORT lines, then run the wrapper (which logs to stick + RAM and starts
+    # its own hwmon-backed state dumps). The anim length comes from the
+    # displayanim file on the stick (an env assignment on a CLI line is not
+    # proven to survive CLI_exec).
+    # line lengths kept at/under the PROVEN pair line (69 chars): the CLI
+    # parser has practical length limits (the long trace-launch line never
+    # ran). The RAM copy is /tmp/dl.sh for exactly that reason.
+    printf 'CLI(CLI_exec cp /mnt/sd*/AutoScript/displaylaunch.sh /tmp/dl.sh)\n'
+    printf 'CLI(CLI_exec cp /mnt/sd*/AutoScript/cyberdraw /tmp/cyberdraw)\n'
+    printf 'CLI(CLI_exec chmod 755 /tmp/dl.sh /tmp/cyberdraw)\n'
+    printf 'CLI(CLI_exec /bin/sh /tmp/dl.sh &)\n'
+    cli_tail
+}
 
 cmd_preflight() {
     echo "== preflight $(stamp) =="
@@ -136,6 +160,9 @@ cmd_preflight() {
     check_elf "$ORIGINAL" "$SHA_ORIG"
     check_elf "$RELEASE" "$SHA_REL"
     check_elf "$DBG_SO" "$SHA_PAIR_DBG"
+    check_elf "$DISPLAY_DIR/cyberdraw" "$SHA_CYBER"
+    [ -f "$DISPLAY_DIR/displaylaunch.sh" ] || die "display payload missing: $DISPLAY_DIR/displaylaunch.sh"
+    echo "OK  display payload $DISPLAY_DIR (cyberdraw + displaylaunch.sh)"
     [ -f "$OPTICAL/media_check.py" ] || die "observer kit missing: $OPTICAL"
     echo "OK  observer kit $OPTICAL"
     (cd "$EXP" && python3 tools/sacd_client.py selftest --out /tmp/sacd-hw-selftest)
@@ -146,6 +173,10 @@ cmd_preflight() {
     echo "  2) PLAYER: power ON, Firebird in tray, player idle, insert the USB ->"
     echo "     tray opens BY ITSELF (= AutoScript firing)"
     echo "  3) make sacd-hw-wait && make sacd-hw-baseline"
+    echo
+    echo "Session legs (PLAYER-SESSION-RUNBOOK.md): candidate trial -> standby"
+    echo "capture -> pair retry (DEBUG observer) -> DISPLAY leg LAST"
+    echo "  (make sacd-usb-display-mode; TV photo/video is the evidence)."
 }
 
 cmd_usb_build() {
@@ -171,6 +202,8 @@ cmd_usb_build() {
     cp "$HWMON_DIR/inventory" "$USB/AutoScript/inventory"
     cp "$HWMON_DIR/hwmon_restore.sh" "$USB/AutoScript/hwmon_restore.sh"
     cp "$HWMON_DIR/pairlaunch.sh" "$USB/AutoScript/pairlaunch.sh"
+    cp "$DISPLAY_DIR/displaylaunch.sh" "$USB/AutoScript/displaylaunch.sh"
+    cp "$DISPLAY_DIR/cyberdraw" "$USB/AutoScript/cyberdraw"
     auto_baseline > "$USB/AutoScript/AutoScript"
     cmd_usb_check
     echo
@@ -206,6 +239,30 @@ cmd_usb_check() {
     [ -f "$USB/AutoScript/hwmon_restore.sh" ] || die "hwmon_restore.sh missing on stick"
     [ -f "$USB/AutoScript/pairlaunch.sh" ] || die "pairlaunch.sh missing on stick"
     echo "OK  hwmon watcher + restore + pairlaunch present"
+    # display payload (TV photo/video leg): cyberdraw must be the PINNED ARM
+    # build — a stale or foreign binary would silently test nothing. A stick
+    # built before this payload only WARNS unless the session IS display mode
+    # (a pre-payload stick must stay usable for baseline/pair/candidate legs).
+    case "$(cat "$USB/AutoScript/AutoScript")" in
+        *displaylaunch*) DISPLAY_MODE=1 ;;
+        *) DISPLAY_MODE=0 ;;
+    esac
+    dlgot=""
+    [ -f "$USB/AutoScript/cyberdraw" ] && dlgot=$(sha_of "$USB/AutoScript/cyberdraw")
+    if [ ! -f "$USB/AutoScript/displaylaunch.sh" ] || [ "$dlgot" != "$SHA_CYBER" ]; then
+        if [ "$DISPLAY_MODE" = 1 ]; then
+            die "display payload wrong/missing on a DISPLAY-mode stick (displaylaunch.sh present? cyberdraw sha=${dlgot:-none}, expected $SHA_CYBER) — re-run make sacd-usb-display-mode"
+        fi
+        echo "WARN display payload absent/stale on stick (cyberdraw sha=${dlgot:-none})"
+        echo "     — fine for baseline/pair legs; make sacd-usb-display-mode stages it"
+    else
+        echo "OK  cyberdraw = pinned ARM build (17d0c2cb…)"
+        if [ -f "$USB/AutoScript/displayanim" ]; then
+            echo "OK  displayanim override present: $(cat "$USB/AutoScript/displayanim") s"
+        else
+            echo "OK  displayanim not set (displaylaunch.sh default 45 s)"
+        fi
+    fi
     # Phase-0 runtime inventory (plan §4 remainder): static ARM collector,
     # launched once per boot by hwmon_restore.sh
     [ -f "$USB/AutoScript/inventory" ] || die "inventory collector missing on stick ($USB/AutoScript/inventory — staged from $HWMON_DIR/inventory)"
@@ -216,13 +273,20 @@ cmd_usb_check() {
     for f in pairlaunch.sh hwmon_restore.sh inventory; do
         if [ -f "$HWMON_DIR/$f" ] && ! cmp -s "$HWMON_DIR/$f" "$USB/AutoScript/$f"; then
             echo "WARN $f on stick differs from the repo copy — a mode flip"
-            echo "     (sacd-usb-baseline-mode / sacd-usb-pair-mode) refreshes it"
+            echo "     (sacd-usb-baseline-mode / sacd-usb-pair-mode / sacd-usb-display-mode)"
+            echo "     refreshes it"
         fi
     done
+    if [ -f "$DISPLAY_DIR/displaylaunch.sh" ] && [ -f "$USB/AutoScript/displaylaunch.sh" ] \
+       && ! cmp -s "$DISPLAY_DIR/displaylaunch.sh" "$USB/AutoScript/displaylaunch.sh"; then
+        echo "WARN displaylaunch.sh on stick differs from the repo copy —"
+        echo "     make sacd-usb-display-mode refreshes it"
+    fi
     echo "AutoScript (${USB}/AutoScript/AutoScript):"
     sed 's/^/    /' "$USB/AutoScript/AutoScript"
     case "$(cat "$USB/AutoScript/AutoScript")" in
         *pairlaunch*) echo "MODE: pair-capture (instrumented via pairlaunch.sh wrapper)" ;;
+        *displaylaunch*) echo "MODE: display (cyberdraw on /dev/fb0 via displaylaunch.sh wrapper)" ;;
         *) echo "MODE: baseline (normal daemon)" ;;
     esac
     if [ -f "$USB/AutoScript/firebird.pair" ]; then
@@ -243,6 +307,12 @@ cmd_usb_mode() { # $1 = baseline|pair
         echo "refreshed AutoScript/inventory (Phase-0 collector)"
     fi
     echo "refreshed AutoScript/pairlaunch.sh + hwmon_restore.sh from the repo"
+    # display payload rides every mode flip too (canonical stick)
+    if [ -f "$DISPLAY_DIR/displaylaunch.sh" ] && [ -f "$DISPLAY_DIR/cyberdraw" ]; then
+        cp "$DISPLAY_DIR/displaylaunch.sh" "$USB/AutoScript/displaylaunch.sh"
+        cp "$DISPLAY_DIR/cyberdraw" "$USB/AutoScript/cyberdraw"
+        echo "refreshed AutoScript/displaylaunch.sh + cyberdraw (display payload)"
+    fi
     if [ "$1" = "pair" ]; then
         if [ -f "$USB/AutoScript/firebird.pair" ]; then
             rm "$USB/AutoScript/firebird.pair"
@@ -265,6 +335,37 @@ cmd_usb_mode() { # $1 = baseline|pair
         echo "  decision + every READ/DECRYPT + the save outcome."
         echo "  PLAYER: pull the stick, reinsert while idle -> tray opens BY"
         echo "          ITSELF (= trigger), then: make sacd-hw-wait && make sacd-hw-pair"
+    elif [ "$1" = "display" ]; then
+        # the TV photo/video leg: our pixels on the real panel (or a named cause)
+        [ -f "$DISPLAY_DIR/cyberdraw" ] || die "display payload missing: $DISPLAY_DIR/cyberdraw"
+        check_elf "$DISPLAY_DIR/cyberdraw" "$SHA_CYBER"
+        cp "$DISPLAY_DIR/cyberdraw" "$USB/AutoScript/cyberdraw"
+        cp "$DISPLAY_DIR/displaylaunch.sh" "$USB/AutoScript/displaylaunch.sh"
+        if [ -n "$DISPLAY_ANIM" ]; then
+            case "$DISPLAY_ANIM" in
+                *[!0-9]*|'') die "DISPLAY_ANIM must be a whole number of seconds (got '$DISPLAY_ANIM')" ;;
+            esac
+            if [ "$DISPLAY_ANIM" -lt 1 ] || [ "$DISPLAY_ANIM" -gt 100 ]; then
+                die "DISPLAY_ANIM must be 1..100 s (cyberdraw caps at 100; got $DISPLAY_ANIM)"
+            fi
+            printf '%s\n' "$DISPLAY_ANIM" > "$USB/AutoScript/displayanim"
+            echo "displayanim override written: ${DISPLAY_ANIM}s"
+        else
+            rm -f "$USB/AutoScript/displayanim"
+            echo "displayanim cleared (displaylaunch.sh default 45s)"
+        fi
+        auto_display > "$USB/AutoScript/AutoScript"
+        ANS=$([ -n "$DISPLAY_ANIM" ] && echo "$DISPLAY_ANIM" || echo 45)
+        echo "AutoScript set to DISPLAY mode (cyberdraw on /dev/fb0, ${ANS}s anim)."
+        echo "  PLAYER: pull the stick, reinsert while idle -> tray opens BY ITSELF"
+        echo "          (= trigger). PHONE READY BEFORE INSERTING: record video and"
+        echo "          take a photo of the TV during the ${ANS}s window — the scene is a"
+        echo "          green phosphor console + wireframe cube, unmistakeable."
+        echo "  THEN (standby pass): power press ONCE -> note whether the picture"
+        echo "          survives / the screen blanks -> power press again (wake) ->"
+        echo "          note instant vs slow wake. Write times in notes.txt."
+        echo "  THEN: pull the stick, reinsert once more (recover trigger) -> power"
+        echo "          off, pull stick -> make sacd-hw-collect"
     else
         auto_baseline > "$USB/AutoScript/AutoScript"
         # restore the SILENT observer so a baseline flip leaves a canonical stick
@@ -272,6 +373,7 @@ cmd_usb_mode() { # $1 = baseline|pair
             cp "$OPTICAL/bx510_pair.so" "$USB/optical/bx510_pair.so"
             echo "pair observer restored to SILENT build (canonical)."
         fi
+        rm -f "$USB/AutoScript/displayanim"
         echo "AutoScript set to BASELINE mode (normal daemon)."
     fi
     sed 's/^/    /' "$USB/AutoScript/AutoScript"
@@ -373,8 +475,14 @@ cmd_collect() {
     echo "== collect $(stamp) =="
     mkdir -p "$SESSION_DIR"
     if [ -f "$USB/AutoScript/firebird.pair" ]; then cp "$USB/AutoScript/firebird.pair" "$SESSION_DIR/"; fi
-    # Phase-0 runtime inventories (one per boot; see INVENTORY-SPEC.md)
+    # Phase-0 runtime inventories (one per boot; see INVENTORY-SPEC.md) and
+    # the display leg's active-display samples (inventory-active-*)
     for f in "$USB"/AutoScript/inventory-*.txt; do
+        [ -f "$f" ] && cp "$f" "$SESSION_DIR/"
+    done
+    # display leg: launcher log (live-on-stick) + the next-trigger recovery copy
+    for f in "$USB"/AutoScript/displaylaunch.log \
+             "$USB"/AutoScript/displaylaunch-recovered.log; do
         [ -f "$f" ] && cp "$f" "$SESSION_DIR/"
     done
     for d in bx510-baseline bx510-baseline-retry bx510-candidate bx510-candidate-retry; do
@@ -391,6 +499,10 @@ cmd_collect() {
             echo "- retry needed? why:"
             echo "- pair capture result / wire hash:"
             echo "- anything on the player screen:"
+            echo "- DISPLAY leg: photo/video file name (copied into this folder),"
+            echo "  and what the TV showed (scene / black / appliance UI / garble)"
+            echo "- DISPLAY leg standby pass: picture during standby (survived/blanked),"
+            echo "  wake behaviour (instant/slow) + timestamps"
         } > "$SESSION_DIR/notes.txt"
     fi
     cmd_verify_session
@@ -420,6 +532,13 @@ PY
              request-pair-console.txt notes.txt; do
         if [ -f "$SESSION_DIR/$f" ]; then echo "console/notes: $f present"; fi
     done
+    if ls "$SESSION_DIR"/displaylaunch*.log >/dev/null 2>&1; then
+        grep -h "CYBERDRAW: full-frame md5\|cyberdraw: open\|unsupported bpp\|anim exit" \
+             "$SESSION_DIR"/displaylaunch*.log 2>/dev/null | head -n 6
+    fi
+    for f in "$SESSION_DIR"/inventory*.txt; do
+        [ -f "$f" ] && echo "inventory: ${f##*/}"
+    done
     [ "$found" -gt 0 ] || die "no artifacts found in $SESSION_DIR — did the captures run?"
     echo "verification done: $found artifact set(s) present"
 }
@@ -430,6 +549,7 @@ case "${1:-}" in
     usb-check)       cmd_usb_check ;;
     usb-baseline-mode) cmd_usb_mode baseline ;;
     usb-pair-mode)   cmd_usb_mode pair ;;
+    usb-display-mode) cmd_usb_mode display ;;
     usb-original)     cmd_usb_use "$ORIGINAL" "$SHA_ORIG" "ORIGINAL" ;;
     usb-candidate)    cmd_usb_use "$RELEASE" "$SHA_REL" "RELEASE CANDIDATE" ;;
     wait)            cmd_wait ;;

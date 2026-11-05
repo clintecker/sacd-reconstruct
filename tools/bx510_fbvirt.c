@@ -31,6 +31,39 @@
  *   a request, but the virtual device keeps advertising its single
  *   consistent mode; the provider never re-reads VSCREENINFO after INIT.
  *
+ * - MT85 MULTI-POOL MODEL (the rung-(d) decode, 2026-11-04 session;
+ *   full condition list in MT85-SEARCHPOOL-DECODE.md): the retail
+ *   dfb_surfacemanager_allocate (0x40e0) dispatches on
+ *   buffer->surface->config.caps & (DSCAPS_PRIMARY|DSCAPS_VIDEOONLY)
+ *   == 5 — and EVERY primary layer region surface carries exactly
+ *   those caps (published layer_context.c:1509 builds the layer
+ *   surface with DSCAPS_VIDEOONLY|DSCAPS_PRIMARY). That branch
+ *   computes num-2 and returns DR_TEMPUNAVAIL (26) if num < 2:
+ *   primary/video-only surfaces may ONLY allocate from pools
+ *   0..num-2. With the one-pool GETMULTIPOOL response the primary
+ *   layer surface could NEVER allocate — which is why 8 MiB, 32 MiB
+ *   and exact-fit pools all failed identically (the gate fires
+ *   before any size comparison). The real MT85xx driver reports
+ *   multiple memory slices (the ABI is named MULTI_MEM_POOL;
+ *   FB_MEM_SLICE_NUM=4 in the retail revision), so num=2 is the
+ *   minimal hardware-true topology: pool 0 is the slice primary/
+ *   video-only surfaces allocate from, pool 1 is the "last" slice
+ *   the retail skips for them (the retail allocate never reads
+ *   type[]; its skip-last rule embodies the published IOMMU branch's
+ *   "skip FBMT_VALLOC pools" rule, so pool 1 is declared VALLOC).
+ *   Pool 0 is sized exactly one primary surface: pitch*height + 16
+ *   bytes overrun slack per the core's dfb_gfxcard_calc_buffer_size
+ *   (5120*720+16 = 3686416; the +16 prefetch slack is published-
+ *   source, limits zeroed in no-hardware mode), page-aligned up to
+ *   3690496 (901 pages) — mmap lengths are PAGE_ALIGN'd by the kernel before the
+ *   vma exists, so a non-page-multiple size[i] can NEVER match the
+ *   length dispatch (run5's lesson: the provider's first pool mmap
+ *   came back EINVAL and its own "Could not mmap pool!" aborted
+ *   init). The primary allocation carves from the END of the free
+ *   chunk (offset = pool_size - alloc_length), which the rung-(e)
+ *   capture's scan-locate turns into a length measurement of the
+ *   retail core's calculated buffer size.
+ *
  * - Selector lifetime: this 2.6.35 kernel's fb_ops carries NO struct
  *   file* into fb_ioctl or fb_mmap (verified in the Sony tree:
  *   fb_ioctl(info, cmd, arg); fb_mmap(info, vma)), so true per-open-file
@@ -74,29 +107,40 @@
 
 /* ---- MT85 virtual-device storage model ----
  *
- * One image pool of 32 MiB backs the DirectFB surface allocator. NOTE:
- * pool size is NOT the current rung-(e) blocker — 8 MiB, 32 MiB, and an
- * exact-one-surface 3686400-byte pool all fail identically downstream
- * (see MT85-RESULTS.md); 32 MiB is kept as the generous default. The
- * command ring is 512 KiB, debug info 4096 B — all three lengths are
- * distinct from each other and from the standard-fb smem_len so the
- * mmap dispatch below is unambiguous.
+ * TWO image pools (the retail allocate's primary/video-only gate
+ * requires num >= 2 — see the rung-(d) decode in the header comment
+ * and MT85-SEARCHPOOL-DECODE.md):
+ *   pool 0 = one 1280x720 ARGB surface incl. the core's +16-byte
+ *           overrun slack, PAGE-ALIGNED (the kernel rounds mmap
+ *           lengths up to page multiples before the vma exists, so
+ *           every size[] must be page-aligned or the length
+ *           dispatch below never matches — run5's lesson);
+ *   pool 1 = 16 MiB general slice (normal surfaces scan it FIRST:
+ *           the retail checks m_avail[num-1] before any other pool),
+ *           skipped for primary/video-only surfaces, VALLOC type.
+ * The command ring is 512 KiB, debug info 4096 B — every mmap
+ * length is distinct and page-aligned (pool0 3690496, pool1
+ * 16781312 = size+0x1000, ring 524288, debug 4096, fbdev smem
+ * 1658880) so the length dispatch below stays unambiguous.
  */
-#define MT85_POOL_SIZE      (32u * 1024 * 1024)
+#define MT85_POOL0_SIZE     (((1280u * 720u * 4u + 16u) + 4095u) & ~4095u)  /* 3690496, run5-measured: alloc length 3686416 at offset 4080 */
+#define MT85_POOL1_SIZE     (16u * 1024 * 1024)
 #define MT85_CMDBUF_SIZE    (512u * 1024)
 #define MT85_DEBUG_SIZE     4096u
-/* Advertised physical-address namespace for pool 0. CPU addr = the
- * userspace pool mmap base + offset; phys = this base + offset. The
- * layer FBIO_SET(BASE) translation maps this namespace back onto the
- * pool bytes. */
+/* Advertised physical-address namespaces, one per pool. CPU addr =
+ * the userspace pool mmap base + offset; phys = these bases + offset.
+ * The layer FBIO_SET(BASE) translation maps these namespaces back
+ * onto the pool bytes. */
 #define MT85_POOL0_PHYS     0x48000000u
+#define MT85_POOL1_PHYS     0x4A000000u
 /* Ring capacity in items, assuming 64-byte items (GFX_BUFF_CMD_ITEM_T
  * = payload union + 5 reserved words). Item size is published-source
  * only until the retail provider is observed pushing commands; the
  * value only affects the accelerated path, which this pass stubs. */
 #define MT85_RING_ITEM_SIZE 64u
 
-static void *mt85_pool_mem;    /* vmalloc, MT85_POOL_SIZE  */
+static void *mt85_pool_mem;    /* vmalloc, MT85_POOL0_SIZE */
+static void *mt85_pool1_mem;   /* vmalloc, MT85_POOL1_SIZE */
 static void *mt85_cmdbuf_mem;  /* vmalloc, MT85_CMDBUF_SIZE */
 static void *mt85_debug_mem;   /* vmalloc, MT85_DEBUG_SIZE */
 static unsigned int mt85_selector = MT85_FB_MMAP_MEMPOOL;
@@ -136,13 +180,19 @@ static int fbvirt_mmap(struct fb_info *info, struct vm_area_struct *vma)
 
     if (off == 0) {
         /* MT85 vendor mapping classes — all at file offset 0, dispatched
-         * by the published length conventions (see header comment):
-         *   pool i  requested with exactly size[i] + i*0x1000
+         * by the retail-verified length conventions (retail pool-mmap
+         * loop at 0x27b0-0x27d4 computes length = size[i] + i*0x1000):
+         *   pool 0  requested with exactly size[0]      (+ 0*0x1000)
+         *   pool 1  requested with exactly size[1]+0x1000
          *   ring    requested with exactly the GETCMDBUFLEN value
          *   debug   requested with exactly 4096 */
-        if (len == MT85_POOL_SIZE + 0 * 0x1000UL) {
+        if (len == MT85_POOL0_SIZE + 0 * 0x1000UL) {
             which = mt85_pool_mem;
             printk(KERN_INFO "fbvirt-mt85: mmap pool0 len=%lu "
+                   "(selector=%u)\n", len, mt85_selector);
+        } else if (len == MT85_POOL1_SIZE + 1 * 0x1000UL) {
+            which = mt85_pool1_mem;
+            printk(KERN_INFO "fbvirt-mt85: mmap pool1 len=%lu "
                    "(selector=%u)\n", len, mt85_selector);
         } else if (len == MT85_CMDBUF_SIZE) {
             which = mt85_cmdbuf_mem;
@@ -171,9 +221,17 @@ static int fbvirt_mmap(struct fb_info *info, struct vm_area_struct *vma)
     }
 
     /* standard fbdev path unchanged: map screen_base at the requested
-     * offset, bounded by smem_len (the raw-drawing regression gate) */
-    if (off + len > info->fix.smem_len)
+     * offset, bounded by smem_len (the raw-drawing regression gate).
+     * A rejected mmap is LOGGED — an unmatched vendor length must be
+     * visible in the module log, not a silent EINVAL (run5's lesson:
+     * the pool mmap failure was invisible until the provider's own
+     * "Could not mmap pool!" named it). */
+    if (off + len > info->fix.smem_len) {
+        printk(KERN_INFO "fbvirt-mt85: mmap REJECTED off=%lu len=%lu "
+               "(matches no vendor class; smem_len=%u) -> EINVAL\n",
+               off, len, info->fix.smem_len);
         return -EINVAL;
+    }
     {
         /* local cursor: never mutate vma->vm_start (the zero-length
          * VMA left by the classic vfb mutation pattern gets torn down
@@ -245,7 +303,7 @@ static int mt85_ioctl(struct fb_info *info, unsigned int cmd,
         struct mt85fb_imagebuffer ib;
         if (copy_from_user(&ib, (void __user *)arg, sizeof(ib)))
             return -EFAULT;
-        ib.u4Size = MT85_POOL_SIZE;
+        ib.u4Size = MT85_POOL0_SIZE;
         ib.u4VirtAddr = 0;                 /* provider never reads it */
         ib.u4PhyAddr = MT85_POOL0_PHYS;
         if (copy_to_user((void __user *)arg, &ib, sizeof(ib)))
@@ -258,7 +316,12 @@ static int mt85_ioctl(struct fb_info *info, unsigned int cmd,
     case MT85_FBIO_GETMULTIPOOL: {
         /* RETAIL layout (verified; see header): 88 bytes, four-entry
          * arrays, phys[0]@8, addr[0]@24 (caller overwrites with its
-         * mmap), size[0]@40, type[0]@56, handle[0]@72 */
+         * mmap), size[0]@40, type[0]@56, handle[0]@72.
+         * TWO pools: the retail allocate's primary/video-only branch
+         * (caps & 5 == 5 — every primary layer region surface) can
+         * only use pools 0..num-2 and declines with TEMPUNAVAIL when
+         * num < 2, so a one-pool answer made the primary layer
+         * surface unallocatable (rung (d) blocker). */
         unsigned char mp[MT85_RETAIL_POOL_BYTES];
         unsigned int *mpw = (unsigned int *)mp;
         if (copy_from_user(mp, (void __user *)arg, sizeof(mp)))
@@ -269,18 +332,28 @@ static int mt85_ioctl(struct fb_info *info, unsigned int cmd,
             return -EINVAL;
         }
         memset(mp, 0, sizeof(mp));
-        mpw[0] = 1;                            /* num      */
+        mpw[0] = 2;                            /* num      */
         mpw[1] = 1;                            /* ref_num  */
-        mpw[MT85_RETAIL_MP_OFF_PHYS / 4] = MT85_POOL0_PHYS;
-        /* addr[0] left 0: userspace stores its mmap result there */
-        mpw[MT85_RETAIL_MP_OFF_SIZE / 4] = MT85_POOL_SIZE;
-        mpw[MT85_RETAIL_MP_OFF_TYPE / 4] = MT85_FBMT_ONEZONE;
+        /* phys[] */
+        mpw[MT85_RETAIL_MP_OFF_PHYS / 4 + 0] = MT85_POOL0_PHYS;
+        mpw[MT85_RETAIL_MP_OFF_PHYS / 4 + 1] = MT85_POOL1_PHYS;
+        /* addr[] left 0: userspace stores its mmap results there */
+        /* size[] */
+        mpw[MT85_RETAIL_MP_OFF_SIZE / 4 + 0] = MT85_POOL0_SIZE;
+        mpw[MT85_RETAIL_MP_OFF_SIZE / 4 + 1] = MT85_POOL1_SIZE;
+        /* type[]: nothing in the retail allocate reads it (verified in
+         * the decode); pool 1 declared VALLOC to record the skip-last
+         * convention the retail's primary/video-only branch embodies */
+        mpw[MT85_RETAIL_MP_OFF_TYPE / 4 + 0] = MT85_FBMT_ONEZONE;
+        mpw[MT85_RETAIL_MP_OFF_TYPE / 4 + 1] = MT85_FBMT_VALLOC;
         if (copy_to_user((void __user *)arg, mp, sizeof(mp)))
             return -EFAULT;
         mt85_log_req(cmd);
         printk(KERN_INFO "fbvirt-mt85: GETMULTIPOOL(0x%x retail) -> "
-               "num=1 size[0]=%u phys[0]=0x%08x (88-byte retail struct)\n",
-               cmd, MT85_POOL_SIZE, MT85_POOL0_PHYS);
+               "num=2 size[0]=%u phys[0]=0x%08x size[1]=%u "
+               "phys[1]=0x%08x (88-byte retail struct)\n",
+               cmd, MT85_POOL0_SIZE, MT85_POOL0_PHYS,
+               MT85_POOL1_SIZE, MT85_POOL1_PHYS);
         return 0;
     }
     case MT85_FBIO_SETMMAPMETHOD: {
@@ -366,19 +439,28 @@ static int mt85_ioctl(struct fb_info *info, unsigned int cmd,
         if (set.mask & MT85_SET_VISIBLE) pl->visible = set.rSetting.fgVisible;
         if (set.mask & MT85_SET_BASE) {
             /* translate the advertised phys namespace back onto pool
-             * bytes: base must land inside pool 0 */
+             * bytes: base must land inside one of the two pools */
             if (set.rSetting.u4Base >= MT85_POOL0_PHYS
-                && set.rSetting.u4Base < MT85_POOL0_PHYS + MT85_POOL_SIZE) {
+                && set.rSetting.u4Base < MT85_POOL0_PHYS + MT85_POOL0_SIZE) {
                 pl->base = set.rSetting.u4Base;
                 printk(KERN_INFO "fbvirt-mt85: SET plane base "
                        "0x%08x -> pool0+%u (in bounds)\n",
                        set.rSetting.u4Base,
                        set.rSetting.u4Base - MT85_POOL0_PHYS);
+            } else if (set.rSetting.u4Base >= MT85_POOL1_PHYS
+                       && set.rSetting.u4Base
+                       < MT85_POOL1_PHYS + MT85_POOL1_SIZE) {
+                pl->base = set.rSetting.u4Base;
+                printk(KERN_INFO "fbvirt-mt85: SET plane base "
+                       "0x%08x -> pool1+%u (in bounds)\n",
+                       set.rSetting.u4Base,
+                       set.rSetting.u4Base - MT85_POOL1_PHYS);
             } else {
                 printk(KERN_INFO "fbvirt-mt85: SET plane base 0x%08x "
-                       "OUT OF POOL RANGE [0x%08x,0x%08x) — recorded, "
-                       "not mapped\n", set.rSetting.u4Base,
-                       MT85_POOL0_PHYS, MT85_POOL0_PHYS + MT85_POOL_SIZE);
+                       "OUT OF POOL RANGE [0x%08x,0x%08x)/[0x%08x,0x%08x) "
+                       "— recorded, not mapped\n", set.rSetting.u4Base,
+                       MT85_POOL0_PHYS, MT85_POOL0_PHYS + MT85_POOL0_SIZE,
+                       MT85_POOL1_PHYS, MT85_POOL1_PHYS + MT85_POOL1_SIZE);
                 pl->base = set.rSetting.u4Base;
             }
         }
@@ -520,15 +602,19 @@ static int __init fbvirt_init(void)
     fbvirt_info->pseudo_palette = NULL;
 
     /* MT85 vendor storage (separate from the standard fbdev screen:
-     * pool / command ring / debug info, each bounded independently) */
-    mt85_pool_mem = vmalloc_32(MT85_POOL_SIZE);
+     * pool 0 / pool 1 / command ring / debug info, each bounded
+     * independently) */
+    mt85_pool_mem = vmalloc_32(MT85_POOL0_SIZE);
+    mt85_pool1_mem = vmalloc_32(MT85_POOL1_SIZE);
     mt85_cmdbuf_mem = vmalloc_32(MT85_CMDBUF_SIZE);
     mt85_debug_mem = vmalloc_32(MT85_DEBUG_SIZE);
-    if (!mt85_pool_mem || !mt85_cmdbuf_mem || !mt85_debug_mem) {
+    if (!mt85_pool_mem || !mt85_pool1_mem || !mt85_cmdbuf_mem
+        || !mt85_debug_mem) {
         ret = -ENOMEM;
         goto out_mt85;
     }
-    memset(mt85_pool_mem, 0, MT85_POOL_SIZE);
+    memset(mt85_pool_mem, 0, MT85_POOL0_SIZE);
+    memset(mt85_pool1_mem, 0, MT85_POOL1_SIZE);
     memset(mt85_cmdbuf_mem, 0, MT85_CMDBUF_SIZE);
     memset(mt85_debug_mem, 0, MT85_DEBUG_SIZE);
     /* initialize the shared ring header (GFX_DRV_CMDBUF_T prefix stays
@@ -545,10 +631,12 @@ static int __init fbvirt_init(void)
            "%lu bytes at %p (fb%d)\n", FBVIRT_XRES, FBVIRT_YRES,
            FBVIRT_BPP, size, fbvirt_info->screen_base,
            fbvirt_info->node);
-    printk(KERN_INFO "fbvirt-mt85: vendor contract up: pool %u B "
-           "phys=0x%08x, ring %u B (maxcount %u), debug %u B; "
-           "18 published requests, unknown -> ENOTTY\n",
-           MT85_POOL_SIZE, MT85_POOL0_PHYS, MT85_CMDBUF_SIZE,
+    printk(KERN_INFO "fbvirt-mt85: vendor contract up: 2 pools "
+           "(p0 %u B phys=0x%08x primary/video-only slice, p1 %u B "
+           "phys=0x%08x general slice), ring %u B (maxcount %u), "
+           "debug %u B; retail requests served, unknown -> ENOTTY\n",
+           MT85_POOL0_SIZE, MT85_POOL0_PHYS, MT85_POOL1_SIZE,
+           MT85_POOL1_PHYS, MT85_CMDBUF_SIZE,
            *(unsigned int *)(mt85_cmdbuf_mem + MT85_RING_OFF_MAXCOUNT),
            MT85_DEBUG_SIZE);
     return 0;
@@ -556,6 +644,8 @@ static int __init fbvirt_init(void)
 out_mt85:
     if (mt85_pool_mem)
         vfree(mt85_pool_mem), mt85_pool_mem = NULL;
+    if (mt85_pool1_mem)
+        vfree(mt85_pool1_mem), mt85_pool1_mem = NULL;
     if (mt85_cmdbuf_mem)
         vfree(mt85_cmdbuf_mem), mt85_cmdbuf_mem = NULL;
     if (mt85_debug_mem)
@@ -573,6 +663,8 @@ static void __exit fbvirt_exit(void)
     unregister_framebuffer(fbvirt_info);
     if (mt85_pool_mem)
         vfree(mt85_pool_mem);
+    if (mt85_pool1_mem)
+        vfree(mt85_pool1_mem);
     if (mt85_cmdbuf_mem)
         vfree(mt85_cmdbuf_mem);
     if (mt85_debug_mem)

@@ -52,6 +52,8 @@
 static unsigned int *fb;
 static int pitch_px;
 static int SCAL = 2;          /* device px per logical px (set from the panel) */
+/* device profile offsets (see profile_load): where the visible area starts */
+static int g_xoff, g_yoff, g_visible_w, g_visible_h, g_pitch;
 
 static void px_blend(int xd, int yd, unsigned int c, unsigned a)
 {
@@ -214,7 +216,7 @@ static void px(int x, int y, unsigned int c)
     int dx, dy;
     unsigned int *row;
     if (x < 0 || y < 0 || x >= CW || y >= CH) return;
-    row = fb + (size_t)(y * SCAL) * pitch_px + (size_t)x * SCAL;
+    row = fb + (size_t)(g_yoff + y * SCAL) * pitch_px + (size_t)(g_xoff + x * SCAL);
     for (dy = 0; dy < SCAL; dy++) {
         unsigned int *o = row + (size_t)dy * pitch_px;
         for (dx = 0; dx < SCAL; dx++) o[dx] = c;
@@ -229,7 +231,7 @@ static void rect(int x, int y, int w, int h, unsigned int c)
     if (x + w > CW) w = CW - x;
     if (y + h > CH) h = CH - y;
     if (w <= 0 || h <= 0) return;
-    row = fb + (size_t)(y * SCAL) * pitch_px + (size_t)x * SCAL;
+    row = fb + (size_t)(g_yoff + y * SCAL) * pitch_px + (size_t)(g_xoff + x * SCAL);
     for (dy = 0; dy < h * SCAL; dy++) {
         unsigned int *o = row + (size_t)dy * pitch_px;
         for (dx = 0; dx < w; dx++)
@@ -537,6 +539,39 @@ static unsigned spark[40];
 static int g_selftest __attribute__((unused));
 static int g_render_only;
 
+/* ---- calibration pattern -------------------------------------------------
+   Designed so a single photo names the fault:
+     - green 1-px grid every 32 logical px      -> stride / scale mismatch
+     - white 8-px border at the exact edges     -> visible-area offset / crop
+     - crosshair + dot at (0,0) and (CW-1,CH-1) -> origin offset
+     - four colour bars in KNOWN order          -> byte order / format
+     - one-pixel checker at the centre          -> scale factor (alias patttern)
+   Diff it against the same pattern rendered in the rig. */
+static void draw_calib(void)
+{
+    int x, y, i;
+    static const unsigned int bars[4] = { C_RED, C_PHOS, C_CYAN, C_AMBER };
+    rect(0, 0, CW, CH, 0x000000);
+    for (y = 0; y < CH; y += 32) rect(0, y, CW, 1, 0x00ff00);
+    for (x = 0; x < CW; x += 32) rect(x, 0, 1, CH, 0x00ff00);
+    for (i = 0; i < 8; i++) {
+        rect(i, i, CW - 2 * i, 1, 0xffffff);
+        rect(i, CH - 1 - i, CW - 2 * i, 1, 0xffffff);
+        rect(i, i, 1, CH - 2 * i, 0xffffff);
+        rect(CW - 1 - i, i, 1, CH - 2 * i, 0xffffff);
+    }
+    /* colour bars, left-to-right in a FIXED order */
+    for (i = 0; i < 4; i++)
+        rect(40 + i * (CW - 80) / 4, 40, (CW - 80) / 4 - 8, 60, bars[i]);
+    /* origin crosshair + centre checker */
+    rect(0, 0, 24, 2, 0xffffff); rect(0, 0, 2, 24, 0xffffff);
+    rect(CW - 24, CH - 2, 24, 2, 0xffffff); rect(CW - 2, CH - 24, 2, 24, 0xffffff);
+    for (y = CH / 2 - 16; y < CH / 2 + 16; y++)
+        for (x = CW / 2 - 16; x < CW / 2 + 16; x++)
+            if (((x ^ y) & 1) == 0) rect(x, y, 1, 1, 0xffffff);
+    text1("CALIBRATION  CW=640 CH=360  SCAL=2", 12, CH - 20, 0xffffff);
+}
+
 static void scene(const hud_t *h, double t, double fps, int frame)
 {
     char l[128], up[16];
@@ -712,6 +747,29 @@ int main(int argc, char **argv)
    module dispatches mmap classes BY LENGTH, so mmap(POOL_LEN) hands us the
    same slice the retail provider maps. No DirectFB, no command ring, no Flip.
    Enable with HUD_POOL=1. */
+/* device profile: what the panel actually is. Filled from the calibration run
+   (or read from /tmp/hud-profile). Fields: scale, xoff, yoff, visible_w,
+   visible_h, pitch. Anything absent keeps the default. */
+
+static void profile_load(void)
+{
+    FILE *f = fopen("/tmp/hud-profile", "r");
+    char k[32];
+    int v;
+    if (!f) return;
+    while (fscanf(f, "%31[a-z_] = %d", k, &v) == 2) {
+        if (!strcmp(k, "scale")) SCAL = v;
+        else if (!strcmp(k, "xoff")) g_xoff = v;
+        else if (!strcmp(k, "yoff")) g_yoff = v;
+        else if (!strcmp(k, "visible_w")) g_visible_w = v;
+        else if (!strcmp(k, "visible_h")) g_visible_h = v;
+        else if (!strcmp(k, "pitch")) g_pitch = v;
+    }
+    fclose(f);
+    printf("HUD: profile scale=%d xoff=%d yoff=%d vis=%dx%d pitch=%d\n",
+           SCAL, g_xoff, g_yoff, g_visible_w, g_visible_h, g_pitch);
+}
+
 static int pool_open(const char *dev)
 {
     size_t len = (size_t)CW * SCAL * (size_t)CH * SCAL * 4u + 0x1000u;
@@ -765,7 +823,9 @@ int main(int argc, char **argv)
         tick_push("CLIENT CONNECTED");
         tick_push("READ lsn=532104 n=128 (256K)");
         tick_push("CLOSE rc=0");
-        scene(&hp, 1.7, 13.0, 8);
+        profile_load();
+        if (getenv("HUD_CALIB")) draw_calib();
+        else scene(&hp, 1.7, 13.0, 8);
         printf("HUD: POOL-RENDER DONE\n");
         return 0;
     }

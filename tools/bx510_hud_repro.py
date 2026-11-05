@@ -43,6 +43,8 @@ def main():
         p.add_argument("--" + opt, required=True, type=Path)
     p.add_argument("--secs", type=int, default=3)
     p.add_argument("--scale", type=int, default=2)
+    p.add_argument("--calib", action="store_true",
+                   help="draw the calibration pattern instead of the HUD scene")
     p.add_argument("--font", type=Path, default=None,
                    help="Sony font (carved from /res/font.bin) to stage in-guest")
     p.add_argument("--pool-mode", action="store_true",
@@ -82,7 +84,9 @@ def main():
         "/sbin/insmod /lib/modules/2.6.35/BDP/fusion.ko; echo HR_FUSION=$?",
         "set -- $(grep fusion /res/proc/devices); /bin/mknod /res/dev/fusion0 c $1 0; echo HR_FUSNODE=$?",
         # the HUD itself, exactly as the supervisor runs it
-        ("LD_PRELOAD=/res/shim/tmpredir.so HUD_POOL=1 HUD_FONT=/res/shim/sony-font.ttf "
+        (("LD_PRELOAD=/res/shim/tmpredir.so HUD_POOL=1 HUD_CALIB=1 "
+         if a.calib else
+         "LD_PRELOAD=/res/shim/tmpredir.so HUD_POOL=1 HUD_FONT=/res/shim/sony-font.ttf ") +
          "/res/shim/sacd_hud --render >/res/hud.out 2>&1; echo HR_HUD=$?") if a.font else
         f"LD_PRELOAD=/res/shim/tmpredir.so /res/shim/sacd_hud --render >/res/hud.out 2>&1; echo HR_HUD=$?",
         "echo HR_HUD_BEGIN; cat /res/hud.out; echo HR_HUD_END",

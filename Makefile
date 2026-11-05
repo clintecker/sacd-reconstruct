@@ -449,6 +449,17 @@ sacd-hw-payload-check:
 sacd-hud-sim:
 	cd experiments/sacd_reconstruct && cc -O2 -Wall -Wextra -Wno-pragmas -DHUD_SIM -I. -o /tmp/hudsim tools/bx510_sacd_hud.c && HUD_FONT=evidence/bx510/display-payload/sony-font.ttf /tmp/hudsim /tmp/hud_sim.ppm 1 && sips -s format png /tmp/hud_sim.ppm --out /tmp/hud_sim.png >/dev/null && echo "wrote /tmp/hud_sim.png"
 
+## SACD hardware :: sacd-usb-calib :: arm the CALIBRATION pattern on the stick :: sets AutoScript/hudcalib then display mode, so the next player run photographs a known pattern (grid/bars/edges) instead of the HUD
+.PHONY: sacd-usb-calib
+sacd-usb-calib:
+	sh experiments/sacd_reconstruct/tools/sacd_hardware.sh usb-display-mode
+	printf '1\n' > /Volumes/SONYUSB/AutoScript/hudcalib
+
+## SACD hardware :: sacd-hud-diff :: does the rig predict the panel? :: SSIM + luminance + best global shift between a device photo and a render; exits non-zero below MIN_SSIM (default 0.55)
+.PHONY: sacd-hud-diff
+sacd-hud-diff:
+	python3 experiments/sacd_reconstruct/tools/bx510_hud_diff.py "$(PHOTO)" "$(RENDER)" --min-ssim $${MIN_SSIM:-0.55}
+
 ## SACD hardware :: sacd-hud-guest :: run the HUD in the real Sony guest and GATE it :: asserts rc=0 and a non-black framebuffer (a black screenshot fails instead of being eyeballed); currently red because fbvirt's FBIO_DISPATCHHW is a no-op
 .PHONY: sacd-hud-guest
 sacd-hud-guest:

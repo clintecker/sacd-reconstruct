@@ -439,6 +439,21 @@ sacd-emu-daemons:
 #            HW_ISO (the Firebird rip) DISK (/dev/diskN for usb-build)
 #            DISPLAY_ANIM (45, the display leg's anim window in seconds)
 
+## SACD hardware :: sacd-hw-payload-check :: the stick gate :: verifies EVERY payload SHA against the repo, asserts the AutoScript shape (<=9 lines / <=460 bytes), shell-syntax checks the wrappers, and fails loudly (staging calls it automatically)
+.PHONY: sacd-hw-payload-check
+sacd-hw-payload-check:
+	sh experiments/sacd_reconstruct/tools/sacd_hardware.sh payload-check
+
+## SACD hardware :: sacd-hud-sim :: render the HUD scene on the Mac (no DirectFB, no device) :: real Sony font + fake telemetry -> PNG, for layout/text iteration in seconds
+.PHONY: sacd-hud-sim
+sacd-hud-sim:
+	cd experiments/sacd_reconstruct && cc -O2 -Wall -Wextra -Wno-pragmas -DHUD_SIM -I. -o /tmp/hudsim tools/bx510_sacd_hud.c && HUD_FONT=evidence/bx510/display-payload/sony-font.ttf /tmp/hudsim /tmp/hud_sim.ppm 1 && sips -s format png /tmp/hud_sim.ppm --out /tmp/hud_sim.png >/dev/null && echo "wrote /tmp/hud_sim.png"
+
+## SACD hardware :: sacd-hud-guest :: run the HUD in the real Sony guest and GATE it :: asserts rc=0 and a non-black framebuffer (a black screenshot fails instead of being eyeballed); currently red because fbvirt's FBIO_DISPATCHHW is a no-op
+.PHONY: sacd-hud-guest
+sacd-hud-guest:
+	sh experiments/sacd_reconstruct/tools/hud_guest_run.sh
+
 ## SACD hardware :: sacd-usb-prune :: tidy the session stick back to payload-only :: drops the player's own hwmon snapshots/backups, recovered logs and inventory reports (collect them first); reports the KiB freed
 .PHONY: sacd-usb-prune
 sacd-usb-prune:

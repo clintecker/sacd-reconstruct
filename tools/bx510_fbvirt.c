@@ -12,8 +12,11 @@
  * them into the UART log. The real libdirectfb from the device's
  * rootfs can then be exercised against it with system=fbdev.
  *
- * Mode: 720x576, 32bpp XRGB (the platform's SD resolution; the layer
- * model in the device's directfbrc uses 720x576 for video layers).
+ * Mode: 1280x720, 32bpp XRGB — MODE PARITY with the player (2026-11-05): the
+ * panel's layer is 1280x720 and DirectFB's primary comes back 1280x720, while
+ * this module used to advertise 720x576. That mismatch hid every pitch/size bug
+ * we hit on hardware (a 1280-wide surface over a 720-wide fbdev, lock pitch
+ * 5120 vs 2880). The rig must advertise what the panel advertises.
  *
  * MT85xx vendor contract (this session's extension — see
  * bx510_fbvirt_mt85.h for the ABI and evidence/bx510-guest/graphics/
@@ -101,8 +104,8 @@
 
 #include "bx510_fbvirt_mt85.h"
 
-#define FBVIRT_XRES 720
-#define FBVIRT_YRES 576
+#define FBVIRT_XRES 1280
+#define FBVIRT_YRES 720
 #define FBVIRT_BPP  32
 
 /* ---- MT85 virtual-device storage model ----

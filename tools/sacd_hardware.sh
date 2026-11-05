@@ -71,7 +71,7 @@ SHA_FBMD5="049b09654766530b093c280621983a84943f057527c6364e1634cc63dd8331ba"
 # Tier-1 probe: real DirectFB against the player's own 1.2 libs (vendor pool path)
 SHA_DFB="51e797486b8b9733f51fdd22929dd88993a4e899351431a371115c777e9c614f"
 # the HUD (docs/HUD-DESIGN.md); H0 = static layout mock on the same stack
-SHA_HUD="86412d7b961d90a4e629234790d738ecdb0a71e0d903527628ddd04012c1dd00"
+SHA_HUD="1f3eb9360de47aee2abcbf8993419ce8f58e43abeb2e9d2bf448d2eccc759fbd"
 ISO_SIZE_EXPECTED=2179497984
 
 HW_HOST="${HW_HOST:-10.20.1.236}"
@@ -246,7 +246,9 @@ cmd_usb_build() {
     cp "$DISPLAY_DIR/fbmd5" "$USB/AutoScript/fbmd5" 2>/dev/null || true
     cp "$DISPLAY_DIR/dfbhello" "$USB/AutoScript/dfbhello" 2>/dev/null || true
     cp "$DISPLAY_DIR/sacd_hud" "$USB/AutoScript/sacd_hud" 2>/dev/null || true
+    cp "$DISPLAY_DIR/sony-font.ttf" "$USB/AutoScript/sony-font.ttf" 2>/dev/null || true
     auto_baseline > "$USB/AutoScript/AutoScript"
+    cmd_payload_check
     cmd_usb_check
     echo
     echo "USB built (MTK CLI format). Next (sleep-trigger protocol):"
@@ -368,6 +370,7 @@ cmd_usb_mode() { # $1 = baseline|pair
         cp "$DISPLAY_DIR/fbmd5" "$USB/AutoScript/fbmd5" 2>/dev/null || true
         cp "$DISPLAY_DIR/dfbhello" "$USB/AutoScript/dfbhello" 2>/dev/null || true
         cp "$DISPLAY_DIR/sacd_hud" "$USB/AutoScript/sacd_hud" 2>/dev/null || true
+    cp "$DISPLAY_DIR/sony-font.ttf" "$USB/AutoScript/sony-font.ttf" 2>/dev/null || true
         echo "refreshed AutoScript/displaylaunch.sh + cyberdraw + fbmd5 + dfbhello + sacd_hud"
     fi
     if [ "$1" = "pair" ]; then
@@ -417,6 +420,7 @@ cmd_usb_mode() { # $1 = baseline|pair
         cp "$DISPLAY_DIR/fbmd5" "$USB/AutoScript/fbmd5" 2>/dev/null || true
         cp "$DISPLAY_DIR/dfbhello" "$USB/AutoScript/dfbhello" 2>/dev/null || true
         cp "$DISPLAY_DIR/sacd_hud" "$USB/AutoScript/sacd_hud" 2>/dev/null || true
+    cp "$DISPLAY_DIR/sony-font.ttf" "$USB/AutoScript/sony-font.ttf" 2>/dev/null || true
         # PRESERVE the previous run's logs: staging used to delete them, which
         # threw away the very rcs the next iteration needed (2026-11-05)
         for f in displaylaunch.log candlaunch.log cand-recovered.out hwmon-boot.txt; do
@@ -462,6 +466,7 @@ cmd_usb_mode() { # $1 = baseline|pair
         echo "AutoScript set to BASELINE mode (normal daemon)."
     fi
     sed 's/^/    /' "$USB/AutoScript/AutoScript"
+    cmd_payload_check
 }
 
 cmd_usb_use() { # $1 = path $2 = sha $3 = name — stages into AutoScript/, the
@@ -474,6 +479,64 @@ cmd_usb_use() { # $1 = path $2 = sha $3 = name — stages into AutoScript/, the
     got=$(sha_of "$USB/AutoScript/sacd_extract_160")
     [ "$got" = "$2" ] || die "post-copy SHA mismatch on stick"
     echo "OK  stick AutoScript/sacd_extract_160 is now the $3 ($2)"
+}
+
+cmd_payload_check() {
+    # The gate usb-check should always have been: every payload file is hashed
+    # against the repo copy, the CLI script shape is asserted (the parser
+    # truncates >~9 lines / ~460 bytes), and required files must exist.
+    # Staging calls this too, so a silent stale copy cannot happen again.
+    echo "== payload-check $(stamp) =="
+    [ -d "$USB/AutoScript" ] || die "USB not mounted at $USB (pass USB=/Volumes/<name>)"
+    S="$USB/AutoScript"
+    fail=0
+    need="AutoScript sacd_extract_160 hwmon hwmon_restore.sh pairlaunch.sh candlaunch.sh hudlaunch.sh inventory sacd_hud cyberdraw fbmd5 dfbhello sacd_read.ko sony-font.ttf"
+    for f in $need; do
+        [ -f "$S/$f" ] || { echo "MISSING $f"; fail=1; }
+    done
+    for pair in "$DISPLAY_DIR/cyberdraw:$SHA_CYBER" \
+                "$DISPLAY_DIR/fbmd5:$SHA_FBMD5" \
+                "$DISPLAY_DIR/dfbhello:$SHA_DFB" \
+                "$DISPLAY_DIR/sacd_hud:$SHA_HUD"; do
+        src=${pair%%:*}; want=${pair##*:}; f=${src##*/}
+        [ -f "$S/$f" ] || continue
+        got=$(sha_of "$S/$f")
+        if [ "$got" != "$want" ]; then
+            echo "SHA MISMATCH $f: stick=$got repo=$want"
+            fail=1
+        else
+            echo "OK  $f $got"
+        fi
+    done
+    for f in hwmon_restore.sh pairlaunch.sh candlaunch.sh hudlaunch.sh displaylaunch.sh; do
+        if [ -f "$HWMON_DIR/$f" ] && [ -f "$S/$f" ] && ! cmp -s "$HWMON_DIR/$f" "$S/$f"; then
+            case "$f" in displaylaunch.sh) ;; *)
+                echo "STALE $f (stick differs from repo)"; fail=1 ;;
+            esac
+        fi
+    done
+    if [ -f "$DISPLAY_DIR/displaylaunch.sh" ] && [ -f "$S/displaylaunch.sh" ] \
+       && ! cmp -s "$DISPLAY_DIR/displaylaunch.sh" "$S/displaylaunch.sh"; then
+        echo "STALE displaylaunch.sh"; fail=1
+    fi
+    lines=$(wc -l < "$S/AutoScript")
+    bytes=$(wc -c < "$S/AutoScript")
+    if [ "$lines" -gt 9 ] || [ "$bytes" -gt 460 ]; then
+        echo "SCRIPT SHAPE FAIL: $lines lines / $bytes bytes (limits 9 / 460)"
+        fail=1
+    else
+        echo "OK  AutoScript shape: $lines lines / $bytes bytes"
+    fi
+    case "$(file -b "$S/inventory" 2>/dev/null)" in
+        *ARM*) echo "OK  inventory is an ARM ELF" ;;
+        *) echo "FAIL inventory is not an ARM ELF"; fail=1 ;;
+    esac
+    for f in hudlaunch.sh displaylaunch.sh hwmon_restore.sh candlaunch.sh pairlaunch.sh; do
+        [ -f "$S/$f" ] || continue
+        sh -n "$S/$f" 2>/dev/null || { echo "SHELL SYNTAX FAIL $f"; fail=1; }
+    done
+    [ "$fail" -eq 0 ] || die "payload-check FAILED — fix the stick before using it on the player"
+    echo "payload-check PASS"
 }
 
 cmd_usb_prune() {
@@ -662,6 +725,7 @@ case "${1:-}" in
     usb-pair-mode)   cmd_usb_mode pair ;;
     usb-display-mode) cmd_usb_mode display ;;
     usb-prune)       cmd_usb_prune ;;
+    payload-check)   cmd_payload_check ;;
     usb-debug-mode)  cmd_usb_mode debug ;;
     usb-original)     cmd_usb_use "$ORIGINAL" "$SHA_ORIG" "ORIGINAL" ;;
     usb-candidate)    cmd_usb_use "$RELEASE" "$SHA_REL" "RELEASE CANDIDATE" ;;

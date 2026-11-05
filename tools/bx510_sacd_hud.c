@@ -37,13 +37,107 @@
 #include <math.h>
 #include <dirent.h>
 #include <sys/statvfs.h>
+#include <sys/mman.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <fcntl.h>
+#ifndef HUD_SIM
 #include <directfb.h>
+#endif
 
 #define CW 640
 #define CH 360
+
+/* ---------------- software canvas ----------------------------------- */
+static unsigned int *fb;
+static int pitch_px;
+static int SCAL = 2;          /* device px per logical px (set from the panel) */
+
+static void px_blend(int xd, int yd, unsigned int c, unsigned a)
+{
+    unsigned int *o;
+    unsigned int r, g, b, dr, dg, db;
+    if (xd < 0 || yd < 0 || xd >= pitch_px || yd >= (CH * SCAL)) return;
+    o = fb + (size_t)yd * pitch_px + xd;
+    dr = (*o >> 16) & 0xff; dg = (*o >> 8) & 0xff; db = *o & 0xff;
+    r = ((c >> 16) & 0xff) * a / 255 + dr * (255 - a) / 255;
+    g = ((c >> 8) & 0xff) * a / 255 + dg * (255 - a) / 255;
+    b = (c & 0xff) * a / 255 + db * (255 - a) / 255;
+    *o = (r << 16) | (g << 8) | b;
+}
+
+/* Sony's own screen font (carved from /res/font.bin, see bx510_font_carve.py)
+   rendered with stb_truetype: no freetype on this rootfs, and the hand-rolled
+   5x7 face was unreadable on a TV at 1080p. Falls back to 5x7 if absent. */
+#define STB_TRUETYPE_IMPLEMENTATION
+#include "third_party/stb_truetype.h"
+
+static void px_blend(int xd, int yd, unsigned int c, unsigned a);
+
+static stbtt_fontinfo g_font;
+static unsigned char *g_ttf;
+static int g_font_ok;
+static float g_fsc;            /* scale for the current size */
+
+static int font_load(const char *path)
+{
+    FILE *f = fopen(path, "rb");
+    long n;
+    if (!f) return 0;
+    fseek(f, 0, SEEK_END); n = ftell(f); fseek(f, 0, SEEK_SET);
+    if (n <= 0) { fclose(f); return 0; }
+    g_ttf = malloc((size_t)n);
+    if (!g_ttf) { fclose(f); return 0; }
+    if (fread(g_ttf, 1, (size_t)n, f) != (size_t)n) { fclose(f); free(g_ttf); g_ttf = NULL; return 0; }
+    fclose(f);
+    if (!stbtt_InitFont(&g_font, g_ttf, stbtt_GetFontOffsetForIndex(g_ttf, 0))) {
+        free(g_ttf); g_ttf = NULL; return 0;
+    }
+    g_font_ok = 1;
+    return 1;
+}
+static int ttf_width(const char *str, int px)
+{
+    float sc;
+    int w = 0;
+    if (!g_font_ok) return (int)strlen(str) * 6;
+    sc = stbtt_ScaleForPixelHeight(&g_font, (float)px);
+    for (; *str; str++) {
+        int adv, lsb;
+        stbtt_GetCodepointHMetrics(&g_font, *str, &adv, &lsb);
+        w += (int)(adv * sc);
+    }
+    return w;
+}
+/* draw at logical (x,y) with logical pixel height px; blocks scaled by SCAL */
+static int ttf_text(const char *str, int x, int y, int px, unsigned int col)
+{
+    int cx = x;
+    if (!g_font_ok) return -1;
+    g_fsc = stbtt_ScaleForPixelHeight(&g_font, (float)px);
+    for (; *str; str++) {
+        int gw = 0, gh = 0, xo = 0, yo = 0, adv, lsb;
+        unsigned char *bmp = stbtt_GetCodepointBitmap(&g_font, g_fsc, g_fsc, *str,
+                                                     &gw, &gh, &xo, &yo);
+        stbtt_GetCodepointHMetrics(&g_font, *str, &adv, &lsb);
+        if (bmp) {
+            int yy, xx, sy, sx;
+            for (yy = 0; yy < gh; yy++)
+                for (xx = 0; xx < gw; xx++) {
+                    unsigned char a = bmp[yy * gw + xx];
+                    if (!a) continue;
+                    for (sy = 0; sy < SCAL; sy++)
+                        for (sx = 0; sx < SCAL; sx++)
+                            px_blend((cx + xo + xx) * SCAL + sx,
+                                     (y + yo + yy) * SCAL + sy, col, a);
+                }
+            stbtt_FreeBitmap(bmp, NULL);
+        }
+        cx += (int)(adv * g_fsc);
+    }
+    return cx;
+}
+
 
 #define C_BG      0xff000a06
 #define C_GRID    0xff00150f
@@ -114,25 +208,33 @@ static const glyph_t *find_glyph(char c)
     return &FONT[NGlyphs - 1];
 }
 
-/* ---------------- software canvas ----------------------------------- */
-static unsigned int *fb;
-static int pitch_px;
 
 static void px(int x, int y, unsigned int c)
 {
+    int dx, dy;
+    unsigned int *row;
     if (x < 0 || y < 0 || x >= CW || y >= CH) return;
-    fb[y * pitch_px + x] = c;
+    row = fb + (size_t)(y * SCAL) * pitch_px + (size_t)x * SCAL;
+    for (dy = 0; dy < SCAL; dy++) {
+        unsigned int *o = row + (size_t)dy * pitch_px;
+        for (dx = 0; dx < SCAL; dx++) o[dx] = c;
+    }
 }
 static void rect(int x, int y, int w, int h, unsigned int c)
 {
-    int i, j;
+    int dy, dx, ddx;
+    unsigned int *row;
     if (x < 0) { w += x; x = 0; }
     if (y < 0) { h += y; y = 0; }
     if (x + w > CW) w = CW - x;
     if (y + h > CH) h = CH - y;
-    for (j = 0; j < h; j++)
-        for (i = 0; i < w; i++)
-            fb[(y + j) * pitch_px + x + i] = c;
+    if (w <= 0 || h <= 0) return;
+    row = fb + (size_t)(y * SCAL) * pitch_px + (size_t)x * SCAL;
+    for (dy = 0; dy < h * SCAL; dy++) {
+        unsigned int *o = row + (size_t)dy * pitch_px;
+        for (dx = 0; dx < w; dx++)
+            for (ddx = 0; ddx < SCAL; ddx++) o[dx * SCAL + ddx] = c;
+    }
 }
 static void box(int x, int y, int w, int h, unsigned int c)
 {
@@ -165,13 +267,13 @@ static void glyph2(char c, int x, int y, unsigned int col)
 }
 static int text2(const char *s, int x, int y, unsigned int col)
 {
-    int cx = x;
-    for (; *s; s++) { glyph2(*s, cx, y, col); cx += 12; }
-    return cx;
-}
-static int text2r(const char *s, int xr, int y, unsigned int col)
-{
-    return text2(s, xr - (int)strlen(s) * 12, y, col);
+    int r;
+    if (g_font_ok) { r = ttf_text(s, x, y - 12, 18, col); return r; }  /* 18 px logical: TV legible */
+    {
+        int cx = x;
+        for (; *s; s++) { glyph2(*s, cx, y, col); cx += 12; }
+        return cx;
+    }
 }
 /* 1x face: 6 px per char — status numbers and ticker lines (2x is for the
    headline values only; a 640-px canvas can't fit 2x text and full lines) */
@@ -186,13 +288,18 @@ static void glyph1(char c, int x, int y, unsigned int col)
 }
 static int text1(const char *s, int x, int y, unsigned int col)
 {
-    int cx = x;
-    for (; *s; s++) { glyph1(*s, cx, y, col); cx += 6; }
-    return cx;
+    int r;
+    if (g_font_ok) { r = ttf_text(s, x, y - 8, 12, col); return r; }   /* 12 px logical */
+    {
+        int cx = x;
+        for (; *s; s++) { glyph1(*s, cx, y, col); cx += 6; }
+        return cx;
+    }
 }
 static int text1r(const char *s, int xr, int y, unsigned int col)
 {
-    return text1(s, xr - (int)strlen(s) * 6, y, col);
+    int w = g_font_ok ? ttf_width(s, 12) : (int)strlen(s) * 6;
+    return text1(s, xr - w, y, col);
 }
 
 /* ---------------- telemetry ----------------------------------------- */
@@ -427,6 +534,8 @@ static void ticker_poll(const char *path)
 
 /* ---------------- scene --------------------------------------------- */
 static unsigned spark[40];
+static int g_selftest __attribute__((unused));
+static int g_render_only;
 
 static void scene(const hud_t *h, double t, double fps, int frame)
 {
@@ -435,46 +544,40 @@ static void scene(const hud_t *h, double t, double fps, int frame)
 
     rect(0, 0, CW, CH, C_BG);
 
-    {   /* perspective grid, scrolling */
-        int gy = 210 + (int)(fmod(t * 8.0, 8.0));
+    {   /* perspective grid + CRT sweep */
+        int gy = 250 + (int)(fmod(t * 8.0, 8.0));
         for (; gy < CH; gy += 8) {
-            int half = (gy - 210) * 2 + 30;
+            int half = (gy - 250) * 2 + 20;
             rect(320 - half, gy, half * 2, 1, C_PHOSD);
         }
-        for (i = -8; i <= 8; i++)
-            line(320 + i * 20, 210, 320 + i * 90, CH, C_GRID);
-    }
-    {   /* CRT sweep */
-        int sy = (int)(fmod(t * 60.0, CH));
-        rect(0, sy, CW, 2, 0x0b3a1c);
+        for (i = -8; i <= 8; i++) line(320 + i * 18, 250, 320 + i * 80, CH, C_GRID);
+        { int sy = (int)(fmod(t * 60.0, CH)); rect(0, sy, CW, 1, 0x0b3a1c); }
     }
 
-    /* ---- status bar ---- */
-    rect(0, 0, CW, 18, C_PANEL);
-    text1("SACD//RIPPER", 4, 2, C_PHOS);
+    /* ---- status bar: 22 logical high, one line, right-aligned numbers ---- */
+    rect(0, 0, CW, 22, C_PANEL);
+    text1("SACD//RIPPER", 6, 5, C_PHOS);
     snprintf(up, sizeof up, "%02lu:%02lu:%02lu", h->uptime_s / 3600, (h->uptime_s / 60) % 60, h->uptime_s % 60);
-    text1(up, 84, 2, C_PHOSD);
-    snprintf(l, sizeof l, "%.0fFPS", fps);
-    text1r(l, CW - 86, 2, C_PHOSD);
-    text1r(h->clients_2002 ? "LIVE" : (h->listen_2002 ? "ARMED" : "IDLE"), CW - 4, 2,
+    text1(up, 84, 5, C_PHOSD);
+    snprintf(l, sizeof l, "%.0f FPS", fps);
+    text1r(l, CW - 66, 5, C_PHOSD);
+    text1r(h->clients_2002 ? "LIVE" : (h->listen_2002 ? "ARMED" : "IDLE"), CW - 8, 5,
            h->clients_2002 ? C_PHOS : C_AMBER);
-    text1("HUD H2   CPSA//MT85   MTK CLI AUTOSCRIPT   software 640x360 -> StretchBlit",
-          4, 10, C_PHOSD);
 
-    /* ---- panels ---- */
-    rect(4, 22, 400, 316, C_PANEL); box(4, 22, 400, 316, C_FRAME);
-    rect(408, 22, 228, 316, C_PANEL); box(408, 22, 228, 316, C_FRAME);
+    /* ---- panels: equal height, bottoms clear of the footer ---- */
+    rect(6, 26, 392, 306, C_PANEL); box(6, 26, 392, 306, C_FRAME);
+    rect(404, 26, 230, 306, C_PANEL); box(404, 26, 230, 306, C_FRAME);
 
-    /* ---- left: live state (2x) + ticker (1x) ---- */
-    text1("EVENT STREAM", 8, 25, C_CYAN);
+    /* ---- left: state (18 px) then the event ticker (12 px) ---- */
+    text1("EVENT STREAM", 12, 30, C_CYAN);
     {
-        int y = 40;
+        int y = 48;
         snprintf(l, sizeof l, "CPSA %s", h->module_loaded ? "LOADED" : "DOWN");
-        text2(l, 8, y, h->module_loaded ? C_PHOS : C_RED); y += 18;
+        text2(l, 12, y, h->module_loaded ? C_PHOS : C_RED); y += 24;
         snprintf(l, sizeof l, "%s  CLIENTS %d", h->listen_2002 ? ":2002 LISTEN" : ":2002 CLOSED", h->clients_2002);
-        text2(l, 8, y, h->listen_2002 ? C_PHOS : C_AMBER); y += 18;
+        text2(l, 12, y, h->listen_2002 ? C_PHOS : C_AMBER); y += 24;
         snprintf(l, sizeof l, "%s  PID %d", h->state, h->daemon_pid);
-        text2(l, 8, y, C_WHITE); y += 22;
+        text2(l, 12, y, C_WHITE); y += 30;
         {
             int n = tick_n < TICK_MAX ? tick_n : TICK_MAX;
             for (i = 0; i < n; i++) {
@@ -484,50 +587,52 @@ static void scene(const hud_t *h, double t, double fps, int frame)
                 if (strlen(l) > 46) l[46] = 0;
                 {
                     char c2[80];
-                    if (tick_rep[idx] > 1)
-                        snprintf(c2, sizeof c2, "%s x%u", l, tick_rep[idx]);
-                    else
-                        snprintf(c2, sizeof c2, "%s", l);
-                    text1(c2, 8, y, (i == n - 1) ? C_WHITE : C_PHOSD);
+                    if (tick_rep[idx] > 1) snprintf(c2, sizeof c2, "%s x%u", l, tick_rep[idx]);
+                    else snprintf(c2, sizeof c2, "%s", l);
+                    text1(c2, 12, y, (i == n - 1) ? C_WHITE : C_PHOSD);
                 }
-                y += 10;
+                y += 13;
             }
         }
-        if (h->note[0]) text1(h->note, 8, 306, C_RED);
-        if ((frame / 6) % 2) rect(8, 316, 6, 8, C_PHOS);
+        if (h->note[0]) text1(h->note, 12, 316, C_RED);
+        if ((frame / 6) % 2) rect(12, 324, 6, 5, C_PHOS);
     }
 
     /* ---- right: telemetry ---- */
-    text1("TELEMETRY", 412, 25, C_CYAN);
-    snprintf(l, sizeof l, "%.1f MB/s", ev_mbps ? (double)ev_mbps : h->mbps);
-    text2(l, 412, 38, C_WHITE);
+    text1("TELEMETRY", 410, 30, C_CYAN);
+    snprintf(l, sizeof l, "%.1f MB/s", h->mbps);
+    text2(l, 410, 46, C_WHITE);
     for (i = 0; i < 39; i++) spark[i] = spark[i + 1];
-    { double m = (double)(ev_mbps ? ev_mbps : h->mbps) * 2.0; spark[39] = (unsigned)(m > 80 ? 80 : m); }
+    { double m = (double)(ev_mbps ? ev_mbps : h->mbps) * 2.0; spark[39] = (unsigned)(m > 70 ? 70 : m); }
     for (i = 0; i < 38; i++)
-        rect(412 + i * 5, 92 - (int)spark[i] / 2, 3, (int)spark[i] / 2, (i > 28) ? C_AMBER : C_PHOS);
-    {
+        rect(410 + i * 5, 92 - (int)spark[i] / 2, 3, (int)spark[i] / 2, (i > 28) ? C_AMBER : C_PHOS);
+    {   /* disc map */
         unsigned long long total = DISC_SECTORS * SECTOR_BYTES;
         int cells = 36, lit = total ? (int)((double)ev_last_lsn * SECTOR_BYTES / (double)total * cells) : 0;
         int cw = 216 / cells;
         if (lit > cells) lit = cells;
-        box(412, 96, 220, 14, C_FRAME);
+        box(410, 100, 220, 12, C_FRAME);
         for (i = 0; i < cells; i++) {
             unsigned int c = C_PHOSD;
             if (i < lit) c = C_PHOS;
             if (i == lit) c = C_WHITE;
-            rect(415 + i * cw, 99, cw - 1, 8, c);
+            rect(413 + i * cw, 103, cw - 1, 6, c);
         }
     }
+    snprintf(l, sizeof l, "REQ %llu  SEC %llu", ev_requests, ev_sectors);
+    text1(l, 410, 136, C_PHOSD);
+    snprintf(l, sizeof l, "LSN %llu", ev_last_lsn);
+    text1(l, 410, 148, C_PHOSD);
     snprintf(l, sizeof l, "MEM %luM  TMP %u%%", h->memfree_kb / 1024, h->tmp_pct);
-    text1(l, 412, 115, h->tmp_pct > 90 ? C_RED : C_PHOSD);
-    snprintf(l, sizeof l, "REQ %llu  SEC %llu  LSN %llu", ev_requests, ev_sectors, ev_last_lsn);
-    text1(l, 412, 125, C_PHOSD);
+    text1(l, 410, 160, h->tmp_pct > 90 ? C_RED : C_PHOSD);
+    snprintf(l, sizeof l, "CPSA %d  %s", h->misc_201, h->state);
+    text1(l, 410, 172, C_WHITE);
 
-    box(412, 140, 220, 30, C_FRAME);
-    text1("ALERTS", 416, 144, C_CYAN);
-    text1(h->note[0] ? h->note : "NONE", 416, 155, h->note[0] ? C_RED : C_PHOS);
+    box(410, 188, 220, 26, C_FRAME);
+    text1("ALERTS", 414, 191, C_CYAN);
+    text1(h->note[0] ? h->note : "NONE", 414, 202, h->note[0] ? C_RED : C_PHOS);
 
-    {   /* rotating cube, true 3D */
+    {   /* rotating cube in the free area below the alerts */
         static const double v[8][3] = {
             {-1,-1,-1},{1,-1,-1},{1,1,-1},{-1,1,-1},
             {-1,-1, 1},{1,-1, 1},{1,1, 1},{-1,1, 1}
@@ -542,26 +647,98 @@ static void scene(const hud_t *h, double t, double fps, int frame)
             x1 = x * ca - z * sa; z1 = x * sa + z * ca;
             y1 = y * cb - z1 * sb; z1 = y * sb + z1 * cb;
             { double d = 4.0 / (4.0 + z1);
-              p[k][0] = 522 + (int)(x1 * 36 * d);
-              p[k][1] = 248 + (int)(y1 * 36 * d); }
+              p[k][0] = 519 + (int)(x1 * 30 * d);
+              p[k][1] = 258 + (int)(y1 * 28 * d); }
         }
         for (k = 0; k < 12; k++)
             line(p[e[k][0]][0], p[e[k][0]][1], p[e[k][1]][0], p[e[k][1]][1], C_PHOSD);
     }
-    text1("SACD HUD H2", 4, CH - 10, C_PHOSD);
-    text1r("CPSA//MT85", CW - 4, CH - 10, C_MAGENTA);
+    text1("SACD HUD", 6, CH - 10, C_PHOSD);
+    text1r("CPSA//MT85", CW - 6, CH - 10, C_MAGENTA);
+}
+
+#ifdef HUD_SIM
+/* ---- host simulator: same scene(), real font, no DirectFB, no device ----
+   cc -DHUD_SIM -I. -o hudsim bx510_sacd_hud.c && ./hudsim out.ppm [frames] */
+int main(int argc, char **argv)
+{
+    hud_t h;
+    const char *out = (argc > 1) ? argv[1] : "/tmp/hud_sim.ppm";
+    int frames = (argc > 2) ? atoi(argv[2]) : 1;
+    int i;
+    FILE *f;
+    const char *fp = getenv("HUD_FONT");
+    if (!fp || !fp[0]) fp = "sony-font.ttf";
+    SCAL = 2;
+    pitch_px = CW * SCAL;
+    fb = calloc((size_t)pitch_px * CH * SCAL, sizeof(unsigned int));
+    if (!fb) return 1;
+    if (font_load(fp)) printf("SIM: font %s\n", fp);
+    else printf("SIM: no font at %s (5x7 fallback)\n", fp);
+
+    memset(&h, 0, sizeof h);
+    h.module_loaded = 1; h.misc_201 = 1; h.listen_2002 = 1; h.clients_2002 = 1;
+    h.daemon_pid = 4682; h.uptime_s = 872; h.memfree_kb = 155 * 1024; h.tmp_pct = 0;
+    snprintf(h.state, sizeof h.state, "SERVING");
+    ev_requests = 1024; ev_sectors = 532104; ev_last_lsn = 532104; ev_mbps = 5;
+    for (i = 0; i < 39; i++) spark[i] = (unsigned)(6 + (i * 7) % 18);
+    tick_push("CLIENT CONNECTED");
+    tick_push("READ lsn=532104 n=128 (256K)");
+    tick_push("READ lsn=532232 n=128 (256K)");
+    tick_push("READ lsn=0 n=128 (256K)");
+    tick_push("CLOSE rc=0");
+
+    for (i = 0; i < frames; i++)
+        scene(&h, 1.7 + i * 0.2, 13.0, i * 4);
+
+    f = fopen(out, "wb");
+    if (!f) return 1;
+    fprintf(f, "P6\n%d %d\n255\n", CW * SCAL, CH * SCAL);
+    for (i = 0; i < pitch_px * CH * SCAL; i++) {
+        unsigned int v = fb[i];
+        unsigned char rgb[3] = { (unsigned char)((v >> 16) & 0xff),
+                                 (unsigned char)((v >> 8) & 0xff),
+                                 (unsigned char)(v & 0xff) };
+        fwrite(rgb, 1, 3, f);
+    }
+    fclose(f);
+    printf("SIM: wrote %s (%dx%d)\n", out, CW * SCAL, CH * SCAL);
+    return 0;
+}
+#else
+/* ---- Tier-3 shortcut: draw straight into the vendor POOL slice ----------
+   The scan-out on this SoC is a buffer allocated from the MT85 image pool, not
+   the fbdev smem (hardware proved fbdev paint is overwritten in <2 s). The
+   module dispatches mmap classes BY LENGTH, so mmap(POOL_LEN) hands us the
+   same slice the retail provider maps. No DirectFB, no command ring, no Flip.
+   Enable with HUD_POOL=1. */
+static int pool_open(const char *dev)
+{
+    size_t len = (size_t)CW * SCAL * (size_t)CH * SCAL * 4u + 0x1000u;
+    int fd = open(dev, O_RDWR);
+    void *m;
+    if (fd < 0) { printf("HUD: pool open %s failed\n", dev); return 0; }
+    m = mmap(NULL, len, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+    close(fd);
+    if (m == MAP_FAILED) { printf("HUD: pool mmap %zu failed\n", len); return 0; }
+    fb = m;
+    pitch_px = CW * SCAL;
+    printf("HUD: pool %s mapped len=%zu (%dx%d) — drawing directly, no Flip\n",
+           dev, len, CW * SCAL, CH * SCAL);
+    return 1;
 }
 
 int main(int argc, char **argv)
 {
     IDirectFB *dfb;
-    IDirectFBSurface *prim = NULL, *canvas = NULL;
-    DFBSurfaceDescription dsc, cdesc;
+    IDirectFBSurface *prim = NULL;
+    DFBSurfaceDescription dsc;
     DFBResult ret;
     int hold = (argc > 1) ? atoi(argv[1]) : 120;
     const char *ticker = (argc > 2) ? argv[2] : "/tmp/cand.out";
     hud_t h;
-    int pw = 0, ph = 0, first_blit = 1;
+    int pw = 0, ph = 0, first_blit = 1, first_blit2 = 0;
+    (void)first_blit2;
     struct timespec t0, now;
     unsigned frames = 0;
     long long next_sample = 0, next_frame = 0;
@@ -571,6 +748,34 @@ int main(int argc, char **argv)
     if (hold > 600) hold = 600;
 
     setvbuf(stdout, NULL, _IOLBF, 0);
+    if (getenv("HUD_POOL")) {
+        const char *fp2 = getenv("HUD_FONT");
+        int i;
+        hud_t hp;
+        if (!pool_open(getenv("HUD_POOL")[0] == '1' ? "/dev/fb0" : getenv("HUD_POOL")))
+            return 1;
+        if (!fp2 || !fp2[0]) fp2 = "/tmp/sony-font.ttf";
+        if (font_load(fp2)) printf("HUD: font %s\n", fp2);
+        memset(&hp, 0, sizeof hp);
+        hp.module_loaded = 1; hp.misc_201 = 1; hp.listen_2002 = 1; hp.clients_2002 = 1;
+        hp.daemon_pid = 4682; hp.uptime_s = 872; hp.memfree_kb = 155 * 1024;
+        snprintf(hp.state, sizeof hp.state, "SERVING");
+        ev_requests = 1024; ev_sectors = 532104; ev_last_lsn = 532104; ev_mbps = 5;
+        for (i = 0; i < 39; i++) spark[i] = (unsigned)(6 + (i * 7) % 18);
+        tick_push("CLIENT CONNECTED");
+        tick_push("READ lsn=532104 n=128 (256K)");
+        tick_push("CLOSE rc=0");
+        scene(&hp, 1.7, 13.0, 8);
+        printf("HUD: POOL-RENDER DONE\n");
+        return 0;
+    }
+    {
+        int selftest = (argc > 1 && !strcmp(argv[1], "--selftest"));
+        int renderonly = (argc > 1 && !strcmp(argv[1], "--render"));
+        if (selftest) { hold = 1; }
+        if (renderonly) { hold = 1; g_render_only = 1; }
+        g_selftest = selftest;
+    }
     ret = DirectFBInit(&argc, &argv);
     printf("HUD: DirectFBInit rc=%d\n", ret);
     if (ret) return 1;
@@ -578,10 +783,10 @@ int main(int argc, char **argv)
     printf("HUD: DirectFBCreate rc=%d\n", ret);
     if (ret) return 2;
 
-    /* CAPS ONLY: the provider then hands back the panel's own mode
-       (1280x720 here). Asking for 1920x1080 produced a surface larger than the
-       visible area, so the right/bottom of the canvas fell off the screen
-       (2026-11-05, video evidence). */
+    /* CAPS ONLY: provider hands back the panel's own mode. Drawing goes
+       straight into the LOCKED PRIMARY: the canvas + StretchBlit route went
+       through the provider's accelerated command buffer, which segfaults in
+       the guest (FBIO_DISPATCHHW storm) and blanked the panel on hardware. */
     memset(&dsc, 0, sizeof dsc);
     dsc.flags = DSDESC_CAPS;
     dsc.caps = DSCAPS_PRIMARY | DSCAPS_FLIPPING;
@@ -589,52 +794,20 @@ int main(int argc, char **argv)
     printf("HUD: CreateSurface(primary, panel mode) rc=%d\n", ret);
     if (ret) { dfb->Release(dfb); return 3; }
     prim->GetSize(prim, &pw, &ph);
-    printf("HUD: primary %dx%d\n", pw, ph);
-
-    /* The canvas MUST be a normal system surface: a DSCAPS_NONE preallocated
-       surface is a poor blit source in this provider, and Blit() with a NULL
-       rect does not stretch — the H2 first cut therefore drew nothing.
-       Pattern: SYSTEMONLY canvas, Lock/Unlock per frame, explicit
-       StretchBlit(src 0,0,CW,CH -> dst 0,0,pw,ph). */
-    memset(&cdesc, 0, sizeof cdesc);
-    cdesc.flags = DSDESC_CAPS | DSDESC_WIDTH | DSDESC_HEIGHT | DSDESC_PIXELFORMAT;
-    cdesc.caps = DSCAPS_SYSTEMONLY;
-    cdesc.width = CW; cdesc.height = CH;
-    cdesc.pixelformat = DSPF_ARGB;
-    ret = dfb->CreateSurface(dfb, &cdesc, &canvas);
-    printf("HUD: CreateSurface(canvas %dx%d SYSTEMONLY) rc=%d\n", CW, CH, ret);
-    if (ret) { prim->Release(prim); dfb->Release(dfb); return 5; }
-    fb = calloc(CW * CH, sizeof(unsigned int));
-    if (!fb) { canvas->Release(canvas); prim->Release(prim); dfb->Release(dfb); return 4; }
-    pitch_px = CW;
-
-    /* self-test: a bright fill through the same Lock->StretchBlit path. If the
-       panel stays black here, the blit is the fault and no drawing code
-       matters. Logged, so the stick names it. */
-    {
-        void *p0 = NULL;
-        int pitch0 = 0;
-        DFBRectangle src = { 0, 0, CW, CH };
-        DFBRectangle dst = { 0, 0, pw, ph };
-        DFBResult lr = canvas->Lock(canvas, DSLF_WRITE, &p0, &pitch0);
-        printf("HUD: selftest Lock rc=%d pitch=%d\n", lr, pitch0);
-        if (lr == DFB_OK) {
-            int y, x;
-            unsigned int *q = p0;
-            for (y = 0; y < CH; y++)
-                for (x = 0; x < CW; x++) q[(y * pitch0 / 4) + x] = 0xff00ff00u;
-            canvas->Unlock(canvas);
-        }
-        {
-            DFBResult br = prim->StretchBlit(prim, canvas, &src, &dst);
-            DFBResult fr = prim->Flip(prim, NULL, DSFLIP_NONE);
-            printf("HUD: selftest StretchBlit rc=%d Flip rc=%d\n", br, fr);
-        }
-        sleep(2);
-    }
+    printf("HUD: panel %dx%d\n", pw, ph);
+    SCAL = pw / CW;
+    if (SCAL < 1) SCAL = 1;
+    printf("HUD: logical %dx%d scale=%d\n", CW, CH, SCAL);
+    printf("HUD: drawing directly into the primary (no canvas, no blit)\n");
 
     udp_open();
     printf("HUD: host channel udp/%d %s\n", HUD_UDP_PORT, udp_fd >= 0 ? "OPEN" : "unavailable");
+    {
+        const char *fp = getenv("HUD_FONT");
+        if (!fp || !fp[0]) fp = "/tmp/sony-font.ttf";
+        if (font_load(fp)) printf("HUD: font %s loaded (TiresiasScreenfont)\n", fp);
+        else printf("HUD: font %s NOT loaded — falling back to the 5x7 face\n", fp);
+    }
     sample(&h, 1);
     ticker_poll(ticker);
     tick_events_only = 1;
@@ -689,27 +862,37 @@ int main(int argc, char **argv)
         if (el < next_frame) { usleep(20000); continue; }
         next_frame = el + 66;              /* ~15 fps target */
 
-        if (canvas->Lock(canvas, DSLF_WRITE, &lockptr, &lockpitch) == DFB_OK) {
-            fb = lockptr;
-            pitch_px = lockpitch / 4;
-            locked = 1;
-        }
-        scene(&h, t, fps, (int)frames);
-        if (locked) canvas->Unlock(canvas);
-
         {
-            DFBRectangle src = { 0, 0, CW, CH };
-            DFBRectangle dst = { 0, 0, pw, ph };
-            DFBResult br = prim->StretchBlit(prim, canvas, &src, &dst);
+            DFBResult lr = prim->Lock(prim, DSLF_WRITE, &lockptr, &lockpitch);
+            if (lr == DFB_OK) {
+                fb = lockptr;
+                pitch_px = lockpitch / 4;
+                scene(&h, t, fps, (int)frames);
+                prim->Unlock(prim);
+                locked = 1;
+            }
             if (first_blit) {
-                printf("HUD: StretchBlit rc=%d (canvas %dx%d -> panel %dx%d)\n",
-                       br, CW, CH, pw, ph);
+                printf("HUD: primary Lock rc=%d pitch=%d\n", lr, lockpitch);
                 first_blit = 0;
             }
-            if (br) prim->Blit(prim, canvas, NULL, 0, 0);
+        }
+        if (g_render_only) {
+            printf("HUD: RENDER-ONLY: one frame drawn into the primary, no Flip\n");
+            fflush(stdout);
+            prim->Release(prim);
+            dfb->Release(dfb);
+            return 0;
         }
         prim->Flip(prim, NULL, DSFLIP_NONE);
         frames++;
+        if (g_selftest && frames == 2) {
+            printf("SELFTEST: PASS frames=%u panel=%dx%d scal=%d\n", frames, pw, ph, SCAL);
+            printf("HUD: DONE\n");
+            fflush(stdout);
+            prim->Release(prim);
+            dfb->Release(dfb);
+            return 0;
+        }
         if (secs > 0.5) fps = frames / secs;
     }
 
@@ -723,8 +906,8 @@ int main(int argc, char **argv)
                  (unsigned long long)(h.read_bytes >> 20), h.tmp_pct);
         printf("%s\nHUD: DONE\n", l);
     }
-    canvas->Release(canvas);
     prim->Release(prim);
     dfb->Release(dfb);
     return 0;
 }
+#endif /* HUD_SIM */

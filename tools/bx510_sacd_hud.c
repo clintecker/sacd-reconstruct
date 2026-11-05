@@ -54,6 +54,20 @@ static int pitch_px;
 static int SCAL = 2;          /* device px per logical px (set from the panel) */
 /* device profile offsets (see profile_load): where the visible area starts */
 static int g_xoff, g_yoff, g_visible_w, g_visible_h, g_pitch;
+/* Text size in DEVICE px, derived from the visible panel height so the HUD has
+   the same physical size at 720p and 1080p: headline ~1/40 of the height,
+   secondary ~1/60 (18/12 px at 720p, 27/18 px at 1080p). A profile may
+   override both. */
+static int g_head_px = 18, g_body_px = 12;
+
+static void typography_set(int visible_h)
+{
+    if (visible_h <= 0) visible_h = 720;
+    g_head_px = visible_h / 40;
+    g_body_px = visible_h / 60;
+    if (g_head_px < 12) g_head_px = 12;
+    if (g_body_px < 9) g_body_px = 9;
+}
 
 static void px_blend(int xd, int yd, unsigned int c, unsigned a)
 {
@@ -291,7 +305,11 @@ static void glyph1(char c, int x, int y, unsigned int col)
 static int text1(const char *s, int x, int y, unsigned int col)
 {
     int r;
-    if (g_font_ok) { r = ttf_text(s, x, y - 8, 12, col); return r; }   /* 12 px logical */
+    if (g_font_ok) {
+        int lp = g_body_px / SCAL; if (lp < 6) lp = 6;
+        r = ttf_text(s, x, y - lp * 2 / 3, lp, col);
+        return r;
+    }
     {
         int cx = x;
         for (; *s; s++) { glyph1(*s, cx, y, col); cx += 6; }
@@ -300,7 +318,8 @@ static int text1(const char *s, int x, int y, unsigned int col)
 }
 static int text1r(const char *s, int xr, int y, unsigned int col)
 {
-    int w = g_font_ok ? ttf_width(s, 12) : (int)strlen(s) * 6;
+    int w = g_font_ok ? ttf_width(s, g_body_px / SCAL ? g_body_px / SCAL : 6)
+                      : (int)strlen(s) * 6;
     return text1(s, xr - w, y, col);
 }
 
@@ -569,7 +588,19 @@ static void draw_calib(void)
     for (y = CH / 2 - 16; y < CH / 2 + 16; y++)
         for (x = CW / 2 - 16; x < CW / 2 + 16; x++)
             if (((x ^ y) & 1) == 0) rect(x, y, 1, 1, 0xffffff);
-    text1("CALIBRATION  CW=640 CH=360  SCAL=2", 12, CH - 20, 0xffffff);
+    {   /* legibility ruler: identical string at increasing sizes, labelled.
+           A photo tells us which size reads on the actual TV. */
+        static const int sizes[] = { 12, 16, 20, 26, 34, 44 };
+        int yy = 120, k;
+        char lab[32];
+        for (k = 0; k < 6; k++) {
+            snprintf(lab, sizeof lab, "%dpx", sizes[k]);
+            text1(lab, 12, yy, 0x00b34d);
+            if (g_font_ok) ttf_text("READ THIS FROM THE SOFA", 90, yy, sizes[k] / SCAL, 0xffffff);
+            yy += sizes[k] / SCAL + 10;
+        }
+    }
+    text1("CALIBRATION  CW=640 CH=360", 12, CH - 20, 0xffffff);
 }
 
 static void scene(const hud_t *h, double t, double fps, int frame)
@@ -764,6 +795,8 @@ static void profile_load(void)
         else if (!strcmp(k, "visible_w")) g_visible_w = v;
         else if (!strcmp(k, "visible_h")) g_visible_h = v;
         else if (!strcmp(k, "pitch")) g_pitch = v;
+        else if (!strcmp(k, "head_px")) g_head_px = v;
+        else if (!strcmp(k, "body_px")) g_body_px = v;
     }
     fclose(f);
     printf("HUD: profile scale=%d xoff=%d yoff=%d vis=%dx%d pitch=%d\n",
@@ -781,8 +814,11 @@ static int pool_open(const char *dev)
     if (m == MAP_FAILED) { printf("HUD: pool mmap %zu failed\n", len); return 0; }
     fb = m;
     pitch_px = CW * SCAL;
+    typography_set(getenv("HUD_VISIBLE_H") ? atoi(getenv("HUD_VISIBLE_H"))
+                                           : CH * SCAL);
     printf("HUD: pool %s mapped len=%zu (%dx%d) — drawing directly, no Flip\n",
            dev, len, CW * SCAL, CH * SCAL);
+    printf("HUD: typography head=%d body=%d device px\n", g_head_px, g_body_px);
     return 1;
 }
 

@@ -84,11 +84,9 @@ def main():
         "/sbin/insmod /lib/modules/2.6.35/BDP/fusion.ko; echo HR_FUSION=$?",
         "set -- $(grep fusion /res/proc/devices); /bin/mknod /res/dev/fusion0 c $1 0; echo HR_FUSNODE=$?",
         # the HUD itself, exactly as the supervisor runs it
-        (("LD_PRELOAD=/res/shim/tmpredir.so HUD_POOL=1 HUD_CALIB=1 "
-         if a.calib else
-         "LD_PRELOAD=/res/shim/tmpredir.so HUD_POOL=1 HUD_FONT=/res/shim/sony-font.ttf ") +
-         "/res/shim/sacd_hud --render >/res/hud.out 2>&1; echo HR_HUD=$?") if a.font else
-        f"LD_PRELOAD=/res/shim/tmpredir.so /res/shim/sacd_hud --render >/res/hud.out 2>&1; echo HR_HUD=$?",
+        "LD_PRELOAD=/res/shim/tmpredir.so HUD_POOL=1 HUD_FONT=/res/shim/sony-font.ttf "
+        + ("HUD_CALIB=1 " if a.calib else "")
+        + "/res/shim/sacd_hud --render >/res/hud.out 2>&1; echo HR_HUD=$?",
         "echo HR_HUD_BEGIN; cat /res/hud.out; echo HR_HUD_END",
         # and what it actually put on the (virtual) panel
         f"LD_PRELOAD=/res/shim/tmpredir.so /res/shim/fbdump --pool /res/dev/fb0 {a.scale} {a.pool_ofs} >/res/fb.txt 2>&1; echo HR_DUMP=$?",

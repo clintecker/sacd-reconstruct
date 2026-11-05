@@ -25,6 +25,8 @@
 #   usb-debug-mode      write the DAEMON-DEBUG AutoScript line (candlaunch.sh:
 #                    runs the stick's daemon with output captured + exit status
 #                    + dmesg, recovered at the next trigger)
+#   usb-prune        drop the player's own artifacts (hwmon snapshots/backups,
+#                    recovered logs, inventory reports) — payload-only stick
 #   usb-original        put the original ELF on the stick
 #   usb-candidate       put the release-candidate ELF on the stick
 #   candidate        run the candidate capture (out dir evidence/bx510-candidate
@@ -68,6 +70,8 @@ SHA_CYBER="17d0c2cb7ba7fd4ae43fa499124d099a7ec4b42c1ac7290d2f6cbcf0856fde13"
 SHA_FBMD5="049b09654766530b093c280621983a84943f057527c6364e1634cc63dd8331ba"
 # Tier-1 probe: real DirectFB against the player's own 1.2 libs (vendor pool path)
 SHA_DFB="51e797486b8b9733f51fdd22929dd88993a4e899351431a371115c777e9c614f"
+# the HUD (docs/HUD-DESIGN.md); H0 = static layout mock on the same stack
+SHA_HUD="86412d7b961d90a4e629234790d738ecdb0a71e0d903527628ddd04012c1dd00"
 ISO_SIZE_EXPECTED=2179497984
 
 HW_HOST="${HW_HOST:-10.20.1.236}"
@@ -131,7 +135,11 @@ cli_tail() {
 }
 auto_baseline() {
     cli_head
-    printf 'CLI(CLI_exec /sacd_extract_160 -S &)\n'
+    # NO daemon line here: hwmon_restore.sh starts the daemon through
+    # candlaunch.sh (captured stdout -> the HUD ticker). A second daemon would
+    # lose the bind race and exit via remove_modules, which rmmod's the module
+    # UNDER the winner and kills the listener (2026-11-05, seen as
+    # "NO LISTENER 2002" while candlaunch.log claimed a start).
     cli_tail
 }
 auto_pair() {
@@ -185,6 +193,7 @@ cmd_preflight() {
     check_elf "$DISPLAY_DIR/cyberdraw" "$SHA_CYBER"
     check_elf "$DISPLAY_DIR/fbmd5" "$SHA_FBMD5"
     check_elf "$DISPLAY_DIR/dfbhello" "$SHA_DFB"
+    check_elf "$DISPLAY_DIR/sacd_hud" "$SHA_HUD"
     [ -f "$DISPLAY_DIR/displaylaunch.sh" ] || die "display payload missing: $DISPLAY_DIR/displaylaunch.sh"
     [ -f "$HWMON_DIR/candlaunch.sh" ] || die "daemon-debug launcher missing: $HWMON_DIR/candlaunch.sh"
     echo "OK  display payload $DISPLAY_DIR (cyberdraw + displaylaunch.sh)"
@@ -228,10 +237,15 @@ cmd_usb_build() {
     cp "$HWMON_DIR/hwmon_restore.sh" "$USB/AutoScript/hwmon_restore.sh"
     cp "$HWMON_DIR/pairlaunch.sh" "$USB/AutoScript/pairlaunch.sh"
     cp "$HWMON_DIR/candlaunch.sh" "$USB/AutoScript/candlaunch.sh"
+    cp "$HWMON_DIR/hudlaunch.sh" "$USB/AutoScript/hudlaunch.sh"
+    # the DEBUG observer under its own name: the HUD's per-request telemetry
+    # needs the build that LOGS (optical/bx510_pair.so is the silent canonical)
+    cp "$DBG_SO" "$USB/optical/bx510_pair_dbg.so" 2>/dev/null || true
     cp "$DISPLAY_DIR/displaylaunch.sh" "$USB/AutoScript/displaylaunch.sh"
     cp "$DISPLAY_DIR/cyberdraw" "$USB/AutoScript/cyberdraw"
     cp "$DISPLAY_DIR/fbmd5" "$USB/AutoScript/fbmd5" 2>/dev/null || true
     cp "$DISPLAY_DIR/dfbhello" "$USB/AutoScript/dfbhello" 2>/dev/null || true
+    cp "$DISPLAY_DIR/sacd_hud" "$USB/AutoScript/sacd_hud" 2>/dev/null || true
     auto_baseline > "$USB/AutoScript/AutoScript"
     cmd_usb_check
     echo
@@ -299,7 +313,7 @@ cmd_usb_check() {
         *"ELF 32-bit"*ARM*) echo "OK  inventory collector present (ARM)" ;;
         *) echo "WARN inventory collector is not an ARM ELF — expected the static arm-none-linux-gnueabi build" ;;
     esac
-    for f in pairlaunch.sh hwmon_restore.sh inventory; do
+    for f in pairlaunch.sh hwmon_restore.sh hudlaunch.sh inventory; do
         if [ -f "$HWMON_DIR/$f" ] && ! cmp -s "$HWMON_DIR/$f" "$USB/AutoScript/$f"; then
             echo "WARN $f on stick differs from the repo copy — a mode flip"
             echo "     (sacd-usb-baseline-mode / sacd-usb-pair-mode / sacd-usb-display-mode)"
@@ -338,6 +352,8 @@ cmd_usb_mode() { # $1 = baseline|pair
     cp "$HWMON_DIR/candlaunch.sh" "$USB/AutoScript/candlaunch.sh"
     cp "$HWMON_DIR/hwmon_restore.sh" "$USB/AutoScript/hwmon_restore.sh"
     cp "$HWMON_DIR/candlaunch.sh" "$USB/AutoScript/candlaunch.sh" 2>/dev/null || true
+    cp "$HWMON_DIR/hudlaunch.sh" "$USB/AutoScript/hudlaunch.sh" 2>/dev/null || true
+    cp "$DBG_SO" "$USB/optical/bx510_pair_dbg.so" 2>/dev/null || true
     # keep the Phase-0 inventory collector current too (hwmon_restore now
     # runs it once per boot)
     if [ -f "$HWMON_DIR/inventory" ]; then
@@ -351,7 +367,8 @@ cmd_usb_mode() { # $1 = baseline|pair
         cp "$DISPLAY_DIR/cyberdraw" "$USB/AutoScript/cyberdraw"
         cp "$DISPLAY_DIR/fbmd5" "$USB/AutoScript/fbmd5" 2>/dev/null || true
         cp "$DISPLAY_DIR/dfbhello" "$USB/AutoScript/dfbhello" 2>/dev/null || true
-        echo "refreshed AutoScript/displaylaunch.sh + cyberdraw + fbmd5 + dfbhello (display payload)"
+        cp "$DISPLAY_DIR/sacd_hud" "$USB/AutoScript/sacd_hud" 2>/dev/null || true
+        echo "refreshed AutoScript/displaylaunch.sh + cyberdraw + fbmd5 + dfbhello + sacd_hud"
     fi
     if [ "$1" = "pair" ]; then
         if [ -f "$USB/AutoScript/firebird.pair" ]; then
@@ -399,6 +416,14 @@ cmd_usb_mode() { # $1 = baseline|pair
         cp "$DISPLAY_DIR/displaylaunch.sh" "$USB/AutoScript/displaylaunch.sh"
         cp "$DISPLAY_DIR/fbmd5" "$USB/AutoScript/fbmd5" 2>/dev/null || true
         cp "$DISPLAY_DIR/dfbhello" "$USB/AutoScript/dfbhello" 2>/dev/null || true
+        cp "$DISPLAY_DIR/sacd_hud" "$USB/AutoScript/sacd_hud" 2>/dev/null || true
+        # PRESERVE the previous run's logs: staging used to delete them, which
+        # threw away the very rcs the next iteration needed (2026-11-05)
+        for f in displaylaunch.log candlaunch.log cand-recovered.out hwmon-boot.txt; do
+            if [ -f "$USB/AutoScript/$f" ]; then
+                mv -f "$USB/AutoScript/$f" "$USB/AutoScript/$f.prev" 2>/dev/null
+            fi
+        done
         if [ -n "$DISPLAY_ANIM" ]; then
             case "$DISPLAY_ANIM" in
                 *[!0-9]*|'') die "DISPLAY_ANIM must be a whole number of seconds (got '$DISPLAY_ANIM')" ;;
@@ -449,6 +474,27 @@ cmd_usb_use() { # $1 = path $2 = sha $3 = name — stages into AutoScript/, the
     got=$(sha_of "$USB/AutoScript/sacd_extract_160")
     [ "$got" = "$2" ] || die "post-copy SHA mismatch on stick"
     echo "OK  stick AutoScript/sacd_extract_160 is now the $3 ($2)"
+}
+
+cmd_usb_prune() {
+    # Tidy a session stick back to payload-only: the player's own writes
+    # (hwmon snapshots/backups), recovered logs, inventory reports. Evidence
+    # that matters is already pulled into SESSION_DIR / the repo; the ramfs
+    # hygiene fix in hwmon_restore.sh is separate (this is the stick side).
+    [ -d "$USB/AutoScript" ] || die "USB not mounted at $USB"
+    echo "== usb-prune $(stamp) =="
+    before=$(du -sk "$USB" 2>/dev/null | awk '{print $1}')
+    rm -rf "$USB/AutoScript/hwmon-data" "$USB/AutoScript/hwmon-backup" 2>/dev/null
+    for f in "$USB"/AutoScript/inventory-*.txt "$USB"/AutoScript/*.log \
+             "$USB"/AutoScript/cand.dmesg "$USB"/AutoScript/cand-recovered.out \
+             "$USB"/AutoScript/firebird.pair; do
+        [ -f "$f" ] && rm -f "$f"
+    done
+    for f in "$USB"/AutoScript/._*; do [ -f "$f" ] && rm -f "$f"; done
+    rm -rf "$USB/.Spotlight-V100" "$USB/.fseventsd" 2>/dev/null
+    after=$(du -sk "$USB" 2>/dev/null | awk '{print $1}')
+    echo "pruned: ${before} KiB -> ${after} KiB on the stick"
+    echo "payload kept: $(ls "$USB/AutoScript" | tr '\n' ' ')"
 }
 
 cmd_wait() {
@@ -615,6 +661,7 @@ case "${1:-}" in
     usb-baseline-mode) cmd_usb_mode baseline ;;
     usb-pair-mode)   cmd_usb_mode pair ;;
     usb-display-mode) cmd_usb_mode display ;;
+    usb-prune)       cmd_usb_prune ;;
     usb-debug-mode)  cmd_usb_mode debug ;;
     usb-original)     cmd_usb_use "$ORIGINAL" "$SHA_ORIG" "ORIGINAL" ;;
     usb-candidate)    cmd_usb_use "$RELEASE" "$SHA_REL" "RELEASE CANDIDATE" ;;

@@ -439,6 +439,11 @@ sacd-emu-daemons:
 #            HW_ISO (the Firebird rip) DISK (/dev/diskN for usb-build)
 #            DISPLAY_ANIM (45, the display leg's anim window in seconds)
 
+## SACD hardware :: sacd-usb-prune :: tidy the session stick back to payload-only :: drops the player's own hwmon snapshots/backups, recovered logs and inventory reports (collect them first); reports the KiB freed
+.PHONY: sacd-usb-prune
+sacd-usb-prune:
+	sh experiments/sacd_reconstruct/tools/sacd_hardware.sh usb-prune
+
 ## SACD hardware :: sacd-hw-preflight :: Mac preflight for the on-player session :: ISO present + both pinned ELF SHAs + client selftest + next-steps checklist
 .PHONY: sacd-hw-preflight
 sacd-hw-preflight:

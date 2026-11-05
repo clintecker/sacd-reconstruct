@@ -214,6 +214,7 @@ above. Techniques that live only in session history are lost techniques.
 | `sacd-emu-build` | `(no arguments)` | build the full-system sony-bx510 QEMU on the lab VM — the pinned 9.2.4 tarball is pre-staged (SHA f3cc1c4e… verified at stage time) so build.sh performs no outbound fetch; JOBS=6 |
 | `sacd-emu-smoke` | `(no arguments)` | full-system guest smoke tests — the emulator team's pinned PASS set — shell (Sony PID 1, kernel 2.6.35, bdpdrv.ko digest), handoff, fastboot, control-ramdisk |
 | `sacd-emu-daemons` | `(no arguments)` | run both daemon ELFs inside Sony's real guest OS — the loader/libc compatibility proof — the original and the release candidate must produce identical --help bytes under Sony's shipped libraries with eager binding |
+| `sacd-usb-prune` | `(no arguments)` | tidy the session stick back to payload-only — drops the player's own hwmon snapshots/backups, recovered logs and inventory reports (collect them first); reports the KiB freed |
 | `sacd-hw-preflight` | `(no arguments)` | Mac preflight for the on-player session — ISO present + both pinned ELF SHAs + client selftest + next-steps checklist |
 | `sacd-usb-build` | `(no arguments)` | DESTRUCTIVE: build the baseline USB from blank — usage: make sacd-usb-build DISK=/dev/diskN CONFIRM=ERASE — FAT32 erase + original daemon + observer kit + baseline AutoScript; refuses without CONFIRM=ERASE |
 | `sacd-usb-check` | `(no arguments)` | verify the USB stick — daemon SHA vs both pinned ELFs, AutoScript mode, observer kit presence, stale pair file note |

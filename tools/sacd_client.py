@@ -35,6 +35,24 @@ import threading
 
 CLIENT_VERSION = "sacd_client.py 1.0"
 
+# Optional HUD channel: the panel runs a UDP listener (default :20023) and we
+# tell it what we are asking the daemon for, so the on-screen console shows the
+# CLIENT's real requests (the daemon reads via ioctl, so /proc cannot show them).
+HUD_ADDR = None
+
+
+def hud_send(msg):
+    if not HUD_ADDR:
+        return
+    try:
+        _sock.sendto(msg.encode("utf-8", "replace"), HUD_ADDR)
+    except Exception:
+        pass
+
+
+_sock = __import__("socket").socket(__import__("socket").AF_INET,
+                                    __import__("socket").SOCK_DGRAM)
+
 REQ_DISC_OPEN = 1
 REQ_DISC_CLOSE = 2
 REQ_DISC_READ = 3
@@ -250,12 +268,14 @@ def run_sequence(host, port, log, frame_sink=None):
         log("  READ %-22s lsn=%d want=%d got=%s len=%d sha=%s" %
             (label, lsn, count, resp["result"], len(resp["data"]),
              (rec["payload_sha256"] or "")[:16]))
+        hud_send("READ lsn=%d n=%d got=%s" % (lsn, count, resp["result"]))
         return resp
 
     conn = Connection(host, port, frame_sink=frame_sink)
     try:
         resp = conn.request(REQ_DISC_OPEN)
         log("  OPEN  result=%s" % resp["result"])
+        hud_send("OPEN rc=%s" % resp["result"])
         if resp["result"] is None or resp["result"] < 0:
             log("  !! DISC_OPEN returned %s — no disc / open failed" % resp["result"])
 
@@ -276,6 +296,7 @@ def run_sequence(host, port, log, frame_sink=None):
         # reconnect test: close, reconnect, open, repeat the mid read
         resp = conn.request(REQ_DISC_CLOSE)
         log("  CLOSE result=%s" % resp["result"])
+        hud_send("CLOSE rc=%s" % resp["result"])
     finally:
         conn.close()
 
@@ -302,6 +323,11 @@ def run_sequence(host, port, log, frame_sink=None):
 
 
 def cmd_capture(args):
+    global HUD_ADDR
+    if getattr(args, "hud", None):
+        hh, _, hp = args.hud.partition(":")
+        HUD_ADDR = (hh, int(hp or 20023))
+
     def log(msg):
         print(msg)
         with open(os.path.join(args.out, "capture.log"), "a") as f:
@@ -678,6 +704,9 @@ def main():
     c.add_argument("--host", required=True)
     c.add_argument("--port", type=int, default=2002)
     c.add_argument("--out", required=True, help="evidence output directory")
+    c.add_argument("--hud", default=None,
+                   help="HUD host:port to push live client events to (e.g. "
+                        "10.20.1.236:20023)")
     c.add_argument("--firmware", default=None,
                    help="player model + firmware version (manual)")
     c.add_argument("--disc-id", default=None,

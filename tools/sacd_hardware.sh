@@ -22,6 +22,9 @@
 #   usb-display-mode    write the DISPLAY AutoScript line (cyberdraw --anim on
 #                    /dev/fb0 via displaylaunch.sh; DISPLAY_ANIM seconds,
 #                    default 45) — the TV photo/video leg
+#   usb-debug-mode      write the DAEMON-DEBUG AutoScript line (candlaunch.sh:
+#                    runs the stick's daemon with output captured + exit status
+#                    + dmesg, recovered at the next trigger)
 #   usb-original        put the original ELF on the stick
 #   usb-candidate       put the release-candidate ELF on the stick
 #   candidate        run the candidate capture (out dir evidence/bx510-candidate
@@ -61,6 +64,10 @@ DBG_SO="$EXP/evidence/bx510-guest/pair-observer/bx510_pair_dbg.so"
 # display payload: cyberdraw (ARM, built from tools/bx510_cyberdraw.c with
 # the gnuarm toolchain — recipe + source SHA in DISPLAY-SPEC.md)
 SHA_CYBER="17d0c2cb7ba7fd4ae43fa499124d099a7ec4b42c1ac7290d2f6cbcf0856fde13"
+# read-only framebuffer hasher: the paint-vs-displayed vs-repainted discriminator
+SHA_FBMD5="049b09654766530b093c280621983a84943f057527c6364e1634cc63dd8331ba"
+# Tier-1 probe: real DirectFB against the player's own 1.2 libs (vendor pool path)
+SHA_DFB="51e797486b8b9733f51fdd22929dd88993a4e899351431a371115c777e9c614f"
 ISO_SIZE_EXPECTED=2179497984
 
 HW_HOST="${HW_HOST:-10.20.1.236}"
@@ -95,15 +102,23 @@ check_elf() {
 # empty hwmon/, daemon never bound). The daemon is copied to / (RAM) and
 # run from there — the stick can be removed once serving (scene recipe).
 cli_head() {
+    # NOTRAY=1 omits the tray cycle: the module's init claims CPSA, and the
+    # appliance holds it while it is scanning the disc (2026-11-04 attempt 3:
+    # insmod EBUSY with a clean /proc/misc and no sacd_read loaded). With no
+    # tray cycle the daemon starts against whatever disc state is current.
+    # sleep is plain "10" — the suffixed form was not honoured (tray closed
+    # after ~5s, so the disc had no settle window).
     # IR squelch lines REMOVED (learning from the 2026-11-04 session: after
     # a script with CLI_drv.ir.rx.sq ran, the appliance UI wedged in an
     # OFF-flash loop with an unresponsive power button — leading hypothesis
     # is persistent IR suppression; the operator's original proven 2-line
     # script had no squelch lines. Hypothesis-driven removal, labeled.)
     printf '#MTKAT 0.xx script\n'
-    printf 'CLI(CLI_drv.sacd.tray 1)\n'
-    printf 'CLI(CLI_exec sleep 10s)\n'
-    printf 'CLI(CLI_drv.sacd.tray 0)\n'
+    if [ "${NOTRAY:-0}" != "1" ]; then
+        printf 'CLI(CLI_drv.sacd.tray 1)\n'
+        printf 'CLI(CLI_exec sleep 10)\n'
+        printf 'CLI(CLI_drv.sacd.tray 0)\n'
+    fi
     printf 'CLI(CLI_exec /bin/sh /mnt/sd*/AutoScript/hwmon_restore.sh)\n'
     printf 'CLI(CLI_exec cp /mnt/sd*/AutoScript/sacd_extract_160 /sacd_extract_160)\n'
     printf 'CLI(CLI_exec cp /mnt/sd*/AutoScript/hwmon /tmp/hwmon.bin)\n'
@@ -132,19 +147,26 @@ auto_pair() {
     # CLI-line glob arg was observed left literal by nullglob)
 }
 auto_display() {
+    # SAME shape as the proven baseline script (9 lines / ~454 bytes). The MTK
+    # CLI parser truncates longer scripts (2026-11-04 attempt 6: a 13-line /
+    # 628-byte display script ran hwmon_restore and then stopped dead — no
+    # hwmon, no wrapper, no cyberdraw). The leg is therefore armed by the
+    # AutoScript/displayanim flag file instead of extra CLI lines:
+    # hwmon_restore.sh (line 4, always executes) copies cyberdraw +
+    # displaylaunch.sh to RAM and starts the wrapper.
     cli_head
-    # Same proven shape as auto_pair: copy the wrapper + the tool to RAM with
-    # SHORT lines, then run the wrapper (which logs to stick + RAM and starts
-    # its own hwmon-backed state dumps). The anim length comes from the
-    # displayanim file on the stick (an env assignment on a CLI line is not
-    # proven to survive CLI_exec).
-    # line lengths kept at/under the PROVEN pair line (69 chars): the CLI
-    # parser has practical length limits (the long trace-launch line never
-    # ran). The RAM copy is /tmp/dl.sh for exactly that reason.
-    printf 'CLI(CLI_exec cp /mnt/sd*/AutoScript/displaylaunch.sh /tmp/dl.sh)\n'
-    printf 'CLI(CLI_exec cp /mnt/sd*/AutoScript/cyberdraw /tmp/cyberdraw)\n'
-    printf 'CLI(CLI_exec chmod 755 /tmp/dl.sh /tmp/cyberdraw)\n'
-    printf 'CLI(CLI_exec /bin/sh /tmp/dl.sh &)\n'
+    printf 'CLI(CLI_exec /sacd_extract_160 -S &)\n'
+    cli_tail
+}
+
+auto_debug() {
+    cli_head
+    # the stock daemon line redirects nothing, so a fast death takes its cause
+    # with it (2026-11-04 attempt 2: candidate alive at uptime 62, gone at 68,
+    # 2002 never bound). candlaunch.sh runs the SAME binary the SAME way, with
+    # output captured + rc + dmesg, recovered at the next trigger.
+    printf 'CLI(CLI_exec cp /mnt/sd*/AutoScript/candlaunch.sh /tmp/candlaunch.sh)\n'
+    printf 'CLI(CLI_exec /bin/sh /tmp/candlaunch.sh &)\n'
     cli_tail
 }
 
@@ -161,7 +183,10 @@ cmd_preflight() {
     check_elf "$RELEASE" "$SHA_REL"
     check_elf "$DBG_SO" "$SHA_PAIR_DBG"
     check_elf "$DISPLAY_DIR/cyberdraw" "$SHA_CYBER"
+    check_elf "$DISPLAY_DIR/fbmd5" "$SHA_FBMD5"
+    check_elf "$DISPLAY_DIR/dfbhello" "$SHA_DFB"
     [ -f "$DISPLAY_DIR/displaylaunch.sh" ] || die "display payload missing: $DISPLAY_DIR/displaylaunch.sh"
+    [ -f "$HWMON_DIR/candlaunch.sh" ] || die "daemon-debug launcher missing: $HWMON_DIR/candlaunch.sh"
     echo "OK  display payload $DISPLAY_DIR (cyberdraw + displaylaunch.sh)"
     [ -f "$OPTICAL/media_check.py" ] || die "observer kit missing: $OPTICAL"
     echo "OK  observer kit $OPTICAL"
@@ -202,8 +227,11 @@ cmd_usb_build() {
     cp "$HWMON_DIR/inventory" "$USB/AutoScript/inventory"
     cp "$HWMON_DIR/hwmon_restore.sh" "$USB/AutoScript/hwmon_restore.sh"
     cp "$HWMON_DIR/pairlaunch.sh" "$USB/AutoScript/pairlaunch.sh"
+    cp "$HWMON_DIR/candlaunch.sh" "$USB/AutoScript/candlaunch.sh"
     cp "$DISPLAY_DIR/displaylaunch.sh" "$USB/AutoScript/displaylaunch.sh"
     cp "$DISPLAY_DIR/cyberdraw" "$USB/AutoScript/cyberdraw"
+    cp "$DISPLAY_DIR/fbmd5" "$USB/AutoScript/fbmd5" 2>/dev/null || true
+    cp "$DISPLAY_DIR/dfbhello" "$USB/AutoScript/dfbhello" 2>/dev/null || true
     auto_baseline > "$USB/AutoScript/AutoScript"
     cmd_usb_check
     echo
@@ -238,6 +266,7 @@ cmd_usb_check() {
     [ -f "$USB/AutoScript/hwmon" ] || die "hwmon watcher missing on stick ($USB/AutoScript/hwmon)"
     [ -f "$USB/AutoScript/hwmon_restore.sh" ] || die "hwmon_restore.sh missing on stick"
     [ -f "$USB/AutoScript/pairlaunch.sh" ] || die "pairlaunch.sh missing on stick"
+    [ -f "$USB/AutoScript/candlaunch.sh" ] || echo "WARN candlaunch.sh missing on stick (daemon-debug mode needs it — any mode flip stages it)"
     echo "OK  hwmon watcher + restore + pairlaunch present"
     # display payload (TV photo/video leg): cyberdraw must be the PINNED ARM
     # build — a stale or foreign binary would silently test nothing. A stick
@@ -287,7 +316,14 @@ cmd_usb_check() {
     case "$(cat "$USB/AutoScript/AutoScript")" in
         *pairlaunch*) echo "MODE: pair-capture (instrumented via pairlaunch.sh wrapper)" ;;
         *displaylaunch*) echo "MODE: display (cyberdraw on /dev/fb0 via displaylaunch.sh wrapper)" ;;
-        *) echo "MODE: baseline (normal daemon)" ;;
+        *candlaunch*) echo "MODE: daemon-debug (candlaunch.sh captures the daemon's output + exit status)" ;;
+        *)
+            if [ -f "$USB/AutoScript/displayanim" ]; then
+                echo "MODE: display (FLAG-ARMED: script is the proven baseline shape;"
+                echo "      hwmon_restore starts displaylaunch.sh + cyberdraw, anim $(cat "$USB/AutoScript/displayanim")s)"
+            else
+                echo "MODE: baseline (normal daemon)"
+            fi ;;
     esac
     if [ -f "$USB/AutoScript/firebird.pair" ]; then
         echo "NOTE: stale firebird.pair already at AutoScript/firebird.pair (trace-launch refuses to overwrite; make sacd-usb-pair-mode removes it on mode switch)"
@@ -299,7 +335,9 @@ cmd_usb_mode() { # $1 = baseline|pair
     # refresh the payload scripts so the stick always carries the current
     # pairlaunch/hwmon_restore (the debug-observer log wiring lives in them)
     cp "$HWMON_DIR/pairlaunch.sh" "$USB/AutoScript/pairlaunch.sh"
+    cp "$HWMON_DIR/candlaunch.sh" "$USB/AutoScript/candlaunch.sh"
     cp "$HWMON_DIR/hwmon_restore.sh" "$USB/AutoScript/hwmon_restore.sh"
+    cp "$HWMON_DIR/candlaunch.sh" "$USB/AutoScript/candlaunch.sh" 2>/dev/null || true
     # keep the Phase-0 inventory collector current too (hwmon_restore now
     # runs it once per boot)
     if [ -f "$HWMON_DIR/inventory" ]; then
@@ -311,7 +349,9 @@ cmd_usb_mode() { # $1 = baseline|pair
     if [ -f "$DISPLAY_DIR/displaylaunch.sh" ] && [ -f "$DISPLAY_DIR/cyberdraw" ]; then
         cp "$DISPLAY_DIR/displaylaunch.sh" "$USB/AutoScript/displaylaunch.sh"
         cp "$DISPLAY_DIR/cyberdraw" "$USB/AutoScript/cyberdraw"
-        echo "refreshed AutoScript/displaylaunch.sh + cyberdraw (display payload)"
+        cp "$DISPLAY_DIR/fbmd5" "$USB/AutoScript/fbmd5" 2>/dev/null || true
+        cp "$DISPLAY_DIR/dfbhello" "$USB/AutoScript/dfbhello" 2>/dev/null || true
+        echo "refreshed AutoScript/displaylaunch.sh + cyberdraw + fbmd5 + dfbhello (display payload)"
     fi
     if [ "$1" = "pair" ]; then
         if [ -f "$USB/AutoScript/firebird.pair" ]; then
@@ -335,12 +375,30 @@ cmd_usb_mode() { # $1 = baseline|pair
         echo "  decision + every READ/DECRYPT + the save outcome."
         echo "  PLAYER: pull the stick, reinsert while idle -> tray opens BY"
         echo "          ITSELF (= trigger), then: make sacd-hw-wait && make sacd-hw-pair"
+    elif [ "$1" = "debug" ]; then
+        # instrument the DAEMON launch: output + exit status + dmesg
+        cp "$HWMON_DIR/candlaunch.sh" "$USB/AutoScript/candlaunch.sh"
+        auto_debug > "$USB/AutoScript/AutoScript"
+        if [ "${NOTRAY:-0}" = "1" ]; then
+            echo "AutoScript set to DAEMON-DEBUG mode, NO TRAY CYCLE (the tray"
+            echo "  stays as it is — the disc-scan trigger is what engages bdpdrv's"
+            echo "  CPSA stack and makes the module's insmod return EBUSY)."
+        else
+        echo "AutoScript set to DAEMON-DEBUG mode (candlaunch.sh: captured output,"
+        echo "  exit status, dmesg). The stick's daemon is what runs — stage the"
+        echo "  tape under test first (sacd-usb-candidate / sacd-usb-original)."
+        echo "  PLAYER: pull the stick, reinsert while idle -> tray opens BY ITSELF."
+        echo "  AFTER the run: pull + reinsert once more to recover the log, then"
+        echo "  make sacd-hw-collect; the log is AutoScript/candlaunch-recovered.log."
+        fi
     elif [ "$1" = "display" ]; then
         # the TV photo/video leg: our pixels on the real panel (or a named cause)
         [ -f "$DISPLAY_DIR/cyberdraw" ] || die "display payload missing: $DISPLAY_DIR/cyberdraw"
         check_elf "$DISPLAY_DIR/cyberdraw" "$SHA_CYBER"
         cp "$DISPLAY_DIR/cyberdraw" "$USB/AutoScript/cyberdraw"
         cp "$DISPLAY_DIR/displaylaunch.sh" "$USB/AutoScript/displaylaunch.sh"
+        cp "$DISPLAY_DIR/fbmd5" "$USB/AutoScript/fbmd5" 2>/dev/null || true
+        cp "$DISPLAY_DIR/dfbhello" "$USB/AutoScript/dfbhello" 2>/dev/null || true
         if [ -n "$DISPLAY_ANIM" ]; then
             case "$DISPLAY_ANIM" in
                 *[!0-9]*|'') die "DISPLAY_ANIM must be a whole number of seconds (got '$DISPLAY_ANIM')" ;;
@@ -351,8 +409,10 @@ cmd_usb_mode() { # $1 = baseline|pair
             printf '%s\n' "$DISPLAY_ANIM" > "$USB/AutoScript/displayanim"
             echo "displayanim override written: ${DISPLAY_ANIM}s"
         else
-            rm -f "$USB/AutoScript/displayanim"
-            echo "displayanim cleared (displaylaunch.sh default 45s)"
+            # ALWAYS armed: the flag is what starts the leg (the script itself
+            # stays at the proven baseline length). 45 s is the default window.
+            printf '%s\n' 45 > "$USB/AutoScript/displayanim"
+            echo "displayanim default written: 45s"
         fi
         auto_display > "$USB/AutoScript/AutoScript"
         ANS=$([ -n "$DISPLAY_ANIM" ] && echo "$DISPLAY_ANIM" || echo 45)
@@ -480,6 +540,11 @@ cmd_collect() {
     for f in "$USB"/AutoScript/inventory-*.txt; do
         [ -f "$f" ] && cp "$f" "$SESSION_DIR/"
     done
+    # daemon-debug leg: launcher log + captured output + dmesg
+    for f in "$USB"/AutoScript/candlaunch.log "$USB"/AutoScript/candlaunch-recovered.log \
+             "$USB"/AutoScript/cand-recovered.out "$USB"/AutoScript/cand.dmesg; do
+        [ -f "$f" ] && cp "$f" "$SESSION_DIR/"
+    done
     # display leg: launcher log (live-on-stick) + the next-trigger recovery copy
     for f in "$USB"/AutoScript/displaylaunch.log \
              "$USB"/AutoScript/displaylaunch-recovered.log; do
@@ -550,6 +615,7 @@ case "${1:-}" in
     usb-baseline-mode) cmd_usb_mode baseline ;;
     usb-pair-mode)   cmd_usb_mode pair ;;
     usb-display-mode) cmd_usb_mode display ;;
+    usb-debug-mode)  cmd_usb_mode debug ;;
     usb-original)     cmd_usb_use "$ORIGINAL" "$SHA_ORIG" "ORIGINAL" ;;
     usb-candidate)    cmd_usb_use "$RELEASE" "$SHA_REL" "RELEASE CANDIDATE" ;;
     wait)            cmd_wait ;;

@@ -464,6 +464,11 @@ sacd-usb-baseline-mode:
 sacd-usb-pair-mode:
 	PAIR_LSN="$(PAIR_LSN)" sh experiments/sacd_reconstruct/tools/sacd_hardware.sh usb-pair-mode
 
+## SACD hardware :: sacd-usb-debug-mode :: set the AutoScript to the daemon-debug launcher :: runs the stick's daemon with output captured + exit status + dmesg (candlaunch.sh) — for naming a fast on-player death
+.PHONY: sacd-usb-debug-mode
+sacd-usb-debug-mode:
+	sh experiments/sacd_reconstruct/tools/sacd_hardware.sh usb-debug-mode
+
 ## SACD hardware :: sacd-usb-display-mode :: set the AutoScript to the display leg :: cyberdraw --anim on /dev/fb0 through displaylaunch.sh (DISPLAY_ANIM=45 default) — the TV photo/video test; the log names the cause when the screen stays black
 .PHONY: sacd-usb-display-mode
 sacd-usb-display-mode:

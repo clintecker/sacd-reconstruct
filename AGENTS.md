@@ -219,6 +219,7 @@ above. Techniques that live only in session history are lost techniques.
 | `sacd-usb-check` | `(no arguments)` | verify the USB stick — daemon SHA vs both pinned ELFs, AutoScript mode, observer kit presence, stale pair file note |
 | `sacd-usb-baseline-mode` | `(no arguments)` | set the AutoScript to the normal daemon line — the stock baseline launcher |
 | `sacd-usb-pair-mode` | `(no arguments)` | set the AutoScript to the instrumented trace-launch line — LSN=600 by default; removes a stale firebird.pair (trace-launch refuses to overwrite) |
+| `sacd-usb-debug-mode` | `(no arguments)` | set the AutoScript to the daemon-debug launcher — runs the stick's daemon with output captured + exit status + dmesg (candlaunch.sh) — for naming a fast on-player death |
 | `sacd-usb-display-mode` | `(no arguments)` | set the AutoScript to the display leg — cyberdraw --anim on /dev/fb0 through displaylaunch.sh (DISPLAY_ANIM=45 default) — the TV photo/video test; the log names the cause when the screen stays black |
 | `sacd-usb-original` | `(no arguments)` | put the ORIGINAL ELF on the stick — SHA-verified 0fdcefdb… — the baseline daemon |
 | `sacd-usb-candidate` | `(no arguments)` | put the RELEASE CANDIDATE ELF on the stick — SHA-verified e91720fb… — for the #6 candidate trial after the baseline lands |

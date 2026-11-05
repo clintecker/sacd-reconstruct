@@ -1,0 +1,347 @@
+=== BX510 runtime inventory (bx510_inventory v1) ===
+collector: bx510_inventory v2 (read-only, +fusion adjudicator)
+note: x86-test values may appear when this binary is run on the lab VM; player values come only from the player run
+--- uptime ---
+760122.57 3911810.55
+--- elf interpreter ---
+  /proc/self/exe PT_INTERP: none (static image)
+--- core runtime libraries (hashes) ---
+--- loaded images (/proc/self/maps + hashes) ---
+  mapped: /tmp/inv_arm
+--- libc version markers ---
+  libc image: UNKNOWN (none of the candidate paths exist)
+--- kernel release ---
+Linux version 6.12.113+deb13-cloud-amd64 (debian-kernel@lists.debian.org) (x86_64-linux-gnu-gcc-14 (Debian 14.2.0-19) 14.2.0, GNU ld (GNU Binutils for Debian) 2.44) #1 SMP PREEMPT_DYNAMIC Debian 6.12.113-1 (2026-10-15)
+osrelease: 6.12.113+deb13-cloud-amd64
+--- cpu (/proc/cpuinfo) ---
+processor	: 0
+model name	: ARMv8 Processor rev 0 (v8l)
+BogoMIPS	: 100.00
+Features	: swp half thumb fast_mult vfp edsp neon vfpv3 tls vfpv4 idiva idivt vfpd32 lpae fphp asimdhp asimddp asimdfhm asimdbf16 i8mm aes pmull sha1 sha2 crc32 sb ssbs
+CPU implementer	: 0x41
+CPU architecture: 8
+CPU variant	: 0x1
+CPU part	: 0xd07
+CPU revision	: 0
+
+processor	: 1
+model name	: ARMv8 Processor rev 0 (v8l)
+BogoMIPS	: 100.00
+Features	: swp half thumb fast_mult vfp edsp neon vfpv3 tls vfpv4 idiva idivt vfpd32 lpae fphp asimdhp asimddp asimdfhm asimdbf16 i8mm aes pmull sha1 sha2 crc32 sb ssbs
+CPU implementer	: 0x41
+CPU architecture: 8
+CPU variant	: 0x1
+CPU part	: 0xd07
+CPU revision	: 0
+
+processor	: 2
+model name	: ARMv8 Processor rev 0 (v8l)
+BogoMIPS	: 100.00
+Features	: swp half thumb fast_mult vfp edsp neon vfpv3 tls vfpv4 idiva idivt vfpd32 lpae fphp asimdhp asimddp asimdfhm asimdbf16 i8mm aes pmull sha1 sha2 crc32 sb ssbs
+CPU implementer	: 0x41
+CPU architecture: 8
+CPU variant	: 0x1
+CPU part	: 0xd07
+CPU revision	: 0
+
+processor	: 3
+model name	: ARMv8 Processor rev 0 (v8l)
+BogoMIPS	: 100.00
+Features	: swp half thumb fast_mult vfp edsp neon vfpv3 tls vfpv4 idiva idivt vfpd32 lpae fphp asimdhp asimddp asimdfhm asimdbf16 i8mm aes pmull sha1 sha2 crc32 sb ssbs
+CPU implementer	: 0x41
+CPU architecture: 8
+CPU variant	: 0x1
+CPU part	: 0xd07
+CPU revision	: 0
+
+processor	: 4
+model name	: ARMv8 Processor rev 0 (v8l)
+BogoMIPS	: 100.00
+Features	: swp half thumb fast_mult vfp edsp neon vfpv3 tls vfpv4 idiva idivt vfpd32 lpae fphp asimdhp asimddp asimdfhm asimdbf16 i8mm aes pmull sha1 sha2 crc32 sb ssbs
+CPU implementer	: 0x41
+CPU architecture: 8
+CPU variant	: 0x1
+CPU part	: 0xd07
+CPU revision	: 0
+
+processor	: 5
+model name	: ARMv8 Processor rev 0 (v8l)
+BogoMIPS	: 100.00
+Features	: swp half thumb fast_mult vfp edsp neon vfpv3 tls vfpv4 idiva idivt vfpd32 lpae fphp asimdhp asimddp asimdfhm asimdbf16 i8mm aes pmull sha1 sha2 crc32 sb ssbs
+CPU implementer	: 0x41
+CPU architecture: 8
+CPU variant	: 0x1
+CPU part	: 0xd07
+CPU revision	: 0
+
+--- memory (/proc/meminfo) ---
+MemTotal:       16383308 kB
+MemFree:         6032836 kB
+MemAvailable:   10101188 kB
+Buffers:          296896 kB
+Cached:          4507248 kB
+SwapCached:            0 kB
+Active:          5116788 kB
+Inactive:        2991656 kB
+Active(anon):    4731036 kB
+Inactive(anon):   675376 kB
+Active(file):     385752 kB
+Inactive(file):  2316280 kB
+Unevictable:           0 kB
+Mlocked:               0 kB
+SwapTotal:             0 kB
+SwapFree:              0 kB
+Dirty:               408 kB
+Writeback:             0 kB
+AnonPages:       3298772 kB
+Mapped:           363724 kB
+Shmem:           2102188 kB
+KReclaimable:    1708168 kB
+Slab:            2040136 kB
+SReclaimable:    1708168 kB
+SUnreclaim:       331968 kB
+KernelStack:       22832 kB
+PageTables:        41824 kB
+SecPageTables:         0 kB
+NFS_Unstable:          0 kB
+Bounce:                0 kB
+WritebackTmp:          0 kB
+CommitLimit:     8191652 kB
+Committed_AS:   19738008 kB
+VmallocTotal:   34359738367 kB
+VmallocUsed:       37212 kB
+VmallocChunk:          0 kB
+Percpu:            18368 kB
+HardwareCorrupted:     0 kB
+AnonHugePages:   2693120 kB
+ShmemHugePages:        0 kB
+ShmemPmdMapped:        0 kB
+FileHugePages:         0 kB
+FilePmdMapped:         0 kB
+Unaccepted:            0 kB
+HugePages_Total:       0
+HugePages_Free:        0
+HugePages_Rsvd:        0
+HugePages_Surp:        0
+Hugepagesize:       2048 kB
+Hugetlb:               0 kB
+DirectMap4k:      397132 kB
+DirectMap2M:    12185600 kB
+DirectMap1G:     6291456 kB
+--- random devices + entropy ---
+/dev/urandom: exists mode=666 type=chardev read: 8/8 bytes: 37ef30adc8071fe3
+/dev/random: exists mode=666 type=chardev read (O_NONBLOCK): 8/8 bytes: 0200c5916968b225
+/proc/sys/kernel/random/entropy_avail: 256
+--- network interfaces + negotiated link ---
+Inter-|   Receive                                                |  Transmit
+ face |bytes    packets errs drop fifo frame compressed multicast|bytes    packets errs drop fifo colls carrier compressed
+    lo: 979923459  130138    0    0    0     0          0         0 979923459  130138    0    0    0     0       0          0
+  eth0: 11121766840 7761851    0    0    0     0          0         0 1291355432 1603462    0    0    0     0       0          0
+docker0: 22637710  409954    0    0    0     0          0         0 3557509994  809457    0   52    0     0       0          0
+veth5f5e839:    6764      52    0    0    0     0          0         0    63475    1218    0    0    0     0       0          0
+br-ae30e943be18:  114738     718    0    0    0     0          0         0   113141     983    0    5    0     0       0          0
+veth3be5df9:  107264     628    0    0    0     0          0         0   101795    1004    0    0    0     0       0          0
+veth84a46f0:   55085     322    0    0    0     0          0         0    74016     593    0    0    0     0       0          0
+veth1ed174f:   75911     458    0    0    0     0          0         0    95078     706    0    0    0     0       0          0
+veth470b9f8:   72377     519    0    0    0     0          0         0   164743    1657    0    0    0     0       0          0
+veth3bd5b85:  100583     433    0    0    0     0          0         0  3072723    1503    0    0    0     0       0          0
+veth4b731ea:   89687     479    0    0    0     0          0         0  2181698    1536    0    0    0     0       0          0
+veth3fb6d72:  208440    1526    0    0    0     0          0         0   275391    2713    0    0    0     0       0          0
+vethc8da35f:     126       3    0    0    0     0          0         0    41011     782    0    0    0     0       0          0
+vethc7df987:   68766     397    0    0    0     0          0         0   115368    1246    0    0    0     0       0          0
+veth2ad2aeb:   10474      52    0    0    0     0          0         0    47137     789    0    0    0     0       0          0
+vethfa87691:   18780      87    0    0    0     0          0         0    54038     830    0    0    0     0       0          0
+veth8830bf3:    5321      28    0    0    0     0          0         0    41661     730    0    0    0     0       0          0
+veth88895fe:  135593    1436    0    0    0     0          0         0   330379    2408    0    0    0     0       0          0
+veth7d810f8:  208579    2481    0    0    0     0          0         0   554436    3770    0    0    0     0       0          0
+veth1c2fc5e:   94984    1191    0    0    0     0          0         0   148764    2127    0    0    0     0       0          0
+vethc4fdd7a:  185495    2207    0    0    0     0          0         0   533696    3488    0    0    0     0       0          0
+vethc5f8a36:   11477     137    0    0    0     0          0         0    41080     708    0    0    0     0       0          0
+veth81e8b3a:   10039     120    0    0    0     0          0         0    39708     687    0    0    0     0       0          0
+veth7257853:   94744     715    0    0    0     0          0         0   126308    1211    0    0    0     0       0          0
+veth150b5f0:   14487     166    0    0    0     0          0         0    40623     580    0    0    0     0       0          0
+veth82b0715:  550363    7941    0    0    0     0          0         0 271510719    5619    0    0    0     0       0          0
+veth8028cac:  633641    9257    0    0    0     0          0         0 271546705    6179    0    0    0     0       0          0
+vethfbc98e8:  701201   10364    0    0    0     0          0         0 270930260    5960    0    0    0     0       0          0
+vethe9cc6d1:   19710     217    0    0    0     0          0         0    34317     395    0    0    0     0       0          0
+vethf7091a9:   35364     338    0    0    0     0          0         0    51431     497    0    0    0     0       0          0
+  iface vethe9cc6d1:
+    speed: 10000
+    duplex: full
+    carrier: 1
+  iface vethfbc98e8:
+    speed: 10000
+    duplex: full
+    carrier: 1
+  iface vethfa87691:
+    speed: 10000
+    duplex: full
+    carrier: 1
+  iface br-ae30e943be18:
+    speed: 10000
+    duplex: unknown
+    carrier: 1
+  iface veth470b9f8:
+    speed: 10000
+    duplex: full
+    carrier: 1
+  iface veth84a46f0:
+    speed: 10000
+    duplex: full
+    carrier: 1
+  iface veth150b5f0:
+    speed: 10000
+    duplex: full
+    carrier: 1
+  iface veth82b0715:
+    speed: 10000
+    duplex: full
+    carrier: 1
+  iface veth1ed174f:
+    speed: 10000
+    duplex: full
+    carrier: 1
+  iface veth3be5df9:
+    speed: 10000
+    duplex: full
+    carrier: 1
+  iface veth1c2fc5e:
+    speed: 10000
+    duplex: full
+    carrier: 1
+  iface eth0:
+    speed: -1
+    duplex: unknown
+    carrier: 1
+  iface veth8830bf3:
+    speed: 10000
+    duplex: full
+    carrier: 1
+  iface veth8028cac:
+    speed: 10000
+    duplex: full
+    carrier: 1
+  iface veth3fb6d72:
+    speed: 10000
+    duplex: full
+    carrier: 1
+  iface lo:
+    speed: UNKNOWN
+    duplex: UNKNOWN
+    carrier: 1
+  iface docker0:
+    speed: 10000
+    duplex: unknown
+    carrier: 1
+  iface veth7257853:
+    speed: 10000
+    duplex: full
+    carrier: 1
+  iface vethc8da35f:
+    speed: 10000
+    duplex: full
+    carrier: 1
+  iface veth2ad2aeb:
+    speed: 10000
+    duplex: full
+    carrier: 1
+  iface vethf7091a9:
+    speed: 10000
+    duplex: full
+    carrier: 1
+  iface vethc7df987:
+    speed: 10000
+    duplex: full
+    carrier: 1
+  iface veth88895fe:
+    speed: 10000
+    duplex: full
+    carrier: 1
+  iface veth5f5e839:
+    speed: 10000
+    duplex: full
+    carrier: 1
+  iface veth7d810f8:
+    speed: 10000
+    duplex: full
+    carrier: 1
+  iface veth4b731ea:
+    speed: 10000
+    duplex: full
+    carrier: 1
+  iface veth3bd5b85:
+    speed: 10000
+    duplex: full
+    carrier: 1
+  iface veth81e8b3a:
+    speed: 10000
+    duplex: full
+    carrier: 1
+  iface vethc5f8a36:
+    speed: 10000
+    duplex: full
+    carrier: 1
+  iface vethc4fdd7a:
+    speed: 10000
+    duplex: full
+    carrier: 1
+IP address       HW type     Flags       HW address            Mask     Device
+172.17.0.11      0x1         0x2         02:d9:83:49:4b:0e     *        docker0
+172.17.0.17      0x1         0x2         22:8e:21:7f:96:60     *        docker0
+172.17.0.14      0x1         0x2         da:6e:1f:75:34:7a     *        docker0
+172.17.0.20      0x1         0x2         72:8e:d7:2a:8c:b2     *        docker0
+172.17.0.4       0x1         0x2         aa:1b:35:61:60:d5     *        docker0
+172.17.0.23      0x1         0x2         16:e8:7d:d4:15:c9     *        docker0
+172.17.0.7       0x1         0x2         da:47:55:22:bb:f7     *        docker0
+172.17.0.10      0x1         0x2         e6:58:8e:4b:59:37     *        docker0
+172.17.0.16      0x1         0x2         d6:ca:89:bd:a0:0a     *        docker0
+172.17.0.13      0x1         0x2         6e:8d:59:c9:1a:61     *        docker0
+172.17.0.19      0x1         0x2         b6:6b:cb:a6:68:f7     *        docker0
+172.18.0.2       0x1         0x2         36:1a:7a:da:5f:89     *        br-ae30e943be18
+172.17.0.3       0x1         0x2         06:d7:39:55:fe:9c     *        docker0
+172.17.0.22      0x1         0x2         ba:c5:0d:79:c8:f1     *        docker0
+172.17.0.6       0x1         0x2         9e:10:78:7a:5b:8d     *        docker0
+172.18.0.4       0x1         0x2         ba:20:67:5e:26:28     *        br-ae30e943be18
+172.17.0.9       0x1         0x2         96:9f:18:cf:dd:a5     *        docker0
+172.17.0.12      0x1         0x2         c2:67:ec:ec:cf:de     *        docker0
+172.17.0.18      0x1         0x2         16:9b:27:10:fb:50     *        docker0
+172.17.0.15      0x1         0x2         ae:79:f1:e6:ea:95     *        docker0
+10.99.31.1       0x1         0x2         da:dc:ff:27:4f:3a     *        eth0
+172.17.0.2       0x1         0x2         92:49:30:b4:b3:55     *        docker0
+172.17.0.21      0x1         0x2         b6:be:b7:03:29:1b     *        docker0
+172.17.0.5       0x1         0x2         62:c9:89:bf:78:4f     *        docker0
+172.17.0.24      0x1         0x2         ea:08:54:2f:61:65     *        docker0
+172.17.0.8       0x1         0x2         8e:7c:ba:74:0f:35     *        docker0
+--- resource limits (/proc/self/limits) ---
+Limit                     Soft Limit           Hard Limit           Units     
+Max cpu time              unlimited            unlimited            seconds   
+Max file size             unlimited            unlimited            bytes     
+Max data size             unlimited            unlimited            bytes     
+Max stack size            8388608              unlimited            bytes     
+Max core file size        0                    unlimited            bytes     
+Max resident set          unlimited            unlimited            bytes     
+Max processes             63897                63897                processes 
+Max open files            1024                 524288               files     
+Max locked memory         8388608              8388608              bytes     
+Max address space         unlimited            unlimited            bytes     
+Max file locks            unlimited            unlimited            locks     
+Max pending signals       63897                63897                signals   
+Max msgqueue size         819200               819200               bytes     
+Max nice priority         0                    0                    
+Max realtime priority     0                    0                    
+Max realtime timeout      unlimited            unlimited            us        
+--- busybox identity + applet list ---
+/bin/busybox: UNKNOWN (stat: No such file or directory)
+  /bin/busybox: UNKNOWN (open: No such file or directory)
+busybox applets (no args): UNKNOWN (/bin/busybox not executable: No such file or directory)
+busybox uname -a: UNKNOWN (/bin/busybox not executable: No such file or directory)
+--- flash / storage ---
+UNKNOWN (cannot open /proc/mtd: No such file or directory)
+df (busybox): UNKNOWN (/bin/busybox not executable: No such file or directory)
+/dev/mtd0: UNKNOWN (stat: No such file or directory)
+--- directfb / fusion runtime identities ---
+  (no /dev/fusion* entries)
+  /proc/fusion: UNKNOWN (opendir: No such file or directory)
+  -- participant identity resolution (PID + start time; ID 1 = master) --
+  (no live PIDs found in /proc/fusion content — supports the no-master reading)
+=== end of inventory ===

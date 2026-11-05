@@ -52,6 +52,15 @@ cp -R experiments/sacd_reconstruct/evidence/bx510-guest/gates3 \
       "$STANDALONE/evidence/bx510-guest/" 2>/dev/null || true
 cp -R experiments/sacd_reconstruct/evidence/bx510-guest/hdhost \
       "$STANDALONE/evidence/bx510-guest/" 2>/dev/null || true
+# the on-player payload + its evidence (HUD render, TV photos, specs): these
+# were never mirrored, so the review repo had no screenshots (2026-11-05)
+mkdir -p "$STANDALONE/evidence/bx510"
+cp -R experiments/sacd_reconstruct/evidence/bx510/display-payload \
+      "$STANDALONE/evidence/bx510/" 2>/dev/null || true
+cp -R experiments/sacd_reconstruct/evidence/bx510/hw-session-2026-11-05 \
+      "$STANDALONE/evidence/bx510/" 2>/dev/null || true
+cp -R experiments/sacd_reconstruct/evidence/bx510/hwmon-payload \
+      "$STANDALONE/evidence/bx510/" 2>/dev/null || true
 cp -R experiments/sacd_reconstruct/docs "$STANDALONE/" 2>/dev/null || true
 cp -R experiments/sacd_reconstruct/emulator-kit "$STANDALONE/" 2>/dev/null || true
 cp Makefile AGENTS.md "$STANDALONE/"

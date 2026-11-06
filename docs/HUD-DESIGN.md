@@ -56,7 +56,7 @@ control surface later.
 │ > CPSA module armed compid=1  │  THROUGHPUT  ▁▂▅█▇▅▃▂ 4.7 MB/s│
 │ > disc: FIREBIRD  1064208 sec │  LSN         0532104 / 1064208│
 │ > listener :2002 LISTEN       │  SECTORS READ  532104          │
-│ > client 192.0.2.10 connected│  REQUESTS     1024             │
+│ > client 10.20.1.236 connected│  REQUESTS     1024             │
 │ > READ lsn=0532104 n=128  ok  │  ERRORS       0                │
 │ > DECRYPT ok  1.9 ms          │  ┌ disc map ────────────────┐  │
 │ > READ lsn=0532232 n=128  ok  │  │····●······················│  │

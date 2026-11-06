@@ -34,13 +34,11 @@ STAT: ioctl(5307) ret=0 errno=0 a=0 b=0 c=0 d=0
 P0_STAT=0
 / # dd if=/res/dev/sr0 bs=2048 skip=510 count=1 2>/res/e | md5sum
 b00b6ea73582088a96ffefdd1f497765  -
-/ # echo P0_RAW_BEGIN; hexdump -v -e '1/1 "%02x"' /res/gc-raw.bin | head -c 48; 
-
+/ # echo P0_RAW_BEGIN; hexdump -v -e '1/1 "%02x"' /res/gc-raw.bin | head -c 48; 
 echo
 P0_RAW_BEGIN
 080110ffffffffffffffffff0100080410ffffffffffffff
-/ # dd if=/res/gc-raw.bin bs=1 skip=2040 count=16 2>/res/e | hexdump -v -e '1/1 
-
+/ # dd if=/res/gc-raw.bin bs=1 skip=2040 count=16 2>/res/e | hexdump -v -e '1/1 
 "%02x"'; echo P0_RAW_END
 P0_RAW_END
 / # dd if=/res/dev/sr0 bs=2048 skip=510 count=1 2>/res/e | md5sum
@@ -64,19 +62,9 @@ aaaaaaaaaaaaaaaa0114000000000000
 / # echo P0_OUT_BEGIN; cat /res/daemon.out; echo P0_OUT_END
 P0_OUT_BEGIN
 mknod: /dev/sacd_read: No such file or directory
-
-SACD Daemon 0.37 active. Client none. SACD disc inserted.              
-SACD Daemon 0.37 active. Client none. SACD disc inserted.              
-SACD Daemon 0.37 active. Client none. SACD disc inserted.              
-SACD Daemon 0.37 active. Client none. SACD disc inserted.              
-SACD Daemon 0.37 active. Client none. SACD disc inserted.              
-SACD Daemon 0.37 active. Client none. SACD disc inserted.              
-SACD Daemon 0.37 active. Client none. SACD disc inserted.              
-SACD Daemon 0.37 active. Client none. SACD disc inserted.              
-SACD Daemon 0.37 active. Client none. SACD disc inserted.              libsacdread: Can't stat /dev/sr0
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              libsacdread: Can't stat /dev/sr0
 No such file or directory
-
-SACD Daemon 0.37 active. Client none. SACD disc inserted.              libsacdread: Can't stat /dev/sr0
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              libsacdread: Can't stat /dev/sr0
 No such file or directory
 libsacdread: Can't stat /dev/sr0
 No such file or directory
@@ -84,34 +72,27 @@ libsacdread: Can't stat /dev/sr0
 No such file or directory
 libsacdread: Can't stat /dev/sr0
 No such file or directory
-
-SACD Daemon 0.37 active. Client none. SACD disc inserted.              libsacdread: Can't stat /dev/sr0
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              libsacdread: Can't stat /dev/sr0
 No such file or directory
 libsacdread: Can't stat /dev/sr0
 No such file or directory
-
-SACD Daemon 0.37 active. Client none. SACD disc inserted.              libsacdread: Can't stat /dev/sr0
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              libsacdread: Can't stat /dev/sr0
 No such file or directory
-
-SACD Daemon 0.37 active. Client none. SACD disc inserted.              libsacdread: Can't stat /dev/sr0
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              libsacdread: Can't stat /dev/sr0
 No such file or directory
 libsacdread: Can't stat /dev/sr0
 No such file or directory
 libsacdread: Can't stat /dev/sr0
 No such file or directory
-
-SACD Daemon 0.37 active. Client none. SACD disc inserted.              libsacdread: Can't stat /dev/sr0
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              libsacdread: Can't stat /dev/sr0
 No such file or directory
-
-SACD Daemon 0.37 active. Client none. SACD disc inserted.              
-SACD Daemon 0.37 active. Client none. SACD disc inserted.              P0_OUT_END
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              P0_OUT_END
 / # /sbin/insmod /res/shim/hdhost.ko; echo P0_HD=$?
 P0_HD=0
 / # grep hdhost /res/proc/devices; echo P0_HDDEV=$?
 254 hdhost
 P0_HDDEV=0
-/ # set -- $(grep hdhost /res/proc/devices); /bin/mknod /res/dev/hdhost b $1 0; 
-
+/ # set -- $(grep hdhost /res/proc/devices); /bin/mknod /res/dev/hdhost b $1 0; 
 echo P0_HDNODE=$?
 P0_HDNODE=0
 / # dd if=/res/dev/hdhost bs=2048 skip=0 count=1 2>/res/e | md5sum
@@ -124,8 +105,7 @@ c99a74c555371a433d121f551d6c6398  -
 620f0b67a91f7f74151bc5be745b7110  -
 / # dd if=/res/dev/hdhost bs=2048 skip=8191 count=1 2>/res/e | md5sum
 c99a74c555371a433d121f551d6c6398  -
-/ # dd if=/res/dev/hdhost bs=2048 skip=4000000 count=1 2>/res/e >/dev/null; echo
-
+/ # dd if=/res/dev/hdhost bs=2048 skip=4000000 count=1 2>/res/e >/dev/null; echo
  P0_HDOOB=$?
 P0_HDOOB=1
 / # echo P0_HDID_BEGIN

@@ -93,7 +93,7 @@ def main():
                         "B05-B09 fix stack)")
     p.add_argument("--hdhost", type=Path,
                    help="HDHOST: VM-side path to the read-only host image; "
-                        "passed to QEMU as the player.local machine property "
+                        "passed to QEMU as the sony-bx510 machine property "
                         "(device at 0x70020000; see docs/large-image-interface.md)")
     p.add_argument("--fbmod", type=Path,
                    help="virtual framebuffer module (fbvirt.ko) to stage "
@@ -302,7 +302,7 @@ def main():
                 i = argv.index("-M")
             except ValueError:
                 i = argv.index("-machine")
-            argv[i + 1] = f"player.local,hdhost={a.hdhost.resolve()}"
+            argv[i + 1] = f"sony-bx510,hdhost={a.hdhost.resolve()}"
         log = observe(argv, commands, wanted, a.timeout, a.log)
         # An expected negative protocol response lives INSIDE a completed
         # run (the client prints result=-1). A probe that never reaches

@@ -706,7 +706,7 @@ def main():
     c.add_argument("--out", required=True, help="evidence output directory")
     c.add_argument("--hud", default=None,
                    help="HUD host:port to push live client events to (e.g. "
-                        "192.0.2.10:20023)")
+                        "10.20.1.236:20023)")
     c.add_argument("--firmware", default=None,
                    help="player model + firmware version (manual)")
     c.add_argument("--disc-id", default=None,

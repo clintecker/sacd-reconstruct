@@ -49,5 +49,5 @@ documented in `DELTA.md`:
 
 - `gnuarm` 2009q3 (`arm-none-linux-gnueabi-gcc` 4.4.1, glibc 2.9) for the
   reconstruction, to match the shipped build's ABI.
-- QEMU 9.2.4 with `emulator-kit/` for the `player.local` machine model.
+- QEMU 9.2.4 with `emulator-kit/` for the `sony-bx510` machine model.
 - Python 3 for the verification tooling.

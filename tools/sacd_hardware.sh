@@ -41,7 +41,7 @@
 #   verify-session   SHA-verify + inventory the collected artifacts
 #
 # Environment overrides:
-#   HW_HOST (192.0.2.10)  HW_PORT (2002)  USB (/Volumes/SONYUSB)
+#   HW_HOST (10.20.1.236)  HW_PORT (2002)  USB (/Volumes/SONYUSB)
 #   PLAYER_MOUNT (/mnt/sda1)  PAIR_LSN (600)  DISPLAY_ANIM (45)
 #   SESSION_DIR (~/bx510-session)  HW_ISO (the Firebird rip)
 set -eu
@@ -74,7 +74,7 @@ SHA_DFB="51e797486b8b9733f51fdd22929dd88993a4e899351431a371115c777e9c614f"
 SHA_HUD="6334bda98e53d43fa476fda3f350af0cc2e7e77f503782848c74d972ce5795d2"
 ISO_SIZE_EXPECTED=2179497984
 
-HW_HOST="${HW_HOST:-192.0.2.10}"
+HW_HOST="${HW_HOST:-10.20.1.236}"
 HW_PORT="${HW_PORT:-2002}"
 USB="${USB:-/Volumes/SONYUSB}"
 PLAYER_MOUNT="${PLAYER_MOUNT:-/mnt/sda1}"

@@ -212,7 +212,7 @@ launcher. The single highest-leverage unknown in the whole appliance
 picture.
 
 **U5 — Optional: emulator display model.** From U2's register
-knowledge, add a display controller to our QEMU `player.local` machine
+knowledge, add a display controller to our QEMU `sony-bx510` machine
 (the HDHOST playbook: understand the contract, model the device,
 watch it work) — boot the real UI to a virtual framebuffer and diff
 frame dumps. This is the "watch it draw" endgame, and it feeds the
@@ -230,7 +230,7 @@ library — rather than the whole stack.
 - Claims about behavior require observable evidence (framebuffer
   dumps, register traces, wire-level captures)
 - Emulator limitations labeled honestly (no HDMI encoder model, no
-  video-decode hardware in the player.local machine today)
+  video-decode hardware in the sony-bx510 machine today)
 - Hardware stays ground truth: a photograph of the actual player's
   output can anchor any framebuffer-diff claim
 

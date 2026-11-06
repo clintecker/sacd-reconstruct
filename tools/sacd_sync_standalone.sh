@@ -14,8 +14,8 @@
 # Usage: sacd_sync_standalone.sh [MSG]   (MSG: optional commit-message
 # prefix; the canonical commit hash is always included)
 set -e
-CANON=/Users/you/code/aftermath-sacd
-STANDALONE=/Users/you/code/sacd-reconstruct
+CANON=/Users/clint/code/aftermath-sacd
+STANDALONE=/Users/clint/code/sacd-reconstruct
 MSG="${1:-sync from canonical tree}"
 
 cd "$CANON"
@@ -81,7 +81,7 @@ if [ -z "$(git status --porcelain)" ]; then
   exit 0
 fi
 git add -A
-git commit -q -m "$MSG (user@sacd-reconstruct $CANON_SHA)
+git commit -q -m "$MSG (aftermath@sacd-reconstruct $CANON_SHA)
 
 Mirrored by sacd-sync-standalone (remote + top-level identity gates:
 canonical git@github.com:clintecker/aftermath.git, standalone

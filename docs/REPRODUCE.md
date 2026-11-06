@@ -41,7 +41,7 @@ SHA-256, so two runs are comparable by diffing manifests.
 ## 3. Full system (Sony's own kernel and rootfs in QEMU)
 
 Build the machine model and boot a target image; `emulator-kit/build.sh` builds
-QEMU with the `player.local` machine, and `emulator-kit/run.py` boots it with the
+QEMU with the `sony-bx510` machine, and `emulator-kit/run.py` boots it with the
 NAND image. The gate scripts under `evidence/bx510-guest/gates*/` show the
 canonical command lines: they boot the guest twice (original binary, then the
 reconstruction), replay the same client sequence, and compare raw TX/RX bytes.

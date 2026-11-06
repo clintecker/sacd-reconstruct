@@ -33,7 +33,7 @@ BINARY_EXT = re.compile(r"\.(ko|so|bin|img|iso|ppm|HEIC|heic|gif|mp4|o|a)$", re.
 IP = re.compile(r"\b(10|192\.168|172\.(1[6-9]|2\d|3[01]))\.\d{1,3}\.\d{1,3}\b")
 MAC = re.compile(r"\b([0-9a-f]{2}:){5}[0-9a-f]{2}\b", re.I)
 USERPATH = re.compile(r"/Users/[A-Za-z0-9._-]+")
-HOSTNAME = re.compile(r"\b(player.local|user@)\b")
+HOSTNAME = re.compile(r"\b(bx510-emulator|aftermath@)\b")
 # our own scrub placeholders are benign, not leaks
 BENIGN = ("aa:bb:cc:00:11:22", "/Users/you", "/home/you", "user@", "player.local")
 

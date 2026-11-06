@@ -25,13 +25,11 @@ STAT: ioctl(5307) ret=0 errno=0 a=0 b=0 c=0 d=0
 P0_STAT=0
 / # dd if=/res/dev/sr0 bs=2048 skip=510 count=1 2>/res/e | md5sum
 549c7a36a0050f23788a156c4578e998  -
-/ # echo P0_RAW_BEGIN; hexdump -v -e '1/1 "%02x"' /res/gc-raw.bin | head -c 48; 
-
+/ # echo P0_RAW_BEGIN; hexdump -v -e '1/1 "%02x"' /res/gc-raw.bin | head -c 48; 
 echo
 P0_RAW_BEGIN
 0801100000080410b8a10500080310011a8010e7c204c32b
-/ # dd if=/res/gc-raw.bin bs=1 skip=2040 count=16 2>/res/e | hexdump -v -e '1/1 
-
+/ # dd if=/res/gc-raw.bin bs=1 skip=2040 count=16 2>/res/e | hexdump -v -e '1/1 
 "%02x"'; echo P0_RAW_END
 bdpvirt: TestUnitReadyLoop(a=0x4e20)
 bdpvirt: GetProfile(out=ddacbeec) -> profile 0x10
@@ -57,23 +55,7 @@ bdpvirt: GetProfile(out=ddacbeec) -> profile 0x10
 / # echo P0_OUT_BEGIN; cat /res/daemon.out; echo P0_OUT_END
 P0_OUT_BEGIN
 mknod: /dev/sacd_read: No such file or directory
-
-SACD Daemon 0.37 active. Client none. SACD disc inserted.              
-SACD Daemon 0.37 active. Client none. SACD disc inserted.              
-SACD Daemon 0.37 active. Client none. SACD disc inserted.              
-SACD Daemon 0.37 active. Client none. SACD disc inserted.              
-SACD Daemon 0.37 active. Client none. SACD disc inserted.              
-SACD Daemon 0.37 active. Client none. SACD disc inserted.              
-SACD Daemon 0.37 active. Client none. SACD disc inserted.              
-SACD Daemon 0.37 active. Client none. SACD disc inserted.              
-SACD Daemon 0.37 active. Client none. SACD disc inserted.              
-SACD Daemon 0.37 active. Client none. SACD disc inserted.              
-SACD Daemon 0.37 active. Client none. SACD disc inserted.              
-SACD Daemon 0.37 active. Client none. SACD disc inserted.              
-SACD Daemon 0.37 active. Client none. SACD disc inserted.              
-SACD Daemon 0.37 active. Client none. SACD disc inserted.              
-SACD Daemon 0.37 active. Client none. SACD disc inserted.              
-SACD Daemon 0.37 active. Client none. SACD disc inserted.              P0_OUT_END
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              P0_OUT_END
 / # dd if=/res/dev/hdhost bs=2048 skip=0 count=1 2>/res/e | md5sum
 0e51baf7a8f535ab8c984149b5b6020a  -
 / # dd if=/res/dev/hdhost bs=2048 skip=10 count=1 2>/res/e | md5sum
@@ -86,8 +68,7 @@ c99a74c555371a433d121f551d6c6398  -
 bdpvirt: TestUnitReadyLoop(a=0x4e20)
 bdpvirt: GetProfile(out=ddacbeec) -> profile 0x10
 c99a74c555371a433d121f551d6c6398  -
-/ # dd if=/res/dev/hdhost bs=2048 skip=4000000 count=1 2>/res/e >/dev/null; echo
-
+/ # dd if=/res/dev/hdhost bs=2048 skip=4000000 count=1 2>/res/e >/dev/null; echo
  P0_HDOOB=$?
 P0_HDOOB=1
 / # echo P0_HDID_BEGIN

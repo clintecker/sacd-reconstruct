@@ -35,7 +35,7 @@ if [ ! -f "$src/.bx510-patched" ]; then
     (cd "$src" && patch -p1 < "$kit_dir/qemu-integration.patch")
     touch "$src/.bx510-patched"
 fi
-cp "$kit_dir/player.local.c" "$kit_dir/mt8560-nfi.c" "$kit_dir/mt8560-nfi.h" "$kit_dir/mt8560-hdhost.c" "$kit_dir/mt8560-hdhost.h" "$src/hw/arm/"
+cp "$kit_dir/sony-bx510.c" "$kit_dir/mt8560-nfi.c" "$kit_dir/mt8560-nfi.h" "$kit_dir/mt8560-hdhost.c" "$kit_dir/mt8560-hdhost.h" "$src/hw/arm/"
 mkdir -p "$work/build"
 cd "$work/build"
 if [ ! -f build.ninja ]; then
@@ -43,4 +43,4 @@ if [ ! -f build.ninja ]; then
         --enable-tcg --enable-fdt=system --disable-docs --disable-werror --disable-guest-agent
 fi
 ninja -j "${JOBS:-4}" qemu-system-arm
-./qemu-system-arm -machine help | grep 'player.local'
+./qemu-system-arm -machine help | grep 'sony-bx510'

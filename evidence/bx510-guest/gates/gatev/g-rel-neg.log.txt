@@ -1,9 +1,9 @@
 # role=release
-# reference=/home/you/reconstruct/release/sacd_extract_160_release
+# reference=/home/aftermath/reconstruct/release/sacd_extract_160_release
 # sha256(release)=e91720fbbbd592505bde6630843b0495ff82a93e40c0e427aaa70a081ff9ae22
 # sha256(original)=0fdcefdb84ae818be7385657eaf0960053f6e4452a82f19cbe6777f9c8cddb45
 # sha256(release)=e91720fbbbd592505bde6630843b0495ff82a93e40c0e427aaa70a081ff9ae22
-# invocation: bx510_phase0_probe.py --role release --reference /home/you/reconstruct/release/sacd_extract_160_release --corrupt-toc --rawdump
+# invocation: bx510_phase0_probe.py --role release --reference /home/aftermath/reconstruct/release/sacd_extract_160_release --corrupt-toc --rawdump
 / # echo P0_CLIENT_BEGIN; cat /res/client.out; echo P0_CLIENT_END
 P0_CLIENT_BEGIN
 GC: connected 127.0.0.1:2002

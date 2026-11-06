@@ -95,5 +95,5 @@ git commit -q -m "$MSG (aftermath@sacd-reconstruct $CANON_SHA)
 Mirrored by sacd-sync-standalone (remote + top-level identity gates:
 canonical git@github.com:clintecker/aftermath.git, standalone
 git@github.com:clintecker/sacd-reconstruct.git)."
-git push -q origin main
-echo "standalone pushed: $(git rev-parse --short HEAD)"
+git push -q origin main:staging   # staging mirror; the PUBLIC branch is separate
+echo "standalone staging pushed: $(git rev-parse --short HEAD)"

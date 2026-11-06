@@ -1541,6 +1541,14 @@ static void scene_retro(const hud_t *h, double t, double fps, int frame)
         rtext("Z80 NODE FARM", 4, y + 15, 3);
         rtext_r(h->note[0] ? h->note : "NOMINAL", RW - 4, y + 15, h->note[0] ? 12 : 2);
         rtext("CPSA//MT85", 4, y + 25, 6);
+        {   /* PERMANENT COLOUR KEY: the photo settles channel order.
+               Read left-to-right: RED, GREEN, BLUE, CYAN, MAGENTA, YELLOW.
+               If the first chip is not red on the TV, the pool order is wrong
+               and the `order` profile knob needs the value the photo implies. */
+            int kx = 96, k;
+            static const unsigned char kc[6] = { 5, 2, 11, 7, 6, 4 };  /* R G B C M Y */
+            for (k = 0; k < 6; k++) rfill(kx + k * 10, y + 25, 8, 6, kc[k]);
+        }
         snprintf(up, sizeof up, "%02lu:%02lu:%02lu", h->uptime_s / 3600,
                  (h->uptime_s / 60) % 60, h->uptime_s % 60);
         rtext_r(up, RW - 4, y + 25, 3);

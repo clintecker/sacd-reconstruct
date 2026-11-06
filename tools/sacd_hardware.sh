@@ -71,7 +71,7 @@ SHA_FBMD5="049b09654766530b093c280621983a84943f057527c6364e1634cc63dd8331ba"
 # Tier-1 probe: real DirectFB against the player's own 1.2 libs (vendor pool path)
 SHA_DFB="51e797486b8b9733f51fdd22929dd88993a4e899351431a371115c777e9c614f"
 # the HUD (docs/HUD-DESIGN.md); H0 = static layout mock on the same stack
-SHA_HUD="c1181ac77fe051353c7ac9ef165eeceaad3e475f2fef0e44aeb097034153abd7"
+SHA_HUD="982b3d7d7b94cb9e8cef723b93f3224be121b803b7872f42954585d9afc1a88e"
 ISO_SIZE_EXPECTED=2179497984
 
 HW_HOST="${HW_HOST:-10.20.1.236}"

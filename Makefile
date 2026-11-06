@@ -444,6 +444,11 @@ sacd-emu-daemons:
 sacd-hw-payload-check:
 	sh experiments/sacd_reconstruct/tools/sacd_hardware.sh payload-check
 
+## SACD hardware :: sacd-hud-build :: build the HUD for the player (VM, era toolchain) and pull it into display-payload :: one place for the flags (-std=gnu99, -Wno-pragmas, dynamic) that each cost a failed run
+.PHONY: sacd-hud-build
+sacd-hud-build:
+	sh experiments/sacd_reconstruct/tools/hud_build.sh
+
 ## SACD hardware :: sacd-hud-sim :: render the HUD scene on the Mac (no DirectFB, no device) :: real Sony font + fake telemetry -> PNG, for layout/text iteration in seconds
 .PHONY: sacd-hud-sim
 sacd-hud-sim:

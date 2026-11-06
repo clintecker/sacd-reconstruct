@@ -54,6 +54,10 @@ static int pitch_px;
 static int SCAL = 2;          /* device px per logical px (set from the panel) */
 /* device profile offsets (see profile_load): where the visible area starts */
 static int g_xoff, g_yoff, g_visible_w, g_visible_h, g_pitch;
+static int g_quant_off;   /* set while drawing glyphs so dither spares text */
+/* channel order of the pool buffer. The calibration bars decide which is
+   right: red must be red, green green. 0=ARGB(xRGB) 1=BGRA 2=RGBA 3=ABGR */
+static int g_order;
 /* Text size in DEVICE px, derived from the visible panel height so the HUD has
    the same physical size at 720p and 1080p: headline ~1/40 of the height,
    secondary ~1/60 (18/12 px at 720p, 27/18 px at 1080p). A profile may
@@ -130,6 +134,7 @@ static int ttf_text(const char *str, int x, int y, int px, unsigned int col)
 {
     int cx = x;
     if (!g_font_ok) return -1;
+    g_quant_off = 1;
     g_fsc = stbtt_ScaleForPixelHeight(&g_font, (float)px);
     for (; *str; str++) {
         int gw = 0, gh = 0, xo = 0, yo = 0, adv, lsb;
@@ -151,6 +156,7 @@ static int ttf_text(const char *str, int x, int y, int px, unsigned int col)
         }
         cx += (int)(adv * g_fsc);
     }
+    g_quant_off = 0;
     return cx;
 }
 
@@ -224,6 +230,17 @@ static const glyph_t *find_glyph(char c)
     return &FONT[NGlyphs - 1];
 }
 
+
+static unsigned int reorder(unsigned int c)
+{
+    unsigned int a = (c >> 24) & 0xff, r = (c >> 16) & 0xff, g = (c >> 8) & 0xff, b = c & 0xff;
+    switch (g_order) {
+    case 1: return (a << 24) | (r << 16) | (g << 8) | b;      /* BGRA in memory */
+    case 2: return (r << 16) | (g << 8) | (b << 0) | (a << 24);
+    case 3: return (b << 16) | (g << 8) | (r << 0) | (a << 24);
+    default: return c;
+    }
+}
 
 static void px(int x, int y, unsigned int c)
 {
@@ -603,12 +620,411 @@ static void draw_calib(void)
     text1("CALIBRATION  CW=640 CH=360", 12, CH - 20, 0xffffff);
 }
 
+
+/* ---- whole-screen effects ------------------------------------------------
+   A post pass over the finished frame, operating on DEVICE pixels in the
+   locked buffer (in place, except distortion which needs a source copy).
+   Every effect is cheap enough for an ARM926 at 720p: no floats in the inner
+   loops except distortion's row scale.
+
+   Mask (HUD_FX or profile "fx"):
+     1 scanlines      2 chromatic aberration   4 glitch bands
+     8 barrel distortion  16 vignette          32 noise
+     64 roll/sweep    128 phosphor bloom
+   Default when enabled: scanlines|aberration|glitch|vignette (0x17). */
+static unsigned g_fx;             /* 0 = off */
+static unsigned g_fx_lfsr = 0x1234567u;
+
+static unsigned fx_rand(void)
+{
+    g_fx_lfsr ^= g_fx_lfsr << 13;
+    g_fx_lfsr ^= g_fx_lfsr >> 17;
+    g_fx_lfsr ^= g_fx_lfsr << 5;
+    return g_fx_lfsr;
+}
+
+/* row pointer helper for device coords */
+static unsigned int *fxd(int x, int y) { return fb + (size_t)y * pitch_px + x; }
+
+static void fx_scanlines(int w, int h)
+{
+    int y, x;
+    for (y = 0; y < h; y += 2)
+        for (x = 0; x < w; x++) {
+            unsigned int v = *fxd(x, y);
+            unsigned int r = ((v >> 16) & 0xff) * 3 / 4;
+            unsigned int g = ((v >> 8) & 0xff) * 3 / 4;
+            unsigned int b = (v & 0xff) * 3 / 4;
+            *fxd(x, y) = (r << 16) | (g << 8) | b;
+        }
+}
+
+static void fx_aberration(int w, int h)
+{
+    int y, x, d = 2;                        /* channel separation, device px */
+    for (y = 0; y < h; y++)
+        for (x = 0; x < w; x++) {
+            unsigned int *c = fxd(x, y);
+            unsigned int l = (x >= d) ? *fxd(x - d, y) : *c;
+            unsigned int r = (x + d < w) ? *fxd(x + d, y) : *c;
+            unsigned int rr = (r >> 16) & 0xff;   /* red sampled right  */
+            unsigned int gg = ((*c) >> 8) & 0xff;
+            unsigned int bb = l & 0xff;           /* blue sampled left  */
+            *c = (rr << 16) | (gg << 8) | bb;
+        }
+}
+
+static void fx_glitch(int w, int h, int frame)
+{
+    int bands = 2 + (int)(fx_rand() % 3), b;
+    for (b = 0; b < bands; b++) {
+        int y0 = (int)(fx_rand() % (unsigned)h);
+        int hh = 2 + (int)(fx_rand() % 10);
+        int sh = (int)(fx_rand() % 13) - 6;       /* horizontal shift, clamped */
+        int y, x;
+        for (y = y0; y < y0 + hh && y < h; y++)
+            for (x = 0; x < w; x++) {
+                unsigned int *dst = fxd(x, y);
+                int sx = x + sh;
+                if (sx < 0) sx = 0;
+                if (sx >= w) sx = w - 1;
+                *dst = *fxd(sx, y);
+                if (y == y0 && (x & 7) == 0) *dst = 0x00ff66;  /* tear line */
+            }
+    }
+    (void)frame;
+}
+
+static void fx_vignette(int w, int h)
+{
+    int y, x;
+    for (y = 0; y < h; y++)
+        for (x = 0; x < w; x++) {
+            /* cheap radial falloff, integer only */
+            /* normalise the squared radius to 0..255 at the CORNERS */
+            long dx = (long)x * 2 - w, dy = (long)y * 2 - h;
+            long max2 = (long)w * w + (long)h * h;
+            int d2 = (int)(((dx * dx + dy * dy) * 255) / (max2 ? max2 : 1));
+            int k = 255 - d2 / 4;                     /* <=25% dip at corners */
+            unsigned int v = *fxd(x, y);
+            unsigned int r = (((v >> 16) & 0xff) * k) / 255;
+            unsigned int g = (((v >> 8) & 0xff) * k) / 255;
+            unsigned int b = ((v & 0xff) * k) / 255;
+            *fxd(x, y) = (r << 16) | (g << 8) | b;
+        }
+}
+
+static void fx_noise(int w, int h)
+{
+    int y, x;
+    for (y = 0; y < h; y++)
+        for (x = 0; x < w; x += 2) {
+            unsigned n = fx_rand() & 0x0f;
+            unsigned int v = *fxd(x, y);
+            unsigned int r = (((v >> 16) & 0xff) + n > 255) ? 255 : ((v >> 16) & 0xff) + n;
+            *fxd(x, y) = (r << 16) | (v & 0xffff);
+        }
+}
+
+static void fx_bloom(int w, int h)
+{
+    /* additive 1-px horizontal smear of bright pixels: a cheap phosphor glow */
+    int y, x;
+    for (y = 0; y < h; y++)
+        for (x = 1; x < w - 1; x++) {
+            unsigned int a = *fxd(x - 1, y), b = *fxd(x + 1, y);
+            unsigned int v = *fxd(x, y);
+            unsigned int lum = ((b >> 8) & 0xff);
+            if (lum > 96) {
+                unsigned int r = (v >> 16) & 0xff, g = (v >> 8) & 0xff, bl = v & 0xff;
+                r = (r + ((a >> 16) & 0xff) / 6) > 255 ? 255 : r + ((a >> 16) & 0xff) / 6;
+                g = (g + ((b >> 8) & 0xff) / 3) > 255 ? 255 : g + ((b >> 8) & 0xff) / 3;
+                bl = (bl + (b & 0xff) / 8) > 255 ? 255 : bl + (b & 0xff) / 8;
+                *fxd(x, y) = (r << 16) | (g << 8) | bl;
+            }
+        }
+}
+
+static void fx_barrel(int w, int h)
+{
+    /* nearest-neighbour barrel: sample along a curved row. Copy first. */
+    static unsigned int *src;
+    static size_t src_cap;
+    int y, x;
+    size_t need = (size_t)w * h;
+    if (src_cap < need) {
+        unsigned int *ns = realloc(src, need * sizeof(unsigned int));
+        if (!ns) return;
+        src = ns; src_cap = need;
+    }
+    for (y = 0; y < h; y++)
+        for (x = 0; x < w; x++) src[(size_t)y * w + x] = *fxd(x, y);
+    for (y = 0; y < h; y++)
+        for (x = 0; x < w; x++) {
+            int cx = x * 2 - w, cy = y * 2 - h;
+            /* r^2 scaled down; the 6/4096 factor is a mild bulge */
+            int r2 = (cx * cx + cy * cy) / (w + h);
+            int sx = x + (cx * r2) / 12288;   /* mild bulge, not a fish-eye */
+            int sy = y + (cy * r2) / 12288;
+            if (sx < 0) sx = 0;
+            if (sy < 0) sy = 0;
+            if (sx >= w) sx = w - 1;
+            if (sy >= h) sy = h - 1;
+            *fxd(x, y) = src[(size_t)sy * w + sx];
+        }
+}
+
+static void fx_apply(int frame)
+{
+    int w = g_visible_w ? g_visible_w : CW * SCAL;
+    int h = g_visible_h ? g_visible_h : CH * SCAL;
+    if (!g_fx) return;
+    if (g_fx & 4) fx_glitch(w, h, frame);
+    if (g_fx & 8) fx_barrel(w, h);
+    if (g_fx & 2) fx_aberration(w, h);
+    if (g_fx & 1) fx_scanlines(w, h);
+    if (g_fx & 16) fx_vignette(w, h);
+    if (g_fx & 32) fx_noise(w, h);
+    if (g_fx & 128) fx_bloom(w, h);
+    if (g_fx & 64) {   /* rolling brightness sweep */
+        int y0 = (int)((unsigned)frame * 7) % (h ? h : 1);
+        int y, x;
+        for (y = y0; y < y0 + 24 && y < h; y++)
+            for (x = 0; x < w; x++) {
+                unsigned int v = *fxd(x, y);
+                unsigned int r = (v >> 16) & 0xff, g = (v >> 8) & 0xff, b = v & 0xff;
+                *fxd(x, y) = (((r + 24 > 255 ? 255 : r + 24) << 16) |
+                              ((g + 40 > 255 ? 255 : g + 40) << 8) |
+                              (b + 24 > 255 ? 255 : b + 24));
+            }
+    }
+    return;
+}
+
+
+/* ================= AMIGA / VIDEO-TOASTER LOOK ===========================
+   The reference is early digitised TV graphics: Amiga DPaint + genlock,
+   Video Toaster DVE, and the composite/VHS path between them. Implemented as
+   the vocabulary of that era rather than generic noise:
+
+     AMIGA_QUANT   4 bits/channel quantisation + 4x4 Bayer ordered dither
+                   (the 4096-colour Amiga palette look)
+     AMIGA_COPPER  moving copper-list gradient bars behind the panels
+     AMIGA_BOING   the checkered bouncing ball (Boing), not a wireframe cube
+     AMIGA_NTSC    composite artifacts: chroma bleed rightward, dot crawl on
+                   edges, mild ringing
+     AMIGA_INTER   interlace flicker: alternate scanlines dimmed per field
+     AMIGA_VHS     rolling tracking band, head-switching noise at the bottom,
+                   dropouts
+     AMIGA_DVE     Toaster wipes: mosaic blocks / venetian blinds / strobe
+   ======================================================================= */
+#define AMIGA_QUANT  0x100u
+#define AMIGA_COPPER 0x200u
+#define AMIGA_BOING  0x400u
+#define AMIGA_NTSC  0x800u
+#define AMIGA_INTER 0x1000u
+#define AMIGA_VHS   0x2000u
+#define AMIGA_DVE   0x4000u
+#define AMIGA_PRESET (AMIGA_QUANT|AMIGA_COPPER|AMIGA_BOING|AMIGA_NTSC|AMIGA_INTER|AMIGA_VHS)
+
+static const unsigned char BAYER4[4][4] = {
+    {  0,  8,  2, 10 },
+    { 12,  4, 14,  6 },
+    {  3, 11,  1,  9 },
+    { 15,  7, 13,  5 }
+};
+
+/* quantise one colour with ordered dither; called from the pixel primitives so
+   there is no extra full-frame pass */
+static unsigned int amiga_quant(unsigned int c, int x, int y)
+{
+    unsigned int r = (c >> 16) & 0xff, g = (c >> 8) & 0xff, b = c & 0xff;
+    int d = BAYER4[y & 3][x & 3] - 8;          /* -8..+7 */
+    r = (unsigned)((int)r + d); g = (unsigned)((int)g + d); b = (unsigned)((int)b + d);
+    r = (r > 255 ? 255 : r) & 0xf0;            /* 4 bits per channel */
+    g = (g > 255 ? 255 : g) & 0xf0;
+    b = (b > 255 ? 255 : b) & 0xf0;
+    /* a little of the dither back so it reads as dither, not banding */
+    r |= BAYER4[y & 3][x & 3] >> 2;
+    g |= BAYER4[y & 3][x & 3] >> 2;
+    b |= BAYER4[y & 3][x & 3] >> 2;
+    return (c & 0xff000000u) | (r << 16) | (g << 8) | b;
+}
+
+/* copper bars: horizontal gradient bands that drift, drawn under the panels */
+static void amiga_copper_backdrop(double t)
+{
+    int y, x;
+    for (y = 0; y < CH; y++) {
+        double ph = (double)y / 40.0 + t * 0.8;
+        int a = (int)(80 + 60 * sin(ph));
+        int b = (int)(80 + 60 * sin(ph + 2.1));
+        int c = (int)(80 + 60 * sin(ph + 4.2));
+        unsigned int col = ((unsigned)(a & 0xff) << 16) | ((unsigned)(b & 0xff) << 8)
+                         | (unsigned)(c & 0xff);
+        for (x = 0; x < CW; x++) {
+            /* dim toward the middle so text stays readable */
+            unsigned int k = (unsigned)(150 + 80 * cos((double)x / 70.0 + t));
+            rect(x, y, 1, 1, ((((col >> 16) & 0xff) * k / 160) << 16) |
+                             ((((col >> 8) & 0xff) * k / 160) << 8) |
+                             (((col & 0xff) * k / 160)));
+        }
+    }
+}
+
+/* Boing: checkered ball, gravity + bounce, squashed on impact */
+static void amiga_boing(double t)
+{
+    const double g = 900.0, e = 0.86;
+    const int floor_y = CH - 40, r = 26;
+    double period = 2.0 * sqrt(2.0 * (floor_y - r) / g);
+    double ph = fmod(t, period);
+    double h = (floor_y - r) - 0.5 * g * ph * ph;
+    int cy, cx = 512 + (int)(18 * sin(t * 0.6)), k;
+    int squash;
+    if (h < r) { h = r + fabs(h - r) * e; }
+    cy = (int)h;
+    squash = (cy > floor_y - r - 6) ? 8 : 0;
+    for (k = -r; k <= r; k++)
+        for (int j = -r; j <= r; j++) {
+            double rx = (double)(r + squash), ry = (double)(r - squash);
+            double dx = (double)k, dy = (double)j;
+            if ((dx * dx) / (rx * rx) + (dy * dy) / (ry * ry) > 1.0) continue;
+            {
+                int chk = ((k / 6) + (j / 6)) & 1;
+                rect(cx + k, cy + j, 1, 1, chk ? 0xd8d8d8 : 0x101010);
+            }
+        }
+}
+
+/* composite/video artifacts, applied over the finished frame */
+static void amiga_ntsc(int w, int h, int frame)
+{
+    int y, x;
+    for (y = 0; y < h; y++) {
+        unsigned int prev = *fxd(0, y);
+        for (x = 1; x < w; x++) {
+            unsigned int *c = fxd(x, y);
+            unsigned int v = *c;
+            unsigned int r = (v >> 16) & 0xff, g = (v >> 8) & 0xff, b = v & 0xff;
+            unsigned int pr = (prev >> 16) & 0xff, pg = (prev >> 8) & 0xff, pb = prev & 0xff;
+            /* chroma bleed: smear colour to the right, luma stays sharp */
+            r = (r * 3 + pr) / 4;
+            b = (b * 3 + pb) / 4;
+            g = (g * 3 + pg) / 4;
+            /* dot crawl on horizontal edges */
+            if (((x + y + frame) & 3) == 0) {
+                unsigned int up = (y > 0) ? *fxd(x, y - 1) : v;
+                int du = (int)(((up >> 8) & 0xff)) - (int)g;
+                if (du > 24 || du < -24) g = (g + 18 > 255) ? 255 : g + 18;
+            }
+            *c = (r << 16) | (g << 8) | b;
+            prev = v;
+        }
+    }
+}
+
+static void amiga_interlace(int w, int h, int frame)
+{
+    int y, x;
+    int phase = frame & 1;
+    for (y = 0; y < h; y++) {
+        if ((y & 1) != phase) continue;          /* the other field */
+        for (x = 0; x < w; x++) {
+            unsigned int v = *fxd(x, y);
+            unsigned int r = ((v >> 16) & 0xff) * 15 / 16;
+            unsigned int g = ((v >> 8) & 0xff) * 15 / 16;
+            unsigned int b = (v & 0xff) * 15 / 16;
+            *fxd(x, y) = (r << 16) | (g << 8) | b;
+        }
+    }
+}
+
+static void amiga_vhs(int w, int h, int frame)
+{
+    int y, x;
+    int band = (int)((unsigned)frame * 11) % (h + 60) - 30;   /* rolling band */
+    for (y = band; y < band + 10; y++) {
+        if (y < 0 || y >= h) continue;
+        int sh = 3 + (int)(fx_rand() % 5);
+        for (x = 0; x < w; x++) {
+            unsigned int *d = fxd(x, y);
+            unsigned n = fx_rand() & 0x3f;                    /* snow */
+            unsigned int v = *fxd((x + sh) % w, y);
+            unsigned int r = ((v >> 16) & 0xff) / 2 + n;
+            unsigned int g = ((v >> 8) & 0xff) / 2 + n;
+            unsigned int b = (v & 0xff) / 2 + n;
+            *d = ((r > 255 ? 255 : r) << 16) | ((g > 255 ? 255 : g) << 8) |
+                 (b > 255 ? 255 : b);
+        }
+    }
+    /* head-switching noise along the bottom edge */
+    for (y = h - 6; y < h; y++) {
+        if (y < 0) continue;
+        int sh = (int)(fx_rand() % 7);
+        for (x = 0; x < w; x++) {
+            unsigned int v = *fxd((x + sh) % w, y);
+            unsigned n = fx_rand() & 0x1f;
+            unsigned int r = ((v >> 16) & 0xff) / 3 + n;
+            *fxd(x, y) = (r << 16) | (v & 0x00ffff);
+        }
+    }
+    /* occasional dropout: a white speck column */
+    if ((frame % 17) == 0) {
+        int dx = (int)(fx_rand() % (unsigned)w);
+        int dy = (int)(fx_rand() % (unsigned)h);
+        int k;
+        for (k = 0; k < 3; k++) fxd((dx + k) % w, dy)[0] = 0xffffff;
+    }
+}
+
+static void amiga_dve(int w, int h, int frame)
+{
+    /* Toaster-style treatment that cycles: mosaic -> blinds -> strobe */
+    int mode = (frame / 40) % 3;
+    int y, x;
+    if (mode == 0) {                       /* mosaic blocks */
+        int bs = 12;
+        for (y = 0; y < h; y += bs)
+            for (x = 0; x < w; x += bs) {
+                unsigned int v = *fxd(x, y);
+                int yy, xx;
+                for (yy = 0; yy < bs && y + yy < h; yy++)
+                    for (xx = 0; xx < bs && x + xx < w; xx++)
+                        *fxd(x + xx, y + yy) = v;
+            }
+    } else if (mode == 1) {                /* venetian blinds */
+        for (y = 0; y < h; y++)
+            if ((y % 24) < 8)
+                for (x = 0; x < w; x++) fxd(x, y)[0] >>= 2;
+    } else {                               /* strobe: brief invert */
+        if ((frame % 20) < 2)
+            for (y = 0; y < h; y++)
+                for (x = 0; x < w; x++) {
+                    unsigned int v = *fxd(x, y);
+                    *fxd(x, y) = (~v) & 0x00ffffff;
+                }
+    }
+}
+
+static void amiga_apply(int frame, double t)
+{
+    int w = g_visible_w ? g_visible_w : CW * SCAL;
+    int h = g_visible_h ? g_visible_h : CH * SCAL;
+    if (g_fx & AMIGA_INTER) amiga_interlace(w, h, frame);
+    if (g_fx & AMIGA_NTSC) amiga_ntsc(w, h, frame);
+    if (g_fx & AMIGA_VHS) amiga_vhs(w, h, frame);
+    if (g_fx & AMIGA_DVE) amiga_dve(w, h, frame);
+    (void)t;
+}
+
 static void scene(const hud_t *h, double t, double fps, int frame)
 {
     char l[128], up[16];
     int i;
 
     rect(0, 0, CW, CH, C_BG);
+    if (g_fx & AMIGA_COPPER) amiga_copper_backdrop(t);
 
     {   /* perspective grid + CRT sweep */
         int gy = 250 + (int)(fmod(t * 8.0, 8.0));
@@ -621,7 +1037,7 @@ static void scene(const hud_t *h, double t, double fps, int frame)
     }
 
     /* ---- status bar: 22 logical high, one line, right-aligned numbers ---- */
-    rect(0, 0, CW, 22, C_PANEL);
+    if (!(g_fx & AMIGA_COPPER)) rect(0, 0, CW, 22, C_PANEL);
     text1("SACD//RIPPER", 6, 5, C_PHOS);
     snprintf(up, sizeof up, "%02lu:%02lu:%02lu", h->uptime_s / 3600, (h->uptime_s / 60) % 60, h->uptime_s % 60);
     text1(up, 84, 5, C_PHOSD);
@@ -631,8 +1047,12 @@ static void scene(const hud_t *h, double t, double fps, int frame)
            h->clients_2002 ? C_PHOS : C_AMBER);
 
     /* ---- panels: equal height, bottoms clear of the footer ---- */
-    rect(6, 26, 392, 306, C_PANEL); box(6, 26, 392, 306, C_FRAME);
-    rect(404, 26, 230, 306, C_PANEL); box(404, 26, 230, 306, C_FRAME);
+    if (!(g_fx & AMIGA_COPPER)) {
+        rect(6, 26, 392, 306, C_PANEL);
+        rect(404, 26, 230, 306, C_PANEL);
+    }
+    box(6, 26, 392, 306, C_FRAME);
+    box(404, 26, 230, 306, C_FRAME);
 
     /* ---- left: state (18 px) then the event ticker (12 px) ---- */
     text1("EVENT STREAM", 12, 30, C_CYAN);
@@ -698,7 +1118,8 @@ static void scene(const hud_t *h, double t, double fps, int frame)
     text1("ALERTS", 414, 191, C_CYAN);
     text1(h->note[0] ? h->note : "NONE", 414, 202, h->note[0] ? C_RED : C_PHOS);
 
-    {   /* rotating cube in the free area below the alerts */
+    if (g_fx & AMIGA_BOING) amiga_boing(t);
+    else {   /* rotating cube in the free area below the alerts */
         static const double v[8][3] = {
             {-1,-1,-1},{1,-1,-1},{1,1,-1},{-1,1,-1},
             {-1,-1, 1},{1,-1, 1},{1,1, 1},{-1,1, 1}
@@ -754,8 +1175,15 @@ int main(int argc, char **argv)
     tick_push("READ lsn=0 n=128 (256K)");
     tick_push("CLOSE rc=0");
 
-    for (i = 0; i < frames; i++)
+    g_visible_w = CW * SCAL; g_visible_h = CH * SCAL;
+    if (getenv("HUD_FX") && !strcmp(getenv("HUD_FX"), "amiga")) g_fx = AMIGA_PRESET;
+    else if (getenv("HUD_FX")) g_fx = (unsigned)strtoul(getenv("HUD_FX"), NULL, 0);
+    else g_fx = 0x17;
+    for (i = 0; i < frames; i++) {
         scene(&h, 1.7 + i * 0.2, 13.0, i * 4);
+        fx_apply(i * 4 + 8);
+        amiga_apply(i * 4 + 8, 1.7 + i * 0.2);
+    }
 
     f = fopen(out, "wb");
     if (!f) return 1;
@@ -795,6 +1223,8 @@ static void profile_load(void)
         else if (!strcmp(k, "visible_w")) g_visible_w = v;
         else if (!strcmp(k, "visible_h")) g_visible_h = v;
         else if (!strcmp(k, "pitch")) g_pitch = v;
+        else if (!strcmp(k, "fx")) g_fx = (unsigned)v;
+        else if (!strcmp(k, "order")) g_order = v;
         else if (!strcmp(k, "head_px")) g_head_px = v;
         else if (!strcmp(k, "body_px")) g_body_px = v;
     }
@@ -816,6 +1246,11 @@ static int pool_open(const char *dev)
     pitch_px = CW * SCAL;
     typography_set(getenv("HUD_VISIBLE_H") ? atoi(getenv("HUD_VISIBLE_H"))
                                            : CH * SCAL);
+    g_visible_w = g_visible_w ? g_visible_w : CW * SCAL;
+    g_visible_h = g_visible_h ? g_visible_h : CH * SCAL;
+    if (getenv("HUD_FX") && !strcmp(getenv("HUD_FX"), "amiga")) g_fx = AMIGA_PRESET;
+    else if (getenv("HUD_FX")) g_fx = (unsigned)strtoul(getenv("HUD_FX"), NULL, 0);
+    else g_fx = 0x17;      /* default look: scanlines+aberration+glitch+vignette */
     printf("HUD: pool %s mapped len=%zu (%dx%d) — drawing directly, no Flip\n",
            dev, len, CW * SCAL, CH * SCAL);
     printf("HUD: typography head=%d body=%d device px\n", g_head_px, g_body_px);
@@ -860,8 +1295,11 @@ int main(int argc, char **argv)
         tick_push("READ lsn=532104 n=128 (256K)");
         tick_push("CLOSE rc=0");
         profile_load();
-        if (getenv("HUD_CALIB")) draw_calib();
+        if (getenv("HUD_CALIB")) { g_fx = 0; draw_calib(); }   /* measure RAW */
         else scene(&hp, 1.7, 13.0, 8);
+        fx_apply(8);
+        amiga_apply(8, 1.7);
+        printf("HUD: effects mask 0x%x applied\n", g_fx);
         printf("HUD: POOL-RENDER DONE\n");
         return 0;
     }
@@ -964,6 +1402,8 @@ int main(int argc, char **argv)
                 fb = lockptr;
                 pitch_px = lockpitch / 4;
                 scene(&h, t, fps, (int)frames);
+                fx_apply((int)frames);
+        amiga_apply((int)frames, t);
                 prim->Unlock(prim);
                 locked = 1;
             }
@@ -972,6 +1412,7 @@ int main(int argc, char **argv)
                 first_blit = 0;
             }
         }
+        fx_apply((int)frames);
         if (g_render_only) {
             printf("HUD: RENDER-ONLY: one frame drawn into the primary, no Flip\n");
             fflush(stdout);

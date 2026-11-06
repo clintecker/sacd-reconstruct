@@ -82,6 +82,22 @@ case "$(cat /proc/modules 2>/dev/null)" in
         fi ;;
 esac
 
+# --- hudrestart: a re-staged stick must TAKE EFFECT. The HUD inherits its env
+# at start, so idempotency alone kept an old HUD (and its old env) alive after
+# we changed the payload (2026-11-05: calibration flag ignored). Every mode flip
+# writes AutoScript/hudrestart; consume it here by killing supervisor + HUD.
+if [ -f "$D/hudrestart" ]; then
+    rm -f "$D/hudrestart"
+    RP=""
+    [ -f /tmp/hudlaunch.pid ] && read -r RP < /tmp/hudlaunch.pid
+    [ -n "$RP" ] && kill -9 "$RP" 2>/dev/null
+    HDP=""
+    [ -f /tmp/sacd_hud.pid ] && read -r HDP < /tmp/sacd_hud.pid
+    [ -n "$HDP" ] && kill -9 "$HDP" 2>/dev/null
+    echo "display: hudrestart consumed -> killed supervisor($RP) HUD($HDP)" >>"$D/hwmon-boot.txt"
+    sleep 1
+fi
+
 # --- display leg bootstrap (flag-driven) ---
 # The MTK CLI parser truncates longer scripts (evidence 2026-11-04 attempt 6:
 # a 13-line/628-byte display script ran hwmon_restore and then stopped — no

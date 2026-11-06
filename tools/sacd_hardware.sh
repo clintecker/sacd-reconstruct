@@ -71,7 +71,7 @@ SHA_FBMD5="049b09654766530b093c280621983a84943f057527c6364e1634cc63dd8331ba"
 # Tier-1 probe: real DirectFB against the player's own 1.2 libs (vendor pool path)
 SHA_DFB="51e797486b8b9733f51fdd22929dd88993a4e899351431a371115c777e9c614f"
 # the HUD (docs/HUD-DESIGN.md); H0 = static layout mock on the same stack
-SHA_HUD="dbd1bbab2cc773ea3410fc85074a469fec45831a5817d469123c51005a03af6e"
+SHA_HUD="522b65c987c842b9086acae7c593f39b7496263affa2a637f06b5c6ba7b8f7fa"
 ISO_SIZE_EXPECTED=2179497984
 
 HW_HOST="${HW_HOST:-10.20.1.236}"
@@ -247,6 +247,8 @@ cmd_usb_build() {
     cp "$DISPLAY_DIR/dfbhello" "$USB/AutoScript/dfbhello" 2>/dev/null || true
     cp "$DISPLAY_DIR/sacd_hud" "$USB/AutoScript/sacd_hud" 2>/dev/null || true
     cp "$DISPLAY_DIR/sony-font.ttf" "$USB/AutoScript/sony-font.ttf" 2>/dev/null || true
+    printf '1\n' > "$USB/AutoScript/hudrestart"   # force a fresh supervisor+HUD
+
     auto_baseline > "$USB/AutoScript/AutoScript"
     cmd_payload_check
     cmd_usb_check
@@ -371,6 +373,8 @@ cmd_usb_mode() { # $1 = baseline|pair
         cp "$DISPLAY_DIR/dfbhello" "$USB/AutoScript/dfbhello" 2>/dev/null || true
         cp "$DISPLAY_DIR/sacd_hud" "$USB/AutoScript/sacd_hud" 2>/dev/null || true
     cp "$DISPLAY_DIR/sony-font.ttf" "$USB/AutoScript/sony-font.ttf" 2>/dev/null || true
+    printf '1\n' > "$USB/AutoScript/hudrestart"   # force a fresh supervisor+HUD
+
         echo "refreshed AutoScript/displaylaunch.sh + cyberdraw + fbmd5 + dfbhello + sacd_hud"
     fi
     if [ "$1" = "pair" ]; then
@@ -421,6 +425,8 @@ cmd_usb_mode() { # $1 = baseline|pair
         cp "$DISPLAY_DIR/dfbhello" "$USB/AutoScript/dfbhello" 2>/dev/null || true
         cp "$DISPLAY_DIR/sacd_hud" "$USB/AutoScript/sacd_hud" 2>/dev/null || true
     cp "$DISPLAY_DIR/sony-font.ttf" "$USB/AutoScript/sony-font.ttf" 2>/dev/null || true
+    printf '1\n' > "$USB/AutoScript/hudrestart"   # force a fresh supervisor+HUD
+
         # PRESERVE the previous run's logs: staging used to delete them, which
         # threw away the very rcs the next iteration needed (2026-11-05)
         for f in displaylaunch.log candlaunch.log cand-recovered.out hwmon-boot.txt; do
@@ -521,11 +527,13 @@ cmd_payload_check() {
     fi
     lines=$(wc -l < "$S/AutoScript")
     bytes=$(wc -c < "$S/AutoScript")
-    if [ "$lines" -gt 9 ] || [ "$bytes" -gt 460 ]; then
-        echo "SCRIPT SHAPE FAIL: $lines lines / $bytes bytes (limits 9 / 460)"
+    # evidence: 13 lines / 628 B truncated (only the first 4 ran); 9-line
+    # baseline and 11-line pair scripts are proven, so the gate allows 11.
+    if [ "$lines" -gt 11 ] || [ "$bytes" -gt 500 ]; then
+        echo "SCRIPT SHAPE FAIL: $lines lines / $bytes bytes (limits 11 / 500)"
         fail=1
     else
-        echo "OK  AutoScript shape: $lines lines / $bytes bytes"
+        echo "OK  AutoScript shape: $lines lines / $bytes bytes (limits 11/500)"
     fi
     case "$(file -b "$S/inventory" 2>/dev/null)" in
         *ARM*) echo "OK  inventory is an ARM ELF" ;;

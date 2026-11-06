@@ -37,7 +37,7 @@ Send the exact result and identify the USB used. A successful connection makes t
 python3 firebird.py --host 192.0.2.10 --model BDP-S5100 --firmware M15.R.0257
 ```
 
-The runner loads the team's exact capture client from a matching local checkout or via your authenticated GitHub CLI. If you prefer to use an existing local copy, pass `--client /path/to/sacd-reconstruct/tools/sacd_client.py`. It must match the recorded commit. Replace the IP if it has changed. Optional arguments are `--model`, `--firmware`, `--disc-id` and `--iso "/path/to/Firebird.iso"`. The ISO stays on your Mac. Python 3.8 or newer is sufficient.
+The runner loads the maintainers's exact capture client from a matching local checkout or via your authenticated GitHub CLI. If you prefer to use an existing local copy, pass `--client /path/to/sacd-reconstruct/tools/sacd_client.py`. It must match the recorded commit. Replace the IP if it has changed. Optional arguments are `--model`, `--firmware`, `--disc-id` and `--iso "/path/to/Firebird.iso"`. The ISO stays on your Mac. Python 3.8 or newer is sufficient.
 
 3. **Send `bx510-firebird/send-this.zip`**. It contains the client log, available manifest and device metadata. On a successful run the checks cover nine exchanges, positive open/size/read/close results, a reconnect and four read records. With an ISO they also verify each returned sector and its complete response-frame hash. On failure, send whatever log the runner saved and the final terminal error. Use a fresh directory on a retry, e.g. `--out bx510-firebird-2`.
 

@@ -39,7 +39,7 @@ more of Sony's stack than we need to.
   `IDirectFBFont`) if the format is DGI: then `DrawString` replaces our glyph
   painter and text becomes the device's own, at real sizes.
 - If `font.bin` is a Sony-private container, write the decoder (deterministic
-  bytes-through-tools, `tools/bx510_fontdecode.py`) — it is 62 KB, small.
+  bytes-through-tools; `tools/bx510_font_carve.py` is the shipped first step) — it is 62 KB, small.
 - Use `logo_clrbar.bin`/`logo.bin` as blit sources for backgrounds instead of
   procedural patterns.
 - **Acceptance**: HUD text rendered by DirectFB's font engine, readable at 1080p,

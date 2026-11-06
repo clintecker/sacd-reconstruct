@@ -1,6 +1,6 @@
 /* bx510_sacdstat.c — direct SACD-status ioctl check for the BX510 guest.
  *
- * The team review asked for a direct check of the 5307 (SACD_IOC_SACD)
+ * the maintainers review asked for a direct check of the 5307 (SACD_IOC_SACD)
  * contract: sacd_read.ko's handler calls _IDECLI_OddGetProfile(&out) and
  * compares the value with 0x10 (SACD profile). Successful wire payload
  * reads do not cover this path — this binary drives the ioctl directly

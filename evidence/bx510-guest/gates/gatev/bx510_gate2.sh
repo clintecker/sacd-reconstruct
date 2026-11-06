@@ -16,7 +16,7 @@
 # record is appended to every transcript; --rawdump pushes the full
 # both-direction wire capture (decode: bx510_rawdecode.py).
 set -e
-ORIG=~/sacd-verify/original/sacd_extract_160
+ORIG=~/the verification tree/original/sacd_extract_160
 REL=~/reconstruct/release/sacd_extract_160_release
 PIN_ORIG=0fdcefdb84ae818be7385657eaf0960053f6e4452a82f19cbe6777f9c8cddb45
 PIN_REL=e91720fbbbd592505bde6630843b0495ff82a93e40c0e427aaa70a081ff9ae22

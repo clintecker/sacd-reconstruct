@@ -20,7 +20,7 @@ Each manifest must contain the original client’s nine-exchange positive baseli
 
 ## Capture two frames on a subsequent player run
 
-1. Complete the untouched original-daemon baseline first. Pick two adjacent LSNs **inside** a track range parsed from Firebird’s area TOC. The area TOC's own address (reported as 353764 on the team's image) identifies metadata. A track's `track_start` identifies a candidate audio sector.
+1. Complete the untouched original-daemon baseline first. Pick two adjacent LSNs **inside** a track range parsed from Firebird’s area TOC. The area TOC's own address (reported as 353764 on the maintainers's image) identifies metadata. A track's `track_start` identifies a candidate audio sector.
 2. Use a separate test startup of the original daemon, with the normal daemon stopped. Copy this optical folder to USB. From an existing player shell/launcher hook, start the following once, substituting the actual USB directory, the path to the verified original daemon, and the decimal LSN. The example assumes the optical folder was copied as `/mnt/sda1/AutoScript/optical`.
 
 ```sh

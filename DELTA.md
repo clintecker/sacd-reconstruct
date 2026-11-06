@@ -221,7 +221,7 @@ independent full runs:
     RELEASE IMAGE  reconstruct/release/sacd_extract_160_release
     SHA-256       e91720fbbbd592505bde6630843b0495ff82a93e40c0e427aaa70a081ff9ae22
 
-Build command: `cd reconstruct && make verify` on the lab VM (host
+Build command: `cd reconstruct && make verify` on the build host (host
 prerequisites documented in tools/release_build.py: FSF gcc-4.4.1 source +
 built 4.4.1 tree, glibc-2.9 sources, CodeSourcery 2009q3-67 sysroot whose
 libgcc_s.so.1 must hash 5068e1ea...bec6d4, FSF binutils 2.19.1).
@@ -280,10 +280,10 @@ Replay (sacd_client.py capture, identical request sequence):
 
 Codified as make targets (root Makefile, docs-sync'd):
   sacd-sync  stage repo + build sources to the VM (never extract a
-             directory member through the ~/sacd-verify/reconstruct symlink
+             directory member through the ~/the verification tree/reconstruct symlink
              — GNU tar replaces the symlink with a real dir and orphans the
              build tree; cost the release ELF once)
-  sacd-verify  clean release build + all checks
+  the verification tree  clean release build + all checks
   sacd-rig   orig-vs-candidate replay + evidence pull + compare
   sacd-parity  Mac-side fn_diff/pool_audit/regressions (accepted residuals
              _start + call_gmon_start only)

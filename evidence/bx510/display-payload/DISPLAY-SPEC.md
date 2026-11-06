@@ -29,7 +29,7 @@ Source SHA-256 (`tools/bx510_cyberdraw.c`):
 Binary SHA-256 (`cyberdraw` here):
 `17d0c2cb7ba7fd4ae43fa499124d099a7ec4b42c1ac7290d2f6cbcf0856fde13`
 
-Recipe (lab VM, x86 native — never on the Mac):
+Recipe (build host, x86 native — never on the Mac):
 
     ~/gnuarm/bin/arm-none-linux-gnueabi-gcc -O2 -Wall \
         -o /tmp/cyberdraw tools/bx510_cyberdraw.c -lm -lrt

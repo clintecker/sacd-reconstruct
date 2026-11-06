@@ -53,7 +53,7 @@ static int disc_fd = -1;
 static int (*real_fstat64)(int, struct stat64 *);
 static int (*real_execvp)(const char *, char *const argv[]);
 
-/* The enhanced installer (sacd-enhanced, B10/B11) VALIDATES its
+/* The enhanced installer (the repaired tree, B10/B11) VALIDATES its
  * environment instead of trusting it: fstat on the device fd must
  * show the expected character device (major 10 — the module registers
  * as a misc device, minor 201), and the loader call must succeed. In

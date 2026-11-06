@@ -77,7 +77,7 @@ docs-check:
 
 # ── VM transport ────────────────────────────────────────────────────────────
 
-## VM transport :: vm-exec CMD='...' :: run a command on the lab VM :: batch-mode keyed ssh (the prefix adhoc lines keep dropping)
+## VM transport :: vm-exec CMD='...' :: run a command on the build host :: batch-mode keyed ssh (the prefix adhoc lines keep dropping)
 .PHONY: vm-exec
 vm-exec:
 	@test -n "$(CMD)" || (echo "usage: make vm-exec CMD='docker ps'" && exit 2)
@@ -247,7 +247,7 @@ sacd-hdhost-smoke: sacd-stage sacd-hdhost-mod
 	$(VM_SSH) 'sh /tmp/bx510_hdsmoke.sh' | tee /tmp/hdsmoke-local.out | tail -12
 	-$(VM_SSH) 'ls -dt /tmp/hdsmoke-* | head -1' | xargs -I{} $(VM_SCP) -r "$(VM_USER)@$(VM_HOST):{}" experiments/sacd_reconstruct/evidence/bx510-guest/hdhost/ 2>/dev/null
 
-## SACD gates :: sacd-gate4 :: (no arguments) :: the 5 GiB boundary-sentinel battery — the team's final large-image validation :: both pinned daemons serve hash-verified sectors straddling the 2 GiB and 4 GiB byte-offset boundaries from a host-backed sparse image through BOTH read paths; clamp at the new track range, final sector, beyond-capacity; byte-identity, raw-frame verification, self-pairs in the verdict; image is regenerable (SHA-recorded manifest kept, binaries dropped)
+## SACD gates :: sacd-gate4 :: (no arguments) :: the 5 GiB boundary-sentinel battery — the maintainers's final large-image validation :: both pinned daemons serve hash-verified sectors straddling the 2 GiB and 4 GiB byte-offset boundaries from a host-backed sparse image through BOTH read paths; clamp at the new track range, final sector, beyond-capacity; byte-identity, raw-frame verification, self-pairs in the verdict; image is regenerable (SHA-recorded manifest kept, binaries dropped)
 .PHONY: sacd-gate4
 sacd-gate4: sacd-stage
 	$(VM_SSH) 'sh /tmp/bx510_gate4.sh' 2>/dev/null || { $(VM_SCP) experiments/sacd_reconstruct/tools/bx510_gate4.sh $(VM_USER)@$(VM_HOST):/tmp/; $(VM_SSH) 'sh /tmp/bx510_gate4.sh'; }
@@ -294,11 +294,11 @@ cvss:
 
 # ── Analysis & session ops ──────────────────────────────────────────────────
 
-## Analysis & session ops :: child-triage ID=run-id :: the subagent hang-triage procedure :: log-growth + process checks BEFORE any interrupt — elapsed tool time is a prompt to look, not a verdict (the 1-for-3 lesson)
+## Analysis & session ops :: child-triage ID=run-id :: the helper process hang-triage procedure :: log-growth + process checks BEFORE any interrupt — elapsed tool time is a prompt to look, not a verdict (the 1-for-3 lesson)
 .PHONY: child-triage
 child-triage:
 	@test -n "$(ID)" || (echo "usage: make child-triage ID=64f1372e-..." && exit 2)
-	@OUT=$$(ls /var/folders/9w/*/T/pi-subagents-uid-501/async-subagent-runs/$(ID)/output-0.log 2>/dev/null | head -1); \
+	@OUT=$$(ls /var/folders/9w/*/T/pi-subagents-uid-501/async-helper process-runs/$(ID)/output-0.log 2>/dev/null | head -1); \
 	if [ -z "$$OUT" ]; then echo "no output log found for $(ID) — check the run id"; exit 2; fi; \
 	S1=$$(stat -f%z "$$OUT"); sleep 12; S2=$$(stat -f%z "$$OUT"); \
 	echo "log growth over 12s: $$S1 -> $$S2 ($$(( S2 - S1 )) bytes)"; \
@@ -365,35 +365,35 @@ evidence-pull:
 	@echo "pulled into $(DEST)"
 
 # ── SACD reconstruction (sacd_extract_160) ──────────────────────────────────
-# Runs on the lab VM via the same keyed-ssh channel as the vm-* family.
-# VM tree: ~/sacd-verify (repo-shaped: original/, tools/, incoming/,
+# Runs on the build host via the same keyed-ssh channel as the vm-* family.
+# VM tree: ~/the verification tree (repo-shaped: original/, tools/, incoming/,
 # reconstruct -> ~/reconstruct). VM check-python: ~/sacdtest-venv
 # (pyelftools + unicorn installed from Mac-staged wheels).
 
 SACD      := experiments/sacd_reconstruct
 SACD_ORIG := $(SACD)/original/sacd_extract_160
 SACD_CAND ?= $(SACD)/reconstruct/release/sacd_extract_160_release
-SACD_VM   := sacd-verify
+SACD_VM   := the verification tree
 SACD_PY   := $$HOME/sacdtest-venv/bin/python
 SACD_VM_RIG_OUT ?= /tmp/sacd-rig
 ELF ?= $(SACD_CAND)
 
-## SACD :: sacd-sync :: stage the sacd-verify tree + build sources to the lab VM :: tar-pipe private channel — repo members go to ~/sacd-verify; reconstruct SOURCES stream directly into the VM build tree ~/reconstruct (never extract a directory member through the ~/sacd-verify/reconstruct symlink — GNU tar replaces the symlink with a real dir and orphans the build tree, which cost the release ELF once); release/ and build/ stay VM-owned
+## SACD :: sacd-sync :: stage the the verification tree tree + build sources to the build host :: tar-pipe private channel — repo members go to ~/the verification tree; reconstruct SOURCES stream directly into the VM build tree ~/reconstruct (never extract a directory member through the ~/the verification tree/reconstruct symlink — GNU tar replaces the symlink with a real dir and orphans the build tree, which cost the release ELF once); release/ and build/ stay VM-owned
 .PHONY: sacd-sync
 sacd-sync:
 	COPYFILE_DISABLE=1 tar -cf - -C $(SACD) --exclude='reconstruct' tools original incoming docs evidence/bx510/BASELINE-RUNBOOK.md | $(VM_SSH) 'mkdir -p ~/$(SACD_VM) && tar -xf - -C ~/$(SACD_VM)'
 	COPYFILE_DISABLE=1 tar -cf - -C $(SACD)/reconstruct --exclude='build' --exclude='release' . | $(VM_SSH) 'mkdir -p ~/reconstruct && tar -xf - -C ~/reconstruct && ln -sfn ~/reconstruct ~/$(SACD_VM)/reconstruct && echo staged'
 
-## SACD :: sacd-verify :: clean-checkout release build + every check, on the VM :: make verify in reconstruct/ — builds from tracked sources, prints candidate SHA-256, runs fn_diff/interface/status/division/pool checks against that exact file; reproducible bit-identical across runs
-.PHONY: sacd-verify
-sacd-verify:
+## SACD :: the verification tree :: clean-checkout release build + every check, on the VM :: make verify in reconstruct/ — builds from tracked sources, prints candidate SHA-256, runs fn_diff/interface/status/division/pool checks against that exact file; reproducible bit-identical across runs
+.PHONY: the verification tree
+the verification tree:
 	$(VM_SSH) 'cd ~/$(SACD_VM)/reconstruct && VERIFY_PY=$(SACD_PY) sh ../tools/release_verify.sh'
 
-## SACD :: sacd-rig [DISC=~/sacd-verify/firebird.iso] [OUT=<stamp>] :: QEMU protocol rig: original vs release candidate over the same disc fixture :: replays DISC_OPEN→SIZE→READ×3→CLOSE→reconnect→repeat against both daemons under sacd_rig.so, compares transcripts (result codes, payload hashes), pulls manifests as evidence — pkill-stale hygiene included because a wedged daemon holds port 2002
+## SACD :: sacd-rig [DISC=~/the verification tree/firebird.iso] [OUT=<stamp>] :: QEMU protocol rig: original vs release candidate over the same disc fixture :: replays DISC_OPEN→SIZE→READ×3→CLOSE→reconnect→repeat against both daemons under sacd_rig.so, compares transcripts (result codes, payload hashes), pulls manifests as evidence — pkill-stale hygiene included because a wedged daemon holds port 2002
 .PHONY: sacd-rig
 sacd-rig:
 	@test -n "$(call if-defined,DISC)" || true
-	$(VM_SSH) 'cd ~/$(SACD_VM) && rm -rf $(SACD_VM_RIG_OUT) && sh tools/rig_run.sh original/sacd_extract_160 reconstruct/release/sacd_extract_160_release $(SACD_VM_RIG_OUT) $(if $(DISC),$(DISC),$$HOME/sacd-verify/firebird.iso)'
+	$(VM_SSH) 'cd ~/$(SACD_VM) && rm -rf $(SACD_VM_RIG_OUT) && sh tools/rig_run.sh original/sacd_extract_160 reconstruct/release/sacd_extract_160_release $(SACD_VM_RIG_OUT) $(if $(DISC),$(DISC),$$HOME/the verification tree/firebird.iso)'
 	@RIGDIR=$(SACD)/evidence/qemu-rig/$$(date -u +%Y%m%d-%H%M%S)
 	@for d in capture-orig capture-cand overlap-orig overlap-cand; do mkdir -p $$RIGDIR/$$d; $(VM_SCP) -r "$(VM_USER)@$(VM_HOST):$(SACD_VM_RIG_OUT)/$$d/." $$RIGDIR/$$d/; done
 	@for l in daemon-orig.log daemon-cand.log daemon-orig2.log daemon-cand2.log; do $(VM_SCP) "$(VM_USER)@$(VM_HOST):$(SACD_VM_RIG_OUT)/$$l" "$$RIGDIR/" 2>/dev/null || true; done
@@ -417,7 +417,7 @@ sacd-selftest:
 # OS. VM tree: ~/bx510-emu (emulator kit, images/, pre-staged qemu tarball —
 # the build script's own download path is bypassed so nothing leaves the VM).
 
-## SACD :: sacd-emu-build :: build the full-system player.local QEMU on the lab VM :: the pinned 9.2.4 tarball is pre-staged (SHA f3cc1c4e… verified at stage time) so build.sh performs no outbound fetch; JOBS=6
+## SACD :: sacd-emu-build :: build the full-system player.local QEMU on the build host :: the pinned 9.2.4 tarball is pre-staged (SHA f3cc1c4e… verified at stage time) so build.sh performs no outbound fetch; JOBS=6
 .PHONY: sacd-emu-build
 sacd-emu-build:
 	$(VM_SSH) 'cd ~/bx510-emu/emulator && mkdir -p work && cp -n ~/bx510-emu/qemu-9.2.4.tar.xz work/qemu-9.2.4.tar.xz && JOBS=6 sh build.sh work'
@@ -430,7 +430,7 @@ sacd-emu-smoke:
 ## SACD :: sacd-emu-daemons :: run both daemon ELFs inside Sony's real guest OS :: the loader/libc compatibility proof — the original and the release candidate must produce identical --help bytes under Sony's shipped libraries with eager binding
 .PHONY: sacd-emu-daemons
 sacd-emu-daemons:
-	$(VM_SSH) 'cd ~/bx510-emu/emulator && python3 verify_daemons.py --qemu work/build/qemu-system-arm --images ../images --reference ~/sacd-verify/original/sacd_extract_160 --release ~/reconstruct/release/sacd_extract_160_release'
+	$(VM_SSH) 'cd ~/bx510-emu/emulator && python3 verify_daemons.py --qemu work/build/qemu-system-arm --images ../images --reference ~/the verification tree/original/sacd_extract_160 --release ~/reconstruct/release/sacd_extract_160_release'
 
 # ── SACD hardware session (BX510 on-player; Mac-side orchestration) ─────────
 # tools/sacd_hardware.sh drives everything except physical player steps.

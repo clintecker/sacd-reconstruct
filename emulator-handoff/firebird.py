@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Capture a short positive reference session from your player using the team's pinned client."""
+"""Capture a short positive reference session from your player using the maintainers's pinned client."""
 import argparse
 from importlib.util import module_from_spec, spec_from_file_location
 import json

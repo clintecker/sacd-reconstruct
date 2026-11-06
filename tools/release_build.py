@@ -68,7 +68,7 @@ def main():
     p.add_argument("--profile", choices=("parity", "enhanced"), default="parity",
                    help="parity: the frozen reference build (asserts the legacy "
                         "verified installer/status shapes). enhanced: the "
-                        "sacd-enhanced branch build (asserts the B01-B12 fixed "
+                        "the repaired tree branch build (asserts the B01-B12 fixed "
                         "shapes instead — regressions still fail the build).")
     args = p.parse_args()
 

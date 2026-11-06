@@ -6,7 +6,7 @@ real `sacd_read.ko` loaded by each daemon via its own insmod, bdpvirt
 virtual ODD, corrected synthetic Firebird fixture (86,200 sectors).
 
 Reference binaries (pinned, SHA-stamped in the run manifests):
-- original: `~/sacd-verify/original/sacd_extract_160`
+- original: `~/the verification tree/original/sacd_extract_160`
 - release:  `~/reconstruct/release/sacd_extract_160_release`
 
 ## Gate design (addresses reviewer finding #2)
@@ -207,7 +207,7 @@ loudly on mismatch.
 
 ## Gate hardening (virtual-drive team altered-log review, round 2)
 
-The team fuzzed the gate with altered copies of the saved transcripts and
+the maintainers fuzzed the gate with altered copies of the saved transcripts and
 found four alterations that still produced PASS. All are fixed, and each
 is now a permanent regression control (tools/test_bx510_gate.py, 11/11
 passing; baselines are constructed from the gate's own generators, so the

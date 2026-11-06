@@ -3,7 +3,7 @@
 `bx510_inventory` (source: `tools/bx510_inventory.c`, built binary staged
 here as `inventory`) is the read-only runtime-inventory collector for the
 production plan §4 remainder — the fields the 2026-11-04 hwmon corpus
-does NOT already carry (see `incoming/production-plan/RECONCILIATION.md`).
+does NOT already carry (see `docs/PROVENANCE.md`).
 It completes Phase 0 in one trigger on the next hardware session.
 
 ## What is already covered elsewhere (NOT re-collected here)
@@ -37,7 +37,7 @@ aborts mid-report. `cat_file` sections cap at the listed byte limits.
 | directfb / fusion runtime identities | `/dev/fusion*` + `/dev/fb*` listing, `/proc/fusion/*` contents (read-only, 4 KiB/file), DirectFB/Fusion library hashes | opendir/stat + hash of `/usr/lib` + `/lib` matches (`libdirectfb*`, `libdirect-*`, `libdirect_*`, `libfusion*`) | per-probe UNKNOWN |
 
 SHA-256 is implemented in-binary (no crypto dependency) and was verified
-bit-exact against `sha256sum` on the lab VM (libc.so.6 hash matched).
+bit-exact against `sha256sum` on the build host (libc.so.6 hash matched).
 
 ## Build
 
@@ -79,7 +79,7 @@ the same boot → skip (five triggers on one boot were observed on
 Failures are logged, never fatal — the restore script keeps working as
 the trigger bootstrap either way.
 
-The wiring was proven end-to-end on the lab VM with the real ARM binary
+The wiring was proven end-to-end on the build host with the real ARM binary
 (binfmt-registered qemu-arm): trigger 1 wrote the report, trigger 2
 (uptime advanced) skipped, a simulated new boot (recorded uptime ahead
 of wall clock) re-collected.

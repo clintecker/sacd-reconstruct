@@ -1,6 +1,6 @@
 # Runtime differential test: original vs reconstruction (qemu-user)
 
-Date: 2026-11-02. Location: lab VM (`user@192.0.2.10`), qemu-arm-static 1:7.2
+Date: 2026-11-02. Location: build host (`user@192.0.2.10`), qemu-arm-static 1:7.2
 (staged Mac-side from deb.debian.org per network policy; installed via dpkg).
 Emulated env: `-L ~/arm-2009q3/arm-none-linux-gnueabi/libc` (CodeSourcery 2009q3
 glibc-2.9 ARM sysroot — the same sysroot both binaries were linked against).

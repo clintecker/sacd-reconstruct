@@ -1,12 +1,12 @@
 # role=original
-# reference=/home/you/sacd-verify/original/sacd_extract_160
+# reference=/home/you/the verification tree/original/sacd_extract_160
 # sha256(original)=0fdcefdb84ae818be7385657eaf0960053f6e4452a82f19cbe6777f9c8cddb45
 # sha256(original)=0fdcefdb84ae818be7385657eaf0960053f6e4452a82f19cbe6777f9c8cddb45
 # sha256(release)=e91720fbbbd592505bde6630843b0495ff82a93e40c0e427aaa70a081ff9ae22
 # runner sha256=a4aae5dab36c7c886836967c0e589b2a0a2b372e15947fdefa4edab31175a48f
 # host image sha256=363ae0c543923775d5322258ade1af5637a656ce51d3d1b3ea549f4413af5df2
 # rig: HDHOST transport (sr0 -> /res/dev/hdhost)
-# invocation: bx510_phase0_probe.py --role original --reference /home/you/sacd-verify/original/sacd_extract_160 --hdhost <img> --sr0-target /res/dev/hdhost  --rawdump
+# invocation: bx510_phase0_probe.py --role original --reference /home/you/the verification tree/original/sacd_extract_160 --hdhost <img> --sr0-target /res/dev/hdhost  --rawdump
 / # echo P0_CLIENT_BEGIN; cat /res/client.out; echo P0_CLIENT_END
 P0_CLIENT_BEGIN
 GC: connected 127.0.0.1:2002

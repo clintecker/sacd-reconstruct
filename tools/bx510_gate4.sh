@@ -14,7 +14,7 @@
 # serve independently verified sectors from a large host-backed image
 # through BOTH read paths, without staging the full image in guest RAM.
 set -e
-ORIG=~/sacd-verify/original/sacd_extract_160
+ORIG=~/the verification tree/original/sacd_extract_160
 REL=~/reconstruct/release/sacd_extract_160_release
 PIN_ORIG=0fdcefdb84ae818be7385657eaf0960053f6e4452a82f19cbe6777f9c8cddb45
 PIN_REL=e91720fbbbd592505bde6630843b0495ff82a93e40c0e427aaa70a081ff9ae22
@@ -38,7 +38,7 @@ echo "GATE4: pinned ELF hashes verified (role-asserted per run)"
 
 # VERIFY_ONLY=DIR: re-run every check against an existing evidence
 # directory (no boots, no image build) — the evidence-reviewer path:
-# the team can re-verify saved transcripts + captures without the VM.
+# the maintainers can re-verify saved transcripts + captures without the VM.
 if [ -n "$VERIFY_ONLY" ]; then
   OUT="$VERIFY_ONLY"
   echo "GATE4: VERIFY-ONLY against $OUT (no boots)"

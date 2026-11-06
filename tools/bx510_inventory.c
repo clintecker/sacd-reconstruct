@@ -15,7 +15,7 @@
  *   - TOLERANT: every probe is wrapped; a missing file/permission
  *     error is printed as "UNKNOWN (<reason>)", never a crash.
  *   - One portable C99 source: the x86 build is the behavior test
- *     (real /proc on the lab VM), the ARM build is the payload.
+ *     (real /proc on the build host), the ARM build is the payload.
  *
  * Build (era gnuarm, static preferred — zero loader dependency, and a
  * static collector keeps its own /proc/self/maps free of the libs it
@@ -745,7 +745,7 @@ int main(void)
     printf("=== BX510 runtime inventory (bx510_inventory v1) ===\n");
     printf("collector: %s\n", "bx510_inventory v2 (read-only, +fusion adjudicator)");
     printf("note: x86-test values may appear when this binary is run on the"
-           " lab VM; player values come only from the player run\n");
+           " build host; player values come only from the player run\n");
 
     section("uptime");
     cat_file("/proc/uptime", 0);

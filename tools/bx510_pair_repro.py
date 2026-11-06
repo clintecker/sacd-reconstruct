@@ -23,11 +23,11 @@ sacd_read.ko insmod by the daemon itself, mkfixture, loopback client).
 The probe file is NOT modified; this harness copies its machinery
 (build_tar pattern, observe-driven UART, marker discipline).
 
-Run from ~/bx510-emu/emulator on the lab VM (needs run.py + smoke.py +
+Run from ~/bx510-emu/emulator on the build host (needs run.py + smoke.py +
 ../images), e.g.:
 
   python3 bx510_pair_repro.py --qemu work/build/qemu-system-arm \
-      --images ../images --reference /home/you/sacd-verify/original/sacd_extract_160 \
+      --images ../images --reference /home/you/the verification tree/original/sacd_extract_160 \
       --shim /tmp/tmpredir.so --bgstart /tmp/bgstart --stub /tmp/mod/bx510_bdpvirt.ko \
       --mkfixture /tmp/mkfixture --gclient /tmp/gclient --lo_up /tmp/lo_up \
       --pair-so /tmp/pairrepro/bx510_pair.so --arm-lsn 80000 --read-lsns 80000,600 \

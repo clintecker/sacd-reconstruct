@@ -4,6 +4,13 @@ A clean-room, function-level reconstruction of the SACD ripping daemon that ship
 inside Sony's 2013 BDP-BX510 Blu-ray player (`sacd_extract_160`, SHA-256
 `0fdcefdb…`), plus the tooling that proved it byte-identical on the real device.
 
+![The on-panel HUD running on the player](evidence/bx510/display-payload/hud-anim.gif)
+
+*The reconstruction's companion HUD, running on the real player: LCARS-style
+console drawn as an 8088-VGA canvas (320x180, 16 colours, integer-scaled x6), with
+a blinkenlights event matrix and a colour key for verifying the panel's channel
+order.*
+
 The daemon speaks a simple binary protocol over TCP 2002 and serves raw SACD
 sectors read through the player's CPSA hardware path. This repository contains:
 

@@ -1,5 +1,5 @@
 #!/bin/sh
-# hud_guest_run.sh — run the HUD in the REAL Sony guest (QEMU on the lab VM) and
+# hud_guest_run.sh — run the HUD in the REAL Sony guest (QEMU on the build host) and
 # GATE it: rc must be 0 AND the dumped pool framebuffer must not be black.
 set -eu
 H="${VM_USER:-aftermath}@${VM_HOST:-192.0.2.10}"

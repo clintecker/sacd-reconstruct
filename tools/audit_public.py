@@ -37,6 +37,19 @@ HOSTNAME = re.compile(r"\b(player.local|user@)\b")
 # our own scrub placeholders are benign, not leaks
 BENIGN = ("aa:bb:cc:00:11:22", "/Users/you", "/home/you", "user@", "player.local")
 
+# deeper classes: things that hurt a reader or leak, without being IP addresses
+SECRET = re.compile(r"(sk-[A-Za-z0-9]{16,}|ghp_[A-Za-z0-9]{20,}|AKIA[0-9A-Z]{12,}|"
+                    r"-----BEGIN [A-Z ]*PRIVATE KEY-----|xox[baprs]-[A-Za-z0-9-]{10,})")
+EMAIL = re.compile(r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b")
+CVE = re.compile(r"\bCVE-\d{4}-\d{4,7}\b")
+# narrow on purpose: "worker thread", "reviewer" etc. are legitimate English
+JARGON = re.compile(r"\b(the repaired tree|the verification tree|build host|helper process|"
+                    r"LANE-[0-9]|STAGE-[0-9]|the maintainers)\b", re.I)
+BENIGN_EMAIL = ("git@github.com", "okir@monad.swb.de")
+# a doc that points at something we excluded leaves the reader stranded
+REF = re.compile(r"`((?:analysis|original|incoming|emulator-kit|reconstruct|tools|docs|"
+                 r"evidence|emulator-handoff)/[A-Za-z0-9_./-]+)`")
+
 
 def tracked(repo):
     out = subprocess.run(["git", "-C", repo, "ls-files"], capture_output=True, text=True)
@@ -99,7 +112,7 @@ def main():
             t = scan_text(p)
             hits = []
             tt = t
-            for b in BENIGN:
+            for b in BENIGN + BENIGN_EMAIL:
                 tt = tt.replace(b, "")
             if IP.search(tt): hits.append("ipv4")
             if MAC.search(tt): hits.append("mac")
@@ -108,13 +121,34 @@ def main():
             if hits:
                 cls.append("LEAK-ID")
                 report.setdefault("LEAK-DETAIL", []).append([f, sorted(set(hits))])
+        # deeper text checks
+        if is_text(f) and size < 400_000:
+            t = scan_text(f)
+            t_ben = t
+            for b in BENIGN_EMAIL:
+                t_ben = t_ben.replace(b, "")
+            # attribution headers in reconstructed sources are correct, not leaks
+            vendorish = f.startswith(("evidence/", "tools/third_party/", "reconstruct/"))
+            for name, rx, body in (("SECRET", SECRET, t), ("EMAIL", EMAIL, t_ben),
+                                   ("CVE", CVE, t), ("JARGON", JARGON, t)):
+                m = rx.search(body)
+                if m and name == "EMAIL" and vendorish:
+                    name = "EMAIL-VENDOR"      # kernel/glibc/zlib strings, informational
+                if m:
+                    report.setdefault(name, []).append([f, size])
+                    report.setdefault(name + "-DETAIL", []).append([f, m.group(0)[:60]])
+            refs = set(REF.findall(t))
+            missing = [r for r in refs if not os.path.exists(os.path.join(repo, r))]
+            if missing:
+                report.setdefault("BROKEN-REF", []).append([f, size])
+                report.setdefault("BROKEN-REF-DETAIL", []).append([f, sorted(missing)[:6]])
         if not cls:
             cls = ["OK"]
         for c in cls:
             report[c].append([f, size])
 
     for k, v in report.items():
-        if k == "LEAK-DETAIL":
+        if k.endswith("-DETAIL"):
             continue
         print("== %s: %d files, %.1f MiB" % (k, len(v), sum(x[1] for x in v) / 1048576))
         for f, s in sorted(v, key=lambda x: -x[1])[:12]:

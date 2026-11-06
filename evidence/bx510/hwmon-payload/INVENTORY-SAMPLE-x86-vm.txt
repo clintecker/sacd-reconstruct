@@ -1,6 +1,6 @@
 === BX510 runtime inventory (bx510_inventory v1) ===
 collector: bx510_inventory v2 (read-only, +fusion adjudicator)
-note: x86-test values may appear when this binary is run on the lab VM; player values come only from the player run
+note: x86-test values may appear when this binary is run on the build host; player values come only from the player run
 --- uptime ---
 760122.55 3911810.50
 --- elf interpreter ---

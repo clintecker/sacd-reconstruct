@@ -1,0 +1,49 @@
+sacd capture 2026-11-04T02:43:14Z -> 192.0.2.10:2002
+  OPEN  result=-1
+  !! DISC_OPEN returned -1 — no disc / open failed
+  SIZE  total_sectors=-1
+  READ one-sector @ 0         lsn=0 want=1 got=-1 len=0 sha=
+  READ 128-sector @ 0         lsn=0 want=128 got=-1 len=0 sha=
+  READ one-sector @ mid(0)    lsn=0 want=1 got=-1 len=0 sha=
+  READ beyond-EOF read (failure probe) lsn=99 want=1 got=-1 len=0 sha=
+  CLOSE result=0
+  OPEN  (reconnect) result=-1
+  READ one-sector @ mid repeat (reconnect) lsn=0 want=1 got=-1 len=0 sha=
+  CLOSE (reconnect)
+wrote /Users/you/code/aftermath-sacd/experiments/sacd_reconstruct/evidence/bx510-baseline/manifest.json
+sacd capture 2026-11-04T02:49:42Z -> 192.0.2.10:2002
+  OPEN  result=0
+  SIZE  total_sectors=1064208
+  READ one-sector @ 0         lsn=0 want=1 got=1 len=2048 sha=e5a00aa9991ac8a5
+  READ 128-sector @ 0         lsn=0 want=128 got=128 len=262144 sha=a28db88d35dbf586
+  READ one-sector @ mid(532104) lsn=532104 want=1 got=1 len=2048 sha=72e971d9ca072881
+  READ beyond-EOF read (failure probe) lsn=1064308 want=1 got=0 len=0 sha=
+  CLOSE result=0
+  OPEN  (reconnect) result=0
+  READ one-sector @ mid repeat (reconnect) lsn=532104 want=1 got=1 len=2048 sha=72e971d9ca072881
+  CLOSE (reconnect)
+wrote /Users/you/code/aftermath-sacd/experiments/sacd_reconstruct/evidence/bx510-baseline/manifest.json
+sacd capture 2026-11-04T03:57:27Z -> 192.0.2.10:2002
+  OPEN  result=0
+  SIZE  total_sectors=1064208
+  READ one-sector @ 0         lsn=0 want=1 got=1 len=2048 sha=e5a00aa9991ac8a5
+  READ 128-sector @ 0         lsn=0 want=128 got=128 len=262144 sha=a28db88d35dbf586
+  READ one-sector @ mid(532104) lsn=532104 want=1 got=1 len=2048 sha=72e971d9ca072881
+  READ beyond-EOF read (failure probe) lsn=1064308 want=1 got=0 len=0 sha=
+  CLOSE result=0
+  OPEN  (reconnect) result=0
+  READ one-sector @ mid repeat (reconnect) lsn=532104 want=1 got=1 len=2048 sha=72e971d9ca072881
+  CLOSE (reconnect)
+wrote /Users/you/code/aftermath-sacd/experiments/sacd_reconstruct/evidence/bx510-baseline/manifest.json
+sacd capture 2026-11-05T03:23:43Z -> 192.0.2.10:2002
+  OPEN  result=0
+  SIZE  total_sectors=1064208
+  READ one-sector @ 0         lsn=0 want=1 got=1 len=2048 sha=e5a00aa9991ac8a5
+  READ 128-sector @ 0         lsn=0 want=128 got=128 len=262144 sha=a28db88d35dbf586
+  READ one-sector @ mid(532104) lsn=532104 want=1 got=1 len=2048 sha=72e971d9ca072881
+  READ beyond-EOF read (failure probe) lsn=1064308 want=1 got=0 len=0 sha=
+  CLOSE result=0
+  OPEN  (reconnect) result=0
+  READ one-sector @ mid repeat (reconnect) lsn=532104 want=1 got=1 len=2048 sha=72e971d9ca072881
+  CLOSE (reconnect)
+wrote /Users/you/code/aftermath-sacd/experiments/sacd_reconstruct/evidence/bx510-baseline/manifest.json

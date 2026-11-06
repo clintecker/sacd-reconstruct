@@ -1,6 +1,6 @@
 # Phase 0/2 results — the daemon and its real kernel module inside the full-system guest
 
-Date: 2026-11-03. Rig: lab VM (`make sacd-emu-build` QEMU player.local,
+Date: 2026-11-03. Rig: build host (`make sacd-emu-build` QEMU player.local,
 Sony kernel 2.6.35 from the M15.R.0257 NAND), probe
 `tools/bx510_phase0_probe.py` (observe-driven, marker-split to defeat the
 shell's command echo), artifacts `/tmp/p0v*-uart.log`, `p0v*-probe.out`
@@ -220,7 +220,7 @@ beyond-EOF (graceful result=0), CLOSE=0, post-close EOF, reconnect after
 1s (OPEN#2/READ#2/CLOSE#2 all clean).
 
 This is the fourth verification dimension for the release decision:
-  1. sacd-verify: clean build + 388/390 fn + interface + pool audit
+  1. the verification tree: clean build + 388/390 fn + interface + pool audit
   2. sacd-rig: qemu-user protocol replay, both replays IDENTICAL
   3. sacd-emu-*: guest execution (--help identical) + THIS differential
   4. pending: hardware baseline + pair capture (the only ground truth

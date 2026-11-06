@@ -5,7 +5,7 @@
 # then runs every check against that exact file. Any check failing exits
 # nonzero. Prints the build command, candidate SHA-256 and each check verdict.
 #
-# Expected state on the producing host (the lab VM):
+# Expected state on the producing host (the build host):
 #   ~/gcc-4.4.1            FSF gcc 4.4.1 release source
 #   ~/g441obj              configured+built gcc 4.4.1 (gcc/xgcc, default armv6z)
 #   ~/glibc-2.9-build/glibc-2.9   glibc 2.9 + glibc-ports 2.9 sources
@@ -26,7 +26,7 @@ QEMU=${QEMU:-qemu-arm-static}
 CSROOT=${CSROOT:-$HOME/arm-2009q3/arm-none-linux-gnueabi/libc}
 EXPECT_FNMATCH=${EXPECT_FNMATCH:-388}
 # fn_diff objdump backend: prefer $OBJDUMP, else the FSF arm objdump when
-# present (lab VM), else the script default (llvm-objdump).
+# present (build host), else the script default (llvm-objdump).
 if [ "${OBJDUMP:-}" = "" ] && [ -x "$HOME/gnuarm/bin/arm-none-linux-gnueabi-objdump" ]; then
   OBJDUMP="$HOME/gnuarm/bin/arm-none-linux-gnueabi-objdump"
   export OBJDUMP

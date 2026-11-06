@@ -31,7 +31,7 @@ Success ladder (printed markers, evidence in the UART transcript):
   FBMT85: rung (d) ... FillRectangle ... rc=0         -> rung d
   FBMT85: rung (e) pool capture MATCHES ...          -> rung e
 
-Run from ~/bx510-emu/emulator on the lab VM:
+Run from ~/bx510-emu/emulator on the build host:
 
   python3 bx510_fbmt85_repro.py --qemu work/build/qemu-system-arm \\
       --images ../images --shim /tmp/tmpredir.so --bgstart /tmp/bgstart \\

@@ -60,7 +60,7 @@ cd ~/bx510-emu/emulator
 cp /tmp/bx510_phase0_probe.py .        # the stale-probe lesson, made explicit
 python3 bx510_phase0_probe.py \
   --qemu work/build/qemu-system-arm --images ../images \
-  --role original --reference ~/sacd-verify/original/sacd_extract_160 \
+  --role original --reference ~/the verification tree/original/sacd_extract_160 \
   --shim /tmp/tmpredir.so --bgstart /tmp/bgstart \
   --stub /tmp/mod/bx510_bdpvirt.ko --mkfixture /tmp/mkfixture \
   --gclient /tmp/gclient --lo_up /tmp/lo_up --sacdstat /tmp/sacdstat \

@@ -10,7 +10,7 @@ document that separates **demonstrated** from **inferred**.
 | `evidence/bx510-guest/gates*/` | full-system gates in Sony's own kernel + rootfs: canonical 6-boot sequence, large-image boundary battery, and the negative controls |
 | `evidence/bx510-guest/differential/` | the in-guest differential: same client sequence, both binaries, TX/RX compared byte-for-byte |
 | `evidence/bx510-guest/pair-observer/` | the LD_PRELOAD observer that records the module's raw and decrypted buffers |
-| `evidence/bx510-baseline/`, `…-candidate/` | on-player captures: `OPEN`, `SIZE`, sector hashes, beyond-EOF refusal, reconnect |
+| `evidence/bx510-baseline/`, `evidence/bx510-candidate/` | on-player captures: `OPEN`, `SIZE`, sector hashes, beyond-EOF refusal, reconnect |
 | `evidence/bx510/display-payload/` | the on-panel HUD: retro render, animations, the panel photograph, and the specs |
 | `evidence/bx510/hw-session-*/` | the hardware session: candidate acceptance, standby behaviour, and the mechanisms learned the hard way |
 

@@ -66,6 +66,15 @@ cp -R experiments/sacd_reconstruct/evidence/bx510/hw-session-2026-11-05 \
       "$STANDALONE/evidence/bx510/" 2>/dev/null || true
 cp -R experiments/sacd_reconstruct/evidence/bx510/hwmon-payload \
       "$STANDALONE/evidence/bx510/" 2>/dev/null || true
+# on-player captures + the pair observer: docs/EVIDENCE.md references these
+for d in bx510-baseline bx510-candidate; do
+    cp -R "experiments/sacd_reconstruct/evidence/$d" "$STANDALONE/evidence/" 2>/dev/null || true
+done
+cp -R experiments/sacd_reconstruct/evidence/bx510-guest/pair-observer \
+      "$STANDALONE/evidence/bx510-guest/" 2>/dev/null || true
+# graphics rung evidence (DISPLAY-SPEC references it)
+cp -R experiments/sacd_reconstruct/evidence/bx510-guest/graphics \
+      "$STANDALONE/evidence/bx510-guest/" 2>/dev/null || true
 cp -R experiments/sacd_reconstruct/docs "$STANDALONE/" 2>/dev/null || true
 cp -R experiments/sacd_reconstruct/emulator-kit "$STANDALONE/" 2>/dev/null || true
 cp Makefile AGENTS.md "$STANDALONE/"

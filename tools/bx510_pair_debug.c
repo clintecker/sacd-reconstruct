@@ -15,7 +15,7 @@
  * this log by construction — the two SACD codes are the ones the
  * matcher cares about anyway.
  *
- * Build (no Zig on the lab VM): gnuarm gcc + gnuarm ld with the same
+ * Build (no Zig on the build host): gnuarm gcc + gnuarm ld with the same
  * recipe as optical/build_trace.sh — see the commands recorded in
  * evidence/bx510-guest/pair-observer/RESULTS.md. Links against the
  * extracted Sony rootfs libs (/tmp/rootfs/lib on the VM).

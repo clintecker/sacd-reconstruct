@@ -20,7 +20,7 @@
 # the healthy battery; the clamp result=6 at 1048494 is the pinned
 # case (B07 changed no clamp arithmetic).
 set -e
-ORIG=~/sacd-verify/original/sacd_extract_160
+ORIG=~/the verification tree/original/sacd_extract_160
 ENH=~/reconstruct/release-next/sacd_extract_160_enhanced/sacd_extract_160_release
 PIN_ORIG=0fdcefdb84ae818be7385657eaf0960053f6e4452a82f19cbe6777f9c8cddb45
 PIN_ENH=9aa4b4b4585b742af9d26ad4007e6141b2ef397d299e5359f98b6442067b6792

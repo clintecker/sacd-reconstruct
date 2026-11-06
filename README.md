@@ -19,7 +19,8 @@ sectors read through the player's CPSA hardware path. This repository contains:
   pool auditor, the on-panel HUD, the emulator shims).
 - **`emulator-kit/`** — a QEMU SoC model for the player (so targets can be run
   without the hardware).
-- **`docs/`** — architecture, reproduction, evidence guide, provenance.
+- **`docs/`** — architecture, [what is inside the binary](docs/DAEMON-MAP.md),
+  reproduction, evidence guide, provenance.
 - **`evidence/`** — the recorded proof: gate runs, differential captures, panel
   photographs, HUD renders.
 

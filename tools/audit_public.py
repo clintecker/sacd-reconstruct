@@ -43,7 +43,7 @@ SECRET = re.compile(r"(sk-[A-Za-z0-9]{16,}|ghp_[A-Za-z0-9]{20,}|AKIA[0-9A-Z]{12,
 EMAIL = re.compile(r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b")
 CVE = re.compile(r"\bCVE-\d{4}-\d{4,7}\b")
 # narrow on purpose: "worker thread", "reviewer" etc. are legitimate English
-JARGON = re.compile(r"\b(aftermath|sacd-enhanced|sacd-verify|lab VM|subagent|"
+JARGON = re.compile(r"\b(sacd-enhanced|sacd-verify|lab VM|subagent|"
                     r"LANE-[0-9]|STAGE-[0-9]|the team)\b", re.I)
 BENIGN_EMAIL = ("git@github.com", "okir@monad.swb.de")
 # a doc that points at something we excluded leaves the reader stranded

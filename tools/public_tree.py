@@ -66,6 +66,8 @@ SCRUB = [
     (re.compile(r"\bsacd-verify\b"), "the verification tree"),
     (re.compile(r"\bsacd-enhanced\b"), "the repaired tree"),
     (re.compile(r"\bsubagent\b", re.I), "helper process"),
+    (re.compile(r"\bthe team\b", re.I), "the maintainers"),
+    (re.compile(r"\bThe team\b"), "The maintainers"),
     (re.compile(r"\b10\.20\.1\.236\b"), "192.0.2.10"),
     (re.compile(r"/home/[A-Za-z0-9._-]+"), "/home/you"),
     (re.compile(r"\b[A-Za-z0-9._-]+@(10\.20|192\.0\.2)"), "user@\\1"),

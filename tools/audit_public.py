@@ -127,7 +127,8 @@ def main():
             t_ben = t
             for b in BENIGN_EMAIL:
                 t_ben = t_ben.replace(b, "")
-            vendorish = f.startswith(("evidence/", "tools/third_party/"))
+            # attribution headers in reconstructed sources are correct, not leaks
+            vendorish = f.startswith(("evidence/", "tools/third_party/", "reconstruct/"))
             for name, rx, body in (("SECRET", SECRET, t), ("EMAIL", EMAIL, t_ben),
                                    ("CVE", CVE, t), ("JARGON", JARGON, t)):
                 m = rx.search(body)

@@ -1222,8 +1222,13 @@ static int rcap_w(const char *label) { return rtext_w(label) + 8; }
 
 static void rcap_text(int x, int y, const char *label, int barcol)
 {
+    /* label colour from the BAR's luminance: black on light bars, white on dark
+       ones. Black-on-deep-blue was unreadable (panel photo). */
+    int txt = 15;
+    if (barcol == 11 || barcol == 9 || barcol == 1 || barcol == 12 || barcol == 13)
+        txt = 8;
     rcap(x, y, rcap_w(label), 10, barcol);
-    rtext(label, x + 4, y + 1, 15);            /* black on colour */
+    rtext(label, x + 4, y + 1, txt);
 }
 
 static void retro_readout(int x, int y, const char *label, const char *value,
@@ -1246,12 +1251,12 @@ static void scene_retro(const hud_t *h, double t, double fps, int frame)
     {
         int x = 4, y = 4;
         retro_readout(x, y, "SACD", h->module_loaded ? "OK" : "DOWN", 4, h->module_loaded ? 2 : 12); y += 20;
-        retro_readout(x, y, "CLUSTER", "0x1F", 11, 7); y += 20;
-        retro_readout(x, y, "NODES", "12480", 11, 7); y += 20;
+        retro_readout(x, y, "CLUSTER", "0x1F", 11, 8); y += 20;
+        retro_readout(x, y, "NODES", "12480", 11, 8); y += 20;
         snprintf(up, sizeof up, "%02lu:%02lu", (h->uptime_s / 60) % 100, h->uptime_s % 60);
-        retro_readout(x, y, "UPTIME", up, 11, 2); y += 20;
+        retro_readout(x, y, "UPTIME", up, 11, 8); y += 20;
         snprintf(l, sizeof l, "%.0f", fps);
-        retro_readout(x, y, "FPS", l, 11, 2); y += 20;
+        retro_readout(x, y, "FPS", l, 11, 8); y += 20;
         rcap_text(x, y, h->listen_2002 ? ":2002 UP" : ":2002 SHUT", h->listen_2002 ? 2 : 12); y += 12;
         rcap_text(x, y, h->clients_2002 ? "LINK LIVE" : "NO LINK", h->clients_2002 ? 2 : 14);
     }

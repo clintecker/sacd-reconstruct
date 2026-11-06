@@ -12,7 +12,10 @@
  * them into the UART log. The real libdirectfb from the device's
  * rootfs can then be exercised against it with system=fbdev.
  *
- * Mode: 1280x720, 32bpp XRGB — MODE PARITY with the player (2026-11-05): the
+ * Mode: 1920x1080, 32bpp (stride 7680) — MODE PARITY with the player: fb0 on
+ * hardware reports 1920x1080 / stride 7680, so a rig at 1280x720 could not
+ * reproduce the row-shear that a 1280-wide writer produces on a 1920-wide
+ * scanout. The rig must advertise what the panel advertises. (Earlier: 1280x720, 32bpp XRGB — MODE PARITY with the player (2026-11-05): the
  * panel's layer is 1280x720 and DirectFB's primary comes back 1280x720, while
  * this module used to advertise 720x576. That mismatch hid every pitch/size bug
  * we hit on hardware (a 1280-wide surface over a 720-wide fbdev, lock pitch
@@ -104,8 +107,8 @@
 
 #include "bx510_fbvirt_mt85.h"
 
-#define FBVIRT_XRES 1280
-#define FBVIRT_YRES 720
+#define FBVIRT_XRES 1920
+#define FBVIRT_YRES 1080
 #define FBVIRT_BPP  32
 
 /* ---- MT85 virtual-device storage model ----
@@ -126,7 +129,7 @@
  * 16781312 = size+0x1000, ring 524288, debug 4096, fbdev smem
  * 1658880) so the length dispatch below stays unambiguous.
  */
-#define MT85_POOL0_SIZE     (((1280u * 720u * 4u + 16u) + 4095u) & ~4095u)  /* 3690496, run5-measured: alloc length 3686416 at offset 4080 */
+#define MT85_POOL0_SIZE     (((1920u * 1080u * 4u + 16u) + 4095u) & ~4095u)  /* 3690496, run5-measured: alloc length 3686416 at offset 4080 */
 #define MT85_POOL1_SIZE     (16u * 1024 * 1024)
 #define MT85_CMDBUF_SIZE    (512u * 1024)
 #define MT85_DEBUG_SIZE     4096u

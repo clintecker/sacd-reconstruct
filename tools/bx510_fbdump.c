@@ -27,6 +27,7 @@
 #include <linux/fb.h>
 
 static int g_pool_ofs;
+static int g_pool_w = 1920, g_pool_h = 1080;
 
 int main(int argc, char **argv)
 {
@@ -39,6 +40,8 @@ int main(int argc, char **argv)
           scale = (argc > 3) ? atoi(argv[3]) : 2;
           if (argc > 4) ofs = atoi(argv[4]);
           g_pool_ofs = ofs;
+          if (argc > 5) g_pool_w = atoi(argv[5]);
+          if (argc > 6) g_pool_h = atoi(argv[6]);
       } }
     struct fb_var_screeninfo vi;
     struct fb_fix_screeninfo fi;
@@ -58,10 +61,11 @@ int main(int argc, char **argv)
     if (pool) {
         /* pool 0 length as the MODULE defines it: 1280*720*4 + 0x1000 page
            (fbvirt dispatches mmap classes BY LENGTH -- 3686400 selects nothing) */
-        size_t pool_len = 1280u * 720u * 4u + 0x1000u;
+        size_t pool_len = (size_t)g_pool_w * g_pool_h * 4u + 0x1000u;
         mem = mmap(NULL, pool_len, PROT_READ, MAP_SHARED, fd, 0);
         if (mem != MAP_FAILED) {
-            vi.xres = 1280; vi.yres = 720; vi.bits_per_pixel = 32; fi.line_length = 1280 * 4;
+            vi.xres = g_pool_w; vi.yres = g_pool_h; vi.bits_per_pixel = 32;
+            fi.line_length = g_pool_w * 4;
             printf("FBGEOM %s(pool) %u %u %u %u\n", dev, vi.xres, vi.yres,
                    vi.bits_per_pixel, fi.line_length);
             printf("FBPIX ");

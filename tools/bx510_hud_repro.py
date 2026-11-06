@@ -43,12 +43,16 @@ def main():
         p.add_argument("--" + opt, required=True, type=Path)
     p.add_argument("--secs", type=int, default=3)
     p.add_argument("--scale", type=int, default=2)
+    p.add_argument("--dump", choices=("fbdev", "pool"), default="fbdev",
+                   help="which buffer to dump (the HUD writes the fbdev smem)")
     p.add_argument("--calib", action="store_true",
                    help="draw the calibration pattern instead of the HUD scene")
     p.add_argument("--font", type=Path, default=None,
                    help="Sony font (carved from /res/font.bin) to stage in-guest")
     p.add_argument("--pool-mode", action="store_true",
                    help="run the HUD with HUD_POOL=1 (draw straight into the pool)")
+    p.add_argument("--pool-w", type=int, default=1920)
+    p.add_argument("--pool-h", type=int, default=1080)
     p.add_argument("--pool-ofs", type=int, default=4096,
                    help="byte offset of the primary inside the vendor pool")
     p.add_argument("--timeout", type=float, default=900.0)
@@ -89,7 +93,9 @@ def main():
         + "/res/shim/sacd_hud --render >/res/hud.out 2>&1; echo HR_HUD=$?",
         "echo HR_HUD_BEGIN; cat /res/hud.out; echo HR_HUD_END",
         # and what it actually put on the (virtual) panel
-        f"LD_PRELOAD=/res/shim/tmpredir.so /res/shim/fbdump --pool /res/dev/fb0 {a.scale} {a.pool_ofs} >/res/fb.txt 2>&1; echo HR_DUMP=$?",
+        f"LD_PRELOAD=/res/shim/tmpredir.so /res/shim/fbdump {'--pool ' if a.dump == 'pool' else ''}/res/dev/fb0 {a.scale} "
+        + (f"{a.pool_ofs} {a.pool_w} {a.pool_h}" if a.dump == 'pool' else "")
+        + " >/res/fb.txt 2>&1; echo HR_DUMP=$?",
         "echo HR_FB_BEGIN; cat /res/fb.txt; echo HR_FB_END",
         'echo HR_REPRO_DONE',
     ]

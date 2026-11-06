@@ -38,6 +38,10 @@
 #include <dirent.h>
 #include <sys/statvfs.h>
 #include <sys/mman.h>
+#ifndef HUD_SIM
+#include <linux/fb.h>
+#include <sys/ioctl.h>
+#endif
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <fcntl.h>
@@ -501,7 +505,7 @@ static void hud_event(const char *ln)
     }
 }
 
-#define TICK_MAX 8
+#define TICK_MAX 16
 static char tick[TICK_MAX][80];
 static unsigned tick_rep[TICK_MAX];   /* how many times this line repeated */
 static int tick_n;
@@ -679,7 +683,8 @@ static unsigned int *fxd(int x, int y) { return fb + (size_t)y * pitch_px + x; }
 static void fx_scanlines(int w, int h)
 {
     int y, x;
-    for (y = 0; y < h; y += 2)
+    int period = (h >= 1000) ? 3 : 2;   /* 2-px aliases on a 1080p panel */
+    for (y = 0; y < h; y += period)
         for (x = 0; x < w; x++) {
             unsigned int v = *fxd(x, y);
             unsigned int r = ((v >> 16) & 0xff) * 3 / 4;
@@ -1231,13 +1236,13 @@ static void scene(const hud_t *h, double t, double fps, int frame)
                 if (i == lit) c = C_WHITE;
                 rect(x0 + 2 + i * cw, top2 + 2, cw - 1, mh - 4, c);
             }
-            snprintf(lab, sizeof lab, "DISC %llu / %llu",
+            snprintf(lab, sizeof lab, "DISC %llu/%llu",
                      ev_last_lsn, (unsigned long long)DISC_SECTORS);
-            text_top_r(lab, CW - pad, top2 + mh + 1, small, C_PHOSD);
+            text_top_r(lab, CW - pad, top2 - lh_small - 2, small, C_PHOSD);
         }
         /* footer */
         text_top("SACD HUD", pad, CH - lh_small - 1, small, C_PHOSD);
-        text_top_r("CPSA//MT85", CW - pad, CH - lh_small - 1, small, C_MAGENTA);
+
     }
 }
 
@@ -1334,17 +1339,42 @@ static void profile_load(void)
 
 static int pool_open(const char *dev)
 {
-    size_t len = (size_t)CW * SCAL * (size_t)CH * SCAL * 4u + 0x1000u;
+    struct fb_var_screeninfo vi;
+    struct fb_fix_screeninfo fi;
+    size_t len;
     int fd = open(dev, O_RDWR);
     void *m;
     if (fd < 0) { printf("HUD: pool open %s failed\n", dev); return 0; }
+    /* GEOMETRY FROM THE DEVICE, never assumed. Writing 1280-wide rows into a
+       1920-wide scanout shears every row (the panel photo showed exactly the
+       diagonal banding that produces). */
+    if (ioctl(fd, FBIOGET_VSCREENINFO, &vi) == 0 && ioctl(fd, FBIOGET_FSCREENINFO, &fi) == 0
+        && vi.xres && vi.yres && fi.line_length) {
+        printf("HUD: fbdev %s %ux%u bpp=%u stride=%u smem=%u\n",
+               dev, vi.xres, vi.yres, vi.bits_per_pixel, fi.line_length, fi.smem_len);
+        SCAL = vi.xres / CW;
+        if (SCAL < 1) SCAL = 1;
+        g_visible_w = vi.xres;
+        g_visible_h = vi.yres;
+        len = fi.smem_len ? fi.smem_len : (size_t)fi.line_length * vi.yres;
+        m = mmap(NULL, len, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+        if (m == MAP_FAILED) { printf("HUD: fbdev mmap %zu failed\n", len); close(fd); return 0; }
+        fb = m;
+        pitch_px = fi.line_length / (vi.bits_per_pixel / 8);
+        close(fd);
+        typography_set(g_visible_h);
+        printf("HUD: geom %ux%u scale=%d pitch=%d type head=%d body=%d\n",
+               g_visible_w, g_visible_h, SCAL, pitch_px, g_head_px, g_body_px);
+        return 1;
+    }
+    printf("HUD: fbdev geometry read failed, falling back to pool length\n");
+    len = (size_t)CW * SCAL * (size_t)CH * SCAL * 4u + 0x1000u;
     m = mmap(NULL, len, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
     close(fd);
     if (m == MAP_FAILED) { printf("HUD: pool mmap %zu failed\n", len); return 0; }
     fb = m;
     pitch_px = CW * SCAL;
-    typography_set(getenv("HUD_VISIBLE_H") ? atoi(getenv("HUD_VISIBLE_H"))
-                                           : CH * SCAL);
+    if (getenv("HUD_VISIBLE_H")) typography_set(atoi(getenv("HUD_VISIBLE_H")));
     g_visible_w = g_visible_w ? g_visible_w : CW * SCAL;
     g_visible_h = g_visible_h ? g_visible_h : CH * SCAL;
     if (getenv("HUD_FX") && !strcmp(getenv("HUD_FX"), "amiga")) g_fx = AMIGA_PRESET;

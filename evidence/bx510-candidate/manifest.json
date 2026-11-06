@@ -1,0 +1,218 @@
+{
+  "client": "sacd_client.py 1.0",
+  "captured_at": "2026-11-05T03:26:07Z",
+  "target": {
+    "host": "10.20.1.236",
+    "port": 2002
+  },
+  "firmware": "M15.R.0257 (BDP-S5100 family)",
+  "disc_id": "Tomita - Firebird",
+  "label": "candidate",
+  "reference_daemon_sha256": "",
+  "disc_size_sectors": 1064208,
+  "disc_fingerprint_lsn0_128": "a28db88d35dbf5864771c0739c7c894555606b6e9207e64ca771ec05d4a0d08a",
+  "reads": [
+    {
+      "label": "one-sector @ 0",
+      "lsn": 0,
+      "requested_sectors": 1,
+      "returned_sectors": 1,
+      "data_len": 2048,
+      "payload_sha256": "e5a00aa9991ac8a5ee3109844d84a55583bd20572ad3ffcd42792f3c36b183ad"
+    },
+    {
+      "label": "128-sector @ 0",
+      "lsn": 0,
+      "requested_sectors": 128,
+      "returned_sectors": 128,
+      "data_len": 262144,
+      "payload_sha256": "a28db88d35dbf5864771c0739c7c894555606b6e9207e64ca771ec05d4a0d08a"
+    },
+    {
+      "label": "one-sector @ mid(532104)",
+      "lsn": 532104,
+      "requested_sectors": 1,
+      "returned_sectors": 1,
+      "data_len": 2048,
+      "payload_sha256": "72e971d9ca072881eafc1b0ec12077c43629dfc2e81cb645b29286f3174ad97d"
+    },
+    {
+      "label": "beyond-EOF read (failure probe)",
+      "lsn": 1064308,
+      "requested_sectors": 1,
+      "returned_sectors": 0,
+      "data_len": 0,
+      "payload_sha256": null
+    },
+    {
+      "label": "one-sector @ mid repeat (reconnect)",
+      "lsn": 532104,
+      "requested_sectors": 1,
+      "returned_sectors": 1,
+      "data_len": 2048,
+      "payload_sha256": "72e971d9ca072881eafc1b0ec12077c43629dfc2e81cb645b29286f3174ad97d"
+    }
+  ],
+  "frames": [
+    {
+      "request": {
+        "type": 1,
+        "sector_offset": 0,
+        "sector_count": 0
+      },
+      "response": {
+        "type": 1,
+        "type_name": "DISC_OPENED",
+        "result": 0,
+        "data_len": 0
+      },
+      "request_frame_hex": "08011000180000",
+      "response_frame_sha256": "d469c79d85673f53abf799d711335bc3b298429ce3e9e532ef1cddbdac0c813c",
+      "response_frame_len": 5
+    },
+    {
+      "request": {
+        "type": 4,
+        "sector_offset": 0,
+        "sector_count": 0
+      },
+      "response": {
+        "type": 4,
+        "type_name": "DISC_SIZE",
+        "result": 1064208,
+        "data_len": 0
+      },
+      "request_frame_hex": "08041000180000",
+      "response_frame_sha256": "071db11d2c617c4eaa66d2629e88a84d0a5297e59168f391797c6a3eabdcdaf0",
+      "response_frame_len": 7
+    },
+    {
+      "request": {
+        "type": 3,
+        "sector_offset": 0,
+        "sector_count": 1
+      },
+      "response": {
+        "type": 3,
+        "type_name": "DISC_READ",
+        "result": 1,
+        "data_len": 2048
+      },
+      "request_frame_hex": "08031000180100",
+      "response_frame_sha256": "cd7a6b31f9e1e4358a85e18303e135a1a27cca486f90a5a406b26615f15b1762",
+      "response_frame_len": 2056
+    },
+    {
+      "request": {
+        "type": 3,
+        "sector_offset": 0,
+        "sector_count": 128
+      },
+      "response": {
+        "type": 3,
+        "type_name": "DISC_READ",
+        "result": 128,
+        "data_len": 262144
+      },
+      "request_frame_hex": "0803100018800100",
+      "response_frame_sha256": "235326ae6d9791c6f5fe6a7d128a9ff53ede06b557003a5752543e71d7d07ee7",
+      "response_frame_len": 262154
+    },
+    {
+      "request": {
+        "type": 3,
+        "sector_offset": 532104,
+        "sector_count": 1
+      },
+      "response": {
+        "type": 3,
+        "type_name": "DISC_READ",
+        "result": 1,
+        "data_len": 2048
+      },
+      "request_frame_hex": "08031088bd20180100",
+      "response_frame_sha256": "8485bb8637f7449867911d79f3e35f10d92d2e1a4da3eb2290220b1e555955a5",
+      "response_frame_len": 2056
+    },
+    {
+      "request": {
+        "type": 3,
+        "sector_offset": 1064308,
+        "sector_count": 1
+      },
+      "response": {
+        "type": 3,
+        "type_name": "DISC_READ",
+        "result": 0,
+        "data_len": 0
+      },
+      "request_frame_hex": "080310f4fa40180100",
+      "response_frame_sha256": "537a2ef69e0b01be61fa54254342049c1f2af96ddbd3795884d81e4260cba630",
+      "response_frame_len": 5
+    },
+    {
+      "request": {
+        "type": 2,
+        "sector_offset": 0,
+        "sector_count": 0
+      },
+      "response": {
+        "type": 2,
+        "type_name": "DISC_CLOSED",
+        "result": 0,
+        "data_len": 0
+      },
+      "request_frame_hex": "08021000180000",
+      "response_frame_sha256": "aa7f9584103e577bfeb1c13cb63aad9d84d30cd31e55b529d07982b95a642d54",
+      "response_frame_len": 5
+    },
+    {
+      "request": {
+        "type": 1,
+        "sector_offset": 0,
+        "sector_count": 0
+      },
+      "response": {
+        "type": 1,
+        "type_name": "DISC_OPENED",
+        "result": 0,
+        "data_len": 0
+      },
+      "request_frame_hex": "08011000180000",
+      "response_frame_sha256": "d469c79d85673f53abf799d711335bc3b298429ce3e9e532ef1cddbdac0c813c",
+      "response_frame_len": 5
+    },
+    {
+      "request": {
+        "type": 3,
+        "sector_offset": 532104,
+        "sector_count": 1
+      },
+      "response": {
+        "type": 3,
+        "type_name": "DISC_READ",
+        "result": 1,
+        "data_len": 2048
+      },
+      "request_frame_hex": "08031088bd20180100",
+      "response_frame_sha256": "8485bb8637f7449867911d79f3e35f10d92d2e1a4da3eb2290220b1e555955a5",
+      "response_frame_len": 2056
+    },
+    {
+      "request": {
+        "type": 2,
+        "sector_offset": 0,
+        "sector_count": 0
+      },
+      "response": {
+        "type": 2,
+        "type_name": "DISC_CLOSED",
+        "result": 0,
+        "data_len": 0
+      },
+      "request_frame_hex": "08021000180000",
+      "response_frame_sha256": "aa7f9584103e577bfeb1c13cb63aad9d84d30cd31e55b529d07982b95a642d54",
+      "response_frame_len": 5
+    }
+  ]
+}

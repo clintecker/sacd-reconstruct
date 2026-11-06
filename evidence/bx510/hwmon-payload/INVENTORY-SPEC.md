@@ -3,7 +3,7 @@
 `bx510_inventory` (source: `tools/bx510_inventory.c`, built binary staged
 here as `inventory`) is the read-only runtime-inventory collector for the
 production plan §4 remainder — the fields the 2026-11-04 hwmon corpus
-does NOT already carry (see `incoming/production-plan/RECONCILIATION.md`).
+does NOT already carry (see `docs/PROVENANCE.md`).
 It completes Phase 0 in one trigger on the next hardware session.
 
 ## What is already covered elsewhere (NOT re-collected here)

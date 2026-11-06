@@ -1,0 +1,143 @@
+count=150 2>/res/dd.err | /bin/tar -xf - -
+C /res
+/ # /bin/chmod 755 /res/original/sacd_extract_160 /res/shim/tmpredir.so /res/shi
+m/bgstart /res/shim/mkfixture /res/shim/gclient /res/shim/lo_up
+/ # mount -t proc proc /res/proc; echo PR_PROC=$?
+PR_PROC=0
+/ # echo x > /res/zero
+/ # echo PR_EXEC_BEGIN; ls -l /res/original /res/shim /res/pair; echo PR_EXEC_EN
+D
+PR_EXEC_BEGIN
+/res/original:
+-rwxr-xr-x    1 0        0           350830 Jan  1 00:00 [1;32msacd_extract_160[0m
+
+/res/pair:
+-rwxr-xr-x    1 0        0             8893 Jan  1 00:00 [1;32mbx510_pair.so[0m
+
+/res/shim:
+-rwxr-xr-x    1 0        0            66813 Jan  1 00:00 [1;32mbdpvirt.ko[0m
+-rwxr-xr-x    1 0        0            38170 Jan  1 00:00 [1;32mbgstart[0m
+-rwxr-xr-x    1 0        0            47896 Jan  1 00:00 [1;32mgclient[0m
+-rwxr-xr-x    1 0        0            37732 Jan  1 00:00 [1;32mlo_up[0m
+-rwxr-xr-x    1 0        0            40875 Jan  1 00:00 [1;32mmkfixture[0m
+-rwxr-xr-x    1 0        0             9797 Jan  1 00:00 [1;32mtmpredir.so[0m
+PR_EXEC_END
+/ # /sbin/insmod /res/shim/bdpvirt.ko; echo PR_STUB=$?; cat /res/proc/modules
+bdpvirt: bdpdrv-stack provider loaded
+PR_STUB=0
+bx510_bdpvirt 4492 0 - Live 0xbf000000
+/ # BX510_PAIR_OUT=/res/pairtest BX510_PAIR_LSN=80000 BX510_PAIR_LOG=/res/pairlo
+g LD_PRELOAD=/res/shim/tmpredir.so:/res/pair/bx510_pair.so /res/shim/bgstart /re
+s/original/sacd_extract_160 -S
+BG_PID=512
+/ # sleep 8; echo PR_TCP_BEGIN; cat /res/proc/net/tcp; echo PR_TCP_END
+[SACDREAD] ========================================
+[SACDREAD] minor = 201
+[SACDREAD] compid = 0
+[SACDREAD] ========================================
+[SACDREAD]Symbol "i4CPSA_Inst_CPSMode_Ctrl" address is 0xbf0000ec
+[SACDREAD]Symbol "_IDECLI_OddRead" address is 0xbf000154
+[SACDREAD]Symbol "_i4CPSA_Inst_Decrypt" address is 0xbf000114
+[SACDREAD]Symbol "i4CPSA_Inst_SetSACDControl" address is 0xbf000008
+[SACDREAD]Symbol "u4CPSA_Inst_GetInstHandleFromCompId" address is 0xbf0000b8
+[SACDREAD]Symbol "i4CPSA_Inst_Connect" address is 0xbf000088
+[SACDREAD]Symbol "i4CPSA_Inst_Disconnect" address is 0xbf000000
+[SACDREAD]Symbol "vSacdDecryptEnable" address is 0xbf000010
+[SACDREAD]Symbol "_SACDCLI_TestPhy" address is 0xbf00006c
+[SACDREAD]Symbol "eSacdGetVersion" address is 0xbf000014
+[SACDREAD]Symbol "_SACDCLI_FindTag" address is 0xbf00001c
+[SACDREAD]Symbol "_IDECLI_OddTestUnitReadyLoop" address is 0xbf000050
+[SACDREAD]Symbol "_IDECLI_OddGetProfile" address is 0xbf00002c
+[SACDREAD]Symbol "__ksymtab_disable_print" address is 0xc0420818
+bdpvirt: GetInstHandle compid=0 -> free (-1)
+bdpvirt: TestUnitReadyLoop(a=0x4e20)
+bdpvirt: GetProfile(out=ddaabeec) -> profile 0x10
+bdpvirt: TestUnitReadyLoop(a=0x4e20)
+bdpvirt: GetProfile(out=ddaabeec) -> profile 0x10
+bdpvirt: TestUnitReadyLoop(a=0x4e20)
+bdpvirt: GetProfile(out=ddaabeec) -> profile 0x10
+bdpvirt: TestUnitReadyLoop(a=0x4e20)
+bdpvirt: GetProfile(out=ddaabeec) -> profile 0x10
+bdpvirt: TestUnitReadyLoop(a=0x4e20)
+bdpvirt: GetProfile(out=ddaabeec) -> profile 0x10
+bdpvirt: TestUnitReadyLoop(a=0x4e20)
+bdpvirt: GetProfile(out=ddaabeec) -> profile 0x10
+bdpvirt: TestUnitReadyLoop(a=0x4e20)
+bdpvirt: GetProfile(out=ddaabeec) -> profile 0x10
+bdpvirt: TestUnitReadyLoop(a=0x4e20)
+bdpvirt: GetProfile(out=ddaabeec) -> profile 0x10
+PR_TCP_BEGIN
+  sl  local_address rem_address   st tx_queue rx_queue tr tm->when retrnsmt   uid  timeout inode                                                     
+   0: 00000000:07D2 00000000:0000 0A 00000000:00000000 00:00000000 00000000     0        0 61 1 c6250000 300 0 0 2 -1                                
+PR_TCP_END
+/ # echo PR_MOD_BEGIN; cat /res/proc/modules; echo PR_MOD_END
+PR_MOD_BEGIN
+sacd_read 4976 0 - Live 0xbf007000
+bx510_bdpvirt 4492 1 sacd_read, Live 0xbf000000
+PR_MOD_END
+/ # LD_PRELOAD= /res/shim/lo_up; echo PR_LO=$?
+lo_up: flags=0x49 (UP)
+PR_LO=0
+/ # LD_PRELOAD= /res/shim/mkfixture /res/dev/sr0; echo PR_FIXT=$?
+mkfixture: /res/dev/sr0, 86200 sectors, area LSN 600, mid 43100
+PR_FIXT=0
+/ # LD_PRELOAD= /res/shim/gclient 127.0.0.1 2002 pair 80000 600 >/res/client.out
+ 2>&1; echo PR_GC=$?
+bdpvirt: Connect(363, 0, 360, 0) -> 0
+bdpvirt: GetInstHandle compid=0 -> free (-1)
+bdpvirt: CPSMode_Ctrl handle=4294967295 a=64 b=1 -> 0
+bdpvirt: GetInstHandle compid=0 -> free (-1)
+bdpvirt: TestPhy 0
+[SACDREAD]eSacdGetVersion:0
+bdpvirt: OddRead lsn=80000 blocks=2 -> 0
+bdpvirt: GetInstHandle compid=0 -> free (-1)
+bdpvirt: GetInstHandle compid=0 -> free (-1)
+bdpvirt: OddRead lsn=600 blocks=2 -> 0
+bdpvirt: GetInstHandle compid=0 -> free (-1)
+bdpvirt: GetInstHandle compid=0 -> free (-1)
+bdpvirt: GetInstHandle compid=0 -> free (-1)
+bdpvirt: CPSMode_Ctrl handle=4294967295 a=64 b=0 -> 0
+PR_GC=0
+/ # echo PR_CLIENT_BEGIN; cat /res/client.out; echo PR_CLIENT_END
+PR_CLIENT_BEGIN
+GC: connected 127.0.0.1:2002
+GC: OPEN  -> type=1 result=0 datalen=-1
+GC: SIZE  -> type=4 result=86200 (sectors)
+GC: READ pair lsn=80000 cnt=2 -> type=3 result=2 datalen=4096 fnv1a64=a4903e500a141a95
+GC: READ pair lsn=600 cnt=2 -> type=3 result=2 datalen=4096 fnv1a64=534721fbb717bcaa
+GC: CLOSE pair -> type=2 result=0
+GC: DONE pair
+PR_CLIENT_END
+/ # bdpvirt: TestUnitReadyLoop(a=0x4e20)
+bdpvirt: GetProfile(out=ddaabeec) -> profile 0x10
+echo PR_RL_BEGIN; cat /res/readlog; echo PR_RL_END
+PR_RL_BEGIN
+R 1044480 20480
+H 0 0
+534143444d544f4301140000000000000001000100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000025800000000000000000000000000000000000a0000000000000000000000000000000000000000000000000000000000000000000007e90b02000000000100000000000000656e0000656e0000656e0000656e0000656e0000656e0000656e0000656e00000000000000000000
+R 1228800 20480
+H 0 0
+54574f4348544f43011400010000000000000000040000000000000000000000020002000000000000000000000000000000000000000000000000000000000000000000000100000001388000014ff0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+PR_RL_END
+/ # if [ -f /res/pairtest ]; then echo PR_PAIR_PRESENT; ls -l /res/pairtest; dd 
+if=/res/pairtest bs=1 count=16 2>/res/e | /usr/bin/hexdump -v -e '1/1 "%02x"'; e
+cho; else echo PR_PAIR_ABSENT; fi
+PR_PAIR_PRESENT
+-rw-------    1 0        0             8240 Jan  1 00:00 [0;0m/res/pairtest[0m
+42583550414952318038010002000000
+/ # if [ -f /res/pairlog ]; then echo PR_LOG_BEGIN; cat /res/pairlog; echo PR_LO
+G_END; else echo PR_LOG_ABSENT; fi
+PR_LOG_BEGIN
+tid=512 CFG armed=1 lsn=80000 out=/res/pairtest
+tid=527 RD fd=11 rc=0 in[lsn=80000 cnt=2 buf=0x411ea008] post[res=0 lsn=80000 cnt=2 buf=0xc600c000] want_lsn=80000 match=1 pending=0x7f320 pbuf=0x411ea008
+tid=527 SAVE ok lsn=80000 bytes=8240
+tid=527 DC fd=11 rc=0 in[cnt=2 buf=0x411ea008] post[res=0 cnt=2 buf=0xc600c000] match=1 pbuf=0x411ea008
+tid=527 RD fd=11 rc=0 in[lsn=600 cnt=2 buf=0x411ea008] post[res=0 lsn=600 cnt=2 buf=0xc600c000] want_lsn=80000 match=0 pending=0x7f320 pbuf=(nil)
+tid=527 DC fd=11 rc=0 in[cnt=2 buf=0x411ea008] post[res=0 cnt=2 buf=0xc600c000] match=0 pbuf=(nil)
+PR_LOG_END
+/ # echo PR_OUT_BEGIN; cat /res/daemon.out; echo PR_OUT_END
+PR_OUT_BEGIN
+mknod: /dev/sacd_read: No such file or directory
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              PR_OUT_END
+/ # echo PAIR_R""EPRO_DONE
+PAIR_REPRO_DONE

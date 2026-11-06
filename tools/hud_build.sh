@@ -14,8 +14,12 @@ P="${VM_PORT:-2222}"
 SRC="$EXP/tools/bx510_sacd_hud.c"
 OUT="$EXP/evidence/bx510/display-payload/sacd_hud"
 scp -q -o BatchMode=yes -P "$P" "$SRC" "$H:/tmp/bx510_sacd_hud.c"
+# vendored headers the HUD includes (stb_truetype, font8x8)
+scp -q -o BatchMode=yes -P "$P" "$EXP/tools/third_party/stb_truetype.h" "$EXP/tools/third_party/font8x8_basic.h" "$H:/tmp/"
 ssh -o BatchMode=yes -p "$P" "$H" '
 set -e
+mkdir -p /tmp/third_party
+cp /tmp/stb_truetype.h /tmp/font8x8_basic.h /tmp/third_party/
 T=~/mt85src/DirectFB-1.2.7
 ~/gnuarm/bin/arm-none-linux-gnueabi-gcc -O2 -std=gnu99 -Wall -Wextra -Wno-pragmas \
   -I$T/include -I$T/lib -I$T/lib/direct -I$T -o /tmp/sacd_hud /tmp/bx510_sacd_hud.c \

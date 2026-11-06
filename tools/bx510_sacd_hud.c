@@ -491,6 +491,7 @@ static unsigned long long ev_requests, ev_sectors, ev_last_lsn, ev_bytes, ev_byt
 static double ev_win_t;
 
 static void tick_push(const char *ln);   /* below */
+static void ev_push(const char *ln);
 
 static void hud_event(const char *ln)
 {
@@ -502,8 +503,8 @@ static void hud_event(const char *ln)
         ev_sectors += cnt;
         ev_last_lsn = lsn;
         ev_bytes += (unsigned long long)cnt * SECTOR_BYTES;
-        /* semantic line: what the client just asked for */
-        snprintf(ev, sizeof ev, "READ lsn=%lu n=%u (%uK)", (unsigned long)lsn, cnt, cnt * 2);
+        /* compact line so it fits the LCARS column: "RD 0532104+128" */
+        snprintf(ev, sizeof ev, "RD %lu+%u", (unsigned long)lsn, cnt);
         tick_push(ev);
     }
 }
@@ -557,7 +558,18 @@ static void udp_poll(void)
                     ev_bytes += (unsigned long long)cnt * SECTOR_BYTES;
                 }
             }
-            if (b[0]) tick_push(b);
+            if (b[0]) {   /* "READ lsn=532104 n=128 got=128" -> "RD 532104+128" */
+                unsigned l2 = 0, c2 = 0;
+                const char *pl2 = strstr(b, "lsn="), *pc2 = strstr(b, "n=");
+                if (pl2 && pc2 && sscanf(pl2, "lsn=%u", &l2) == 1
+                    && sscanf(pc2, "n=%u", &c2) == 1) {
+                    char ev2[40];
+                    snprintf(ev2, sizeof ev2, "RD %u+%u", l2, c2);
+                    tick_push(ev2);
+                } else {
+                    tick_push(b);
+                }
+            }
         }
     }
 }
@@ -573,6 +585,7 @@ static void tick_push(const char *ln)
     snprintf(tick[ni], sizeof tick[0], "%s", ln);
     tick_rep[ni] = 1;
     tick_n++;
+    ev_push(ln);
 }
 
 static void ticker_poll(const char *path)
@@ -608,6 +621,48 @@ static void ticker_poll(const char *path)
 }
 
 /* ---------------- scene --------------------------------------------- */
+
+/* ---- event matrix (blinkenlights) --------------------------------------
+   Columns are TIME (newest at the right), rows are EVENT CLASS, colour is the
+   class, brightness is magnitude. Decays as it scrolls, like a logic analyser
+   or a board of status LEDs. No words to parse.
+   classes: 0 READ  1 DECRYPT  2 CLIENT  3 ERROR  4 SYSTEM */
+#define EVC 36                       /* columns kept */
+#define EVR 5                        /* event classes */
+#define EVK_READ 0
+#define EVK_DEC  1
+#define EVK_CLI  2
+#define EVK_ERR  3
+#define EVK_SYS  4
+static unsigned char ev_kind[EVC];
+static unsigned char ev_mag[EVC];    /* 1..9 brightness */
+static int ev_head;
+
+static void ev_classify(const char *ln, int *kind, int *mag)
+{
+    *mag = 1;
+    if (strstr(ln, "ERR") || strstr(ln, "FAIL") || strstr(ln, "ALERT")) { *kind = EVK_ERR; *mag = 9; return; }
+    if (strstr(ln, "RD ") || strstr(ln, "READ")) {
+        unsigned v = 1;
+        const char *p = strstr(ln, "+");
+        if (p) v = (unsigned)atoi(p + 1);
+        *kind = EVK_READ;
+        *mag = (int)(v > 8 ? 8 : (v < 1 ? 1 : v));
+        return;
+    }
+    if (strstr(ln, "DC") || strstr(ln, "DECRYPT")) { *kind = EVK_DEC; *mag = 5; return; }
+    if (strstr(ln, "CLIENT") || strstr(ln, "LINK")) { *kind = EVK_CLI; *mag = 7; return; }
+    *kind = EVK_SYS; *mag = 3;
+}
+static void ev_push(const char *ln)
+{
+    int k = 0, m = 1;
+    ev_classify(ln, &k, &m);
+    ev_head = (ev_head + 1) % EVC;
+    ev_kind[ev_head] = (unsigned char)k;
+    ev_mag[ev_head] = (unsigned char)m;
+}
+
 static unsigned spark[40];
 static int g_selftest __attribute__((unused));
 static int g_render_only;
@@ -1056,6 +1111,258 @@ static void amiga_apply(int frame, double t)
     (void)t;
 }
 
+
+/* ================= RETRO RENDERER: LCARS x AMIGA x 8088 VGA ==============
+   The panel is 1920x1080, but it is DRAWN like an 8088 VGA screen: a 320x180
+   canvas of 16 palette indices, an 8x8 bitmap font, then an integer x6 scale
+   (320*6 = 1920, 180*6 = 1080). Chunky pixels by construction, not by blur.
+
+   Aesthetic: LCARS layout grammar (elbow bars, capsules, left rail of stacked
+   readouts) in an Amiga/Video-Toaster palette, with dystopian capture-farm
+   labelling.
+   ========================================================================= */
+#define RW 320
+#define RH 180
+static int g_rx = 6;               /* integer scale: visible_w / RW */
+
+/* 16-colour palette: VGA-ish, tuned cyberpunk (phosphor + amber + magenta) */
+static const unsigned int RPal[16] = {
+    0x000a06,  /* 0 bg near-black green */
+    0x0a2a12,  /* 1 dim green          */
+    0x22ff66,  /* 2 phosphor           */
+    0x9dffc0,  /* 3 pale phosphor      */
+    0xffb000,  /* 4 amber              */
+    0xff5a3c,  /* 5 orange-red         */
+    0xff33cc,  /* 6 magenta             */
+    0x33e0ff,  /* 7 cyan               */
+    0xe8ffe8,  /* 8 white              */
+    0x1a1a24,  /* 9 slate              */
+    0x4a4a66,  /* 10 mid slate         */
+    0x0d3a5c,  /* 11 deep blue         */
+    0xc02040,  /* 12 alarm red         */
+    0x0a7a30,  /* 13 dark green        */
+    0x7a5a00,  /* 14 dark amber        */
+    0x000000   /* 15 pure black        */
+};
+
+static unsigned char rbuf[RW * CH * 0]; /* placeholder (unused) */
+static unsigned char retro[RW * 180];
+
+#define RP(x, y, c) do { if ((x) >= 0 && (y) >= 0 && (x) < RW && (y) < 180) retro[(y) * RW + (x)] = (unsigned char)(c); } while (0)
+
+static void rfill(int x, int y, int w, int h, int c)
+{
+    int i, j;
+    for (j = 0; j < h; j++)
+        for (i = 0; i < w; i++) RP(x + i, y + j, c);
+}
+
+/* LCARS elbow: thick bar with a rounded corner (quarter disc) */
+static void relbow(int x, int y, int w, int h, int r, int c, int corner)
+{
+    int i, j;
+    rfill(x, y, w, h, c);
+    (void)r; (void)corner;
+}
+
+/* LCARS capsule: bar with a bulge at one end */
+static void rcap(int x, int y, int w, int h, int c)
+{
+    rfill(x, y, w, h, c);
+    rfill(x, y + h / 4, 2, h / 2, c);
+    rfill(x + w - 2, y + h / 4, 2, h / 2, c);
+}
+
+/* 8x8 bitmap text, 1 unit per glyph pixel (chunky) */
+#include "third_party/font8x8_basic.h"
+static void rtext(const char *str, int x, int y, int c)
+{
+    int cx = x;
+    for (; *str; str++) {
+        unsigned ch = (unsigned char)*str;
+        const char *g;
+        int row, col;
+        if (ch > 127) ch = '?';
+        g = font8x8_basic[ch];
+        for (row = 0; row < 8; row++)
+            for (col = 0; col < 8; col++)
+                if (g[row] & (1 << col)) RP(cx + col, y + row, c);
+        cx += 8;
+    }
+}
+static int rtext_w(const char *str) { return (int)strlen(str) * 8; }
+static void rtext_r(const char *str, int xr, int y, int c) { rtext(str, xr - rtext_w(str), y, c); }
+
+/* scale the 320x180 index canvas into the device framebuffer, integer x6 */
+static void retro_present(void)
+{
+    int y, x, sy, sx;
+    for (y = 0; y < 180; y++)
+        for (x = 0; x < RW; x++) {
+            unsigned int col = RPal[retro[y * RW + x] & 15];
+            for (sy = 0; sy < g_rx; sy++) {
+                unsigned int *o = fb + (size_t)(y * g_rx + sy) * pitch_px + (size_t)x * g_rx;
+                for (sx = 0; sx < g_rx; sx++) o[sx] = reorder(col);
+            }
+        }
+}
+
+/* ---- LCARS scene -------------------------------------------------------
+   Grid (320x180 canvas, 8x8 glyphs => 40 columns x 22 rows):
+     spine   x 0..2
+     rail    x 4..64    5 readouts (bar+value), then 2 status capsules, ends y 140
+     header  y 4..15    title (x 68) + status capsule (right aligned)
+     left    x 68..198  y 20..126   EVENT STREAM
+     right   x 202..316 y 20..126   TELEMETRY
+     strip   x 68..316  y 130..142  CLUSTER LOAD  (+ label pill at 4..64)
+     footer  y 148..176
+   Every capsule is as wide as its measured label, so nothing overflows.
+   ---------------------------------------------------------------------- */
+static int rcap_w(const char *label) { return rtext_w(label) + 8; }
+
+static void rcap_text(int x, int y, const char *label, int barcol)
+{
+    rcap(x, y, rcap_w(label), 10, barcol);
+    rtext(label, x + 4, y + 1, 15);            /* black on colour */
+}
+
+static void retro_readout(int x, int y, const char *label, const char *value,
+                          int barcol, int valcol)
+{
+    rcap_text(x, y, label, barcol);
+    rtext_r(value, x + 76, y + 12, valcol);
+}
+
+static void scene_retro(const hud_t *h, double t, double fps, int frame)
+{
+    char l[64], up[16];
+    int i;
+
+    rfill(0, 0, RW, 180, 0);
+    rfill(0, 0, 3, 180, 9);
+    rfill(0, 0, 3, 20, 4);
+
+    /* ---- rail (x 4..64, ends y 140) ---- */
+    {
+        int x = 4, y = 4;
+        retro_readout(x, y, "SACD", h->module_loaded ? "OK" : "DOWN", 4, h->module_loaded ? 2 : 12); y += 20;
+        retro_readout(x, y, "CLUSTER", "0x1F", 11, 7); y += 20;
+        retro_readout(x, y, "NODES", "12480", 11, 7); y += 20;
+        snprintf(up, sizeof up, "%02lu:%02lu", (h->uptime_s / 60) % 100, h->uptime_s % 60);
+        retro_readout(x, y, "UPTIME", up, 11, 2); y += 20;
+        snprintf(l, sizeof l, "%.0f", fps);
+        retro_readout(x, y, "FPS", l, 11, 2); y += 20;
+        rcap_text(x, y, h->listen_2002 ? ":2002 UP" : ":2002 SHUT", h->listen_2002 ? 2 : 12); y += 12;
+        rcap_text(x, y, h->clients_2002 ? "LINK LIVE" : "NO LINK", h->clients_2002 ? 2 : 14);
+    }
+
+    /* ---- header ---- */
+    {
+        int tw;
+        rtext("SACD//RIPPER", 88, 5, 2);
+        tw = rtext_w("SACD//RIPPER");
+        rtext("UNIT 0x1F", 88 + tw + 8, 5, 10);
+        rcap_text(316 - rcap_w(h->clients_2002 ? "LIVE" : (h->listen_2002 ? "ARMED" : "IDLE")), 4,
+                  h->clients_2002 ? "LIVE" : (h->listen_2002 ? "ARMED" : "IDLE"),
+                  h->clients_2002 ? 2 : 4);
+        rfill(88, 17, 228, 1, 9);
+    }
+
+    /* ---- left panel: EVENT MATRIX (blinkenlights / logic analyser) ----
+       One column per event (newest at the right), bar HEIGHT = magnitude
+       (sectors read, 1..9), bar COLOUR = event class. Recent columns are
+       bright, older ones fade, so the panel shows the last ~36 events as a
+       pattern: bursts, gaps, errors and decrypts are visible without words. */
+    {
+        int x = 88, y = 20, w = 118, hgt = 106;
+        int cw = 3, ch = 4;                  /* canvas px per cell */
+        int gx = x + 4, gy = y + 15;
+        int cols = (w - 10) / cw, rows = (hgt - 34) / ch;
+        static const unsigned int kcol[EVR] = { 2, 7, 4, 12, 6 };
+        static const char *knm[EVR] = { "RD", "DC", "CL", "ER", "SY" };
+        int c, r, lx;
+        rcap_text(x, y, "EVENT MATRIX", 7);
+        rfill(x, y + 10, 1, hgt, 7);
+        if (rows > 9) rows = 9;
+        if (cols > 36) cols = 36;
+        for (r = 0; r < rows; r++)            /* dim grid */
+            for (c = 0; c < cols; c++)
+                rfill(gx + c * cw, gy + r * ch, cw - 1, ch - 1, 9);
+        for (c = 0; c < cols; c++) {
+            int idx = (ev_head - (cols - 1 - c) + EVC * 2) % EVC;
+            int k = ev_kind[idx], m = ev_mag[idx];
+            int age = cols - 1 - c;
+            int bright;
+            if (!m) continue;
+            bright = m - age / 8;
+            if (bright < 1) continue;
+            if (k < 0 || k >= EVR) k = EVK_SYS;
+            {   /* bar from the bottom: height from magnitude */
+                int hh = m; if (hh > rows) hh = rows;
+                int rr;
+                for (rr = 0; rr < hh; rr++)
+                    rfill(gx + c * cw, gy + (rows - 1 - rr) * ch, cw - 1, ch - 1,
+                          (rr >= hh - 2) ? kcol[k] : (bright > 4 ? kcol[k] : 1));
+            }
+        }
+        /* legend: horizontal chips under the matrix */
+        lx = gx;
+        for (r = 0; r < EVR; r++) {          /* 3 chips per row, inside the panel */
+            int ly = gy + rows * ch + 3 + (r / 3) * 10;
+            int lxx = gx + (r % 3) * 34;
+            rfill(lxx, ly + 1, 3, 4, kcol[r]);
+            rtext(knm[r], lxx + 5, ly, 10);
+        }
+        (void)lx;
+    }
+
+    /* ---- right panel: TELEMETRY (x 202..316) ---- */
+    {
+        int x = 210, y = 20, w = 106;
+        rcap_text(x, y, "TELEMETRY", 4);
+        rfill(x + w, y + 10, 1, 106, 4);
+        {
+            int yy = y + 14;
+            snprintf(l, sizeof l, "%.1f MB/S", ev_mbps ? (double)ev_mbps : h->mbps);
+            rtext(l, x + 3, yy, 2); yy += 10;
+            for (i = 0; i < 30; i++) {
+                int v = (int)spark[8 + i];
+                int hh = v / 3; if (hh > 18) hh = 18;
+                rfill(x + 4 + i * 3, yy + 18 - hh, 2, hh, (i > 22) ? 4 : 2);
+            }
+            yy += 20;
+            {
+                int lit = (int)((double)ev_last_lsn * 34 / (double)DISC_SECTORS);
+                for (i = 0; i < 34; i++)
+                    rfill(x + 4 + i * 3, yy, 2, 4, (i < lit) ? 2 : ((i == lit) ? 8 : 13));
+            }
+            yy += 8;
+            snprintf(l, sizeof l, "SEC %llu", ev_sectors); rtext(l, x + 3, yy, 2); yy += 9;
+            snprintf(l, sizeof l, "LSN %llu", ev_last_lsn); rtext(l, x + 3, yy, 2); yy += 9;
+            snprintf(l, sizeof l, "TMP %u%%", h->tmp_pct);
+            rtext(l, x + 3, yy, h->tmp_pct > 90 ? 12 : 13); yy += 9;
+            rtext(h->note[0] ? h->note : "NOMINAL", x + 3, yy, h->note[0] ? 12 : 13);
+        }
+    }
+
+    /* ---- bottom strip (x 68..316) + footer ---- */
+    {
+        int y = 132;
+        rcap_text(4, y, "CLUSTER", 6);
+        for (i = 0; i < 76; i++) {
+            int v = (int)((i * 37 + frame * 3) % 100);
+            rfill(88 + i * 3, y + 1, 2, 8, v > 70 ? 4 : (v > 30 ? 2 : 13));
+        }
+        rfill(4, y + 12, RW - 8, 1, 9);
+        rtext("Z80 NODE FARM", 4, y + 15, 10);
+        rtext_r(h->note[0] ? h->note : "NOMINAL", RW - 4, y + 15, h->note[0] ? 12 : 13);
+        rtext("CPSA//MT85", 4, y + 25, 6);
+        snprintf(up, sizeof up, "%02lu:%02lu:%02lu", h->uptime_s / 3600,
+                 (h->uptime_s / 60) % 60, h->uptime_s % 60);
+        rtext_r(up, RW - 4, y + 25, 10);
+    }
+}
+
 static void scene(const hud_t *h, double t, double fps, int frame)
 {
     /* ---- one baseline grid drives everything -----------------------------
@@ -1301,8 +1608,10 @@ int main(int argc, char **argv)
     if (getenv("HUD_FX") && !strcmp(getenv("HUD_FX"), "amiga")) g_fx = AMIGA_PRESET;
     else if (getenv("HUD_FX")) g_fx = (unsigned)strtoul(getenv("HUD_FX"), NULL, 0);
     else g_fx = 0x17;
+    g_rx = g_visible_w / RW; if (g_rx < 1) g_rx = 1;
     for (i = 0; i < frames; i++) {
-        scene(&h, 1.7 + i * 0.2, 13.0, i * 4);
+        if (getenv("HUD_RETRO")) { g_fx = 0; scene_retro(&h, 1.7 + i * 0.2, 13.0, i * 4); retro_present(); }
+        else scene(&h, 1.7 + i * 0.2, 13.0, i * 4);
         fx_apply(i * 4 + 8);
         amiga_apply(i * 4 + 8, 1.7 + i * 0.2);
     }
@@ -1381,8 +1690,9 @@ static int pool_open(const char *dev)
         pitch_px = fi.line_length / (vi.bits_per_pixel / 8);
         close(fd);
         typography_set(g_visible_h);
-        printf("HUD: geom %ux%u scale=%d pitch=%d type head=%d body=%d\n",
-               g_visible_w, g_visible_h, SCAL, pitch_px, g_head_px, g_body_px);
+        g_rx = g_visible_w / RW; if (g_rx < 1) g_rx = 1;
+        printf("HUD: geom %ux%u scale=%d retro_x%d pitch=%d type head=%d body=%d\n",
+               g_visible_w, g_visible_h, SCAL, g_rx, pitch_px, g_head_px, g_body_px);
         return 1;
     }
     printf("HUD: fbdev geometry read failed, falling back to pool length\n");
@@ -1443,8 +1753,9 @@ int main(int argc, char **argv)
         tick_push("READ lsn=532104 n=128 (256K)");
         tick_push("CLOSE rc=0");
         profile_load();
-        if (getenv("HUD_CALIB")) { g_fx = 0; draw_calib(); }   /* measure RAW */
-        else scene(&hp, 1.7, 13.0, 8);
+        if (getenv("HUD_CALIB")) { g_fx = 0; draw_calib(); }
+        else if (!getenv("HUD_LEGACY")) { g_fx = 0; scene_retro(&hp, 1.7, 13.0, 8); retro_present(); }
+        else if (getenv("HUD_LEGACY")) scene(&hp, 1.7, 13.0, 8);
         fx_apply(8);
         amiga_apply(8, 1.7);
         printf("HUD: effects mask 0x%x applied\n", g_fx);

@@ -444,6 +444,14 @@ sacd-emu-daemons:
 sacd-hw-payload-check:
 	sh experiments/sacd_reconstruct/tools/sacd_hardware.sh payload-check
 
+## SACD reconstruction :: sacd-daemon-map :: regenerate docs/DAEMON-MAP.md from the linker map :: per-module byte budget, biggest translation units, source tree, threads, delta table — numbers parsed from release.map so the illustration cannot drift from the binary
+.PHONY: sacd-daemon-map
+sacd-daemon-map:
+	python3 experiments/sacd_reconstruct/tools/daemon_map.py \
+	  --map $${MAP:-/Users/clint/code/sacd-reconstruct/reconstruct/release/release.map} \
+	  --src $${SRC:-/Users/clint/code/sacd-reconstruct/reconstruct} \
+	  --out experiments/sacd_reconstruct/docs/DAEMON-MAP.md
+
 ## SACD reconstruction :: sacd-public-publish :: refresh the PUBLIC branch of the standalone repo :: assembles the public tree from staging (Sony binaries out, identifiers scrubbed, EXIF stripped), runs the audit as a gate, then commits and pushes `public`
 .PHONY: sacd-public-publish
 sacd-public-publish:

@@ -19,6 +19,10 @@ one of four CPSA compute ids.
 
 ## 2. The daemon (what we reconstruct)
 
+For the binary's actual composition — byte budget per module, the largest
+translation units, the source tree and the community delta table, all parsed from
+the linker map — see **[DAEMON-MAP.md](DAEMON-MAP.md)**.
+
 ```
   TCP :2002  ──►  protocol (nanopb-era protobuf framing)
                    DISC_OPEN   -> result

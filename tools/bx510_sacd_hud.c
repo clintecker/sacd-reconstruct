@@ -71,10 +71,13 @@ static int g_head_px = 18, g_body_px = 12;
 static void typography_set(int visible_h)
 {
     if (visible_h <= 0) visible_h = 720;
-    g_head_px = visible_h / 26;      /* ~28 px at 720p, 42 at 1080p */
-    g_body_px = visible_h / 38;      /* ~19 px at 720p, 28 at 1080p */
-    if (g_head_px < 16) g_head_px = 16;
-    if (g_body_px < 12) g_body_px = 12;
+    /* readable from a sofa, not from a desk: head ~H/14 (77 px at 1080p),
+       body ~H/20 (54), small ~H/28 (38). Earlier values (H/26, H/38) were
+       "comically small" on the actual panel. */
+    g_head_px = visible_h / 14;
+    g_body_px = visible_h / 20;
+    if (g_head_px < 24) g_head_px = 24;
+    if (g_body_px < 18) g_body_px = 18;
 }
 
 static void px_blend(int xd, int yd, unsigned int c, unsigned a)
@@ -1055,17 +1058,18 @@ static void amiga_apply(int frame, double t)
 
 static void scene(const hud_t *h, double t, double fps, int frame)
 {
-    /* ---- type scale from the panel, in DEVICE px (no logical-px constants) --
-       head  = H/26  (~28 at 720p, 42 at 1080p)
-       body  = H/38  (~19 / 28)
-       small = H/54  (~13 / 20)                                        */
+    /* ---- one baseline grid drives everything -----------------------------
+       Type in DEVICE px from the panel (head H/26, body H/38, small 3/4 body);
+       every position below is expressed in those line heights, so the layout
+       looks the same at 720p and 1080p. */
     int head = g_head_px, body = g_body_px, small = g_body_px * 3 / 4;
-    int H = g_visible_h ? g_visible_h : CH * SCAL;
-    int lh_head = line_h(head) / SCAL + 1;
-    int lh_body = line_h(body) / SCAL + 1;
-    int lh_small = line_h(small) / SCAL + 1;
-    int pad = body / SCAL / 2 + 2;
-    char l[128], up[16];
+    int lhH = line_h(head) / SCAL + 1;
+    int lhB = line_h(body) / SCAL + 1;
+    int lhS = line_h(small) / SCAL + 1;
+    int pad  = lhS / 2 + 2;
+    int barh = lhS + pad;
+    int strip = lhS + pad;
+    char l[160], up[16];
     int i;
 
     /* ---- backdrop ---- */
@@ -1081,168 +1085,182 @@ static void scene(const hud_t *h, double t, double fps, int frame)
         { int sy = (int)(fmod(t * 60.0, CH)); rect(0, sy, CW, 1, 0x0b3a1c); }
     }
 
-    /* ---- status bar: height from the small face, not a constant ---- */
+    /* ---- status bar: title | clock | fps | state, all on one baseline ---- */
+    if (!(g_fx & AMIGA_COPPER)) rect(0, 0, CW, barh, C_PANEL);
     {
-        int barh = lh_small + pad * 2;
-        int yb = pad;
-        if (!(g_fx & AMIGA_COPPER)) rect(0, 0, CW, barh, C_PANEL);
-        text_top("SACD//RIPPER", pad, yb, small, C_PHOS);
-        snprintf(up, sizeof up, "%02lu:%02lu:%02lu", h->uptime_s / 3600,
-                 (h->uptime_s / 60) % 60, h->uptime_s % 60);
-        text_top(up, pad + 20, yb, small, C_PHOSD);
-        snprintf(l, sizeof l, "%.0f FPS", fps);
-        text_top_r(l, CW - pad - 14, yb, small, C_PHOSD);
-        text_top_r(h->clients_2002 ? "LIVE" : (h->listen_2002 ? "ARMED" : "IDLE"),
-                   CW - pad, yb, small, h->clients_2002 ? C_PHOS : C_AMBER);
-
-        /* ---- panels below the bar, equal height, footer clearance ---- */
+        int ty = pad / 2;
         {
-            int top = barh + pad;
-            int map_h = lh_small + pad;
-            int bot = CH - lh_small - map_h - pad * 3;
-            int lw = (CW - pad * 3) * 6 / 10;
-            int rx = pad * 2 + lw;
-            int rw = CW - rx - pad;
-            int lip, rip, riy;
-            snprintf(l, sizeof l, "CPSA %s  %s  PID %d",
-                     h->module_loaded ? "LOADED" : "DOWN",
-                     h->listen_2002 ? ":2002 LISTEN" : ":2002 CLOSED", h->daemon_pid);
-            if (!(g_fx & AMIGA_COPPER)) { rect(pad, top, lw, bot - top, C_PANEL); }
-            box(pad, top, lw, bot - top, C_FRAME);
-            if (!(g_fx & AMIGA_COPPER)) { rect(rx, top, rw, bot - top, C_PANEL); }
-            box(rx, top, rw, bot - top, C_FRAME);
+            int tw = text_top("SACD//RIPPER", pad, ty, small, C_PHOS);
+            snprintf(up, sizeof up, "%02lu:%02lu:%02lu", h->uptime_s / 3600,
+                     (h->uptime_s / 60) % 60, h->uptime_s % 60);
+            text_top(up, pad + tw + lhS / 2, ty, small, C_PHOSD);
+        }
+        snprintf(l, sizeof l, "%.0fFPS", fps);
+        text_top_r(l, CW - pad - 16, ty, small, C_PHOSD);
+        text_top_r(h->clients_2002 ? "LIVE" : (h->listen_2002 ? "ARMED" : "IDLE"),
+                   CW - pad, ty, small, h->clients_2002 ? C_PHOS : C_AMBER);
+        rect(pad, barh - 1, CW - pad * 2, 1, C_FRAME);
+    }
 
-            /* left: state (head) then the ticker (body) */
-            lip = pad * 2; rip = rx + pad; riy = top + pad;
-            text_top("EVENT STREAM", lip, top + pad, small, C_CYAN);
-            {
-                int y = top + pad + lh_small + 2;
-                int avail = lw - pad * 2;
-                int n, shown = 0;
-                char cut[80];
-                snprintf(cut, sizeof cut, "STATE %s", h->state);
-                text_top(cut, lip, y, head, C_WHITE); y += lh_head + 2;
-                snprintf(cut, sizeof cut, "CLIENTS %d   READ %lluM",
-                         h->clients_2002, (unsigned long long)(h->read_bytes >> 20));
-                text_top(cut, lip, y, body, h->clients_2002 ? C_PHOS : C_PHOSD);
-                y += lh_body + 3;
-                n = tick_n < TICK_MAX ? tick_n : TICK_MAX;
-                for (i = 0; i < n && y < bot - lh_body; i++) {
-                    int idx = (tick_n - n + i) % TICK_MAX;
-                    if (idx < 0) continue;
-                    snprintf(l, sizeof l, "%s", tick[idx]);
-                    {   /* clip to the panel width using the REAL metrics */
-                        int wpx = ttf_width(l, body / SCAL ? body / SCAL : 6);
-                        while (wpx > avail && strlen(l) > 1) {
-                            l[strlen(l) - 1] = 0;
-                            wpx = ttf_width(l, body / SCAL ? body / SCAL : 6);
-                        }
-                    }
-                    text_top(l, lip, y, body,
-                             (i >= n - 2) ? C_WHITE : (i >= n - 5 ? C_PHOS : C_PHOSD));
-                    y += lh_body;
-                    shown++;
-                }
-                if (!shown) text_top("(idle)", lip, y, body, C_PHOSD);
-                if (h->note[0]) text_top(h->note, lip, bot - lh_small - 2, small, C_RED);
-            }
+    /* ---- panels ---- */
+    {
+        int top = barh + pad;
+        int bot = CH - strip - pad * 2;
+        int lw = (CW - pad * 3) * 6 / 10;
+        int rx = pad * 2 + lw, rw = CW - rx - pad;
+        int y, avail, x0;
 
-            /* right: throughput, sparkline, disc map, stats, alerts, ball */
-            text_top("TELEMETRY", rip, top + pad, small, C_CYAN);
-            riy = top + pad + lh_small + 2;
-            snprintf(l, sizeof l, "%.1f MB/s", ev_mbps ? (double)ev_mbps : h->mbps);
-            text_top(l, rip, riy, head, C_WHITE); riy += lh_head + 4;
-            for (i = 0; i < 39; i++) spark[i] = spark[i + 1];
-            { double m = (double)(ev_mbps ? ev_mbps : h->mbps) * 2.0;
-              spark[39] = (unsigned)(m > 70 ? 70 : m); }
-            {
-                int sw2 = (rw - pad * 2) / 38, sh2 = lh_body * 3;
-                for (i = 0; i < 38; i++)
-                    rect(rip + i * sw2, riy + sh2 - (int)spark[i] / 2, sw2 - 1,
-                         (int)spark[i] / 2, (i > 28) ? C_AMBER : C_PHOS);
-                riy += sh2 + 4;
-            }
-            {   /* disc map sized to the panel, head position from the last LSN */
-                unsigned long long total = DISC_SECTORS * SECTOR_BYTES;
-                int mw = rw - pad * 2, mh = lh_small;
-                int cells = 36, lit = total ? (int)((double)ev_last_lsn * SECTOR_BYTES /
-                                                    (double)total * cells) : 0;
-                int cw = mw / cells;
-                if (lit > cells) lit = cells;
-                box(rip, riy, mw, mh, C_FRAME);
-                for (i = 0; i < cells; i++) {
-                    unsigned int c = C_PHOSD;
-                    if (i < lit) c = C_PHOS;
-                    if (i == lit) c = C_WHITE;
-                    rect(rip + 2 + i * cw, riy + 2, cw - 1, mh - 4, c);
+        if (!(g_fx & AMIGA_COPPER)) rect(pad, top, lw, bot - top, C_PANEL);
+        box(pad, top, lw, bot - top, C_FRAME);
+        if (!(g_fx & AMIGA_COPPER)) rect(rx, top, rw, bot - top, C_PANEL);
+        box(rx, top, rw, bot - top, C_FRAME);
+
+        /* --- left: header, state block, ticker --- */
+        x0 = pad * 2;
+        y = top + pad;
+        text_top("EVENT STREAM", x0, y, small, C_CYAN);
+        y += lhS;
+        rect(x0, y, lw - pad * 2, 1, C_GRID);
+        y += pad;
+
+        snprintf(l, sizeof l, "STATE  %s", h->state);
+        text_top(l, x0, y, head, C_WHITE); y += lhH;
+        snprintf(l, sizeof l, "CPSA %s   :2002 %s", h->module_loaded ? "LOADED" : "DOWN",
+                 h->listen_2002 ? "LISTEN" : "CLOSED");
+        text_top(l, x0, y, body, (h->module_loaded && h->listen_2002) ? C_PHOS : C_AMBER);
+        y += lhB;
+        snprintf(l, sizeof l, "CLIENTS %d   PID %d", h->clients_2002, h->daemon_pid);
+        text_top(l, x0, y, body, h->clients_2002 ? C_PHOS : C_PHOSD);
+        y += lhB + pad;
+        rect(x0, y, lw - pad * 2, 1, C_GRID);
+        y += pad;
+
+        avail = lw - pad * 2;
+        {
+            int facts_top = bot - (lhS * 4 + pad);
+            int n = tick_n < TICK_MAX ? tick_n : TICK_MAX;
+            for (i = 0; i < n && y < facts_top - lhS; i++) {
+                int idx = (tick_n - n + i) % TICK_MAX;
+                int wpx;
+                if (idx < 0) continue;
+                snprintf(l, sizeof l, "%s", tick[idx]);
+                wpx = ttf_width(l, small / SCAL ? small / SCAL : 6);
+                while (wpx > avail && strlen(l) > 2) {
+                    l[strlen(l) - 1] = 0;
+                    wpx = ttf_width(l, small / SCAL ? small / SCAL : 6);
                 }
-                riy += mh + lh_small / 2;
+                text_top(l, x0, y, small,
+                         (i >= n - 2) ? C_WHITE : (i >= n - 5 ? C_PHOS : C_PHOSD));
+                y += lhS;
             }
-            snprintf(l, sizeof l, "REQ %llu  SEC %llu  LSN %llu",
-                     ev_requests, ev_sectors, ev_last_lsn);
-            text_top(l, rip, riy, body, C_PHOS); riy += lh_body;
-            snprintf(l, sizeof l, "MEM %luM  TMP %u%%",
-                     h->memfree_kb / 1024,
-                     h->tmp_pct);
-            text_top(l, rip, riy, body, h->tmp_pct > 90 ? C_RED : C_PHOSD); riy += lh_body;
-            snprintf(l, sizeof l, "CPSA %d  %s", h->misc_201, h->state);
-            text_top(l, rip, riy, body, C_WHITE); riy += lh_body + lh_small / 2;
-            {
-                int ah = lh_small + lh_small / 2 + 4;
-                box(rip, riy, rw - pad * 2, ah, C_FRAME);
-                text_top("ALERTS", rip + 2, riy + 2, small, C_CYAN);
-                text_top(h->note[0] ? h->note : "NONE", rip + 2, riy + 2 + lh_small,
-                         small, h->note[0] ? C_RED : C_PHOS);
-                riy += ah + lh_small;
-            }
-            if (g_fx & AMIGA_BOING) amiga_boing(t);
-            else {
-                int cx = rip + (rw - pad) / 2, cy = riy + (bot - riy) / 2 - lh_small;
-                int r = (bot - riy) / 4;
-                if (r > lh_body * 2) r = lh_body * 2;
-                if (r > 8) {
-                    static const double v[8][3] = {
-                        {-1,-1,-1},{1,-1,-1},{1,1,-1},{-1,1,-1},
-                        {-1,-1, 1},{1,-1, 1},{1,1, 1},{-1,1, 1} };
-                    static const int e[12][2] = {
-                        {0,1},{1,2},{2,3},{3,0},{4,5},{5,6},{6,7},{7,4},{0,4},{1,5},{2,6},{3,7} };
-                    int p[8][2], k;
-                    double a = t * 0.9, ca = cos(a), sa = sin(a), cb = cos(t * 0.37), sb = sin(t * 0.37);
-                    for (k = 0; k < 8; k++) {
-                        double x = v[k][0], y = v[k][1], z = v[k][2], x1, z1, y1;
-                        x1 = x * ca - z * sa; z1 = x * sa + z * ca;
-                        y1 = y * cb - z1 * sb; z1 = y * sb + z1 * cb;
-                        { double d = 4.0 / (4.0 + z1);
-                          p[k][0] = cx + (int)(x1 * r * d);
-                          p[k][1] = cy + (int)(y1 * r * d); }
-                    }
-                    for (k = 0; k < 12; k++)
-                        line(p[e[k][0]][0], p[e[k][0]][1], p[e[k][1]][0], p[e[k][1]][1], C_PHOSD);
+            if (!n) text_top("WAITING FOR THE DAEMON TO SPEAK", x0, y, body, C_PHOSD);
+        }
+        {   /* bottom block: the facts a photo can be checked against */
+            int by = bot - (lhS * 4 + pad);
+            snprintf(l, sizeof l, "ISO  %llu SECTORS  x 2048 B",
+                     (unsigned long long)DISC_SECTORS);
+            text_top(l, x0, by, small, C_PHOSD); by += lhS;
+            snprintf(l, sizeof l, "READ %llu M   ERRORS 0",
+                     (unsigned long long)(h->read_bytes >> 20));
+            text_top(l, x0, by, small, C_PHOSD); by += lhS;
+            snprintf(l, sizeof l, "CPSA MINOR 201 %s   %s",
+                     h->misc_201 ? "OK" : "GONE",
+                     h->listen_2002 ? "PORT OPEN" : "PORT CLOSED");
+            text_top(l, x0, by, small, h->listen_2002 ? C_PHOS : C_AMBER); by += lhS;
+            if (h->note[0]) text_top(h->note, x0, by, small, C_RED);
+        }
+
+        /* --- right: throughput, sparkline, stats, alerts, cube --- */
+        x0 = rx + pad;
+        y = top + pad;
+        text_top("TELEMETRY", x0, y, small, C_CYAN);
+        y += lhS;
+        rect(x0, y, rw - pad * 2, 1, C_GRID);
+        y += pad;
+
+        snprintf(l, sizeof l, "%.1f MB/s", ev_mbps ? (double)ev_mbps : h->mbps);
+        text_top(l, x0, y, head, C_WHITE);
+        snprintf(l, sizeof l, "%llu REQ", ev_requests);
+        text_top_r(l, CW - pad * 2, y + (lhH - lhS), small, C_PHOSD);
+        y += lhH;
+
+        for (i = 0; i < 39; i++) spark[i] = spark[i + 1];
+        { double m = (double)(ev_mbps ? ev_mbps : h->mbps) * 2.0;
+          spark[39] = (unsigned)(m > 70 ? 70 : m); }
+        {
+            int sw2 = (rw - pad * 2) / 38, sh2 = lhB * 2;
+            for (i = 0; i < 38; i++)
+                rect(x0 + i * sw2, y + sh2 - (int)spark[i] / 2, sw2 - 1,
+                     (int)spark[i] / 2, (i > 28) ? C_AMBER : C_PHOS);
+            y += sh2 + pad;
+        }
+        snprintf(l, sizeof l, "SEC %llu", ev_sectors);
+        text_top(l, x0, y, body, C_PHOS);
+        snprintf(l, sizeof l, "LSN %llu", ev_last_lsn);
+        text_top_r(l, CW - pad * 2, y, body, C_PHOSD);
+        y += lhB;
+        snprintf(l, sizeof l, "MEM %luM", h->memfree_kb / 1024);
+        text_top(l, x0, y, small, C_PHOS);
+        snprintf(l, sizeof l, "TMP %u%%", h->tmp_pct);
+        text_top_r(l, CW - pad * 2, y, small, h->tmp_pct > 90 ? C_RED : C_PHOSD);
+        y += lhS + pad;
+
+        {
+            int ah = lhS + lhS / 2 + pad;
+            box(x0, y, rw - pad * 2, ah, C_FRAME);
+            text_top("ALERTS", x0 + 2, y + 2, small, C_CYAN);
+            text_top(h->note[0] ? h->note : "NONE", x0 + 2, y + 2 + lhS,
+                     small, h->note[0] ? C_RED : C_PHOS);
+            y += ah + pad;
+        }
+        if (g_fx & AMIGA_BOING) amiga_boing(t);
+        else {
+            int cx = x0 + (rw - pad * 2) / 2;
+            int cy = y + (bot - y) / 2 - lhS;
+            int r = (bot - y) / 4;
+            if (r > lhB * 2) r = lhB * 2;
+            if (r > 8) {
+                static const double v[8][3] = {
+                    {-1,-1,-1},{1,-1,-1},{1,1,-1},{-1,1,-1},
+                    {-1,-1, 1},{1,-1, 1},{1,1, 1},{-1,1, 1} };
+                static const int e[12][2] = {
+                    {0,1},{1,2},{2,3},{3,0},{4,5},{5,6},{6,7},{7,4},{0,4},{1,5},{2,6},{3,7} };
+                int p[8][2], k;
+                double a = t * 0.9, ca = cos(a), sa = sin(a), cb = cos(t * 0.37), sb = sin(t * 0.37);
+                for (k = 0; k < 8; k++) {
+                    double x = v[k][0], yv = v[k][1], z = v[k][2], x1, z1, y1;
+                    x1 = x * ca - z * sa; z1 = x * sa + z * ca;
+                    y1 = yv * cb - z1 * sb; z1 = yv * sb + z1 * cb;
+                    { double d = 4.0 / (4.0 + z1);
+                      p[k][0] = cx + (int)(x1 * r * d);
+                      p[k][1] = cy + (int)(y1 * r * d); }
                 }
+                for (k = 0; k < 12; k++)
+                    line(p[e[k][0]][0], p[e[k][0]][1], p[e[k][1]][0], p[e[k][1]][1], C_PHOSD);
             }
         }
-        {   /* full-width disc map strip, above the footer */
-            unsigned long long total = DISC_SECTORS * SECTOR_BYTES;
-            int top2 = CH - lh_small - (lh_small + pad) - pad;
-            int mh = lh_small + pad / 2;
-            int x0 = pad, wpx = CW - pad * 2, cells = 72, cw = wpx / cells;
-            int lit = total ? (int)((double)ev_last_lsn * SECTOR_BYTES / (double)total * cells) : 0;
-            char lab[64];
-            if (lit > cells) lit = cells;
-            box(x0, top2, wpx, mh, C_FRAME);
-            for (i = 0; i < cells; i++) {
-                unsigned int c = C_PHOSD;
-                if (i < lit) c = C_PHOS;
-                if (i == lit) c = C_WHITE;
-                rect(x0 + 2 + i * cw, top2 + 2, cw - 1, mh - 4, c);
-            }
-            snprintf(lab, sizeof lab, "DISC %llu/%llu",
-                     ev_last_lsn, (unsigned long long)DISC_SECTORS);
-            text_top_r(lab, CW - pad, top2 - lh_small - 2, small, C_PHOSD);
-        }
-        /* footer */
-        text_top("SACD HUD", pad, CH - lh_small - 1, small, C_PHOSD);
+    }
 
+    /* ---- full-width disc strip, label to its left, counters right ---- */
+    {
+        unsigned long long total = DISC_SECTORS * SECTOR_BYTES;
+        int top2 = CH - strip - pad;
+        int mh = strip - pad;
+        int x0 = pad, wpx = CW - pad * 2, cells = 96, cw = wpx / cells;
+        int lit = total ? (int)((double)ev_last_lsn * SECTOR_BYTES / (double)total * cells) : 0;
+        if (lit > cells) lit = cells;
+        box(x0, top2, wpx, mh, C_FRAME);
+        for (i = 0; i < cells; i++) {
+            unsigned int c = C_PHOSD;
+            if (i < lit) c = C_PHOS;
+            if (i == lit) c = C_WHITE;
+            rect(x0 + 2 + i * cw, top2 + 2, cw - 1, mh - 4, c);
+        }
+        snprintf(l, sizeof l, "DISC %llu/%llu  %.0f%%",
+                 ev_last_lsn, (unsigned long long)DISC_SECTORS,
+                 total ? 100.0 * (double)ev_last_lsn * SECTOR_BYTES / (double)total : 0.0);
+        text_top(l, pad, CH - lhS - 1, small, C_PHOSD);
+        text_top_r("CPSA//MT85", CW - pad, CH - lhS - 1, small, C_MAGENTA);
     }
 }
 

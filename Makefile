@@ -444,6 +444,11 @@ sacd-emu-daemons:
 sacd-hw-payload-check:
 	sh experiments/sacd_reconstruct/tools/sacd_hardware.sh payload-check
 
+## SACD reconstruction :: sacd-public-publish :: refresh the PUBLIC branch of the standalone repo :: assembles the public tree from staging (Sony binaries out, identifiers scrubbed, EXIF stripped), runs the audit as a gate, then commits and pushes `public`
+.PHONY: sacd-public-publish
+sacd-public-publish:
+	sh experiments/sacd_reconstruct/tools/public_publish.sh
+
 ## SACD hardware :: sacd-hud-anim :: render the HUD as an animated GIF + MP4 :: runs the host simulator for 40 frames (0.2 s apart) and assembles both; the panel animates the same way
 .PHONY: sacd-hud-anim
 sacd-hud-anim:

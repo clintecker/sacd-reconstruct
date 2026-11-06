@@ -1147,6 +1147,8 @@ static const unsigned int RPal[16] = {
 
 static unsigned char rbuf[RW * CH * 0]; /* placeholder (unused) */
 static unsigned char retro[RW * 180];
+static unsigned retro_fx_mask = 0xf | 16 | 64;
+static unsigned int RPalLive[16];
 
 #define RP(x, y, c) do { if ((x) >= 0 && (y) >= 0 && (x) < RW && (y) < 180) retro[(y) * RW + (x)] = (unsigned char)(c); } while (0)
 
@@ -1196,15 +1198,35 @@ static void rtext_r(const char *str, int xr, int y, int c) { rtext(str, xr - rte
 /* scale the 320x180 index canvas into the device framebuffer, integer x6 */
 static void retro_fx(int frame);
 
-static void retro_present(void)
+static void retro_present(int frame, double t)
 {
     int y, x, sy, sx;
-    for (y = 0; y < 180; y++)
+    int cyc = (retro_fx_mask & 64) ? (frame % 8) : 0;
+    int sine = (retro_fx_mask & 128);
+    if (retro_fx_mask & 64) {          /* palette cycling on the accent entries */
+        memcpy(RPalLive, RPal, sizeof RPal);
+        {   int k;
+            for (k = 0; k < 8; k++) {
+                static const int acc[8] = { 4, 5, 6, 7, 14, 13, 11, 1 };
+                int a = acc[k], b = acc[(k + cyc) % 8];
+                RPalLive[a] = RPal[b];
+            }
+        }
+    } else {
+        memcpy(RPalLive, RPal, sizeof RPal);
+    }
+    for (y = 0; y < 180; y++) {
+        int shift = 0;
+        if (sine && y > 20) shift = (int)(3 * sin(y * 0.12 + t * 3.0));
         for (x = 0; x < RW; x++) {
-            unsigned int col = RPal[retro[y * RW + x] & 15];
+            int xs = x + shift;
+            if (xs < 0) xs = 0;
+            if (xs >= RW) xs = RW - 1;
+            unsigned int col = RPalLive[retro[y * RW + xs] & 15];
             for (sy = 0; sy < g_rx; sy++) {
                 unsigned int *o = fb + (size_t)(y * g_rx + sy) * pitch_px + (size_t)x * g_rx;
                 for (sx = 0; sx < g_rx; sx++) o[sx] = reorder(col);
+            }
             }
         }
 }
@@ -1221,7 +1243,88 @@ static const unsigned char RDim[16] = {
     10, 9, 9, 11,   /* white->light slate, slate, slate, blue */
     12, 13, 0, 15
 };
-static unsigned retro_fx_mask = 0xf;
+
+
+/* ---- DOS-era effects ---------------------------------------------------
+   Canvas-level, palette-index driven:
+     16 plasma        32 starfield warp    64 palette cycling
+    128 sine wave    256 rotozoom/pageturn 512 fire strip
+   All operate on the 320x180 index buffer or on the palette, so the output
+   stays chunky. */
+static unsigned int RPalLive[16];
+
+static void dos_plasma(double t)
+{
+    int x, y;
+    for (y = 0; y < 180; y++)
+        for (x = 0; x < RW; x++) {
+            double v = sin(x * 0.06 + t * 1.4) + sin(y * 0.08 - t * 1.1)
+                     + sin((x + y) * 0.04 + t * 0.7);
+            int idx;
+            /* only use the DARK end of the palette so text stays readable */
+            static const unsigned char ramp[8] = { 0, 9, 11, 9, 1, 9, 11, 0 };
+            idx = (int)((v + 3.0) * 1.1);
+            if (idx < 0) idx = 0;
+            if (idx > 7) idx = 7;
+            if (retro[y * RW + x] == 0 || retro[y * RW + x] == 9)
+                retro[y * RW + x] = ramp[idx];
+        }
+}
+
+static void dos_starfield(double t)
+{
+    static int sx[48], sy[48], sz[48];
+    static int init;
+    int i;
+    if (!init) {
+        for (i = 0; i < 48; i++) {
+            sx[i] = (int)(fx_rand() % 320) - 160;
+            sy[i] = (int)(fx_rand() % 180) - 90;
+            sz[i] = 8 + (int)(fx_rand() % 120);
+        }
+        init = 1;
+    }
+    for (i = 0; i < 48; i++) {
+        int px2, py2;
+        sz[i] -= 3;
+        if (sz[i] < 4) { sz[i] = 120; sx[i] = (int)(fx_rand() % 320) - 160; sy[i] = (int)(fx_rand() % 180) - 90; }
+        px2 = 160 + sx[i] * 40 / sz[i];
+        py2 = 90 + sy[i] * 40 / sz[i];
+        if (px2 < 0 || py2 < 0 || px2 >= RW || py2 >= 180) continue;
+        if (retro[py2 * RW + px2] == 0 || retro[py2 * RW + px2] == 9)
+            retro[py2 * RW + px2] = (sz[i] < 40) ? 8 : (sz[i] < 80 ? 10 : 9);
+    }
+    (void)t;
+}
+
+static int dos_fire_strip(int y0)
+{
+    /* cheap 1-D fire along the bottom strip: lfsr noise, low = hot */
+    static unsigned char heat[76];
+    static int init;
+    int i;
+    if (!init) { for (i = 0; i < 76; i++) heat[i] = 0; init = 1; }
+    for (i = 0; i < 76; i++) {
+        int h = heat[i];
+        int n = (int)(fx_rand() % 3);
+        h = h - n + (n == 0 ? 1 : 0);
+        if (h < 0) h = 0;
+        if (h > 3) h = 3;
+        heat[i] = (unsigned char)h;
+    }
+    for (i = 0; i < 76; i++) {
+        static const unsigned char fcol[4] = { 12, 4, 14, 15 };  /* hot->cool */
+        int h = heat[i];
+        rfill(88 + i * 3, y0 + 1 + (3 - h), 2, h ? h : 1, (h > 2) ? 15 : fcol[h]);
+    }
+    return 0;
+}
+
+static void dos_sine(double t, int frame)
+{
+    /* per-row horizontal displacement: sampled at present time */
+    (void)t; (void)frame;
+}
 
 static void retro_fx(int frame)
 {
@@ -1306,6 +1409,8 @@ static void scene_retro(const hud_t *h, double t, double fps, int frame)
     int i;
 
     rfill(0, 0, RW, 180, 0);
+    if (retro_fx_mask & 16) dos_plasma(t);
+    if (retro_fx_mask & 32) dos_starfield(t);
     rfill(0, 0, 3, 180, 9);
     rfill(0, 0, 3, 20, 4);
 
@@ -1346,6 +1451,7 @@ static void scene_retro(const hud_t *h, double t, double fps, int frame)
     {
         int x = 88, y = 20, w = 118, hgt = 106;
         int cw = 3, ch = 4;                  /* canvas px per cell */
+        rfill(x, y + 11, w, hgt - 11, 9);     /* panel floor */
         int gx = x + 4, gy = y + 15;
         int cols = (w - 10) / cw, rows = (hgt - 34) / ch;
         static const unsigned int kcol[EVR] = { 2, 7, 4, 12, 6 };
@@ -1390,6 +1496,7 @@ static void scene_retro(const hud_t *h, double t, double fps, int frame)
     /* ---- right panel: TELEMETRY (x 202..316) ---- */
     {
         int x = 210, y = 20, w = 106;
+        rfill(x, y + 11, w, 106 - 11, 9);
         rcap_text(x, y, "TELEMETRY", 4);
         rfill(x + w, y + 10, 1, 106, 4);
         {
@@ -1424,6 +1531,7 @@ static void scene_retro(const hud_t *h, double t, double fps, int frame)
             int v = (int)((i * 37 + frame * 3) % 100);
             rfill(88 + i * 3, y + 1, 2, 8, v > 70 ? 4 : (v > 30 ? 2 : 13));
         }
+        if (retro_fx_mask & 512) dos_fire_strip(y);
         {   /* travelling highlight along the strip (LCARS "activity" sweep) */
             int hp = (frame * 3) % 76;
             rfill(88 + hp * 3, y + 1, 2, 8, 8);
@@ -1691,7 +1799,7 @@ int main(int argc, char **argv)
             scene_retro(&h, 1.7 + i * 0.2, 13.0, i * 4);
             if (getenv("HUD_RETRO_FX")) retro_fx_mask = (unsigned)strtoul(getenv("HUD_RETRO_FX"), NULL, 0);
             retro_fx(i * 4);
-            retro_present();
+            retro_present(i * 4, 1.7 + i * 0.2);
         }
         else scene(&h, 1.7 + i * 0.2, 13.0, i * 4);
         fx_apply(i * 4 + 8);
@@ -1859,7 +1967,7 @@ int main(int argc, char **argv)
             if (getenv("HUD_RETRO_FX")) retro_fx_mask = (unsigned)strtoul(getenv("HUD_RETRO_FX"), NULL, 0);
             scene_retro(&hp, 1.7, 13.0, 8);
             retro_fx(8);
-            retro_present();
+            retro_present(8, 1.7);
         }
         else if (getenv("HUD_LEGACY")) scene(&hp, 1.7, 13.0, 8);
         fx_apply(8);

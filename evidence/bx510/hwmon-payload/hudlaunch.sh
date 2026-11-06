@@ -91,7 +91,11 @@ done
 # --- the HUD, plus the watchdog that keeps the leg alive ---
 cp "$D/sacd_hud" /tmp/sacd_hud 2>/dev/null
 chmod 755 /tmp/sacd_hud 2>/dev/null
-/tmp/sacd_hud "${HUD_SECS:-1800}" /tmp/cand.out >>"$L1" 2>&1 &
+# HUD_POOL=1 is REQUIRED: draw into the fbdev/pool slice with the RETRO canvas.
+# Without it the HUD takes the legacy DirectFB primary + Flip path (small text,
+# old layout) -- which is exactly what the panel kept showing (2026-11-05).
+HUD_POOL=1 HUD_FONT=/tmp/sony-font.ttf \
+    /tmp/sacd_hud "${HUD_SECS:-1800}" /tmp/cand.out >>"$L1" 2>&1 &
 HPID=$!
 printf '%s\n' "$HPID" >/tmp/sacd_hud.pid
 log "HUD started pid $HPID (watchdog active)"

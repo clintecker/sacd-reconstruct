@@ -13,6 +13,8 @@ H="${VM_USER:-aftermath}@${VM_HOST:-10.20.0.18}"
 P="${VM_PORT:-2222}"
 SRC="$EXP/tools/bx510_sacd_hud.c"
 OUT="$EXP/evidence/bx510/display-payload/sacd_hud"
+BUILD=$(sed -n 's/.*HUD_BUILD ==//p' /dev/null; shasum -a 256 "$SRC" | cut -c1-8)
+echo "build id: $BUILD"
 scp -q -o BatchMode=yes -P "$P" "$SRC" "$H:/tmp/bx510_sacd_hud.c"
 # vendored headers the HUD includes (stb_truetype, font8x8)
 scp -q -o BatchMode=yes -P "$P" "$EXP/tools/third_party/stb_truetype.h" "$EXP/tools/third_party/font8x8_basic.h" "$H:/tmp/"
@@ -21,7 +23,7 @@ set -e
 mkdir -p /tmp/third_party
 cp /tmp/stb_truetype.h /tmp/font8x8_basic.h /tmp/third_party/
 T=~/mt85src/DirectFB-1.2.7
-~/gnuarm/bin/arm-none-linux-gnueabi-gcc -O2 -std=gnu99 -Wall -Wextra -Wno-pragmas \
+~/gnuarm/bin/arm-none-linux-gnueabi-gcc -O2 -std=gnu99 -Wall -Wextra -Wno-pragmas -DHUD_BUILD=\"'$BUILD'\" \
   -I$T/include -I$T/lib -I$T/lib/direct -I$T -o /tmp/sacd_hud /tmp/bx510_sacd_hud.c \
   -L/tmp/rootfs/lib -ldirectfb -ldirect -lfusion -lpthread -lrt -lm
 ~/gnuarm/bin/arm-none-linux-gnueabi-strip /tmp/sacd_hud

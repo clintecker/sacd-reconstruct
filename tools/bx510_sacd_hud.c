@@ -1121,6 +1121,10 @@ static void amiga_apply(int frame, double t)
    readouts) in an Amiga/Video-Toaster palette, with dystopian capture-farm
    labelling.
    ========================================================================= */
+#ifndef HUD_BUILD
+#define HUD_BUILD "dev"
+#endif
+
 #define RW 320
 #define RH 180
 static int g_rx = 6;               /* integer scale: visible_w / RW */
@@ -1541,6 +1545,7 @@ static void scene_retro(const hud_t *h, double t, double fps, int frame)
         rtext("Z80 NODE FARM", 4, y + 15, 3);
         rtext_r(h->note[0] ? h->note : "NOMINAL", RW - 4, y + 15, h->note[0] ? 12 : 2);
         rtext("CPSA//MT85", 4, y + 25, 6);
+        rtext(HUD_BUILD, 150, y + 25, 10);
         {   /* PERMANENT COLOUR KEY: the photo settles channel order.
                Read left-to-right: RED, GREEN, BLUE, CYAN, MAGENTA, YELLOW.
                If the first chip is not red on the TV, the pool order is wrong
@@ -1969,7 +1974,16 @@ int main(int argc, char **argv)
         tick_push("READ lsn=532104 n=128 (256K)");
         tick_push("CLOSE rc=0");
         profile_load();
-        if (getenv("HUD_CALIB")) { g_fx = 0; draw_calib(); }
+        if (getenv("HUD_CALIB")) {          /* calib pattern first, then the HUD */
+            g_fx = 0;
+            draw_calib();
+            printf("HUD: calibration pattern shown (6 s), then the HUD\n");
+            retro_present(0, 0.0);
+            sleep(6);
+            scene_retro(&hp, 1.7, 13.0, 8);
+            retro_fx(8);
+            retro_present(8, 1.7);
+        }
         else if (!getenv("HUD_LEGACY")) {
             g_fx = 0;
             if (getenv("HUD_RETRO_FX")) retro_fx_mask = (unsigned)strtoul(getenv("HUD_RETRO_FX"), NULL, 0);
@@ -1992,6 +2006,7 @@ int main(int argc, char **argv)
         g_selftest = selftest;
     }
     ret = DirectFBInit(&argc, &argv);
+    printf("HUD: build %s\n", HUD_BUILD);
     printf("HUD: DirectFBInit rc=%d\n", ret);
     if (ret) return 1;
     ret = DirectFBCreate(&dfb);

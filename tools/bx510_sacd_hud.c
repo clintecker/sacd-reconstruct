@@ -1137,7 +1137,7 @@ static const unsigned int RPal[16] = {
     0x33e0ff,  /* 7 cyan               */
     0xe8ffe8,  /* 8 white              */
     0x1a1a24,  /* 9 slate              */
-    0x4a4a66,  /* 10 mid slate         */
+    0x9aa2c0,  /* 10 light slate (TEXT-safe: was 0x4a4a66, unreadable) */
     0x0d3a5c,  /* 11 deep blue         */
     0xc02040,  /* 12 alarm red         */
     0x0a7a30,  /* 13 dark green        */
@@ -1266,7 +1266,7 @@ static void scene_retro(const hud_t *h, double t, double fps, int frame)
         int tw;
         rtext("SACD//RIPPER", 88, 5, 2);
         tw = rtext_w("SACD//RIPPER");
-        rtext("UNIT 0x1F", 88 + tw + 8, 5, 10);
+        rtext("UNIT 0x1F", 88 + tw + 8, 5, 3);
         rcap_text(316 - rcap_w(h->clients_2002 ? "LIVE" : (h->listen_2002 ? "ARMED" : "IDLE")), 4,
                   h->clients_2002 ? "LIVE" : (h->listen_2002 ? "ARMED" : "IDLE"),
                   h->clients_2002 ? 2 : 4);
@@ -1316,7 +1316,7 @@ static void scene_retro(const hud_t *h, double t, double fps, int frame)
             int ly = gy + rows * ch + 3 + (r / 3) * 10;
             int lxx = gx + (r % 3) * 34;
             rfill(lxx, ly + 1, 3, 4, kcol[r]);
-            rtext(knm[r], lxx + 5, ly, 10);
+            rtext(knm[r], lxx + 5, ly, 3);
         }
         (void)lx;
     }
@@ -1345,8 +1345,8 @@ static void scene_retro(const hud_t *h, double t, double fps, int frame)
             snprintf(l, sizeof l, "SEC %llu", ev_sectors); rtext(l, x + 3, yy, 2); yy += 9;
             snprintf(l, sizeof l, "LSN %llu", ev_last_lsn); rtext(l, x + 3, yy, 2); yy += 9;
             snprintf(l, sizeof l, "TMP %u%%", h->tmp_pct);
-            rtext(l, x + 3, yy, h->tmp_pct > 90 ? 12 : 13); yy += 9;
-            rtext(h->note[0] ? h->note : "NOMINAL", x + 3, yy, h->note[0] ? 12 : 13);
+            rtext(l, x + 3, yy, h->tmp_pct > 90 ? 12 : 2); yy += 9;
+            rtext(h->note[0] ? h->note : "NOMINAL", x + 3, yy, h->note[0] ? 12 : 2);
         }
     }
 
@@ -1359,12 +1359,12 @@ static void scene_retro(const hud_t *h, double t, double fps, int frame)
             rfill(88 + i * 3, y + 1, 2, 8, v > 70 ? 4 : (v > 30 ? 2 : 13));
         }
         rfill(4, y + 12, RW - 8, 1, 9);
-        rtext("Z80 NODE FARM", 4, y + 15, 10);
-        rtext_r(h->note[0] ? h->note : "NOMINAL", RW - 4, y + 15, h->note[0] ? 12 : 13);
+        rtext("Z80 NODE FARM", 4, y + 15, 3);
+        rtext_r(h->note[0] ? h->note : "NOMINAL", RW - 4, y + 15, h->note[0] ? 12 : 2);
         rtext("CPSA//MT85", 4, y + 25, 6);
         snprintf(up, sizeof up, "%02lu:%02lu:%02lu", h->uptime_s / 3600,
                  (h->uptime_s / 60) % 60, h->uptime_s % 60);
-        rtext_r(up, RW - 4, y + 25, 10);
+        rtext_r(up, RW - 4, y + 25, 3);
     }
 }
 

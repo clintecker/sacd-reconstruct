@@ -43,6 +43,11 @@ for f in experiments/sacd_reconstruct/tools/*.c \
          experiments/sacd_reconstruct/tools/fixture_gen.py; do
   cp "$f" "$STANDALONE/tools/$(basename "$f")"
 done
+# vendored headers (the HUD source includes them) and the public root docs
+mkdir -p "$STANDALONE/tools/third_party"
+cp experiments/sacd_reconstruct/tools/third_party/*.h \
+   "$STANDALONE/tools/third_party/" 2>/dev/null || true
+cp -R experiments/sacd_reconstruct/public "$STANDALONE/" 2>/dev/null || true
 mkdir -p "$STANDALONE/evidence/bx510-guest" "$STANDALONE/docs"
 cp -R experiments/sacd_reconstruct/evidence/bx510-guest/gates \
       "$STANDALONE/evidence/bx510-guest/" 2>/dev/null || true

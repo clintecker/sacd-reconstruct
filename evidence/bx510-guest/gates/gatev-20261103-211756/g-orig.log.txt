@@ -1,10 +1,10 @@
 # role=original
-# reference=/home/aftermath/sacd-verify/original/sacd_extract_160
+# reference=/home/you/sacd-verify/original/sacd_extract_160
 # sha256(original)=0fdcefdb84ae818be7385657eaf0960053f6e4452a82f19cbe6777f9c8cddb45
 # sha256(original)=0fdcefdb84ae818be7385657eaf0960053f6e4452a82f19cbe6777f9c8cddb45
 # sha256(release)=e91720fbbbd592505bde6630843b0495ff82a93e40c0e427aaa70a081ff9ae22
 # runner sha256=441dab7e3da57c0b83ccc788ef2746de6d646c7e5fc99cfb25e50548b02e1f8c
-# invocation: bx510_phase0_probe.py --role original --reference /home/aftermath/sacd-verify/original/sacd_extract_160  --rawdump
+# invocation: bx510_phase0_probe.py --role original --reference /home/you/sacd-verify/original/sacd_extract_160  --rawdump
 / # echo P0_CLIENT_BEGIN; cat /res/client.out; echo P0_CLIENT_END
 P0_CLIENT_BEGIN
 GC: connected 127.0.0.1:2002

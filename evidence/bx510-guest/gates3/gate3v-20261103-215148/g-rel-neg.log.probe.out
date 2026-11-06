@@ -32,11 +32,13 @@ STAT: ioctl(5307) ret=0 errno=0 a=0 b=0 c=0 d=0
 P0_STAT=0
 / # dd if=/res/dev/sr0 bs=2048 skip=510 count=1 2>/res/e | md5sum
 b00b6ea73582088a96ffefdd1f497765  -
-/ # echo P0_RAW_BEGIN; hexdump -v -e '1/1 "%02x"' /res/gc-raw.bin | head -c 48; 
+/ # echo P0_RAW_BEGIN; hexdump -v -e '1/1 "%02x"' /res/gc-raw.bin | head -c 48; 
+
 echo
 P0_RAW_BEGIN
 080110ffffffffffffffffff0100080410b8a10500080310
-/ # dd if=/res/gc-raw.bin bs=1 skip=2040 count=16 2>/res/e | hexdump -v -e '1/1 
+/ # dd if=/res/gc-raw.bin bs=1 skip=2040 count=16 2>/res/e | hexdump -v -e '1/1 
+
 "%02x"'; echo P0_RAW_END
 P0_RAW_END
 / # dd if=/res/dev/sr0 bs=2048 skip=510 count=1 2>/res/e | md5sum
@@ -60,25 +62,19 @@ aaaaaaaaaaaaaaaa0114000000000000
 / # echo P0_OUT_BEGIN; cat /res/daemon.out; echo P0_OUT_END
 P0_OUT_BEGIN
 mknod: /dev/sacd_read: No such file or directory
-SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              libsacdread: Not a ScarletBook disc!
+
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              libsacdread: Not a ScarletBook disc!
 libsacdread: Can't read Master TOC.
-SACD Daemon 0.37 active. Client none. SACD disc inserted.              libsacdread: Not a ScarletBook disc!
-libsacdread: Can't read Master TOC.
-libsacdread: Not a ScarletBook disc!
-libsacdread: Can't read Master TOC.
-libsacdread: Not a ScarletBook disc!
-libsacdread: Can't read Master TOC.
-libsacdread: Not a ScarletBook disc!
-libsacdread: Can't read Master TOC.
-SACD Daemon 0.37 active. Client none. SACD disc inserted.              libsacdread: Not a ScarletBook disc!
-libsacdread: Can't read Master TOC.
-libsacdread: Not a ScarletBook disc!
-libsacdread: Can't read Master TOC.
-SACD Daemon 0.37 active. Client none. SACD disc inserted.              libsacdread: Not a ScarletBook disc!
-libsacdread: Can't read Master TOC.
-libsacdread: Not a ScarletBook disc!
-libsacdread: Can't read Master TOC.
-SACD Daemon 0.37 active. Client none. SACD disc inserted.              libsacdread: Not a ScarletBook disc!
+
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              libsacdread: Not a ScarletBook disc!
 libsacdread: Can't read Master TOC.
 libsacdread: Not a ScarletBook disc!
 libsacdread: Can't read Master TOC.
@@ -86,9 +82,31 @@ libsacdread: Not a ScarletBook disc!
 libsacdread: Can't read Master TOC.
 libsacdread: Not a ScarletBook disc!
 libsacdread: Can't read Master TOC.
-SACD Daemon 0.37 active. Client none. SACD disc inserted.              libsacdread: Not a ScarletBook disc!
+
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              libsacdread: Not a ScarletBook disc!
 libsacdread: Can't read Master TOC.
-SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              P0_OUT_END
+libsacdread: Not a ScarletBook disc!
+libsacdread: Can't read Master TOC.
+
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              libsacdread: Not a ScarletBook disc!
+libsacdread: Can't read Master TOC.
+libsacdread: Not a ScarletBook disc!
+libsacdread: Can't read Master TOC.
+
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              libsacdread: Not a ScarletBook disc!
+libsacdread: Can't read Master TOC.
+libsacdread: Not a ScarletBook disc!
+libsacdread: Can't read Master TOC.
+libsacdread: Not a ScarletBook disc!
+libsacdread: Can't read Master TOC.
+libsacdread: Not a ScarletBook disc!
+libsacdread: Can't read Master TOC.
+
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              libsacdread: Not a ScarletBook disc!
+libsacdread: Can't read Master TOC.
+
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              P0_OUT_END
 / # dd if=/res/dev/hdhost bs=2048 skip=0 count=1 2>/res/e | md5sum
 0e51baf7a8f535ab8c984149b5b6020a  -
 / # dd if=/res/dev/hdhost bs=2048 skip=10 count=1 2>/res/e | md5sum
@@ -99,7 +117,8 @@ c99a74c555371a433d121f551d6c6398  -
 620f0b67a91f7f74151bc5be745b7110  -
 / # dd if=/res/dev/hdhost bs=2048 skip=8191 count=1 2>/res/e | md5sum
 c99a74c555371a433d121f551d6c6398  -
-/ # dd if=/res/dev/hdhost bs=2048 skip=4000000 count=1 2>/res/e >/dev/null; echo
+/ # dd if=/res/dev/hdhost bs=2048 skip=4000000 count=1 2>/res/e >/dev/null; echo
+
  P0_HDOOB=$?
 P0_HDOOB=1
 / # echo P0_HDID_BEGIN

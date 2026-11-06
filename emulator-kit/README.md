@@ -7,7 +7,7 @@ This directory is the WORKING state of the VM kit at
 are disposable. Differences from the handoff are intentional and
 documented in the sacd commit history:
 
-- `sony-bx510.c`: HDHOST machine wiring (the `hdhost` machine property,
+- `player.local.c`: HDHOST machine wiring (the `hdhost` machine property,
   device state, and init call; design in
   `../docs/large-image-interface.md`).
 - `mt8560-hdhost.c/.h`: the HDHOST read-only MMIO block device.

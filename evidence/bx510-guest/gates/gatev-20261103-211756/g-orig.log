@@ -1,167 +1,329 @@
 Uncompressing Linux... done, booting the kernel.
 Linux version 2.6.35 (aokino@rvds241) (gcc version 4.5.1 (GCC) ) #1 PREEMPT Thu Sep 20 09:03:01 JST 2018
-CPU: ARMv6-compatible processor [410fb767] revision 7 (ARMv7), cr=00c5387f
-CPU: VIPT aliasing data cache, VIPT aliasing instruction cache
-Machine: mt85xx
-Memory policy: ECC disabled, Data cache writeback
-[kernel zone size]DMA: 110592KB, NORMAL: 381952KB, MOVABLE: 31744KB
-enable log
-enable cli input
-Built 1 zonelists in Zone order, mobility grouping on.  Total pages: 130048
-Kernel command line: console=ttyMT0,115200 mem=512M root=/dev/mtdblock17 rootfstype=squashfs ro init=/bin/sh
-PID hash table entries: 2048 (order: 1, 8192 bytes)
-Dentry cache hash table entries: 65536 (order: 6, 262144 bytes)
-Inode-cache hash table entries: 32768 (order: 5, 131072 bytes)
-Memory: 512MB = 512MB total
-Memory: 512460k/512460k available, 11828k reserved, 0K highmem
-Virtual kernel memory layout:
-    vector  : 0xffff0000 - 0xffff1000   (   4 kB)
-    fixmap  : 0xfff00000 - 0xfffe0000   ( 896 kB)
-    DMA     : 0xffc00000 - 0xffe00000   (   2 MB)
-    vmalloc : 0xe0800000 - 0xf8000000   ( 376 MB)
-    lowmem  : 0xc0000000 - 0xe0000000   ( 512 MB)
-    modules : 0xbf000000 - 0xc0000000   (  16 MB)
-      .init : 0xc0008000 - 0xc0022000   ( 104 kB)
-      .text : 0xc0022000 - 0xc043a000   (4192 kB)
-      .data : 0xc0456000 - 0xc047dce0   ( 160 kB)
-SLUB: Genslabs=11, HWalign=32, Order=0-3, MinObjects=0, CPUs=1, Nodes=1
-Hierarchical RCU implementation.
-	RCU-based detection of stalled CPUs is disabled.
-	Verbose stalled-CPUs detection is disabled.
-NR_IRQS:128
-Console: colour dummy device 80x30
-console [ttyMT0] enabled
-_mt85xx_uart_console_init:register console ok
-Calibrating delay loop... 261.63 BogoMIPS (lpj=130816)
-pid_max: default: 32768 minimum: 301
-Mount-cache hash table entries: 512
-CPU: Testing write buffer coherency: ok
-NET: Registered protocol family 16
-=== mt8560_init === 
-IC Version = A
-Serial: MT85XX driver $Revision: #25 $
-Serial : add uart port 0
-ttyMT0 at MMIO 0x7000c000 (irq = 14) is a MT85XX Serial
-Serial: driver_register 0
-bio: create slab <bio-0> at 0
-SCSI subsystem initialized
-Advanced Linux Sound Architecture Driver Version 1.0.23.
-<Bluetooth> Info: func:bt_init line:419 Core ver 2.15
-NET: Registered protocol family 31
-<Bluetooth> Info: func:bt_init line:431 HCI device and connection manager initialized
-<Bluetooth> Info: func:hci_sock_init line:810 HCI socket layer initialized
-cfg80211: Calling CRDA to update world regulatory domain
-NET: Registered protocol family 2
-IP route cache hash table entries: 4096 (order: 2, 16384 bytes)
-TCP established hash table entries: 16384 (order: 5, 131072 bytes)
-TCP bind hash table entries: 16384 (order: 4, 65536 bytes)
-TCP: Hash tables configured (established 16384 bind 16384)
-TCP reno registered
-UDP hash table entries: 256 (order: 0, 4096 bytes)
-UDP-Lite hash table entries: 256 (order: 0, 4096 bytes)
-NET: Registered protocol family 1
-RPC: Registered udp transport module.
-RPC: Registered tcp transport module.
-RPC: Registered tcp NFSv4.1 backchannel transport module.
-k_gpio module init success
-squashfs: version 4.0 (2009/01/31) Phillip Lougher
-Installing knfsd (copyright (C) 1996 okir@monad.swb.de).
-msgmni has been set to 1000
-alg: No test for stdrng (krng)
-Block layer SCSI generic (bsg) driver version 0.4 loaded (major 254)
-io scheduler noop registered
-io scheduler deadline registered (default)
-loop: module loaded
-svoif_int_ldr_dram = 0xdfc00000, size = 0x200000
-[_get_static_buffer]start...
-[_get_static_buffer]start_addr:0xdd8b8000, alloc_sz:0x28000, buf_sz:0x25000
-[sata_bltin_init_buffer]sata_int_ldr_fw:0xdd900000, sata_hw_seg_buf:0xdd8b8000, sata_mtd_read_buf:0xdd8b8000
-mt85xx_nand_alloc_memo1 address = 0xdd8e8000
-mt85xx_nand_alloc_memo2 address = 0xdd8e8020
-NAND device: Manufacturer ID: 0xec, Chip ID: 0xda (Samsung NAND 256MiB 3,3V 8-bit)
-Bad block table not found for chip 0
-Bad block table not found for chip 0
-Scanning device for bad blocks
-kernel adaptive mtd mechanism applied.
-mt85xx_part_tbl_init start.
-mt85xx_part_tbl_init success, v1 pit found !
-Creating 25 MTD partitions on "NAND 256MiB 3,3V 8-bit":
-0x000000000000-0x000000200000 : "boot_1"
-0x000000200000-0x000000400000 : "part_info_1"
-0x000000400000-0x000000600000 : "part_info_2"
-0x000000600000-0x000000700000 : "mac_addr_1"
-0x000000700000-0x000000800000 : "mac_addr_2"
-0x000000800000-0x000000900000 : "key_block_1"
-0x000000900000-0x000000a00000 : "key_block_2"
-0x000000a00000-0x000000c00000 : "fe_bin_1"
-0x000000c00000-0x000000e00000 : "fe_bin_2"
-0x000000e00000-0x000000f00000 : "fe_test_data"
-0x000000f00000-0x000001000000 : "fe_parameters"
-0x000001000000-0x000001100000 : "fe_power_curve"
-0x000001100000-0x000001400000 : "ifcon_fw_backup"
-0x000001400000-0x000001700000 : "kernel_1"
-0x000001700000-0x000001a00000 : "kernel_2"
-0x000001a00000-0x000001f00000 : "initrd_1"
-0x000001f00000-0x000008a00000 : "rootfs_normal_1"
-0x000008a00000-0x000008e00000 : "rootfs_enc_it_1"
-0x000008e00000-0x000009200000 : "initrd_2"
-0x000009200000-0x00000c200000 : "rootfs_normal_2"
-0x00000c200000-0x00000c700000 : "rootfs_enc_it_2"
-0x00000c700000-0x00000c800000 : "upg_status"
-0x00000c800000-0x00000c900000 : "init_wall_paper"
-0x00000c900000-0x00000cb00000 : "fast_init_param"
-0x00000cb00000-0x00000f700000 : "ubi0"
-star: eth_base=0xe0880000
-star: pinmux_base=0xe0884000
-star: pdwnc_base=0xe0888100
-star: eth_pdwnc_base=0xe088cc00
-star: eth_chksum_base=0xe0890000
-star: ipll_base1=0xe0894700
-star: ipll_base2=0xe0898300
-star: bsp_base=0xe089c000
-star: desc addr: 0xffc00000(virtual)/0x1d880000(physical)
-star: Ethernet disable powerdown!
-PLL VCO auto reset for 8580A 
-star: test page 0x1E=0x4000,count=1
-star: test page 0x1E=0x4000,count=1
-Star Ethernet: Internal Vitesse PHY
-star: PHY addr = 0x0000
-star: Get Mac from mac_addr_1 partID=4!
-[nand part read-1], u4DevId = 4, 		    u8Offset = 0x0, u4MemPtr = 0xc60e69c8, u4MemLen = 0x6 
-star: Get Mac from mac_addr is invalid:MAC Address:ff-ff-ff-ff-ff-ff
-star: set the default MAC:00-0C-E7-06-00-00
-star: Get Mac from mac_addr failed! 
-star: Star MAC init done
-mice: PS/2 mouse device common for all mice
-<mmc_bltin_init_buffer> init mmc buffers
-ALSA device list:
-  No soundcards found.
-TCP cubic registered
-NET: Registered protocol family 10
-lo: Disabled Privacy Extensions
-IPv6 over IPv4 tunneling driver
-sit0: Disabled Privacy Extensions
-ip6tnl0: Disabled Privacy Extensions
-NET: Registered protocol family 17
-<Bluetooth> Info: func:l2cap_init line:5015 L2CAP ver 2.15
-<Bluetooth> Info: func:l2cap_init line:5016 L2CAP socket layer initialized
-<Bluetooth> Info: func:sco_init line:1050 SCO (Voice Link) ver 0.6
-<Bluetooth> Info: func:sco_init line:1051 SCO socket layer initialized
-<Bluetooth> Info: func:rfcomm_init_ttys line:1181 RFCOMM TTY layer initialized
-<Bluetooth> Info: func:rfcomm_init_sockets line:1149 RFCOMM socket layer initialized
-<Bluetooth> Info: func:rfcomm_init line:2179 RFCOMM ver 1.11
-<Bluetooth> Info: func:bnep_init line:720 BNEP (Ethernet Emulation) ver 1.3
-<Bluetooth> Info: func:hidp_init line:1025 HIDP (Human Interface Emulation) ver 1.2
-lib80211: common routines for IEEE802.11 drivers
-PM Init
-VFP support v0.3: implementor 41 architecture 1 part 20 variant b rev 5
-_mt85xx_late_console_init:register console ok
-VFS: Mounted root (squashfs filesystem) readonly on device 31:17.
-Freeing init memory: 104K, pages: 26
-/bin/sh: can't access tty; job control turned off
-/ # mount -t tmpfs tmpfs /res; /bin/mknod /res/test-bdev b 31 10; /bin/mkdir /re
+
+CPU: ARMv6-compatible processor [410fb767] revision 7 (ARMv7), cr=00c5387f
+
+CPU: VIPT aliasing data cache, VIPT aliasing instruction cache
+
+Machine: mt85xx
+
+Memory policy: ECC disabled, Data cache writeback
+
+[kernel zone size]DMA: 110592KB, NORMAL: 381952KB, MOVABLE: 31744KB
+
+enable log
+
+enable cli input
+
+Built 1 zonelists in Zone order, mobility grouping on.  Total pages: 130048
+
+Kernel command line: console=ttyMT0,115200 mem=512M root=/dev/mtdblock17 rootfstype=squashfs ro init=/bin/sh
+
+PID hash table entries: 2048 (order: 1, 8192 bytes)
+
+Dentry cache hash table entries: 65536 (order: 6, 262144 bytes)
+
+Inode-cache hash table entries: 32768 (order: 5, 131072 bytes)
+
+Memory: 512MB = 512MB total
+
+Memory: 512460k/512460k available, 11828k reserved, 0K highmem
+
+Virtual kernel memory layout:
+
+    vector  : 0xffff0000 - 0xffff1000   (   4 kB)
+
+    fixmap  : 0xfff00000 - 0xfffe0000   ( 896 kB)
+
+    DMA     : 0xffc00000 - 0xffe00000   (   2 MB)
+
+    vmalloc : 0xe0800000 - 0xf8000000   ( 376 MB)
+
+    lowmem  : 0xc0000000 - 0xe0000000   ( 512 MB)
+
+    modules : 0xbf000000 - 0xc0000000   (  16 MB)
+
+      .init : 0xc0008000 - 0xc0022000   ( 104 kB)
+
+      .text : 0xc0022000 - 0xc043a000   (4192 kB)
+
+      .data : 0xc0456000 - 0xc047dce0   ( 160 kB)
+
+SLUB: Genslabs=11, HWalign=32, Order=0-3, MinObjects=0, CPUs=1, Nodes=1
+
+Hierarchical RCU implementation.
+
+	RCU-based detection of stalled CPUs is disabled.
+
+	Verbose stalled-CPUs detection is disabled.
+
+NR_IRQS:128
+
+Console: colour dummy device 80x30
+
+console [ttyMT0] enabled
+
+_mt85xx_uart_console_init:register console ok
+
+Calibrating delay loop... 261.63 BogoMIPS (lpj=130816)
+
+pid_max: default: 32768 minimum: 301
+
+Mount-cache hash table entries: 512
+
+CPU: Testing write buffer coherency: ok
+
+NET: Registered protocol family 16
+
+=== mt8560_init === 
+
+IC Version = A
+
+Serial: MT85XX driver $Revision: #25 $
+
+Serial : add uart port 0
+
+ttyMT0 at MMIO 0x7000c000 (irq = 14) is a MT85XX Serial
+
+Serial: driver_register 0
+
+bio: create slab <bio-0> at 0
+
+SCSI subsystem initialized
+
+Advanced Linux Sound Architecture Driver Version 1.0.23.
+
+<Bluetooth> Info: func:bt_init line:419 Core ver 2.15
+
+NET: Registered protocol family 31
+
+<Bluetooth> Info: func:bt_init line:431 HCI device and connection manager initialized
+
+<Bluetooth> Info: func:hci_sock_init line:810 HCI socket layer initialized
+
+cfg80211: Calling CRDA to update world regulatory domain
+
+NET: Registered protocol family 2
+
+IP route cache hash table entries: 4096 (order: 2, 16384 bytes)
+
+TCP established hash table entries: 16384 (order: 5, 131072 bytes)
+
+TCP bind hash table entries: 16384 (order: 4, 65536 bytes)
+
+TCP: Hash tables configured (established 16384 bind 16384)
+
+TCP reno registered
+
+UDP hash table entries: 256 (order: 0, 4096 bytes)
+
+UDP-Lite hash table entries: 256 (order: 0, 4096 bytes)
+
+NET: Registered protocol family 1
+
+RPC: Registered udp transport module.
+
+RPC: Registered tcp transport module.
+
+RPC: Registered tcp NFSv4.1 backchannel transport module.
+
+k_gpio module init success
+
+squashfs: version 4.0 (2009/01/31) Phillip Lougher
+
+Installing knfsd (copyright (C) 1996 okir@monad.swb.de).
+
+msgmni has been set to 1000
+
+alg: No test for stdrng (krng)
+
+Block layer SCSI generic (bsg) driver version 0.4 loaded (major 254)
+
+io scheduler noop registered
+
+io scheduler deadline registered (default)
+
+loop: module loaded
+
+svoif_int_ldr_dram = 0xdfc00000, size = 0x200000
+
+[_get_static_buffer]start...
+
+[_get_static_buffer]start_addr:0xdd8b8000, alloc_sz:0x28000, buf_sz:0x25000
+
+[sata_bltin_init_buffer]sata_int_ldr_fw:0xdd900000, sata_hw_seg_buf:0xdd8b8000, sata_mtd_read_buf:0xdd8b8000
+
+mt85xx_nand_alloc_memo1 address = 0xdd8e8000
+
+mt85xx_nand_alloc_memo2 address = 0xdd8e8020
+
+NAND device: Manufacturer ID: 0xec, Chip ID: 0xda (Samsung NAND 256MiB 3,3V 8-bit)
+
+Bad block table not found for chip 0
+
+Bad block table not found for chip 0
+
+Scanning device for bad blocks
+
+kernel adaptive mtd mechanism applied.
+
+mt85xx_part_tbl_init start.
+
+mt85xx_part_tbl_init success, v1 pit found !
+
+Creating 25 MTD partitions on "NAND 256MiB 3,3V 8-bit":
+
+0x000000000000-0x000000200000 : "boot_1"
+
+0x000000200000-0x000000400000 : "part_info_1"
+
+0x000000400000-0x000000600000 : "part_info_2"
+
+0x000000600000-0x000000700000 : "mac_addr_1"
+
+0x000000700000-0x000000800000 : "mac_addr_2"
+
+0x000000800000-0x000000900000 : "key_block_1"
+
+0x000000900000-0x000000a00000 : "key_block_2"
+
+0x000000a00000-0x000000c00000 : "fe_bin_1"
+
+0x000000c00000-0x000000e00000 : "fe_bin_2"
+
+0x000000e00000-0x000000f00000 : "fe_test_data"
+
+0x000000f00000-0x000001000000 : "fe_parameters"
+
+0x000001000000-0x000001100000 : "fe_power_curve"
+
+0x000001100000-0x000001400000 : "ifcon_fw_backup"
+
+0x000001400000-0x000001700000 : "kernel_1"
+
+0x000001700000-0x000001a00000 : "kernel_2"
+
+0x000001a00000-0x000001f00000 : "initrd_1"
+
+0x000001f00000-0x000008a00000 : "rootfs_normal_1"
+
+0x000008a00000-0x000008e00000 : "rootfs_enc_it_1"
+
+0x000008e00000-0x000009200000 : "initrd_2"
+
+0x000009200000-0x00000c200000 : "rootfs_normal_2"
+
+0x00000c200000-0x00000c700000 : "rootfs_enc_it_2"
+
+0x00000c700000-0x00000c800000 : "upg_status"
+
+0x00000c800000-0x00000c900000 : "init_wall_paper"
+
+0x00000c900000-0x00000cb00000 : "fast_init_param"
+
+0x00000cb00000-0x00000f700000 : "ubi0"
+
+star: eth_base=0xe0880000
+
+star: pinmux_base=0xe0884000
+
+star: pdwnc_base=0xe0888100
+
+star: eth_pdwnc_base=0xe088cc00
+
+star: eth_chksum_base=0xe0890000
+
+star: ipll_base1=0xe0894700
+
+star: ipll_base2=0xe0898300
+
+star: bsp_base=0xe089c000
+
+star: desc addr: 0xffc00000(virtual)/0x1d880000(physical)
+
+star: Ethernet disable powerdown!
+
+PLL VCO auto reset for 8580A 
+
+star: test page 0x1E=0x4000,count=1
+
+star: test page 0x1E=0x4000,count=1
+
+Star Ethernet: Internal Vitesse PHY
+
+
+star: PHY addr = 0x0000
+
+star: Get Mac from mac_addr_1 partID=4!
+
+[nand part read-1], u4DevId = 4, 		    u8Offset = 0x0, u4MemPtr = 0xc60e69c8, u4MemLen = 0x6 
+
+star: Get Mac from mac_addr is invalid:MAC Address:aa:bb:cc:00:11:22
+
+star: set the default MAC:aa:bb:cc:00:11:22
+
+star: Get Mac from mac_addr failed! 
+
+star: Star MAC init done
+
+mice: PS/2 mouse device common for all mice
+
+<mmc_bltin_init_buffer> init mmc buffers
+
+ALSA device list:
+
+  No soundcards found.
+
+TCP cubic registered
+
+NET: Registered protocol family 10
+
+lo: Disabled Privacy Extensions
+
+IPv6 over IPv4 tunneling driver
+
+sit0: Disabled Privacy Extensions
+
+ip6tnl0: Disabled Privacy Extensions
+
+NET: Registered protocol family 17
+
+<Bluetooth> Info: func:l2cap_init line:5015 L2CAP ver 2.15
+
+<Bluetooth> Info: func:l2cap_init line:5016 L2CAP socket layer initialized
+
+<Bluetooth> Info: func:sco_init line:1050 SCO (Voice Link) ver 0.6
+
+<Bluetooth> Info: func:sco_init line:1051 SCO socket layer initialized
+
+<Bluetooth> Info: func:rfcomm_init_ttys line:1181 RFCOMM TTY layer initialized
+
+<Bluetooth> Info: func:rfcomm_init_sockets line:1149 RFCOMM socket layer initialized
+
+<Bluetooth> Info: func:rfcomm_init line:2179 RFCOMM ver 1.11
+
+<Bluetooth> Info: func:bnep_init line:720 BNEP (Ethernet Emulation) ver 1.3
+
+<Bluetooth> Info: func:hidp_init line:1025 HIDP (Human Interface Emulation) ver 1.2
+
+lib80211: common routines for IEEE802.11 drivers
+
+PM Init
+
+VFP support v0.3: implementor 41 architecture 1 part 20 variant b rev 5
+
+_mt85xx_late_console_init:register console ok
+
+VFS: Mounted root (squashfs filesystem) readonly on device 31:17.
+
+Freeing init memory: 104K, pages: 26
+
+/bin/sh: can't access tty; job control turned off
+/ # mount -t tmpfs tmpfs /res; /bin/mknod /res/test-bdev b 31 10; /bin/mkdir /re
+
 s/tmp /res/dev /res/proc
-/ # /bin/dd if=/res/test-bdev bs=4096 count=155 2>/res/dd.err | /bin/tar -xf - -
+/ # /bin/dd if=/res/test-bdev bs=4096 count=155 2>/res/dd.err | /bin/tar -xf - -
+
 C /res
 / # /bin/chmod 755 /res/original/sacd_extract_160 /res/shim/tmpredir.so
 / # mount -t proc proc /res/proc; echo P0_PROC=$?
@@ -258,7 +420,8 @@ lrwxrwxrwx    1 0        0               55 Sep 20  2018 [1;36mlangsupprt.ko[0
 -rw-rw-r--    1 0        0            40712 Sep 20  2018 [0;0musbserial.ko[0m
 -rw-rw-r--    1 0        0            14384 Sep 20  2018 [0;0mvfat.ko[0m
 P0_BDPDIR_END
-/ # LD_PRELOAD=/res/shim/tmpredir.so /res/shim/bgstart /res/original/sacd_extrac
+/ # LD_PRELOAD=/res/shim/tmpredir.so /res/shim/bgstart /res/original/sacd_extrac
+
 t_160 -S
 BG_PID=514
 / # sleep 8; echo P0_TCP_BEGIN; cat /res/proc/net/tcp; echo P0_TCP_END
@@ -319,7 +482,8 @@ TDB
 534143444d544f4301140000000000000001000100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000025800000000000000000000000000000000000a0000000000000000000000000000000000000000000000000000000000000000000007e90b02000000000100000000000000656e0000656e0000656e0000656e0000656e0000656e0000656e0000656e00000000000000000000
 / # bdpvirt: TestUnitReadyLoop(a=0x4e20)
 bdpvirt: GetProfile(out=ddaabeec) -> profile 0x10
-LD_PRELOAD= /res/shim/gclient 127.0.0.1 2002 >/res/client.out 2>&1; echo P0_
+LD_PRELOAD= /res/shim/gclient 127.0.0.1 2002 >/res/client.out 2>&1; echo P0_
+
 GC=$?
 bdpvirt: Connect(363, 0, 360, 0) -> 0
 bdpvirt: GetInstHandle compid=0 -> free (-1)
@@ -710,7 +874,8 @@ P0_RAWFULL_BEGIN
 /bin/sh: wc: not found
 e3f78190faeaf44cf7cc87c6e8ce267f  /res/gc-raw.bin
 a587231d258990f93ecfe4927da3284e  /res/gc-tx.bin
-/ # gzip -c /res/gc-raw.bin > /res/gc-raw.gz 2>/res/e && echo P0_GZ=yes || { ech
+/ # gzip -c /res/gc-raw.bin > /res/gc-raw.gz 2>/res/e && echo P0_GZ=yes || { ech
+
 o P0_GZ=no; rm -f /res/gc-raw.gz; }
 P0_GZ=no
 / # if [ -f /res/gc-raw.gz ]; then hexdump -v -e '16/1 "%02x" "
@@ -19062,11 +19227,13 @@ STAT: ioctl(5307) ret=0 errno=0 a=0 b=0 c=0 d=0
 P0_STAT=0
 / # dd if=/res/dev/sr0 bs=2048 skip=510 count=1 2>/res/e | md5sum
 549c7a36a0050f23788a156c4578e998  -
-/ # echo P0_RAW_BEGIN; hexdump -v -e '1/1 "%02x"' /res/gc-raw.bin | head -c 48; 
+/ # echo P0_RAW_BEGIN; hexdump -v -e '1/1 "%02x"' /res/gc-raw.bin | head -c 48; 
+
 echo
 P0_RAW_BEGIN
 0801100000080410b8a10500080310011a8010e7c204c32b
-/ # dd if=/res/gc-raw.bin bs=1 skip=2040 count=16 2>/res/e | hexdump -v -e '1/1 
+/ # dd if=/res/gc-raw.bin bs=1 skip=2040 count=16 2>/res/e | hexdump -v -e '1/1 
+
 "%02x"'; echo P0_RAW_END
 0546db6120d4652d61d6dad4808ac81cP0_RAW_END
 / # dd if=/res/dev/sr0 bs=2048 skip=510 count=1 2>/res/e | md5sum
@@ -19090,6 +19257,45 @@ P0_RAW_BEGIN
 / # echo P0_OUT_BEGIN; cat /res/daemon.out; echo P0_OUT_END
 P0_OUT_BEGIN
 mknod: /dev/sacd_read: No such file or directory
-SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              P0_OUT_END
+
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              P0_OUT_END
 / # echo P0_F""INISHED
 P0_FINISHED

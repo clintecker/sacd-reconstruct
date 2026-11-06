@@ -10,7 +10,7 @@ def command(qemu, images, mode, nand=None):
     nand = nand or images / "nand.img"
     # QEMU's comma-separated drive/device syntax escapes a literal comma by doubling it.
     quote = lambda p: str(p).replace(",", ",,")
-    args = [str(qemu), "-M", "sony-bx510", "-m", "512M", "-display", "none",
+    args = [str(qemu), "-M", "player.local", "-m", "512M", "-display", "none",
             "-serial", "stdio", "-monitor", "none", "-nic", "none",
             "-drive", f"if=mtd,format=raw,file={quote(nand)},snapshot=on"]
     if mode == "uboot":

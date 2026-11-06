@@ -25,13 +25,15 @@ STAT: ioctl(5307) ret=0 errno=0 a=0 b=0 c=0 d=0
 P0_STAT=0
 / # dd if=/res/dev/sr0 bs=2048 skip=510 count=1 2>/res/e | md5sum
 549c7a36a0050f23788a156c4578e998  -
-/ # echo P0_RAW_BEGIN; hexdump -v -e '1/1 "%02x"' /res/gc-raw.bin | head -c 48; 
+/ # echo P0_RAW_BEGIN; hexdump -v -e '1/1 "%02x"' /res/gc-raw.bin | head -c 48; 
+
 echo
 P0_RAW_BEGIN
 bdpvirt: TestUnitReadyLoop(a=0x4e20)
 bdpvirt: GetProfile(out=ddaabeec) -> profile 0x10
 0801100000080410b8a10500080310011a8010e7c204c32b
-/ # dd if=/res/gc-raw.bin bs=1 skip=2040 count=16 2>/res/e | hexdump -v -e '1/1 
+/ # dd if=/res/gc-raw.bin bs=1 skip=2040 count=16 2>/res/e | hexdump -v -e '1/1 
+
 "%02x"'; echo P0_RAW_END
 0546db6120d4652d61d6dad4808ac81cP0_RAW_END
 / # dd if=/res/dev/sr0 bs=2048 skip=510 count=1 2>/res/e | md5sum
@@ -55,14 +57,31 @@ bdpvirt: GetProfile(out=ddaabeec) -> profile 0x10
 / # echo P0_OUT_BEGIN; cat /res/daemon.out; echo P0_OUT_END
 P0_OUT_BEGIN
 mknod: /dev/sacd_read: No such file or directory
-SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              SACD Daemon 0.37 active. Client none. SACD disc inserted.              P0_OUT_END
+
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              P0_OUT_END
 / # /sbin/insmod /res/shim/hdhost.ko; echo P0_HD=$?
 hdhost: read-only host image, 8192 sectors x 2048 bytes (major 254)
 P0_HD=0
 / # grep hdhost /res/proc/devices; echo P0_HDDEV=$?
 254 hdhost
 P0_HDDEV=0
-/ # maj=$(grep hdhost /res/proc/devices | tr -s ' ' | cut -d' ' -f1); /bin/mknod
+/ # maj=$(grep hdhost /res/proc/devices | tr -s ' ' | cut -d' ' -f1); /bin/mknod
+
  /res/dev/hdhost b $maj 0; echo P0_HDNODE=$?
 /bin/sh: tr: not found
 /bin/sh: cut: not found
@@ -92,7 +111,8 @@ d41d8cd98f00b204e9800998ecf8427e  -
 d41d8cd98f00b204e9800998ecf8427e  -
 / # dd if=/res/dev/hdhost bs=2048 skip=8191 count=1 2>/res/e | md5sum
 d41d8cd98f00b204e9800998ecf8427e  -
-/ # dd if=/res/dev/hdhost bs=2048 skip=4000000 count=1 2>/res/e >/dev/null; echo
+/ # dd if=/res/dev/hdhost bs=2048 skip=4000000 count=1 2>/res/e >/dev/null; echo
+
  P0_HDOOB=$? (must be nonzero: past capacity is EIO, never zero-filled success)
 /bin/sh: syntax error: unexpected "("
 / # echo P0_HDDONE

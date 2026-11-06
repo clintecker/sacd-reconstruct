@@ -2,7 +2,7 @@
  * bx510_fbvirt.c — virtual framebuffer for the BX510 guest (the
  * "display-model" rung of the drawing-primitive work).
  *
- * The sony-bx510 QEMU machine has no display-controller model (and the
+ * The player.local QEMU machine has no display-controller model (and the
  * real display driver cannot load without the initrd's OSAL base), so
  * this module stands in for the MT85xx fbdev device the way bdpvirt
  * stands in for bdpdrv: it registers a STANDARD 2.6.35 framebuffer

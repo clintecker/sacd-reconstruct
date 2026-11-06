@@ -1,6 +1,6 @@
 /*
  * mt8560-hdhost.h — HDHOST: synthetic read-only host-image interface
- * for the sony-bx510 machine. See docs/large-image-interface.md.
+ * for the player.local machine. See docs/large-image-interface.md.
  * SPDX-License-Identifier: GPL-2.0-or-later
  */
 #ifndef MT8560_HDHOST_H

@@ -1,6 +1,6 @@
 # Hardware session 2026-11-05 — candidate acceptance, standby, and the display leg
 
-Player: Sony BDP-BX510, firmware M15.R.0257, `10.20.1.236`.
+Player: Sony BDP-BX510, firmware M15.R.0257, `192.0.2.10`.
 Disc: Tomita Firebird SACD (ISO 2,179,497,984 bytes = 1,064,208 sectors).
 Kernel: Linux 2.6.35, armv6l, glibc 2.12.2 (inventory report).
 

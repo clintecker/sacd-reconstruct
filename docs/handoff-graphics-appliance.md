@@ -12,7 +12,7 @@ and proved it byte-identical across qemu-user replay, full-system
 in-guest differential with raw wire captures, and (hardware leg) the
 on-player session. The graphics work sits on the same infrastructure:
 Sony's real kernel 2.6.35 + real squashfs booted in our own QEMU
-sony-bx510 machine, with module-seam tools (bdpvirt, hdhost.ko,
+player.local machine, with module-seam tools (bdpvirt, hdhost.ko,
 fbvirt.ko, tmpredir, bx510_phase0_probe.py).
 
 ## 1. Nothing to exfiltrate: we hold every byte
@@ -117,5 +117,5 @@ deterministic decoders for binary assets; hardware is ground truth
 (TV photo, pair capture); regenerable artifacts stay out of git
 (SHA-recorded manifests); VM outbound = apt allowlist only; commit
 through make sacd-commit, sync through make sacd-sync-standalone;
-ALWAYS operate via /Users/clint/bin/sacd (CWD-reset incident history:
+ALWAYS operate via /Users/you/bin/sacd (CWD-reset incident history:
 a490e51).

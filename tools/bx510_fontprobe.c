@@ -55,7 +55,7 @@ int main(int argc, char **argv)
         "THROUGHPUT 4.7 MB/s",
         "READ lsn=532104 n=128 got=128",
         "SEC 130  REQ 6  LSN 532104",
-        "CLIENT CONNECTED 10.20.1.236",
+        "CLIENT CONNECTED 192.0.2.10",
         "MEM 155M  TMP 0%  CPSA 1",
         NULL
     };

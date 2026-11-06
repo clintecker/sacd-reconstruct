@@ -9,7 +9,7 @@
 #   DIRECTFB 1.2.7 headers need a configured tree (build.h) -- see DISPLAY-SPEC
 set -eu
 EXP="$(cd "$(dirname "$0")/.." && pwd)"
-H="${VM_USER:-aftermath}@${VM_HOST:-10.20.0.18}"
+H="${VM_USER:-aftermath}@${VM_HOST:-192.0.2.10}"
 P="${VM_PORT:-2222}"
 SRC="$EXP/tools/bx510_sacd_hud.c"
 OUT="$EXP/evidence/bx510/display-payload/sacd_hud"

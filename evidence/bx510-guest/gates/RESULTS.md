@@ -1,7 +1,7 @@
 # In-guest validation gates — results (positive + negative controls)
 
 Date: 2026-11-03
-Machine: full-system QEMU (sony-bx510), Sony kernel 2.6.35 + real SquashFS,
+Machine: full-system QEMU (player.local), Sony kernel 2.6.35 + real SquashFS,
 real `sacd_read.ko` loaded by each daemon via its own insmod, bdpvirt
 virtual ODD, corrected synthetic Firebird fixture (86,200 sectors).
 

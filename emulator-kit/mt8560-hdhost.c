@@ -1,7 +1,7 @@
 /*
  * mt8560-hdhost.c — HDHOST: synthetic read-only host-image interface.
  *
- * A one-page MMIO block device for the sony-bx510 machine (design:
+ * A one-page MMIO block device for the player.local machine (design:
  * docs/large-image-interface.md in the sacd tree). QEMU opens the host
  * image O_RDONLY; the device has no write path at all. Each transaction
  * carries an explicit 64-bit sector (no shared seek position) and a

@@ -24,7 +24,7 @@
 #include "mt8560-nfi.h"
 #include "mt8560-hdhost.h"
 
-#define TYPE_BX510_MACHINE MACHINE_TYPE_NAME("sony-bx510")
+#define TYPE_BX510_MACHINE MACHINE_TYPE_NAME("player.local")
 OBJECT_DECLARE_SIMPLE_TYPE(Bx510State, BX510_MACHINE)
 
 #define BX_IO_BASE 0x70000000u
@@ -294,7 +294,7 @@ static void bx510_init(MachineState *machine)
     mt8560_nfi_init(&s->nfi, OBJECT(machine), get_system_memory(),
                     qemu_allocate_irq(bx510_nfi_irq, s, 0));
     /* HDHOST: synthetic read-only host-image interface, instantiated only
-     * when a host image is configured (-machine sony-bx510,hdhost=...).
+     * when a host image is configured (-machine player.local,hdhost=...).
      * Design and register contract: docs/large-image-interface.md. */
     if (s->hdhost_path && s->hdhost_path[0]) {
         mt8560_hdhost_init(&s->hdhost, OBJECT(machine), s->hdhost_path);

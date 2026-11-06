@@ -15,7 +15,7 @@
 # the child-hang triage procedure. If a target's flags look fussy, they
 # were earned the hard way.
 
-VM_HOST  ?= 10.20.0.18
+VM_HOST  ?= 192.0.2.10
 VM_PORT  ?= 2222
 VM_USER  ?= aftermath
 VM_SSH   := ssh -o BatchMode=yes -p $(VM_PORT) $(VM_USER)@$(VM_HOST)
@@ -227,7 +227,7 @@ sacd-stage:
 ## SACD vm-tools :: sacd-kit-stage :: (no arguments) :: stage the tracked emulator-kit sources to the VM :: the QEMU kit on the VM (~/bx510-emu/emulator) is disposable — the tracked emulator-kit/ dir is the live state; build.sh on the VM consumes exactly these files
 .PHONY: sacd-kit-stage
 sacd-kit-stage:
-	$(VM_SCP) experiments/sacd_reconstruct/emulator-kit/sony-bx510.c experiments/sacd_reconstruct/emulator-kit/mt8560-nfi.c experiments/sacd_reconstruct/emulator-kit/mt8560-nfi.h experiments/sacd_reconstruct/emulator-kit/mt8560-hdhost.c experiments/sacd_reconstruct/emulator-kit/mt8560-hdhost.h experiments/sacd_reconstruct/emulator-kit/build.sh experiments/sacd_reconstruct/emulator-kit/qemu-integration.patch experiments/sacd_reconstruct/emulator-kit/run.py experiments/sacd_reconstruct/emulator-kit/smoke.py $(VM_USER)@$(VM_HOST):bx510-emu/emulator/ || exit 1
+	$(VM_SCP) experiments/sacd_reconstruct/emulator-kit/player.local.c experiments/sacd_reconstruct/emulator-kit/mt8560-nfi.c experiments/sacd_reconstruct/emulator-kit/mt8560-nfi.h experiments/sacd_reconstruct/emulator-kit/mt8560-hdhost.c experiments/sacd_reconstruct/emulator-kit/mt8560-hdhost.h experiments/sacd_reconstruct/emulator-kit/build.sh experiments/sacd_reconstruct/emulator-kit/qemu-integration.patch experiments/sacd_reconstruct/emulator-kit/run.py experiments/sacd_reconstruct/emulator-kit/smoke.py $(VM_USER)@$(VM_HOST):bx510-emu/emulator/ || exit 1
 	@echo "staged: tracked emulator-kit -> VM:~/bx510-emu/emulator/"
 
 ## SACD hdhost :: sacd-hdhost-qemu :: (no arguments) :: rebuild QEMU on the VM from the tracked kit state :: build.sh copies the staged kit files into the pinned qemu-9.2.4 tree and ninjas qemu-system-arm — minutes; run after any emulator-kit change
@@ -413,11 +413,11 @@ sacd-selftest:
 
 # ── SACD full-system emulator (BX510 handoff) ───────────────────────────────
 # Third verification leg: boots Sony's Linux 2.6.35 from the synthetic NAND
-# inside the sony-bx510 QEMU machine and runs the daemons in the REAL guest
+# inside the player.local QEMU machine and runs the daemons in the REAL guest
 # OS. VM tree: ~/bx510-emu (emulator kit, images/, pre-staged qemu tarball —
 # the build script's own download path is bypassed so nothing leaves the VM).
 
-## SACD :: sacd-emu-build :: build the full-system sony-bx510 QEMU on the lab VM :: the pinned 9.2.4 tarball is pre-staged (SHA f3cc1c4e… verified at stage time) so build.sh performs no outbound fetch; JOBS=6
+## SACD :: sacd-emu-build :: build the full-system player.local QEMU on the lab VM :: the pinned 9.2.4 tarball is pre-staged (SHA f3cc1c4e… verified at stage time) so build.sh performs no outbound fetch; JOBS=6
 .PHONY: sacd-emu-build
 sacd-emu-build:
 	$(VM_SSH) 'cd ~/bx510-emu/emulator && mkdir -p work && cp -n ~/bx510-emu/qemu-9.2.4.tar.xz work/qemu-9.2.4.tar.xz && JOBS=6 sh build.sh work'
@@ -434,7 +434,7 @@ sacd-emu-daemons:
 
 # ── SACD hardware session (BX510 on-player; Mac-side orchestration) ─────────
 # tools/sacd_hardware.sh drives everything except physical player steps.
-# Env knobs: HW_HOST (10.20.1.236) HW_PORT (2002) USB (/Volumes/SONYUSB)
+# Env knobs: HW_HOST (192.0.2.10) HW_PORT (2002) USB (/Volumes/SONYUSB)
 #            PLAYER_MOUNT (/mnt/sda1) PAIR_LSN (600) SESSION_DIR (~/bx510-session)
 #            HW_ISO (the Firebird rip) DISK (/dev/diskN for usb-build)
 #            DISPLAY_ANIM (45, the display leg's anim window in seconds)
@@ -526,7 +526,7 @@ sacd-usb-original:
 sacd-usb-candidate:
 	sh experiments/sacd_reconstruct/tools/sacd_hardware.sh usb-candidate
 
-## SACD hardware :: sacd-hw-wait :: block until the player's daemon listens :: HW_HOST=10.20.1.236 HW_PORT=2002 — run after powering the player on
+## SACD hardware :: sacd-hw-wait :: block until the player's daemon listens :: HW_HOST=192.0.2.10 HW_PORT=2002 — run after powering the player on
 .PHONY: sacd-hw-wait
 sacd-hw-wait:
 	HW_HOST="$(HW_HOST)" HW_PORT="$(HW_PORT)" sh experiments/sacd_reconstruct/tools/sacd_hardware.sh wait

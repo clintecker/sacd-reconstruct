@@ -16,10 +16,10 @@ validated against QEMU's model. What the kernel does give us:
 `CONFIG_BLOCK=y`, `CONFIG_BLK_DEV=y`.
 
 We also control the emulator itself: our own `qemu-system-arm` build
-carries the `sony-bx510` machine. Therefore:
+carries the `player.local` machine. Therefore:
 
 **HDHOST** = a small read-only MMIO block device added to the
-sony-bx510 machine (our QEMU build) + `hdhost.ko`, a guest block-driver
+player.local machine (our QEMU build) + `hdhost.ko`, a guest block-driver
 module built through the proven module pipeline (GPL tree,
 mediatek_defconfig, SMP off, armv6, vermagic patch, kallsyms tail swap),
 exposing the host image as a guest block device.

@@ -5,6 +5,8 @@
 __pycache__/
 *.pyc
 reconstruct/release/sacd_extract_160_release
+reconstruct/sacd_extract_160
+reconstruct/sacd_extract_160_fsf
 
 # generated fixtures and captures
 *.img

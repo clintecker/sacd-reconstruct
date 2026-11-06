@@ -1,0 +1,2 @@
+90a6f1da1b7389fa1b5b3d73b25938835fb5b5e6b455af34ef1e8fe2d6d068a4  experiments/sacd_reconstruct/evidence/bx510/display-payload/photos/2026-11-04-dfbhello-on-panel.HEIC
+65a303ca7fe21634e2ce04515e2d1f9614529f1355a1abc4bfc6304e3df0dfea  experiments/sacd_reconstruct/evidence/bx510/display-payload/photos/2026-11-04-dfbhello-on-panel.png

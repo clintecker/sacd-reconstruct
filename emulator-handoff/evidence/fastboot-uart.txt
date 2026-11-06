@@ -1,0 +1,15 @@
+ARM2 00:00:00.000 
+[vFL_fastboot_main]Power Mode = 0x0, ui1_child_lock = 0,ui1_demo_mode = 0, DRV_CFG_DEMO_MODE_OFFSET = 0X2f1
+ARM2 00:00:00.000 
+[vFL_fastboot_main]7G model = 0, upg pin= 0, diag pin= 0, 
+ARM2 00:00:00.000 [vFL_fastboot_main]model [0], sub_model [0]
+ARM2 00:00:00.000 [IDE_FB]fastlogo!
+ARM2 00:00:00.000 [vFL_fastboot_main] vIdeFastBoot(9140) start
+ARM2 00:00:00.000 [IDE_FB]F/E working area = 0xc0c00000
+ARM2 00:00:00.000 [IDE_FB]NAND flash info(0xe91c00, 64): pagesize = 0x0
+ARM2 00:00:00.000 [vFL_fastboot_main] vIdeFastBoot(9142) end
+ARM2 00:00:00.000 [vFL_fastboot_main] vIdeFastBoot(9408) start, wait loader unbusy
+ARM2 00:00:00.000 [vFL_fastboot_main] vIdeFastBoot(9413) , loader unbusy
+ARM2 00:00:00.000 [IDE_FB]F/E working area = 0xc0c00000
+ARM2 00:00:00.000 [IDE_FB]NAND flash info(0xe91c00, 64): pagesize = 0x0
+ARM2 00:00:00.000 [vFL_fastboot_main] vIdeFastBoot(9415) end

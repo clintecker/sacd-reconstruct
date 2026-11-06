@@ -1,0 +1,161 @@
+40623922b44e5ea7b89c91832783
+d77ad910ddc5b6c00169b41bf462714c
+d012d4639222ecddf44e9968622e5c6d
+591a4ef4af21bdd4e0b97564995094b8
+ede9926f1970296a8d12e7cdc0a5b9dc
+f9f1f4edb3489b09a378bc7a9cc2e94e
+b5d922a5666617329da9a90924d7a7ac
+367cc994e88145d546d344c7225d7ef5
+8102e1e7e9c1d732ada4089b0e035378
+9eef581717aa1b527d99d3cffa278b22
+1784488f8e2b92609419969342116845
+3af275a77fbed236b24ef74564181927
+8f5acc81ec3f3d5674271cc1cda5ebf4
+26c5da82cba8679c8b9ce745ea27d47f
+801a229a25360cf35a0ce0cf558ba908
+90f7e90822ecdbf4d9a82fa613a1d43b
+1c363957b3ceb24bda27bc562e0e3996
+c3f59148920e48b88e92b18070ab9bea
+b0e4c66e901d35fe5e53ffe693f5939b
+cde7ec48432d525084c711a34cca37e7
+fde532d178c3093a8f82d6430eab35e6
+e6c2f53b2ae36ff0c4c50781e8d9bc41
+c7347286eb54fadc9dff185950dcea9e
+1b7e3e641ecbe7ddacf974b5146c346b
+ff7feb39a5d4ad9e9286c6a5a3000802
+10000008011000000801100000080110
+00000801100000080110000008011000
+00080110000008011000000801100000
+0801100000                      
+/ # echo P0_TX_BEGIN; hexdump -v -e '16/1 "%02x" "
+> "' /res/gc-tx.bin; echo P0_TX_END
+P0_TX_BEGIN
+08011000180000080410001800000803
+1000180100080310dcd0021801000803
+100018800100080310f6f00418140008
+031080f1041802000803109ca2051801
+00080210001800000801100018000008
+0310dcd0021801000802100018000008
+01100018000008011000180000080110
+00180000080110001800000801100018
+00000801100018000008011000180000
+08011000180000080110001800000801
+10001800000801100018000008011000
+180000                          
+P0_TX_END
+/ # echo P0_RAWFULL_END
+P0_RAWFULL_END
+/ # echo P0_P128_BEGIN
+P0_P128_BEGIN
+/ # hexdump -v -e '16/1 "%02x" "
+> "' /res/p128.bin | head -4
+e7c204c32be65930c58c0c9f6f5a11dc
+e1f9c41cbd9bebfc13f2137c5bf46348
+cf6af9eb7fdabd1246bebf97dd819e6e
+6faf0a6a1c430dc3cb23b0064f17e15b
+/ # echo P0_P128_END
+P0_P128_END
+/ # LD_PRELOAD= /res/shim/sacdstat; echo P0_STAT=$?
+STAT: ioctl(5307) ret=0 errno=0 a=0 b=0 c=0 d=0
+P0_STAT=0
+/ # dd if=/res/dev/sr0 bs=2048 skip=510 count=1 2>/res/e | md5sum
+549c7a36a0050f23788a156c4578e998  -
+/ # echo P0_RAW_BEGIN; hexdump -v -e '1/1 "%02x"' /res/gc-raw.bin | head -c 48; 
+
+echo
+P0_RAW_BEGIN
+0801100000080410b8a10500080310011a8010e7c204c32b
+/ # dd if=/res/gc-raw.bin bs=1 skip=2040 count=16 2>/res/e | hexdump -v -e '1/1 
+
+"%02x"'; echo P0_RAW_END
+0546db6120d4652d61d6dad4808ac81cP0_RAW_END
+/ # dd if=/res/dev/sr0 bs=2048 skip=510 count=1 2>/res/e | md5sum
+549c7a36a0050f23788a156c4578e998  -
+/ # dd if=/res/dev/sr0 bs=2048 skip=600 count=1 2>/res/e | md5sum
+88eb7b142c7cacd1540b89adabd19c95  -
+/ # hexdump -v -e '16/1 "%02x" "
+> "' /res/t510 | head -12
+534143444d544f430114000000000000
+00010001000000000000000000000000
+00000000000000000000000000000000
+00000000000000000000000000000000
+00000258000000000000000000000000
+00000000000a00000000000000000000
+00000000000000000000000000000000
+000000000000000007e90b0200000000
+0100000000000000656e0000656e0000
+656e0000656e0000656e0000656e0000
+656e0000656e00000000000000000000
+00000000000000000000000000000000
+/ # echo P0_OUT_BEGIN; cat /res/daemon.out; echo P0_OUT_END
+P0_OUT_BEGIN
+mknod: /dev/sacd_read: No such file or directory
+
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              
+SACD Daemon 0.37 active. Client none. SACD disc inserted.              P0_OUT_END
+/ # echo P0_F""INISHED
+P0_FINISHED
+
+--- unimp: 29 lines ---
+     1  bx510: unimplemented read 0x70000070 (4)
+     1  bx510: unimplemented read 0x7000007c (4)
+     1  bx510: unimplemented read 0x7000811c (4)
+     1  bx510: unimplemented read 0x70008730 (4)
+     1  bx510: unimplemented read 0x70024080 (4)
+     1  bx510: unimplemented read 0x70024088 (4)
+     1  bx510: unimplemented read 0x700240c4 (4)
+     1  bx510: unimplemented read 0x70024144 (4)
+     2  bx510: unimplemented read 0x70024188 (4)
+     1  bx510: unimplemented read 0x700241cc (4)
+     1  bx510: unimplemented write 0x70000070 = 0x50000 (4)
+     2  bx510: unimplemented write 0x70008100 = 0xc047ec40 (4)
+     1  bx510: unimplemented write 0x7000811c = 0x0 (4)
+     1  bx510: unimplemented write 0x70008154 = 0xffffffff (4)
+     1  bx510: unimplemented write 0x70008158 = 0x0 (4)
+     1  bx510: unimplemented write 0x7000815c = 0xffffffff (4)
+     1  bx510: unimplemented write 0x7000c01c = 0x100 (4)
+     2  bx510: unimplemented write 0x70024080 = 0x0 (4)
+     1  bx510: unimplemented write 0x700240c4 = 0x0 (4)
+     2  bx510: unimplemented write 0x70024144 = 0x0 (4)
+     1  bx510: unimplemented write 0x70024144 = 0x100 (4)
+     1  bx510: unimplemented write 0x70024148 = 0xffffffff (4)
+     1  bx510: unimplemented write 0x70024188 = 0x0 (4)
+     1  bx510: unimplemented write 0x70024188 = 0x45 (4)
+     1  bx510: unimplemented write 0x700241cc = 0x4 (4)

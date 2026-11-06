@@ -1,0 +1,187 @@
+=== displaylaunch trigger (uptime 1175.65 919.97) ===
+uptime: 1175.68 919.97
+stick dir: /mnt/sdf1/AutoScript
+osrelease: 2.6.35
+--- state(before) uptime 1175 ---
+proc/fb: 0 mt8530
+ls /dev/fb*: crw-------    1 root     root       29,   0 Sep 20  2018 /dev/fb0
+/sys/class/graphics/fb0/blank: 
+/sys/class/graphics/fb0/state: 0
+/sys/class/graphics/fb0/stride: 7680
+/sys/class/graphics/fb0/virtual_size: 1920,2160
+/sys/class/graphics/fb0/mode: 
+ls /dev/fusion*: crw-------    1 root     root      250,   0 Sep 20  2018 0
+ls /proc/fusion: 
+ls /dev/shm: drwxrwxrwt    2 root     root            80 Jan  1  2010 .
+drwxrwxr-x    8 1051     1051             0 Nov  5 03:52 ..
+-rw-r--r--    1 root     root            16 Jan  1  2010 sem.S2_install_mutex
+-rw-r--r--    1 root     root            16 Jan  1  2010 sem.ciphsvsem
+bdpprog pid: 
+--- directfbrc ---
+/usr/etc/directfbrc: # Confiure DirectFB by Yan Wang in MediaTek
+#
+# WM/System
+wm           = sawman
+#system       = devmem
+#video-phys   = 87000000
+#video-length = 16777216
+#primary-layer=0
+bg-color      = 00000000
+no-sighandler
+#no-vt
+thread-scheduler=fifo
+
+#
+# Use 640x480 by default (all visible)
+#mode = 640x480
+
+#
+# Shared Memory Mount Point
+#tmpfs = /tmp
+
+#
+# Disable Cursor
+no-cursor
+
+#
+# Disable Layer Initialization
+#no-init-layer = 0
+
+#
+# Graphics Layer
+init-layer        = 0
+#layer-size        = 720x576
+#layer-format      = RGB16
+layer-stacking    = middle,upper
+#layer-bg-color    = 000000
+#layer-src-key     = 000000
+layer-buffer-mode = frontonly
+
+#
+# Video Layer
+init-layer        = 1
+#layer-size        = 720x576
+#layer-format      = UYVY
+layer-stacking    = lower
+#layer-bg-color    = 000000
+layer-buffer-mode = frontonly
+#layer-bg-image    = /usr/local/share/images/bg_flower.jpg
+
+#
+# Scaling
+#smooth-upscale
+#smooth-downscale
+
+#
+# Debug domains
+#quiet
+#debug
+#debug = Core/GraphicsOps
+#debug = Core/Layers
+#debug = Core/Surface
+meminfo (head): MemTotal:         376368 kB
+MemFree:          184236 kB
+Buffers:           42404 kB
+cyberdraw: /mnt/sdf1/AutoScript/cyberdraw (executable: yes)
+--- cyberdraw --static device sweep (/dev/fb*) uptime 1175 ---
+static-fb0 exit: 0
+CYBERDRAW: /dev/fb0 1920x1080 bpp=32 stride=7680
+CYBERDRAW: ASCII downsample 60x18 (max-lum):
+  ++                         *****************************  ++
+       .+++++++++++++++++++++*++***************************   
+       .+++++++++++++++++++++*+.+++++++++.*    ++.+++++****   
+        ::::::::::::::::::---**-------::::*::::::::::::*-*    
+     ++++++++++++             *           *-           * *    
+     ++++++++++++             *           **           * *    
+     ++++++++++++             **           *           *-*    
+     +++++++++++++++           *           *           ***    
+     *********+                *         *********    ***     
+     *********+                **      ***       ********     
+                                *   ****              ***     
+                                * ***                 **      
+  --------------------------++++****------------------**------
+  :::::::::::::::-+++++++++++++++++******+++++-::::::***::::::
+  -------++++++++++++++++++++++--+++++++******+++++++**-------
+  ++++++++++++++++++++=+++===+====+===+++=+++******++**+++++++
+  ++++++++++++++++++++++====++=====+=====+++===+++****++++++++
+  ++++++++++++++++++++++-  ++   -   +   --  +++----+++++---+++
+CYBERDRAW: full-frame md5: 5be59ae255a692ffb0ab197915ce0656
+CYBERDRAW: DONE
+display device for the anim: /dev/fb0 (probed 1)
+--- dfbhello (real DirectFB stack) uptime 1180 ---
+dfbhello exit: 0
+
+   ~~~~~~~~~~~~~~~~~~~~~~~~~~| DirectFB 1.2.7 |~~~~~~~~~~~~~~~~~~~~~~~~~~
+        (c) 2001-2008  The world wide DirectFB Open Source Community
+        (c) 2000-2004  Convergence (integrated media) GmbH
+      ----------------------------------------------------------------
+
+(*) DirectFB/Core: Multi Application Core. (2012-10-27 13:23) 
+(*) Fusion/SHM: Using MADV_REMOVE (2.6.35.0 >= 2.6.19.2)
+(*) Direct/Thread: Started 'Fusion Dispatch' (2050) [MESSAGING FIFO/FIFO 44/44] <8388608>...
+(*) MediaTek/System: system_initialize: #237
+(*) Direct/Thread: Started 'VT Switcher' (2056) [CRITICAL FIFO/FIFO 44/44] <8388608>...
+(*) Direct/Thread: Started 'PS/2 Input' (2057) [INPUT FIFO/FIFO 44/44] <8388608>...
+(*) DirectFB/Input: IMPS/2 Mouse 1.0 (directfb.org)
+(*) Direct/Thread: Started 'LiRC Input' (2058) [INPUT FIFO/FIFO 44/44] <8388608>...
+(*) DirectFB/Input: LIRC Device 0.2 (directfb.org)
+(*) Direct/Thread: Started 'Keyboard Input' (2059) [INPUT FIFO/FIFO 44/44] <8388608>...
+(*) DirectFB/Input: Keyboard 0.9 (directfb.org)
+(*) DirectFB/Graphics: MediaTek 85xx 1.2 (MediaTek)
+(*) DirectFB/Core/WM: SaWMan 0.2 (directfb.org)
+(*) SaWMan: Initializing stack 0x20197900 for tier 0x255f3000, 0x0, layer 0, context 0x20087000 [3]...
+(*) SaWMan: Initializing stack 0x20197800 for tier 0x255f3e00, 0x0, layer 1, context 0x20087a00 [6]...
+(*) SaWMan/Init: Layer  0:  1280x720, ARGB, options: 0
+(*) SaWMan/Init: Border 0:  1280x720, ARGB, options: 8
+(*) SaWMan/Init: Layer  1:  1280x720, ARGB, options: 0
+(*) SaWMan/Init: Border 1:  1280x720, ARGB, options: 8
+ (!!!)  *** WARNING [Non-flipping window surface and no 'autoflip-window' option used] *** [idirectfbsurface_window.c:319 in IDirectFBSurface_Window_Construct()]
+DFBHELLO: DirectFBInit: rc=0 (OK)
+UUU:CONFIG_DIRECTFB_MULTI_MEM_POOL
+mt85AdapterCmdBufGetCmdBuf: u4CmdbufLen = 0x6000
+[5J] system_initialize -> map debug info
+DFBHELLO: DirectFBCreate: rc=0 (OK)
+DFBHELLO: device: name=85xx vendor=MediaTek
+DFBHELLO: device: blit_flags=0x10ff draw_flags=0x1d
+DFBHELLO: CreateSurface(primary): rc=0 (OK)
+DFBHELLO: primary surface 1920x1080 fmt=0x418c04
+DSPF_ARGB1555 = 0x211780, DSPF_RGB16 = 0x200801, DSPF_RGB24 = 0x300c02, DSPF_RGB32 = 0x400c03
+DSPF_ARGB = 0x418c04, DSPF_A8 = 0x118005, DSPF_YUY2 = 0x200806, DSPF_RGB332 = 0x100407
+DSPF_UYVY = 0x200808, DSPF_I420 = 0x8100609, DSPF_YV12 = 0x810060a, DSPF_LUT8 = 0x4011040b
+DSPF_ALUT44 = 0x4011420c, DSPF_AiRGB = 0x80418c0d, DSPF_A1 = 0x383100e, DSPF_NV12 = 0x810060f
+DSPF_NV16 = 0x10100c10, DSPF_ARGB2554 = 0x212711, DSPF_ARGB4444 = 0x214612, DSPF_NV21 = 0x8100613
+DSPF_AYUV = 0x418c14, DSPF_A4 = 0x894015, DSPF_ARGB1666 = 0x311916, DSPF_ARGB6666 = 0x316917
+DSPF_RGB18 = 0x300918, DSPF_LUT2 = 0x41850119, DSPF_RGB444 = 0x20061a, DSPF_RGB555 = 0x20079b, DSPF_BGR555 = 0x20079c
+DFBHELLO: Flip#1: rc=0 (OK)
+DFBHELLO: HOLDING 25s — pattern should be on the panel now
+DFBHELLO: Flip#2: rc=0 (OK)
+DFBHELLO: DONE
+ (!!!)  *** WARNING [still objects in 'Layer Region Pool'] *** [object.c:241 in fusion_object_pool_destroy()]
+ (!!!)  *** WARNING [still objects in 'Layer Context Pool'] *** [object.c:241 in fusion_object_pool_destroy()]
+ (!!!)  *** WARNING [still objects in 'Surface Pool'] *** [object.c:241 in fusion_object_pool_destroy()]
+(*) MediaTek/System: system_shutdown: #556
+inventory active-display sample armed (+5s)
+--- fbmd5 settle check on /dev/fb0 (+2s) uptime 1206 ---
+fbmd5 exit: 0
+FBMD5: /dev/fb0 1280x720 bpp=32 stride=7680 md5=7b3ba1b1b5fedb562f08fe3428e99dc2
+--- cyberdraw --anim skipped (dfbhello already ran) ---
+--- fbmd5 after anim on /dev/fb0 (uptime 1208) ---
+fbmd5-after exit: 0
+FBMD5: /dev/fb0 1280x720 bpp=32 stride=7680 md5=7b3ba1b1b5fedb562f08fe3428e99dc2
+--- state(after) uptime 1209 ---
+proc/fb: 0 mt8530
+ls /dev/fb*: crw-------    1 root     root       29,   0 Sep 20  2018 /dev/fb0
+/sys/class/graphics/fb0/blank: 
+/sys/class/graphics/fb0/state: 0
+/sys/class/graphics/fb0/stride: 7680
+/sys/class/graphics/fb0/virtual_size: 1280,2880
+/sys/class/graphics/fb0/mode: 
+ls /dev/fusion*: crw-------    1 root     root      250,   0 Sep 20  2018 0
+ls /proc/fusion: 
+ls /dev/shm: drwxrwxrwt    2 root     root            80 Nov  5 03:57 .
+drwxrwxr-x    8 1051     1051             0 Nov  5 03:57 ..
+-rw-r--r--    1 root     root            16 Jan  1  2010 sem.S2_install_mutex
+-rw-r--r--    1 root     root            16 Jan  1  2010 sem.ciphsvsem
+bdpprog pid: 
+=== displaylaunch end (uptime 1209) ===
+inventory (active-display sample) -> stick /mnt/sdf1/AutoScript/inventory-active-1211.txt (RAM copy /tmp/inventory-active-1211.txt)

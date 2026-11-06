@@ -1,0 +1,53 @@
+# runner sha256=441dab7e3da57c0b83ccc788ef2746de6d646c7e5fc99cfb25e50548b02e1f8c
+SHA original=0fdcefdb84ae818be7385657eaf0960053f6e4452a82f19cbe6777f9c8cddb45
+SHA release=e91720fbbbd592505bde6630843b0495ff82a93e40c0e427aaa70a081ff9ae22
+=== POSITIVE GATE + CROSS-BINARY DIFF ===
+GATE: POSITIVE-PASS original (complete ordered sequence, computed hashes)
+GATE: POSITIVE-PASS release (complete ordered sequence, computed hashes)
+SWEEP[original] delay=0 (race window): CLASS=eof
+SWEEP[original] delay=0 (race window): CLASS=ok OPEN type=1 result=0
+SWEEP[original] delay=0 (race window): CLASS=eof
+SWEEP[release] delay=0 (race window): CLASS=eof
+SWEEP[release] delay=0 (race window): CLASS=ok OPEN type=1 result=0
+SWEEP[release] delay=0 (race window): CLASS=eof
+DIFF: TRANSCRIPTS IDENTICAL (protocol steps; sweep reported above)
+=== NEGATIVE CONTROL (malformed TOC) ===
+GATE: NEGATIVE-PASS original (documented failure sequence)
+GATE: NEGATIVE-PASS release (documented failure sequence)
+GATE: NEGATIVE-CONTROL — successful-disc parity NOT awarded (equal-failure-equal is explicitly rejected as a parity claim)
+SWEEP[original] delay=0 (race window): CLASS=eof
+SWEEP[original] delay=0 (race window): CLASS=eof
+SWEEP[original] delay=0 (race window): CLASS=eof
+SWEEP[release] delay=0 (race window): CLASS=eof
+SWEEP[release] delay=0 (race window): CLASS=eof
+SWEEP[release] delay=0 (race window): CLASS=eof
+DIFF: TRANSCRIPTS IDENTICAL (protocol steps; sweep reported above)
+=== SELF-PAIR original->original ===
+GATE: POSITIVE-PASS original (complete ordered sequence, computed hashes)
+GATE: POSITIVE-PASS release (complete ordered sequence, computed hashes)
+SWEEP[original] delay=0 (race window): CLASS=eof
+SWEEP[original] delay=0 (race window): CLASS=ok OPEN type=1 result=0
+SWEEP[original] delay=0 (race window): CLASS=eof
+SWEEP[release] delay=0 (race window): CLASS=eof
+SWEEP[release] delay=0 (race window): CLASS=eof
+SWEEP[release] delay=0 (race window): CLASS=ok OPEN type=1 result=0
+DIFF: TRANSCRIPTS IDENTICAL (protocol steps; sweep reported above)
+=== SELF-PAIR release->release ===
+GATE: POSITIVE-PASS original (complete ordered sequence, computed hashes)
+GATE: POSITIVE-PASS release (complete ordered sequence, computed hashes)
+SWEEP[original] delay=0 (race window): CLASS=eof
+SWEEP[original] delay=0 (race window): CLASS=ok OPEN type=1 result=0
+SWEEP[original] delay=0 (race window): CLASS=eof
+SWEEP[release] delay=0 (race window): CLASS=eof
+SWEEP[release] delay=0 (race window): CLASS=eof
+SWEEP[release] delay=0 (race window): CLASS=ok OPEN type=1 result=0
+DIFF: TRANSCRIPTS IDENTICAL (protocol steps; sweep reported above)
+=== RAW-FRAME VERIFICATION (positive) ===
+SESSION BYTES IDENTICAL (292947 bytes, through CLOSE#2)
+REQUEST STREAMS IDENTICAL (179 bytes)
+RAW-FRAME VERIFICATION: PASS
+=== RAW-FRAME VERIFICATION (negative) ===
+SESSION BYTES IDENTICAL (143 bytes, through CLOSE#2)
+REQUEST STREAMS IDENTICAL (179 bytes)
+RAW-FRAME VERIFICATION: PASS
+GATE: OVERALL VERDICT: PASS (gates, self-pairs, raw-frame verification)

@@ -1,0 +1,16 @@
+Host transport and capture verification
+PASS original upstream Python client against its in-process provider
+PASS nine ordered exchanges, four returned sector ranges checked against a local ISO
+PASS rejected changed OPEN result, altered READ frame SHA-256, missing CLOSE, malformed request bytes, incorrect response length, reconnect digest mismatch, and a changed ISO byte
+PASS two-sector request used the upstream client and returned 4,096 bytes
+
+USB staging
+PASS verified original ELF sha, backup, wrapper install, byte-identical restore, refusal to restore an unexpected active file
+PASS generated the awake-only stick and refused an existing AutoScript directory
+
+ARM guest, stock Linux 2.6.35 and DirectFB 1.2.7
+PASS actual screen ELF loaded and rendered its deterministic in-memory ARGB test with guarded row padding. Force-client display request returned a missing Fusion device in QEMU. Physical HDMI pending.
+PASS real original ELF with the sector observer preloaded, LD_BIND_NOW=1, --help exit 0, known stdout hash
+PASS synthetic lower ARM ioctl provider with overlapping workers, overwritten ioctl pointer, errno forwarding, existing file protection, and byte-for-byte checks of a two-sector raw/logical capture. Physical module read pending.
+PASS updated v1 wrapper in place and restored the exact original ELF while preserving both AutoScript files and the existing log.
+S5100 first physical report: original launcher and fbinfo worked. HDMI bars unobserved in standby. See s5100-first-display-run.md.

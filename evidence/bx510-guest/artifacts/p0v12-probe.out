@@ -1,0 +1,125 @@
+--    1 0        0           463152 Sep 20  2018 [0;0mtntfs.ko[0m
+-rw-rw-r--    1 0        0           106752 Sep 20  2018 [0;0mudf.ko[0m
+-rw-rw-r--    1 0        0            82196 Sep 20  2018 [0;0musb-storage.ko[0m
+-rw-rw-r--    1 0        0            16056 Sep 20  2018 [0;0musb_qmu_linux_native.ko[0m
+-rw-rw-r--    1 0        0           179496 Sep 20  2018 [0;0musbcore.ko[0m
+-rw-rw-r--    1 0        0            39840 Sep 20  2018 [0;0musbhid.ko[0m
+-rw-rw-r--    1 0        0            40712 Sep 20  2018 [0;0musbserial.ko[0m
+-rw-rw-r--    1 0        0            14384 Sep 20  2018 [0;0mvfat.ko[0m
+P0_BDPDIR_END
+/ # LD_PRELOAD=/res/shim/tmpredir.so /res/shim/bgstart /res/original/sacd_extrac
+
+t_160 -S
+BG_PID=514
+/ # sleep 20; echo P0_TCP_BEGIN; cat /res/proc/net/tcp; echo P0_TCP_END
+[SACDREAD] ========================================
+[SACDREAD] minor = 201
+[SACDREAD] compid = 0
+[SACDREAD] ========================================
+[SACDREAD]Symbol "i4CPSA_Inst_CPSMode_Ctrl" address is 0xbf0000d8
+[SACDREAD]Symbol "_IDECLI_OddRead" address is 0xbf0000b8
+[SACDREAD]Symbol "_i4CPSA_Inst_Decrypt" address is 0xbf0000a0
+[SACDREAD]Symbol "i4CPSA_Inst_SetSACDControl" address is 0xbf000000
+[SACDREAD]Symbol "u4CPSA_Inst_GetInstHandleFromCompId" address is 0xbf000084
+[SACDREAD]Symbol "i4CPSA_Inst_Connect" address is 0xbf000008
+[SACDREAD]Symbol "i4CPSA_Inst_Disconnect" address is 0xbf000010
+[SACDREAD]Symbol "vSacdDecryptEnable" address is 0xbf000018
+[SACDREAD]Symbol "_SACDCLI_TestPhy" address is 0xbf000068
+[SACDREAD]Symbol "eSacdGetVersion" address is 0xbf00001c
+[SACDREAD]Symbol "_SACDCLI_FindTag" address is 0xbf000024
+[SACDREAD]Symbol "_IDECLI_OddTestUnitReadyLoop" address is 0xbf00004c
+[SACDREAD]Symbol "_IDECLI_OddGetProfile" address is 0xbf000034
+[SACDREAD]Symbol "__ksymtab_disable_print" address is 0xc0420818
+bdpvirt: GetInstHandleFromCompId compid=0 -> free (-1)
+Unable to handle kernel paging request at virtual address 00004e20
+pgd = dda48000
+[00004e20] *pgd=1d8b6031, *pte=00000000, *ppte=00000000
+Internal error: Oops: 17 [#1] PREEMPT
+last sysfs file: 
+Modules linked in: sacd_read bx510_bdpvirt
+CPU: 0    Not tainted  (2.6.35 #1)
+PC is at strnlen+0x10/0x28
+LR is at string.clone.1+0x2c/0xc0
+pc : [<c0192aa0>]    lr : [<c019404c>]    psr: a00001d3
+sp : ddaabdd0  ip : 00000028  fp : 00000400
+r10: ddaabec0  r9 : 00000002  r8 : 00004e20
+r7 : 00000000  r6 : ffffffff  r5 : c047ec28  r4 : c047e846
+r3 : 00004e20  r2 : 00004e20  r1 : ffffffff  r0 : 00004e20
+Flags: NzCv  IRQs off  FIQs off  Mode SVC_32  ISA ARM  Segment user
+Control: 00c5387d  Table: 1da48008  DAC: 00000015
+Process sacd_extract_16 (pid: 514, stack limit = 0xddaaa268)
+Stack: (0xddaabdd0 to 0xddaac000)
+bdc0:                                     ddaabebc c047ec28 bf000379 c047e846
+bde0: c047e828 c0194d48 ffffffff ffffffff c045ffb8 c006aaf8 ff0a0004 ffffffff
+be00: 0000034f 00000400 c047e828 c047e780 ddaabebc bf000359 ddaaa000 ddaabe30
+be20: 00000004 c0194fa4 00000000 c003c5e4 c0482cac c0040a10 00000001 ddaaa000
+be40: 40025000 60000153 00000000 0000001b 00000000 08000000 00000002 00000001
+be60: ddaaa000 40025000 0000001b c0040e3c 00000000 c002206c 80000153 ffffffff
+be80: fd008000 bebfecf8 40105306 ddaabedc 40105306 c0023264 ddaaa000 40025000
+bea0: bebfed14 c03559d8 bf000359 ddaabebc fffffffc bf00005c bf000359 00004e20
+bec0: fffffffc bf007170 bebfecf8 bf006598 c006aeb0 00000001 c0482cac 00000000
+bee0: 00000000 00000000 00000000 00000002 c61d0380 00000000 bebfecf8 40105306
+bf00: c0023264 ddaaa000 40025000 c00a32dc c62716c0 c61d0380 bebfecf8 bebfecf8
+bf20: 00000005 c00a3d30 c61068a0 c0055b2c ddaaa000 c045b508 ddaabf64 c0355c44
+bf40: 40000000 ddaaa000 00000001 00000000 00000005 c0023264 ddaaa000 40025000
+bf60: ddaabf74 c0355e1c 00000002 c61d0380 bebfecf8 40105306 00000005 c0023264
+bf80: ddaaa000 c00a3dd0 00000005 00000001 bebfecf8 00000000 00000000 00000000
+bfa0: 00000036 c00230e0 00000000 00000000 00000005 40105306 bebfecf8 bebfecf8
+bfc0: 00000000 00000000 00000000 00000036 00000000 00000000 40025000 bebfed14
+bfe0: 00000000 bebfecf8 000212d4 401266cc 60000150 00000005 00000000 00000000
+[<c0192aa0>] (strnlen+0x10/0x28) from [<c019404c>] (string.clone.1+0x2c/0xc0)
+[<c019404c>] (string.clone.1+0x2c/0xc0) from [<c0194d48>] (vsnprintf+0x1c8/0x388)
+[<c0194d48>] (vsnprintf+0x1c8/0x388) from [<c0194fa4>] (vscnprintf+0xc/0x18)
+[<c0194fa4>] (vscnprintf+0xc/0x18) from [<c003c5e4>] (vprintk+0x154/0x3d4)
+[<c003c5e4>] (vprintk+0x154/0x3d4) from [<c03559d8>] (printk+0x2c/0x3c)
+[<c03559d8>] (printk+0x2c/0x3c) from [<bf00005c>] (_IDECLI_OddTestUnitReadyLoop+0x10/0x1c [bx510_bdpvirt])
+[<bf00005c>] (_IDECLI_OddTestUnitReadyLoop+0x10/0x1c [bx510_bdpvirt]) from [<bf006598>] (sacd_read_ioctl+0x36c/0x450 [sacd_read])
+[<bf006598>] (sacd_read_ioctl+0x36c/0x450 [sacd_read]) from [<c00a32dc>] (vfs_ioctl+0x7c/0xac)
+[<c00a32dc>] (vfs_ioctl+0x7c/0xac) from [<c00a3d30>] (do_vfs_ioctl+0x550/0x5bc)
+[<c00a3d30>] (do_vfs_ioctl+0x550/0x5bc) from [<c00a3dd0>] (sys_ioctl+0x34/0x54)
+[<c00a3dd0>] (sys_ioctl+0x34/0x54) from [<c00230e0>] (ret_fast_syscall+0x0/0x30)
+Code: e1a03000 e3510000 e1a02003 0a000003 (e4d3c001) 
+---[ end trace 6c45a69b2be08f30 ]---
+note: sacd_extract_16[514] exited with preempt_count 3
+P0_TCP_BEGIN
+  sl  local_address rem_address   st tx_queue rx_queue tr tm->when retrnsmt   uid  timeout inode                                                     
+   0: 00000000:07D2 00000000:0000 0A 00000000:00000000 00:00000000 00000000     0        0 56 1 c6274000 300 0 0 2 -1                                
+P0_TCP_END
+/ # echo P0_MOD_BEGIN; cat /res/proc/modules; ls -l /res/dev; echo P0_MOD_END
+P0_MOD_BEGIN
+sacd_read 4976 1 - Live 0xbf006000
+bx510_bdpvirt 3844 1 sacd_read, Live 0xbf000000
+crw-r--r--    1 0        0          10, 201 Jan  1 00:00 [1;35msacd_read[0m
+P0_MOD_END
+/ # echo P0_OUT_BEGIN; cat /res/daemon.out; echo P0_OUT_END
+P0_OUT_BEGIN
+mknod: /dev/sacd_read: No such file or directory
+P0_OUT_END
+/ # echo P0_F""INISHED
+P0_FINISHED
+--- unimp: 29 lines ---
+     1  bx510: unimplemented read 0x70000070 (4)
+     1  bx510: unimplemented read 0x7000007c (4)
+     1  bx510: unimplemented read 0x7000811c (4)
+     1  bx510: unimplemented read 0x70008730 (4)
+     1  bx510: unimplemented read 0x70024080 (4)
+     1  bx510: unimplemented read 0x70024088 (4)
+     1  bx510: unimplemented read 0x700240c4 (4)
+     1  bx510: unimplemented read 0x70024144 (4)
+     2  bx510: unimplemented read 0x70024188 (4)
+     1  bx510: unimplemented read 0x700241cc (4)
+     1  bx510: unimplemented write 0x70000070 = 0x50000 (4)
+     2  bx510: unimplemented write 0x70008100 = 0xc047ec40 (4)
+     1  bx510: unimplemented write 0x7000811c = 0x0 (4)
+     1  bx510: unimplemented write 0x70008154 = 0xffffffff (4)
+     1  bx510: unimplemented write 0x70008158 = 0x0 (4)
+     1  bx510: unimplemented write 0x7000815c = 0xffffffff (4)
+     1  bx510: unimplemented write 0x7000c01c = 0x100 (4)
+     2  bx510: unimplemented write 0x70024080 = 0x0 (4)
+     1  bx510: unimplemented write 0x700240c4 = 0x0 (4)
+     2  bx510: unimplemented write 0x70024144 = 0x0 (4)
+     1  bx510: unimplemented write 0x70024144 = 0x100 (4)
+     1  bx510: unimplemented write 0x70024148 = 0xffffffff (4)
+     1  bx510: unimplemented write 0x70024188 = 0x0 (4)
+     1  bx510: unimplemented write 0x70024188 = 0x45 (4)
+     1  bx510: unimplemented write 0x700241cc = 0x4 (4)

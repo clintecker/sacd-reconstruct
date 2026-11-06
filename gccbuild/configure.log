@@ -1,0 +1,46 @@
+checking build system type... x86_64-unknown-linux-gnu
+checking host system type... x86_64-unknown-linux-gnu
+checking target system type... arm-none-linux-gnueabi
+checking for a BSD-compatible install... /usr/bin/install -c
+checking whether ln works... yes
+checking whether ln -s works... yes
+checking for gcc... gcc -std=gnu89 -fcommon
+checking for C compiler default output file name... a.out
+checking whether the C compiler works... yes
+checking whether we are cross compiling... no
+checking for suffix of executables... 
+checking for suffix of object files... o
+checking whether we are using the GNU C compiler... yes
+checking whether gcc -std=gnu89 -fcommon accepts -g... yes
+checking for gcc -std=gnu89 -fcommon option to accept ANSI C... none needed
+checking for g++... no
+checking for c++... no
+checking for gpp... no
+checking for aCC... no
+checking for CC... no
+checking for cxx... no
+checking for cc++... no
+checking for cl... no
+checking for FCC... no
+checking for KCC... no
+checking for RCC... no
+checking for xlC_r... no
+checking for xlC... no
+checking whether we are using the GNU C++ compiler... no
+checking whether g++ accepts -g... no
+checking for gnatbind... no
+checking for gnatmake... no
+checking whether compiler driver understands Ada... no
+checking how to compare bootstrapped objects... cmp --ignore-initial=16 $$f1 $$f2
+checking for correct version of gmp.h... yes
+checking for correct version of mpfr.h... yes
+checking for version 0.10 of PPL... no
+checking for correct version of CLooG... no
+*** This configuration is not supported in the following subdirectories:
+     target-libada gnattools target-libstdc++-v3 target-libgfortran target-libffi target-zlib target-libjava zlib target-libobjc target-libgomp target-libmudflap target-libssp target-boehm-gc
+    (Any other directories should still work fine.)
+gcc: internal compiler error: Segmentation fault signal terminated program collect2
+Please submit a full bug report, with preprocessed source (by using -freport-bug).
+See <file:///usr/share/doc/gcc-12/README.Bugs> for instructions.
+*** The command 'gcc -std=gnu89 -fcommon -o conftest -std=gnu89 -fcommon -O1 -w   conftest.c' failed.
+*** You must set the environment variable CC to a working compiler.

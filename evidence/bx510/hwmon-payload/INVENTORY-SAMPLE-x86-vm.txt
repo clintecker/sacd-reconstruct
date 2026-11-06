@@ -1,0 +1,461 @@
+=== BX510 runtime inventory (bx510_inventory v1) ===
+collector: bx510_inventory v2 (read-only, +fusion adjudicator)
+note: x86-test values may appear when this binary is run on the lab VM; player values come only from the player run
+--- uptime ---
+760122.55 3911810.50
+--- elf interpreter ---
+  /proc/self/exe PT_INTERP: /lib64/ld-linux-x86-64.so.2
+--- core runtime libraries (hashes) ---
+--- loaded images (/proc/self/maps + hashes) ---
+  mapped: /tmp/inv_x86
+  mapped: /usr/lib/x86_64-linux-gnu/libc.so.6
+  mapped: /usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2
+  /usr/lib/x86_64-linux-gnu/libc.so.6: size=1995216 sha256=9792e3cbb541c8f44c7acf5f14f4022ea62998ecc787d326bed4d8b6547dfd92
+  /usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2: size=225672 sha256=c8438e4fde1934e61c88311633f00949ff645d5c04cdb8671fa3d78164d2f307
+--- libc version markers ---
+  libc image: /usr/lib/x86_64-linux-gnu/libc.so.6 (from /proc/self/maps)
+  banner: GNU C Library (Debian GLIBC 2.41-12+deb13u4) stable release version 2.41.
+  max GLIBC_2.x marker: GLIBC_2.41
+--- kernel release ---
+Linux version 6.12.113+deb13-cloud-amd64 (debian-kernel@lists.debian.org) (x86_64-linux-gnu-gcc-14 (Debian 14.2.0-19) 14.2.0, GNU ld (GNU Binutils for Debian) 2.44) #1 SMP PREEMPT_DYNAMIC Debian 6.12.113-1 (2026-10-15)
+osrelease: 6.12.113+deb13-cloud-amd64
+--- cpu (/proc/cpuinfo) ---
+processor	: 0
+vendor_id	: GenuineIntel
+cpu family	: 6
+model		: 151
+model name	: 12th Gen Intel(R) Core(TM) i5-12500T
+stepping	: 5
+microcode	: 0x3d
+cpu MHz		: 1996.800
+cache size	: 16384 KB
+physical id	: 0
+siblings	: 6
+core id		: 0
+cpu cores	: 6
+apicid		: 0
+initial apicid	: 0
+fpu		: yes
+fpu_exception	: yes
+cpuid level	: 32
+wp		: yes
+flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ss ht syscall nx pdpe1gb rdtscp lm constant_tsc arch_perfmon rep_good nopl xtopology cpuid tsc_known_freq pni pclmulqdq vmx ssse3 fma cx16 pdcm pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand hypervisor lahf_lm abm 3dnowprefetch cpuid_fault ssbd ibrs ibpb stibp ibrs_enhanced tpr_shadow flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid rdseed adx smap clflushopt clwb sha_ni xsaveopt xsavec xgetbv1 xsaves user_shstk avx_vnni arat vnmi umip pku ospke waitpkg gfni vaes vpclmulqdq rdpid movdiri movdir64b fsrm md_clear serialize ibt flush_l1d arch_capabilities
+vmx flags	: vnmi preemption_timer posted_intr invvpid ept_x_only ept_ad ept_1gb flexpriority apicv tsc_offset vtpr mtf vapic ept vpid unrestricted_guest vapic_reg vid shadow_vmcs pml ept_mode_based_exec tsc_scaling usr_wait_pause
+bugs		: spectre_v1 spectre_v2 spec_store_bypass swapgs eibrs_pbrsb bhi ibpb_no_ret
+bogomips	: 3993.60
+clflush size	: 64
+cache_alignment	: 64
+address sizes	: 46 bits physical, 48 bits virtual
+power management:
+
+processor	: 1
+vendor_id	: GenuineIntel
+cpu family	: 6
+model		: 151
+model name	: 12th Gen Intel(R) Core(TM) i5-12500T
+stepping	: 5
+microcode	: 0x3d
+cpu MHz		: 1996.800
+cache size	: 16384 KB
+physical id	: 0
+siblings	: 6
+core id		: 1
+cpu cores	: 6
+apicid		: 1
+initial apicid	: 1
+fpu		: yes
+fpu_exception	: yes
+cpuid level	: 32
+wp		: yes
+flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ss ht syscall nx pdpe1gb rdtscp lm constant_tsc arch_perfmon rep_good nopl xtopology cpuid tsc_known_freq pni pclmulqdq vmx ssse3 fma cx16 pdcm pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand hypervisor lahf_lm abm 3dnowprefetch cpuid_fault ssbd ibrs ibpb stibp ibrs_enhanced tpr_shadow flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid rdseed adx smap clflushopt clwb sha_ni xsaveopt xsavec xgetbv1 xsaves user_shstk avx_vnni arat vnmi umip pku ospke waitpkg gfni vaes vpclmulqdq rdpid movdiri movdir64b fsrm md_clear serialize ibt flush_l1d arch_capabilities
+vmx flags	: vnmi preemption_timer posted_intr invvpid ept_x_only ept_ad ept_1gb flexpriority apicv tsc_offset vtpr mtf vapic ept vpid unrestricted_guest vapic_reg vid shadow_vmcs pml ept_mode_based_exec tsc_scaling usr_wait_pause
+bugs		: spectre_v1 spectre_v2 spec_store_bypass swapgs eibrs_pbrsb bhi ibpb_no_ret
+bogomips	: 3993.60
+clflush size	: 64
+cache_alignment	: 64
+address sizes	: 46 bits physical, 48 bits virtual
+power management:
+
+processor	: 2
+vendor_id	: GenuineIntel
+cpu family	: 6
+model		: 151
+model name	: 12th Gen Intel(R) Core(TM) i5-12500T
+stepping	: 5
+microcode	: 0x3d
+cpu MHz		: 1996.800
+cache size	: 16384 KB
+physical id	: 0
+siblings	: 6
+core id		: 2
+cpu cores	: 6
+apicid		: 2
+initial apicid	: 2
+fpu		: yes
+fpu_exception	: yes
+cpuid level	: 32
+wp		: yes
+flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ss ht syscall nx pdpe1gb rdtscp lm constant_tsc arch_perfmon rep_good nopl xtopology cpuid tsc_known_freq pni pclmulqdq vmx ssse3 fma cx16 pdcm pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand hypervisor lahf_lm abm 3dnowprefetch cpuid_fault ssbd ibrs ibpb stibp ibrs_enhanced tpr_shadow flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid rdseed adx smap clflushopt clwb sha_ni xsaveopt xsavec xgetbv1 xsaves user_shstk avx_vnni arat vnmi umip pku ospke waitpkg gfni vaes vpclmulqdq rdpid movdiri movdir64b fsrm md_clear serialize ibt flush_l1d arch_capabilities
+vmx flags	: vnmi preemption_timer posted_intr invvpid ept_x_only ept_ad ept_1gb flexpriority apicv tsc_offset vtpr mtf vapic ept vpid unrestricted_guest vapic_reg vid shadow_vmcs pml ept_mode_based_exec tsc_scaling usr_wait_pause
+bugs		: spectre_v1 spectre_v2 spec_store_bypass swapgs eibrs_pbrsb bhi ibpb_no_ret
+bogomips	: 3993.60
+clflush size	: 64
+cache_alignment	: 64
+address sizes	: 46 bits physical, 48 bits virtual
+power management:
+
+processor	: 3
+vendor_id	: GenuineIntel
+cpu family	: 6
+model		: 151
+model name	: 12th Gen Intel(R) Core(TM) i5-12500T
+stepping	: 5
+microcode	: 0x3d
+cpu MHz		: 1996.800
+cache size	: 16384 KB
+physical id	: 0
+siblings	: 6
+core id		: 3
+cpu cores	: 6
+apicid		: 3
+initial apicid	: 3
+fpu		: yes
+fpu_exception	: yes
+cpuid level	: 32
+wp		: yes
+flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ss ht syscall nx pdpe1gb rdtscp lm constant_tsc arch_perfmon rep_good nopl xtopology cpuid tsc_known_freq pni pclmulqdq vmx ssse3 fma cx16 pdcm pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand hypervisor lahf_lm abm 3dnowprefetch cpuid_fault ssbd ibrs ibpb stibp ibrs_enhanced tpr_shadow flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid rdseed adx smap clflushopt clwb sha_ni xsaveopt xsavec xgetbv1 xsaves user_shstk avx_vnni arat vnmi umip pku ospke waitpkg gfni vaes vpclmulqdq rdpid movdiri movdir64b fsrm md_clear serialize ibt flush_l1d arch_capabilities
+vmx flags	: vnmi preemption_timer posted_intr invvpid ept_x_only ept_ad ept_1gb flexpriority apicv tsc_offset vtpr mtf vapic ept vpid unrestricted_guest vapic_reg vid shadow_vmcs pml ept_mode_based_exec tsc_scaling usr_wait_pause
+bugs		: spectre_v1 spectre_v2 spec_store_bypass swapgs eibrs_pbrsb bhi ibpb_no_ret
+bogomips	: 3993.60
+clflush size	: 64
+cache_alignment	: 64
+address sizes	: 46 bits physical, 48 bits virtual
+power management:
+
+processor	: 4
+vendor_id	: GenuineIntel
+cpu family	: 6
+model		: 151
+model name	: 12th Gen Intel(R) Core(TM) i5-12500T
+stepping	: 5
+microcode	: 0x3d
+cpu MHz		: 1996.800
+cache size	: 16384 KB
+physical id	: 0
+siblings	: 6
+core id		: 4
+cpu cores	: 6
+apicid		: 4
+initial apicid	: 4
+fpu		: yes
+fpu_exception	: yes
+cpuid level	: 32
+wp		: yes
+flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ss ht syscall nx pdpe1gb rdtscp lm constant_tsc arch_perfmon rep_good nopl xtopology cpuid tsc_known_freq pni pclmulqdq vmx ssse3 fma cx16 pdcm pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand hypervisor lahf_lm abm 3dnowprefetch cpuid_fault ssbd ibrs ibpb stibp ibrs_enhanced tpr_shadow flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid rdseed adx smap clflushopt clwb sha_ni xsaveopt xsavec xgetbv1 xsaves user_shstk avx_vnni arat vnmi umip pku ospke waitpkg gfni vaes vpclmulqdq rdpid movdiri movdir64b fsrm md_clear serialize ibt flush_l1d arch_capabilities
+vmx flags	: vnmi preemption_timer posted_intr invvpid ept_x_only ept_ad ept_1gb flexpriority apicv tsc_offset vtpr mtf vapic ept vpid unrestricted_guest vapic_reg vid shadow_vmcs pml ept_mode_based_exec tsc_scaling usr_wait_pause
+bugs		: spectre_v1 spectre_v2 spec_store_bypass swapgs eibrs_pbrsb bhi ibpb_no_ret
+bogomips	: 3993.60
+clflush size	: 64
+cache_alignment	: 64
+address sizes	: 46 bits physical, 48 bits virtual
+power management:
+
+processor	: 5
+vendor_id	: GenuineIntel
+cpu family	: 6
+model		: 151
+model name	: 12th Gen Intel(R) Core(TM) i5-12500T
+stepping	: 5
+microcode	: 0x3d
+cpu MHz		: 1996.800
+cache size	: 16384 KB
+physical id	: 0
+siblings	: 6
+core id		: 5
+cpu cores	: 6
+apicid		: 5
+initial apicid	: 5
+fpu		: yes
+fpu_exception	: yes
+cpuid level	: 32
+wp		: yes
+flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ss ht syscall nx pdpe1gb rdtscp lm constant_tsc arch_perfmon rep_good nopl xtopology cpuid tsc_known_freq pni pclmulqdq vmx ssse3 fma cx16 pdcm pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand hypervisor lahf_lm abm 3dnowprefetch cpuid_fault ssbd ibrs ibpb stibp ibrs_enhanced tpr_shadow flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid rdseed adx smap clflushopt clwb sha_ni xsaveopt xsavec xgetbv1 xsaves user_shstk avx_vnni arat vnmi umip pku ospke waitpkg gfni vaes vpclmulqdq rdpid movdiri movdir64b fsrm md_clear serialize ibt flush_l1d arch_capabilities
+vmx flags	: vnmi preemption_timer posted_intr invvpid ept_x_only ept_ad ept_1gb flexpriority apicv tsc_offset vtpr mtf vapic ept vpid unrestricted_guest vapic_reg vid shadow_vmcs pml ept_mode_based_exec tsc_scaling usr_wait_pause
+bugs		: spectre_v1 spectre_v2 spec_store_bypass swapgs eibrs_pbrsb bhi ibpb_no_ret
+bogomips	: 3993.60
+clflush size	: 64
+cache_alignment	: 64
+address sizes	: 46 bits physical, 48 bits virtual
+power management:
+
+--- memory (/proc/meminfo) ---
+MemTotal:       16383308 kB
+MemFree:         6037928 kB
+MemAvailable:   10106280 kB
+Buffers:          296896 kB
+Cached:          4507248 kB
+SwapCached:            0 kB
+Active:          5110124 kB
+Inactive:        2991656 kB
+Active(anon):    4724372 kB
+Inactive(anon):   675376 kB
+Active(file):     385752 kB
+Inactive(file):  2316280 kB
+Unevictable:           0 kB
+Mlocked:               0 kB
+SwapTotal:             0 kB
+SwapFree:              0 kB
+Dirty:               408 kB
+Writeback:             0 kB
+AnonPages:       3292036 kB
+Mapped:           357844 kB
+Shmem:           2102188 kB
+KReclaimable:    1708168 kB
+Slab:            2039940 kB
+SReclaimable:    1708168 kB
+SUnreclaim:       331772 kB
+KernelStack:       22832 kB
+PageTables:        41824 kB
+SecPageTables:         0 kB
+NFS_Unstable:          0 kB
+Bounce:                0 kB
+WritebackTmp:          0 kB
+CommitLimit:     8191652 kB
+Committed_AS:   18517768 kB
+VmallocTotal:   34359738367 kB
+VmallocUsed:       37212 kB
+VmallocChunk:          0 kB
+Percpu:            18368 kB
+HardwareCorrupted:     0 kB
+AnonHugePages:   2689024 kB
+ShmemHugePages:        0 kB
+ShmemPmdMapped:        0 kB
+FileHugePages:         0 kB
+FilePmdMapped:         0 kB
+Unaccepted:            0 kB
+HugePages_Total:       0
+HugePages_Free:        0
+HugePages_Rsvd:        0
+HugePages_Surp:        0
+Hugepagesize:       2048 kB
+Hugetlb:               0 kB
+DirectMap4k:      397132 kB
+DirectMap2M:    12185600 kB
+DirectMap1G:     6291456 kB
+--- random devices + entropy ---
+/dev/urandom: exists mode=666 type=chardev read: 8/8 bytes: 80aee75737137e67
+/dev/random: exists mode=666 type=chardev read (O_NONBLOCK): 8/8 bytes: 4285762f59dd7d0e
+/proc/sys/kernel/random/entropy_avail: 256
+--- network interfaces + negotiated link ---
+Inter-|   Receive                                                |  Transmit
+ face |bytes    packets errs drop fifo frame compressed multicast|bytes    packets errs drop fifo colls carrier compressed
+    lo: 979923459  130138    0    0    0     0          0         0 979923459  130138    0    0    0     0       0          0
+  eth0: 11121766840 7761851    0    0    0     0          0         0 1291355432 1603462    0    0    0     0       0          0
+docker0: 22637710  409954    0    0    0     0          0         0 3557509994  809457    0   52    0     0       0          0
+veth5f5e839:    6764      52    0    0    0     0          0         0    63475    1218    0    0    0     0       0          0
+br-ae30e943be18:  114738     718    0    0    0     0          0         0   113141     983    0    5    0     0       0          0
+veth3be5df9:  107264     628    0    0    0     0          0         0   101795    1004    0    0    0     0       0          0
+veth84a46f0:   55085     322    0    0    0     0          0         0    74016     593    0    0    0     0       0          0
+veth1ed174f:   75911     458    0    0    0     0          0         0    95078     706    0    0    0     0       0          0
+veth470b9f8:   72377     519    0    0    0     0          0         0   164743    1657    0    0    0     0       0          0
+veth3bd5b85:  100583     433    0    0    0     0          0         0  3072723    1503    0    0    0     0       0          0
+veth4b731ea:   89687     479    0    0    0     0          0         0  2181698    1536    0    0    0     0       0          0
+veth3fb6d72:  208440    1526    0    0    0     0          0         0   275391    2713    0    0    0     0       0          0
+vethc8da35f:     126       3    0    0    0     0          0         0    41011     782    0    0    0     0       0          0
+vethc7df987:   68766     397    0    0    0     0          0         0   115368    1246    0    0    0     0       0          0
+veth2ad2aeb:   10474      52    0    0    0     0          0         0    47137     789    0    0    0     0       0          0
+vethfa87691:   18780      87    0    0    0     0          0         0    54038     830    0    0    0     0       0          0
+veth8830bf3:    5321      28    0    0    0     0          0         0    41661     730    0    0    0     0       0          0
+veth88895fe:  135593    1436    0    0    0     0          0         0   330379    2408    0    0    0     0       0          0
+veth7d810f8:  208579    2481    0    0    0     0          0         0   554436    3770    0    0    0     0       0          0
+veth1c2fc5e:   94984    1191    0    0    0     0          0         0   148764    2127    0    0    0     0       0          0
+vethc4fdd7a:  185495    2207    0    0    0     0          0         0   533696    3488    0    0    0     0       0          0
+vethc5f8a36:   11477     137    0    0    0     0          0         0    41080     708    0    0    0     0       0          0
+veth81e8b3a:   10039     120    0    0    0     0          0         0    39708     687    0    0    0     0       0          0
+veth7257853:   94744     715    0    0    0     0          0         0   126308    1211    0    0    0     0       0          0
+veth150b5f0:   14487     166    0    0    0     0          0         0    40623     580    0    0    0     0       0          0
+veth82b0715:  550363    7941    0    0    0     0          0         0 271510719    5619    0    0    0     0       0          0
+veth8028cac:  633641    9257    0    0    0     0          0         0 271546705    6179    0    0    0     0       0          0
+vethfbc98e8:  701201   10364    0    0    0     0          0         0 270930260    5960    0    0    0     0       0          0
+vethe9cc6d1:   19710     217    0    0    0     0          0         0    34317     395    0    0    0     0       0          0
+vethf7091a9:   35364     338    0    0    0     0          0         0    51431     497    0    0    0     0       0          0
+  iface vethe9cc6d1:
+    speed: 10000
+    duplex: full
+    carrier: 1
+  iface vethfbc98e8:
+    speed: 10000
+    duplex: full
+    carrier: 1
+  iface vethfa87691:
+    speed: 10000
+    duplex: full
+    carrier: 1
+  iface br-ae30e943be18:
+    speed: 10000
+    duplex: unknown
+    carrier: 1
+  iface veth470b9f8:
+    speed: 10000
+    duplex: full
+    carrier: 1
+  iface veth84a46f0:
+    speed: 10000
+    duplex: full
+    carrier: 1
+  iface veth150b5f0:
+    speed: 10000
+    duplex: full
+    carrier: 1
+  iface veth82b0715:
+    speed: 10000
+    duplex: full
+    carrier: 1
+  iface veth1ed174f:
+    speed: 10000
+    duplex: full
+    carrier: 1
+  iface veth3be5df9:
+    speed: 10000
+    duplex: full
+    carrier: 1
+  iface veth1c2fc5e:
+    speed: 10000
+    duplex: full
+    carrier: 1
+  iface eth0:
+    speed: -1
+    duplex: unknown
+    carrier: 1
+  iface veth8830bf3:
+    speed: 10000
+    duplex: full
+    carrier: 1
+  iface veth8028cac:
+    speed: 10000
+    duplex: full
+    carrier: 1
+  iface veth3fb6d72:
+    speed: 10000
+    duplex: full
+    carrier: 1
+  iface lo:
+    speed: UNKNOWN
+    duplex: UNKNOWN
+    carrier: 1
+  iface docker0:
+    speed: 10000
+    duplex: unknown
+    carrier: 1
+  iface veth7257853:
+    speed: 10000
+    duplex: full
+    carrier: 1
+  iface vethc8da35f:
+    speed: 10000
+    duplex: full
+    carrier: 1
+  iface veth2ad2aeb:
+    speed: 10000
+    duplex: full
+    carrier: 1
+  iface vethf7091a9:
+    speed: 10000
+    duplex: full
+    carrier: 1
+  iface vethc7df987:
+    speed: 10000
+    duplex: full
+    carrier: 1
+  iface veth88895fe:
+    speed: 10000
+    duplex: full
+    carrier: 1
+  iface veth5f5e839:
+    speed: 10000
+    duplex: full
+    carrier: 1
+  iface veth7d810f8:
+    speed: 10000
+    duplex: full
+    carrier: 1
+  iface veth4b731ea:
+    speed: 10000
+    duplex: full
+    carrier: 1
+  iface veth3bd5b85:
+    speed: 10000
+    duplex: full
+    carrier: 1
+  iface veth81e8b3a:
+    speed: 10000
+    duplex: full
+    carrier: 1
+  iface vethc5f8a36:
+    speed: 10000
+    duplex: full
+    carrier: 1
+  iface vethc4fdd7a:
+    speed: 10000
+    duplex: full
+    carrier: 1
+IP address       HW type     Flags       HW address            Mask     Device
+192.0.2.12      0x1         0x2         aa:bb:cc:00:11:22     *        docker0
+192.0.2.12      0x1         0x2         aa:bb:cc:00:11:22     *        docker0
+192.0.2.12      0x1         0x2         aa:bb:cc:00:11:22     *        docker0
+192.0.2.12      0x1         0x2         aa:bb:cc:00:11:22     *        docker0
+192.0.2.12       0x1         0x2         aa:bb:cc:00:11:22     *        docker0
+192.0.2.12      0x1         0x2         aa:bb:cc:00:11:22     *        docker0
+192.0.2.12       0x1         0x2         aa:bb:cc:00:11:22     *        docker0
+192.0.2.12      0x1         0x2         aa:bb:cc:00:11:22     *        docker0
+192.0.2.12      0x1         0x2         aa:bb:cc:00:11:22     *        docker0
+192.0.2.12      0x1         0x2         aa:bb:cc:00:11:22     *        docker0
+192.0.2.12      0x1         0x2         aa:bb:cc:00:11:22     *        docker0
+192.0.2.12       0x1         0x2         aa:bb:cc:00:11:22     *        br-ae30e943be18
+192.0.2.12       0x1         0x2         aa:bb:cc:00:11:22     *        docker0
+192.0.2.12      0x1         0x2         aa:bb:cc:00:11:22     *        docker0
+192.0.2.12       0x1         0x2         aa:bb:cc:00:11:22     *        docker0
+192.0.2.12       0x1         0x2         aa:bb:cc:00:11:22     *        br-ae30e943be18
+192.0.2.12       0x1         0x2         aa:bb:cc:00:11:22     *        docker0
+192.0.2.12      0x1         0x2         aa:bb:cc:00:11:22     *        docker0
+192.0.2.12      0x1         0x2         aa:bb:cc:00:11:22     *        docker0
+192.0.2.12      0x1         0x2         aa:bb:cc:00:11:22     *        docker0
+192.0.2.10       0x1         0x2         aa:bb:cc:00:11:22     *        eth0
+192.0.2.12       0x1         0x2         aa:bb:cc:00:11:22     *        docker0
+192.0.2.12      0x1         0x2         aa:bb:cc:00:11:22     *        docker0
+192.0.2.12       0x1         0x2         aa:bb:cc:00:11:22     *        docker0
+192.0.2.12      0x1         0x2         aa:bb:cc:00:11:22     *        docker0
+192.0.2.12       0x1         0x2         aa:bb:cc:00:11:22     *        docker0
+--- resource limits (/proc/self/limits) ---
+Limit                     Soft Limit           Hard Limit           Units     
+Max cpu time              unlimited            unlimited            seconds   
+Max file size             unlimited            unlimited            bytes     
+Max data size             unlimited            unlimited            bytes     
+Max stack size            8388608              unlimited            bytes     
+Max core file size        0                    unlimited            bytes     
+Max resident set          unlimited            unlimited            bytes     
+Max processes             63897                63897                processes 
+Max open files            1024                 524288               files     
+Max locked memory         8388608              8388608              bytes     
+Max address space         unlimited            unlimited            bytes     
+Max file locks            unlimited            unlimited            locks     
+Max pending signals       63897                63897                signals   
+Max msgqueue size         819200               819200               bytes     
+Max nice priority         0                    0                    
+Max realtime priority     0                    0                    
+Max realtime timeout      unlimited            unlimited            us        
+--- busybox identity + applet list ---
+/bin/busybox: UNKNOWN (stat: No such file or directory)
+  /bin/busybox: UNKNOWN (open: No such file or directory)
+busybox applets (no args): UNKNOWN (/bin/busybox not executable: No such file or directory)
+busybox uname -a: UNKNOWN (/bin/busybox not executable: No such file or directory)
+--- flash / storage ---
+UNKNOWN (cannot open /proc/mtd: No such file or directory)
+df (busybox): UNKNOWN (/bin/busybox not executable: No such file or directory)
+/dev/mtd0: UNKNOWN (stat: No such file or directory)
+--- directfb / fusion runtime identities ---
+  (no /dev/fusion* entries)
+  /proc/fusion: UNKNOWN (opendir: No such file or directory)
+  -- participant identity resolution (PID + start time; ID 1 = master) --
+  (no live PIDs found in /proc/fusion content — supports the no-master reading)
+=== end of inventory ===

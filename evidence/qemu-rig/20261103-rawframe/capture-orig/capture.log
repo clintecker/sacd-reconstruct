@@ -1,0 +1,12 @@
+sacd capture 2026-11-03T04:07:19Z -> 127.0.0.1:2002
+  OPEN  result=0
+  SIZE  total_sectors=1064208
+  READ one-sector @ 0         lsn=0 want=1 got=1 len=2048 sha=e5a00aa9991ac8a5
+  READ 128-sector @ 0         lsn=0 want=128 got=128 len=262144 sha=a28db88d35dbf586
+  READ one-sector @ mid(532104) lsn=532104 want=1 got=1 len=2048 sha=72e971d9ca072881
+  READ beyond-EOF read (failure probe) lsn=1064308 want=1 got=0 len=0 sha=
+  CLOSE result=0
+  OPEN  (reconnect) result=0
+  READ one-sector @ mid repeat (reconnect) lsn=532104 want=1 got=1 len=2048 sha=72e971d9ca072881
+  CLOSE (reconnect)
+wrote /tmp/sacd-rig/capture-orig/manifest.json

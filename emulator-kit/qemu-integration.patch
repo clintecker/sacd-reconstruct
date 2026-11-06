@@ -1,0 +1,56 @@
+--- a/configs/devices/arm-softmmu/default.mak
++++ b/configs/devices/arm-softmmu/default.mak
+@@ -42,3 +42,5 @@
+ # CONFIG_FSL_IMX7=n
+ # CONFIG_FSL_IMX6UL=n
+ # CONFIG_ALLWINNER_H3=n
++
++CONFIG_SONY_BX510=y
+--- a/hw/arm/Kconfig
++++ b/hw/arm/Kconfig
+@@ -645,3 +645,10 @@
+     select UNIMP
+     select SSE_COUNTER
+     select SSE_TIMER
++
++config SONY_BX510
++    bool
++    depends on ARM && TCG
++    select PL310
++    select NAND
++    select GENERIC_LOADER
+--- a/hw/arm/meson.build
++++ b/hw/arm/meson.build
+@@ -1,4 +1,5 @@
+ arm_ss = ss.source_set()
++arm_ss.add(when: 'CONFIG_SONY_BX510', if_true: files('player.local.c', 'mt8560-nfi.c', 'mt8560-hdhost.c'))
+ arm_ss.add(files('boot.c'))
+ arm_ss.add(when: 'CONFIG_ARM_VIRT', if_true: files('virt.c'))
+ arm_ss.add(when: 'CONFIG_ACPI', if_true: files('virt-acpi-build.c'))
+--- a/hw/misc/arm_l2x0.c
++++ b/hw/misc/arm_l2x0.c
+@@ -36,6 +36,7 @@
+     SysBusDevice parent_obj;
+ 
+     MemoryRegion iomem;
++    uint32_t cache_id;
+     uint32_t cache_type;
+     uint32_t ctrl;
+     uint32_t aux_ctrl;
+@@ -72,7 +73,7 @@
+     }
+     switch (offset) {
+     case 0:
+-        return CACHE_ID;
++        return s->cache_id;
+     case 0x4:
+         /* aux_ctrl values affect cache_type values */
+         cache_data = (s->aux_ctrl & (7 << 17)) >> 15;
+@@ -174,6 +175,7 @@
+ }
+ 
+ static Property l2x0_properties[] = {
++    DEFINE_PROP_UINT32("cache-id", L2x0State, cache_id, CACHE_ID),
+     DEFINE_PROP_UINT32("cache-type", L2x0State, cache_type, 0x1c100100),
+     DEFINE_PROP_END_OF_LIST(),
+ };

@@ -1,0 +1,13 @@
+
+  WARNING: Symbol version dump /home/you/sony-kernel/linux-2.6.35/Module.symvers
+           is missing; modules will have no dependencies and modversions.
+
+  CC [M]  /tmp/mod/bx510_osai_mini.o
+  CC [M]  /tmp/mod/bx510_bdpvirt.o
+  Building modules, stage 2.
+  MODPOST 2 modules
+WARNING: /tmp/mod/bx510_osai_mini: 'x_memset' exported twice. Previous export was in /tmp/mod/bx510_bdpvirt.ko
+  CC      /tmp/mod/bx510_bdpvirt.mod.o
+  LD [M]  /tmp/mod/bx510_bdpvirt.ko
+  CC      /tmp/mod/bx510_osai_mini.mod.o
+  LD [M]  /tmp/mod/bx510_osai_mini.ko

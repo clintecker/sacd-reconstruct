@@ -1,0 +1,19 @@
+Usage: sacd_extract_160 [options] [outfile]
+  -2, --2ch-tracks                : Export two channel tracks (default)
+  -m, --mch-tracks                : Export multi-channel tracks
+  -e, --output-dsdiff-em          : output as Philips DSDIFF (Edit Master) file
+  -p, --output-dsdiff             : output as Philips DSDIFF file
+  -s, --output-dsf                : output as Sony DSF file
+  -t, --select-track              : only output selected track(s) (ex. -t 1,5,13)
+  -I, --output-iso                : output as RAW ISO
+  -c, --convert-dst               : convert DST to DSD
+  -C, --export-cue                : Export a CUE Sheet
+  -i, --input[=FILE]              : set source and determine if "iso" image, 
+                                    device or server (ex. -i 192.0.2.11:2002)
+  -P, --print                     : display disc and track information
+  -S, --server-mode               : start in a server mode
+
+Help options:
+  -?, --help                      : Show this help message
+  --usage                         : Display brief usage message
+

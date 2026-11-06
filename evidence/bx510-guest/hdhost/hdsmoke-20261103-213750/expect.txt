@@ -1,0 +1,5 @@
+sector 0 md5 579820d0db7a05284ccdd8ed0c7bdb14
+sector 10 md5 16c01e13ce71a27b74b36346bbad9373
+sector 5000 md5 77ae8a69d2543f03bb0aba6956117acf
+sector 8190+8191 md5 8e307f29baf8cea0d0e524bf154f8d1c
+sector 8191 md5 bd478dccba837b6f5cadfb1c59ec92b2

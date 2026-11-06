@@ -1,0 +1,117 @@
+ 1 0        0            21064 Sep 20  2018 [0;0mhst_scansta.ko[0m
+-rw-rw-r--    1 0        0             7500 Sep 20  2018 [0;0mhst_tkip.ko[0m
+-rw-rw-r--    1 0        0            12456 Sep 20  2018 [0;0mhst_tx99.ko[0m
+-rw-rw-r--    1 0        0             5276 Sep 20  2018 [0;0mhst_wep.ko[0m
+-rw-rw-r--    1 0        0           207388 Sep 20  2018 [0;0mhst_wlan.ko[0m
+-rw-rw-r--    1 0        0             2792 Sep 20  2018 [0;0mhst_xauth.ko[0m
+-rw-rw-r--    1 0        0             4776 Sep 20  2018 [0;0mif_ath_usb.ko[0m
+-rw-rw-r--    1 0        0             4752 Sep 20  2018 [0;0minflate.ko[0m
+-rw-rw-r--    1 0        0            42584 Sep 20  2018 [0;0misofs.ko[0m
+-rw-rw-r--    1 0        0            61268 Sep 20  2018 [0;0mjbd.ko[0m
+-rw-rw-r--    1 0        0             5636 Sep 20  2018 [0;0mjdec.ko[0m
+-rw-rw-r--    1 0        0            13452 Sep 20  2018 [0;0mkmem.ko[0m
+lrwxrwxrwx    1 0        0               55 Sep 20  2018 [1;36mlangsupprt.ko[0m -> [1;31m/mnt/rootfs_enc_it/lib/modules/2.6.35/BDP/langsupprt.ko[0m
+-rw-rw-r--    1 0        0           193620 Sep 20  2018 [0;0mlibata.ko[0m
+-rw-rw-r--    1 0        0            10660 Sep 20  2018 [0;0mmbcache.ko[0m
+-rw-rw-r--    1 0        0            11332 Sep 20  2018 [0;0mmsdos.ko[0m
+-rw-rw-r--    1 0        0            67256 Sep 20  2018 [0;0mmtk_hcd.ko[0m
+-rw-rw-r--    1 0        0            67636 Sep 20  2018 [0;0mmusb_hdrc.ko[0m
+-rw-rw-r--    1 0        0             6048 Sep 20  2018 [0;0mnls_ascii.ko[0m
+-rw-rw-r--    1 0        0             9180 Sep 20  2018 [0;0mnls_base.ko[0m
+-rw-rw-r--    1 0        0             7772 Sep 20  2018 [0;0mnls_cp437.ko[0m
+-rw-rw-r--    1 0        0             6060 Sep 20  2018 [0;0mnls_iso8859_1.ko[0m
+-rw-rw-r--    1 0        0             3544 Sep 20  2018 [0;0mnls_utf8.ko[0m
+-rw-rw-r--    1 0        0           114052 Sep 20  2018 [0;0mntfs.ko[0m
+-rw-rw-r--    1 0        0            64848 Sep 20  2018 [0;0mosai.ko[0m
+-rw-rw-r--    1 0        0             8968 Sep 20  2018 [0;0mpdown.ko[0m
+-rw-rw-r--    1 0        0            21444 Sep 20  2018 [0;0mpl2303.ko[0m
+-rw-rw-r--    1 0        0             5816 Sep 20  2018 [0;0mpng.ko[0m
+-rw-rw-r--    1 0        0            14636 Sep 20  2018 [0;0mrm.ko[0m
+-rw-rw-r--    1 0        0           671460 Sep 20  2018 [0;0mrt3370sta.ko[0m
+-rw-rw-r--    1 0        0           114088 Sep 20  2018 [0;0mrtnet3370sta.ko[0m
+-rw-rw-r--    1 0        0            32340 Sep 20  2018 [0;0mrtutil3370sta.ko[0m
+-rw-rw-r--    1 0        0            69452 Sep 20  2018 [0;0msata_mt85xx_mod.ko[0m
+-rw-rw-r--    1 0        0            10664 Sep 20  2018 [0;0msnd-hwdep.ko[0m
+-rw-rw-r--    1 0        0            26416 Sep 20  2018 [0;0msnd-rawmidi.ko[0m
+-rw-rw-r--    1 0        0           121464 Sep 20  2018 [0;0msnd-usb-audio.ko[0m
+-rw-rw-r--    1 0        0            31364 Sep 20  2018 [0;0msnd-usb-caiaq.ko[0m
+-rw-rw-r--    1 0        0            22844 Sep 20  2018 [0;0msnd-usbmidi-lib.ko[0m
+-rw-rw-r--    1 0        0           819876 Sep 20  2018 [0;0msplitter.ko[0m
+-rw-rw-r--    1 0        0            34944 Sep 20  2018 [0;0msr_mod.ko[0m
+-rw-rw-r--    1 0        0           463152 Sep 20  2018 [0;0mtntfs.ko[0m
+-rw-rw-r--    1 0        0           106752 Sep 20  2018 [0;0mudf.ko[0m
+-rw-rw-r--    1 0        0            82196 Sep 20  2018 [0;0musb-storage.ko[0m
+-rw-rw-r--    1 0        0            16056 Sep 20  2018 [0;0musb_qmu_linux_native.ko[0m
+-rw-rw-r--    1 0        0           179496 Sep 20  2018 [0;0musbcore.ko[0m
+-rw-rw-r--    1 0        0            39840 Sep 20  2018 [0;0musbhid.ko[0m
+-rw-rw-r--    1 0        0            40712 Sep 20  2018 [0;0musbserial.ko[0m
+-rw-rw-r--    1 0        0            14384 Sep 20  2018 [0;0mvfat.ko[0m
+P0_BDPDIR_END
+/ # LD_PRELOAD=/res/shim/tmpredir.so /res/shim/bgstart /res/original/sacd_extrac
+
+t_160 -S
+BG_PID=514
+/ # sleep 20; echo P0_TCP_BEGIN; cat /res/proc/net/tcp; echo P0_TCP_END
+[SACDREAD] ========================================
+[SACDREAD] minor = 201
+[SACDREAD] compid = 0
+[SACDREAD] ========================================
+[SACDREAD]Symbol "i4CPSA_Inst_CPSMode_Ctrl" not found in /proc/allsyms!!
+[SACDREAD]Symbol "_IDECLI_OddRead" not found in /proc/allsyms!!
+[SACDREAD]Symbol "_i4CPSA_Inst_Decrypt" not found in /proc/allsyms!!
+[SACDREAD]Symbol "i4CPSA_Inst_SetSACDControl" not found in /proc/allsyms!!
+[SACDREAD]Symbol "u4CPSA_Inst_GetInstHandleFromCompId" not found in /proc/allsyms!!
+[SACDREAD]Symbol "i4CPSA_Inst_Connect" not found in /proc/allsyms!!
+[SACDREAD]Symbol "i4CPSA_Inst_Disconnect" not found in /proc/allsyms!!
+[SACDREAD]Symbol "vSacdDecryptEnable" not found in /proc/allsyms!!
+[SACDREAD]Symbol "_SACDCLI_TestPhy" not found in /proc/allsyms!!
+[SACDREAD]Symbol "eSacdGetVersion" not found in /proc/allsyms!!
+[SACDREAD]Symbol "_SACDCLI_FindTag" not found in /proc/allsyms!!
+[SACDREAD]Symbol "_IDECLI_OddTestUnitReadyLoop" not found in /proc/allsyms!!
+[SACDREAD]Symbol "_IDECLI_OddGetProfile" not found in /proc/allsyms!!
+[SACDREAD]Symbol "__ksymtab_disable_print" address is 0xc0420818
+P0_TCP_BEGIN
+  sl  local_address rem_address   st tx_queue rx_queue tr tm->when retrnsmt   uid  timeout inode                                                     
+P0_TCP_END
+/ # echo P0_MOD_BEGIN; cat /res/proc/modules; ls -l /res/dev; echo P0_MOD_END
+P0_MOD_BEGIN
+bx510_osai_mini 896 0 - Live 0xbf000000
+crw-r--r--    1 0        0          10, 201 Jan  1 00:00 [1;35msacd_read[0m
+P0_MOD_END
+/ # echo P0_OUT_BEGIN; cat /res/daemon.out; echo P0_OUT_END
+P0_OUT_BEGIN
+mknod: /dev/sacd_read: No such file or directory
+insmod: can't insert '/tmp/m000000': Bad address
+[0]: install_modules: mknod/insmod filed
+rmmod: can't unload 'sacd_read': unknown symbol in module, or unknown parameter
+[0]: Can not install modules
+
+P0_OUT_END
+/ # echo P0_F""INISHED
+P0_FINISHED
+--- unimp: 29 lines ---
+     1  bx510: unimplemented read 0x70000070 (4)
+     1  bx510: unimplemented read 0x7000007c (4)
+     1  bx510: unimplemented read 0x7000811c (4)
+     1  bx510: unimplemented read 0x70008730 (4)
+     1  bx510: unimplemented read 0x70024080 (4)
+     1  bx510: unimplemented read 0x70024088 (4)
+     1  bx510: unimplemented read 0x700240c4 (4)
+     1  bx510: unimplemented read 0x70024144 (4)
+     2  bx510: unimplemented read 0x70024188 (4)
+     1  bx510: unimplemented read 0x700241cc (4)
+     1  bx510: unimplemented write 0x70000070 = 0x50000 (4)
+     2  bx510: unimplemented write 0x70008100 = 0xc047ec40 (4)
+     1  bx510: unimplemented write 0x7000811c = 0x0 (4)
+     1  bx510: unimplemented write 0x70008154 = 0xffffffff (4)
+     1  bx510: unimplemented write 0x70008158 = 0x0 (4)
+     1  bx510: unimplemented write 0x7000815c = 0xffffffff (4)
+     1  bx510: unimplemented write 0x7000c01c = 0x100 (4)
+     2  bx510: unimplemented write 0x70024080 = 0x0 (4)
+     1  bx510: unimplemented write 0x700240c4 = 0x0 (4)
+     2  bx510: unimplemented write 0x70024144 = 0x0 (4)
+     1  bx510: unimplemented write 0x70024144 = 0x100 (4)
+     1  bx510: unimplemented write 0x70024148 = 0xffffffff (4)
+     1  bx510: unimplemented write 0x70024188 = 0x0 (4)
+     1  bx510: unimplemented write 0x70024188 = 0x45 (4)
+     1  bx510: unimplemented write 0x700241cc = 0x4 (4)

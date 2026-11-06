@@ -40,6 +40,8 @@ RULES = [
     (r"^original/", "exclude", "Sony binary (sha recorded in PROVENANCE.md)"),
     (r"/sacd_read\.ko$", "exclude", "Sony kernel module"),
     (r"^incoming/", "exclude", "third-party team package"),
+    (r"^reconstruct/sacd_extract_160(_fsf)?$", "exclude",
+     "prebuilt artefact (build it: make -C reconstruct release)"),
     (r"^analysis/", "exclude", "regenerable disassembly dumps"),
     (r"^AGENTS\.md$", "exclude", "internal process/policy doc"),
     (r"^NOTES\.md$", "exclude", "internal session notes"),

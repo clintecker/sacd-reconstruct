@@ -444,6 +444,12 @@ sacd-emu-daemons:
 sacd-hw-payload-check:
 	sh experiments/sacd_reconstruct/tools/sacd_hardware.sh payload-check
 
+## SACD hardware :: sacd-hud-anim :: render the HUD as an animated GIF + MP4 :: runs the host simulator for 40 frames (0.2 s apart) and assembles both; the panel animates the same way
+.PHONY: sacd-hud-anim
+sacd-hud-anim:
+	cd experiments/sacd_reconstruct && cc -O2 -Wall -Wextra -Wno-pragmas -DHUD_SIM -I. -o /tmp/hudsim tools/bx510_sacd_hud.c
+	python3 experiments/sacd_reconstruct/tools/hud_anim.py --sim /tmp/hudsim --frames 40 --scale $${SIZE:-480} --out /tmp/hud_anim
+
 ## SACD hardware :: sacd-hud-build :: build the HUD for the player (VM, era toolchain) and pull it into display-payload :: one place for the flags (-std=gnu99, -Wno-pragmas, dynamic) that each cost a failed run
 .PHONY: sacd-hud-build
 sacd-hud-build:

@@ -1194,6 +1194,8 @@ static int rtext_w(const char *str) { return (int)strlen(str) * 8; }
 static void rtext_r(const char *str, int xr, int y, int c) { rtext(str, xr - rtext_w(str), y, c); }
 
 /* scale the 320x180 index canvas into the device framebuffer, integer x6 */
+static void retro_fx(int frame);
+
 static void retro_present(void)
 {
     int y, x, sy, sx;
@@ -1205,6 +1207,66 @@ static void retro_present(void)
                 for (sx = 0; sx < g_rx; sx++) o[sx] = reorder(col);
             }
         }
+}
+
+
+/* ---- retro effects: applied on the 320x180 INDEX canvas -----------------
+   Palette-level, so they stay chunky: scanline rows are mapped to a DARKER
+   palette entry, the VHS band shifts rows and sprinkles snow, corners dim via
+   the same table. Toggle with HUD_FX (0=off, "retro"=all, or a mask:
+     1 scanlines  2 vhs band  4 vignette  8 dropouts). Default: all. */
+static const unsigned char RDim[16] = {
+    15, 0, 13, 1,   /* bg, dim-green, phosphor, pale       */
+    14, 5, 6, 11,   /* amber, orange-red, magenta, cyan    */
+    10, 9, 9, 11,   /* white->light slate, slate, slate, blue */
+    12, 13, 0, 15
+};
+static unsigned retro_fx_mask = 0xf;
+
+static void retro_fx(int frame)
+{
+    int x, y;
+    if ((retro_fx_mask & 1)) {                  /* scanlines: every 3rd row */
+        for (y = 2; y < 180; y += 3)
+            for (x = 0; x < RW; x++) {
+                unsigned char v = retro[y * RW + x] & 15;
+                /* never dim TYPE colours: text stays crisp, only fills darken */
+                if (v == 2 || v == 3 || v == 8 || v == 4 || v == 7 || v == 6) continue;
+                retro[y * RW + x] = RDim[v];
+            }
+    }
+    if ((retro_fx_mask & 4)) {                  /* vignette: corners dim */
+        for (y = 0; y < 180; y++)
+            for (x = 0; x < RW; x++) {
+                int dx = x * 2 - RW, dy = y * 2 - 180;
+                long d2 = ((long)dx * dx + (long)dy * dy) * 100 /
+                          ((long)RW * RW + 180 * 180);
+                if (d2 > 88) retro[y * RW + x] = RDim[retro[y * RW + x] & 15];
+            }
+    }
+    if ((retro_fx_mask & 2)) {                  /* VHS tracking band */
+        int band = 62 + (frame * 5) % 70;    /* sweeps the body, never the header */
+        for (y = band; y < band + 3 && y < 180; y++) {
+            if (y < 0) continue;
+            {   /* shift the row by 1-2 cells and add snow */
+                unsigned char row[RW];
+                int sh = (y & 1) ? 2 : 1;
+                memcpy(row, retro + y * RW, RW);
+                for (x = 0; x < RW; x++) {
+                    unsigned char v = row[(x + sh) % RW];
+                    int n = (x * 7 + frame) & 31;      /* ~3% snow */
+                    retro[y * RW + x] = (n == 0) ? 9 : (n == 1 ? 10 : v);
+                }
+            }
+        }
+    }
+    if ((retro_fx_mask & 8) && (frame % 11) == 0) {   /* dropout specks */
+        int k;
+        for (k = 0; k < 3; k++) {
+            int dx = (frame * 13 + k * 37) % RW, dy = (frame * 29 + k * 11) % 180;
+            RP(dx, dy, 15); RP(dx + 1, dy, 10);
+        }
+    }
 }
 
 /* ---- LCARS scene -------------------------------------------------------
@@ -1267,9 +1329,12 @@ static void scene_retro(const hud_t *h, double t, double fps, int frame)
         rtext("SACD//RIPPER", 88, 5, 2);
         tw = rtext_w("SACD//RIPPER");
         rtext("UNIT 0x1F", 88 + tw + 8, 5, 3);
-        rcap_text(316 - rcap_w(h->clients_2002 ? "LIVE" : (h->listen_2002 ? "ARMED" : "IDLE")), 4,
-                  h->clients_2002 ? "LIVE" : (h->listen_2002 ? "ARMED" : "IDLE"),
-                  h->clients_2002 ? 2 : 4);
+        {   /* pulsing status capsule: LIVE breathes between phosphor and dim */
+            int pulse = (h->clients_2002 && ((frame / 6) & 1)) ? 13 : (h->clients_2002 ? 2 : 4);
+            rcap_text(316 - rcap_w(h->clients_2002 ? "LIVE" : (h->listen_2002 ? "ARMED" : "IDLE")), 4,
+                      h->clients_2002 ? "LIVE" : (h->listen_2002 ? "ARMED" : "IDLE"),
+                      pulse);
+        }
         rfill(88, 17, 228, 1, 9);
     }
 
@@ -1300,6 +1365,7 @@ static void scene_retro(const hud_t *h, double t, double fps, int frame)
             int bright;
             if (!m) continue;
             bright = m - age / 8;
+            if (age == 0 && ((frame / 4) & 1)) bright = 9;   /* newest column flashes */
             if (bright < 1) continue;
             if (k < 0 || k >= EVR) k = EVK_SYS;
             {   /* bar from the bottom: height from magnitude */
@@ -1357,6 +1423,11 @@ static void scene_retro(const hud_t *h, double t, double fps, int frame)
         for (i = 0; i < 76; i++) {
             int v = (int)((i * 37 + frame * 3) % 100);
             rfill(88 + i * 3, y + 1, 2, 8, v > 70 ? 4 : (v > 30 ? 2 : 13));
+        }
+        {   /* travelling highlight along the strip (LCARS "activity" sweep) */
+            int hp = (frame * 3) % 76;
+            rfill(88 + hp * 3, y + 1, 2, 8, 8);
+            rfill(88 + hp * 3 - 3, y + 1, 2, 8, 3);
         }
         rfill(4, y + 12, RW - 8, 1, 9);
         rtext("Z80 NODE FARM", 4, y + 15, 3);
@@ -1615,10 +1686,34 @@ int main(int argc, char **argv)
     else g_fx = 0x17;
     g_rx = g_visible_w / RW; if (g_rx < 1) g_rx = 1;
     for (i = 0; i < frames; i++) {
-        if (getenv("HUD_RETRO")) { g_fx = 0; scene_retro(&h, 1.7 + i * 0.2, 13.0, i * 4); retro_present(); }
+        if (getenv("HUD_RETRO")) {
+            g_fx = 0;
+            scene_retro(&h, 1.7 + i * 0.2, 13.0, i * 4);
+            if (getenv("HUD_RETRO_FX")) retro_fx_mask = (unsigned)strtoul(getenv("HUD_RETRO_FX"), NULL, 0);
+            retro_fx(i * 4);
+            retro_present();
+        }
         else scene(&h, 1.7 + i * 0.2, 13.0, i * 4);
         fx_apply(i * 4 + 8);
         amiga_apply(i * 4 + 8, 1.7 + i * 0.2);
+        if (getenv("HUD_SIM_ANIM")) {
+            char path[256];
+            FILE *ff;
+            int k;
+            snprintf(path, sizeof path, "%s/frame-%03d.ppm", getenv("HUD_SIM_ANIM"), i);
+            ff = fopen(path, "wb");
+            if (ff) {
+                fprintf(ff, "P6\n%d %d\n255\n", CW * SCAL, CH * SCAL);
+                for (k = 0; k < pitch_px * CH * SCAL; k++) {
+                    unsigned int v = fb[k];
+                    unsigned char rgb[3] = { (unsigned char)((v >> 16) & 0xff),
+                                             (unsigned char)((v >> 8) & 0xff),
+                                             (unsigned char)(v & 0xff) };
+                    fwrite(rgb, 1, 3, ff);
+                }
+                fclose(ff);
+            }
+        }
     }
 
     f = fopen(out, "wb");
@@ -1759,7 +1854,13 @@ int main(int argc, char **argv)
         tick_push("CLOSE rc=0");
         profile_load();
         if (getenv("HUD_CALIB")) { g_fx = 0; draw_calib(); }
-        else if (!getenv("HUD_LEGACY")) { g_fx = 0; scene_retro(&hp, 1.7, 13.0, 8); retro_present(); }
+        else if (!getenv("HUD_LEGACY")) {
+            g_fx = 0;
+            if (getenv("HUD_RETRO_FX")) retro_fx_mask = (unsigned)strtoul(getenv("HUD_RETRO_FX"), NULL, 0);
+            scene_retro(&hp, 1.7, 13.0, 8);
+            retro_fx(8);
+            retro_present();
+        }
         else if (getenv("HUD_LEGACY")) scene(&hp, 1.7, 13.0, 8);
         fx_apply(8);
         amiga_apply(8, 1.7);

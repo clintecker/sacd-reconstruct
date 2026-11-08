@@ -41,7 +41,7 @@ RULES = [
     (r"/sacd_read\.ko$", "exclude", "Sony kernel module"),
     (r"^incoming/", "exclude", "third-party team package"),
     (r"^reconstruct/sacd_extract_160(_fsf)?$", "exclude",
-     "prebuilt artefact (build it: make -C reconstruct release)"),
+     "prebuilt artefact (build it: make -C reconstruct CROSS=... verify)"),
     (r"^analysis/", "exclude", "regenerable disassembly dumps"),
     (r"^AGENTS\.md$", "exclude", "internal process/policy doc"),
     (r"^NOTES\.md$", "exclude", "internal session notes"),
@@ -53,6 +53,8 @@ RULES = [
     (r"^(docs|reconstruct|tools|emulator-kit|gccbuild|emulator-handoff)/", "include", "ours"),
     (r"^DELTA\.md$", "scrub", "reconstruction delta, identifiers scrubbed"),
     (r"^Makefile$", "scrub", "build targets, identifiers scrubbed"),
+    (r"^evidence/bx510/display-payload/hud-anim\.gif$", "include-big",
+     "hero image referenced by the public README"),
     (r"^evidence/.+", "include", "evidence (logs filtered by size below)"),
 ]
 

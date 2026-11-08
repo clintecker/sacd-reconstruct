@@ -708,7 +708,7 @@ evidence/bx510/display-payload/displaylaunch.sh	9724	a2d453af546551a8a2a36b3eb36
 evidence/bx510/display-payload/fbmd5	14244	049b09654766530b093c280621983a84943f057527c6364e1634cc63dd8331ba	include	evidence (logs filtered by size below)
 evidence/bx510/display-payload/hud-amiga-preview.png	513300	d7edaf96692b855a96ebed834dc32d8238e461178bb8d670b76f41f310fb215c	convert	image -> PNG (metadata stripped)
 evidence/bx510/display-payload/hud-anim-frame.png	46310	34aed741adcd59d0587b578c9c30f9852bbd256b875f864653018af510ccfa71	convert	image -> PNG (metadata stripped)
-evidence/bx510/display-payload/hud-anim.gif	1126218	57b4bdd42b2828c91e3070a7cbccb3dd675ccaa0d9b0e08a6b39522ee484906b	exclude	regenerable blob >1 MiB
+evidence/bx510/display-payload/hud-anim.gif	1126218	57b4bdd42b2828c91e3070a7cbccb3dd675ccaa0d9b0e08a6b39522ee484906b	include	hero image referenced by the public README
 evidence/bx510/display-payload/hud-anim.mp4	640458	2afe0821755fc121c28b47248079dfe3016474f0ac7592afa46415436663d9b0	include	evidence (logs filtered by size below)
 evidence/bx510/display-payload/hud-calibration-render.png	14295	31aa14ab760deeb000478b91bcad36bbb37ad2492a484b4aaf620555747a6c25	convert	image -> PNG (metadata stripped)
 evidence/bx510/display-payload/hud-effects-preview.png	78286	6d95d2aff78106511a9602205722ccfc6e6a00d880b9858de26ae3bef82b3e3c	convert	image -> PNG (metadata stripped)
@@ -817,7 +817,7 @@ original/sacd_extract_160	350830	0fdcefdb84ae818be7385657eaf0960053f6e4452a82f19
 original/sacd_read.ko	97805	b3d7a383e45d3bbe1a987a4a2e15ab7a68dd55e88d0319f7a0fd2e9cf0246dfa	exclude	Sony binary (sha recorded in PROVENANCE.md)
 .gitignore	213	194e613d683d2f04d343a0e83965bc06be2630a20840183c961bbaa239eae445	scrub	public root docs
 LICENSE	1291	37cde8b20ef4a8be918ea9373f30dedf54dd3021e6b9b68cc9bbb52888fe2280	scrub	public root docs
-README.md	3873	6f6d7272b2300e7bb87176f063723145faa84688a1dc500541a0043110a0949e	scrub	public root docs
+README.md	6055	8d8a3c61a0d7fd173fe2e8c17d8da1032b3a84f81870153d381ac91c0a831013	scrub	public root docs
 THIRD_PARTY.md	1237	82f3d61218221fd420d91286b66c2c861d718de15b05cb900c774102eb16e72d	scrub	public root docs
 reconstruct/Makefile	4044	4a6bda0fc9c5625d7e201501d9bf163d4ac2075be2cbdee6ddbaf8afef6327ff	scrub	ours
 reconstruct/fsflibgcc/bpabi.S	2163	ea68fd1d3ca487a40ab21f659264c70306ac927db78ca3077c0849e508a0a2e9	scrub	ours
@@ -933,8 +933,8 @@ reconstruct/libsacd/scarletbook_read.h	1995	dbc91d8d050e0e23dc2a1ab42faa994f167c
 reconstruct/libsacd/version.h	1427	9456787c412a4500b2bcdf186d28b327bae655a8b2199d515395b00b38848ca5	scrub	ours
 reconstruct/release/release.map	128373	a5ba8ad78b39e03cff2f8f405195cb1afb2c661e464345338781d04d60892ee4	scrub	ours
 reconstruct/release/sacd_extract_160_release	338568	e91720fbbbd592505bde6630843b0495ff82a93e40c0e427aaa70a081ff9ae22	include	ours
-reconstruct/sacd_extract_160	332153	929f9ce3efb9907c7e72052abfc69ba1e7b9c505ee1a1fda5269fbf93ae281d7	exclude	prebuilt artefact (build it: make -C reconstruct release)
-reconstruct/sacd_extract_160_fsf	379283	e6daa1128da118f1fb7a7bf3c95d6faba40bc1021c920aec7fca34cae93adaa0	exclude	prebuilt artefact (build it: make -C reconstruct release)
+reconstruct/sacd_extract_160	332153	929f9ce3efb9907c7e72052abfc69ba1e7b9c505ee1a1fda5269fbf93ae281d7	exclude	prebuilt artefact (build it: make -C reconstruct CROSS=... verify)
+reconstruct/sacd_extract_160_fsf	379283	e6daa1128da118f1fb7a7bf3c95d6faba40bc1021c920aec7fca34cae93adaa0	exclude	prebuilt artefact (build it: make -C reconstruct CROSS=... verify)
 reconstruct/sacd_read.ko	97805	b3d7a383e45d3bbe1a987a4a2e15ab7a68dd55e88d0319f7a0fd2e9cf0246dfa	exclude	Sony kernel module
 reconstruct/tool/CMakeLists.txt	3022	e281917b859f8e742809b2b10277b791e2f32ba94ee97ece70a4d8b75ffdd97a	scrub	ours
 reconstruct/tool/changelog	1231	d30c4c3391ebcc8778b382e78f3327ff4300d805d36f5fe1180b1db5501a3914	scrub	ours
@@ -951,7 +951,7 @@ reconstruct/tool/win32/stdbool.h	434	2edb5317d7da1ad07e6c561ac57067f3068befa91a1
 reconstruct/tool/win32/stdint.h	7738	114e66b095b4b6a39c048cb7199e4abd8b0b2d4b42e21dd408ec135480d63247	scrub	ours
 reconstruct/tool/win32/sys/atomic.h	1874	bf23f0a16212a52edba4eaf3fcd26de28a6f193ca5346ba94d0b92705d3cf580	scrub	ours
 reconstruct/tool/win32/unistd.h	2007	a2c38ae1b55ec8a39776c437f13169ce1a6e93ab0e135544c07558ef9de9d7a7	scrub	ours
-tools/__pycache__/bx510_gate_check.cpython-312.pyc	22117	47cb25a053f20309bbf12e01bbda70d6cdce2c8a49e2003ddb12a1b2b6e9d13e	include	ours
+tools/__pycache__/bx510_gate_check.cpython-312.pyc	22117	5218c51e60f0ba5b1759f10fb827f5978727f95835b88d1793e759f12a39865b	include	ours
 tools/audit_public.py	6901	9acb5190512968154501a71ce482c481e156350f8a4576bf083fe4254b45f3a3	scrub	ours
 tools/bx510_bdpswap.py	5759	d825b42f12ec40bd2b831c9d6584a8b6258849183518e68bde6c8ae0ffe7b21e	scrub	ours
 tools/bx510_bdpvirt.c	9355	3d1bf4bca0462c4070079562ae9e94bc357c9fa3196d6b361ae20c15214d6a9c	scrub	ours
@@ -1001,7 +1001,7 @@ tools/hud_guest_gate.py	2127	2703b72487349a6c88b54e44078036647becd553018e3a7e938
 tools/hud_guest_run.sh	1309	8c0bfe6eacf4f362cbbd2e9efb62296ec090ef16f1a7fea76068fa74331933a9	scrub	ours
 tools/pool_audit.py	12290	6882026d0c06f938a3775766fc202d46393bf15ea6798f1af6251ed4b43a93d8	scrub	ours
 tools/public_publish.sh	1356	07243b270464ecd054715d1fc8ca13d5fbc01271395d6f73227b1a204395b345	scrub	ours
-tools/public_tree.py	7710	c883b94aba3e08b67aa3e994abc0eed4677f3a78e571bf9a22052b5d8d15362f	scrub	ours
+tools/public_tree.py	7842	75b507b3d7f5ae9c6fdb77d20c376c1a3b0647cf3585b0d79e0ec338a45b84cc	scrub	ours
 tools/qemu_rig.c	12404	c621f26c4158bc005b7dcba5e2325e7c3cbd4fa70ccca3bda926170f1161970c	scrub	ours
 tools/release_build.py	11371	0495b79e5b1165393435d096cb3f7fe926fcae98e77c7a9f4b0a77699ba14acf	scrub	ours
 tools/release_verify.sh	3125	d0e13b998e74692db6d3ae9dc19667890131c7fee0e046dcb1bb5b2eed2e25e3	scrub	ours

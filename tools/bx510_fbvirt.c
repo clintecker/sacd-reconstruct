@@ -12,10 +12,11 @@
  * them into the UART log. The real libdirectfb from the device's
  * rootfs can then be exercised against it with system=fbdev.
  *
- * Mode: 1920x1080, 32bpp (stride 7680) — MODE PARITY with the player: fb0 on
- * hardware reports 1920x1080 / stride 7680, so a rig at 1280x720 could not
- * reproduce the row-shear that a 1280-wide writer produces on a 1920-wide
- * scanout. The rig must advertise what the panel advertises. (Earlier: 1280x720, 32bpp XRGB — MODE PARITY with the player (2026-11-05): the
+ * Mode: 1920x1080, 32bpp (stride 7680), virtual 1920x2160 — MODE PARITY
+ * with the player: fb0 on hardware reports 1920x1080 / stride 7680 /
+ * virtual 1920x2160 (hw-session sysfs capture), so a rig at any other
+ * geometry could not reproduce row-shear/pitch behavior. The rig must
+ * advertise what the panel advertises. (Earlier: 1280x720, 32bpp XRGB — MODE PARITY with the player (2026-11-05): the
  * panel's layer is 1280x720 and DirectFB's primary comes back 1280x720, while
  * this module used to advertise 720x576. That mismatch hid every pitch/size bug
  * we hit on hardware (a 1280-wide surface over a 720-wide fbdev, lock pitch
@@ -84,10 +85,16 @@
  *   the shipped provider is indistinguishable from per-fd selectors.
  *
  * - The command ring is mapped, bounded, and its WR_LOCK/UNLOCK/
- *   DISPATCHHW/WAITDONE plumbing answers, but no command interpreter
- *   runs this pass: DISPATCHHW advances RdPoint to WrPoint and logs
- *   what it consumed (honest no-op — the accelerated path is future
- *   work; rungs d/e use DirectFB's no-hardware software rendering).
+ *   DISPATCHHW/CHECKFLUSH plumbing answers. Since the S3 contract decode
+ *   (docs/mt85xx-fbdev-graphics-contract.md) DISPATCHHW is a REAL consumer:
+ *   the retail gfxdriver's ring ioctls (0x4651 DISPATCHHW, 0x464d
+ *   _mt85CheckFlush) drain the ring (Rd,Wr] in order and EXECUTE the items
+ *   the contract pinned: cmd 0x191 (sync/flush marker, no-op) and cmd 0x01
+ *   (rFill — fill rect into the vendor pool at the payload's dst phys).
+ *   Unknown ids advance the ring and are logged (never EINVAL mid-ring —
+ *   the gfxdriver would retry forever against a full ring). The published
+ *   DISPATCHHW number 0x4653 shares the same consumer so both vendor
+ *   revisions work.
  *
  * - Unknown request numbers stay -ENOTTY and get logged with their
  *   arguments: the log IS the discovery instrument.
@@ -109,6 +116,12 @@
 
 #define FBVIRT_XRES 1920
 #define FBVIRT_YRES 1080
+/* virtual geometry parity: hardware fb0 sysfs reports virtual 1920x2160.
+ * fix.smem_len stays sized to the VISIBLE frame only — the raw-fbdev
+ * regression gate (fbdraw full-frame md5) is byte-pinned to it and nothing
+ * in the retail provider ever pans. */
+#define FBVIRT_XVIRT 1920
+#define FBVIRT_YVIRT 2160
 #define FBVIRT_BPP  32
 
 /* ---- MT85 virtual-device storage model ----
@@ -125,11 +138,11 @@
  *           the retail checks m_avail[num-1] before any other pool),
  *           skipped for primary/video-only surfaces, VALLOC type.
  * The command ring is 512 KiB, debug info 4096 B — every mmap
- * length is distinct and page-aligned (pool0 3690496, pool1
+ * length is distinct and page-aligned (pool0 8298496, pool1
  * 16781312 = size+0x1000, ring 524288, debug 4096, fbdev smem
- * 1658880) so the length dispatch below stays unambiguous.
+ * 8294400) so the length dispatch below stays unambiguous.
  */
-#define MT85_POOL0_SIZE     (((1920u * 1080u * 4u + 16u) + 4095u) & ~4095u)  /* 3690496, run5-measured: alloc length 3686416 at offset 4080 */
+#define MT85_POOL0_SIZE     (1920u * 1080u * 4u + 0x1000u)  /* 8298496: pitch*height + one page — the module convention tools/bx510_fbdump.c --pool maps by (fbdump lesson: pool0 must equal exactly what the dump tool requests or the length dispatch never matches) */
 #define MT85_POOL1_SIZE     (16u * 1024 * 1024)
 #define MT85_CMDBUF_SIZE    (512u * 1024)
 #define MT85_DEBUG_SIZE     4096u
@@ -139,11 +152,13 @@
  * onto the pool bytes. */
 #define MT85_POOL0_PHYS     0x48000000u
 #define MT85_POOL1_PHYS     0x4A000000u
-/* Ring capacity in items, assuming 64-byte items (GFX_BUFF_CMD_ITEM_T
- * = payload union + 5 reserved words). Item size is published-source
- * only until the retail provider is observed pushing commands; the
- * value only affects the accelerated path, which this pass stubs. */
-#define MT85_RING_ITEM_SIZE 64u
+/* Ring capacity in ITEMS and stride are RETAIL-VERIFIED (S3 contract §2):
+ * items are 160 bytes (largest payload memcpy is 132 at item+8) and the
+ * writer addresses slot (Wr+1) unwrapped, so the worst-case write ends at
+ * 192 + 160*maxcount — capacity must be (ring_len - 192)/160. The old
+ * 64-byte-item estimate (maxcount 8188) let the gfxdriver scribble ~1.3 MB
+ * into the 512 KiB mmap = the provider SIGSEGV in the guest. */
+#define MT85_RING_ITEM_SIZE 160u
 
 static void *mt85_pool_mem;    /* vmalloc, MT85_POOL0_SIZE */
 static void *mt85_pool1_mem;   /* vmalloc, MT85_POOL1_SIZE */
@@ -165,6 +180,235 @@ static unsigned int mt85_plane_order[5] = { 3, 4, 5, 0, 1 };
 static unsigned int mt85_osd_plane_order[5] = { 3, 4, 5, 0, 1 };
 
 static struct fb_info *fbvirt_info;
+
+/* ---- retail gfxdriver command-ring consumer (S3) -----------------
+ *
+ * Layout and handshake decoded from the retail libdirectfb_mt85.so
+ * emitter (docs/mt85xx-fbdev-graphics-contract.md §2/§3; the arithmetic
+ * was re-verified against the objdump listing before implementing):
+ *   - ring header = mmap+32; maxcount@+0x04, RdPoint@+0x10, state@+0x30,
+ *     WrPoint@+0x40, writer flag echo@+0x60;
+ *   - items are 160 bytes; the writer writes slot (Wr+1) UNWRAPPED at
+ *     mmap + 32 + 160*(Wr+1) (VERIFIED: add r11, r8, #1 / add r0, r7,
+ *     r11, lsl #5 at 0x1028/0x1054), then stores Wr = (Wr+1) % maxcount
+ *     — so slots live at addresses 160*1 .. 160*maxcount past the header
+ *     and the mirror consumer reads the item after Rd at 160*(Rd+1),
+ *     advancing Rd = (Rd+1) % maxcount. The consumer half is INFERRED
+ *     (no kernel binary in hand); it is the only convention consistent
+ *     with the writer's arithmetic (Wr==Rd empty, (Wr+1)%maxcount==Rd
+ *     full, write-then-advance).
+ */
+#define MT85_RING_LOG_ITEMS 32u     /* per-item detail lines: first N only */
+#define MT85_DSPF_ARGB      0x418c04u  /* retail provider DSPF table, VERIFIED */
+
+static unsigned int mt85_items_logged;
+static unsigned int mt85_dispatch_calls;
+static unsigned int mt85_item_count[0x200];   /* per-command-id totals */
+
+static unsigned int mt85_cmd_payload_bytes(unsigned int cmd)
+{
+    switch (cmd) {
+    case 0x01: return 56;   /* rFill          */
+    case 0x02: return 124;  /* rBitblt        */
+    case 0x03: return 128;  /* rBitblt        */
+    case 0x04: return 108;  /* OPEN           */
+    case 0x0f: return 108;  /* rStretch       */
+    case 0x15: return 132;  /* OPEN           */
+    case 0x16: return 132;  /* rStretch       */
+    case 0x1d: return 132;  /* OPEN           */
+    case 0x27: return 128;  /* rFillBlend     */
+    case 0x28: return 56;   /* rFill          */
+    case 0x29: return 128;  /* rFillBlend     */
+    case 0x2c: return 64;   /* rFill          */
+    case 0x2d: return 72;   /* rFill          */
+    case 0x2e: return 112;  /* rBitblt        */
+    case 0x2f: return 120;  /* rStretch       */
+    case 0x30: return 60;   /* rFillBlend     */
+    case 0x31: return 132;  /* rStretch       */
+    case 0x32: return 56;   /* OPEN           */
+    case 0x34: return 128;  /* BlitPM         */
+    case 0x35: return 128;  /* BlitBlendPM    */
+    case 0x36: return 128;  /* StretchBlitPM  */
+    case 0x38: return 128;  /* StretchBlendPM */
+    case 0x3a: return 124;  /* rBitblt        */
+    case 0x12e: return 108; /* OPEN           */
+    case 0x191: return 0;   /* sync marker: cmd+flag only, NO memcpy */
+    default:   return 0;
+    }
+}
+
+/* rFill (cmd 0x01) — payload field map, EMPIRICALLY PINNED from the first
+ * live retail item (s3-run2.log: dst=0x48465ff0 matches the module's own
+ * FBIO_SET plane base, pitch=5120 and 1280x720 match the SET response, the
+ * +0x30 word 0xff3099e0 matches the rung's SetColor, +0x34 = 0x12345678):
+ *   +0x00 OPEN (0x174c0 observed — NOT the color; contract §3.2's
+ *           "color at +0x00" is disproven by observation),
+ *   +0x04 = 1, +0x08 = dst phys, +0x10/+0x14 = x/y, +0x18 = pitch,
+ *   +0x20 = VENDOR format code from the gfxdriver's own DSPF→MT85 switch
+ *   (VERIFIED literal pool: 0x418c04 DSPF_ARGB → 12; also 0x214612→11,
+ *   0x4011040b→8, 0x200801→9, 0x211780→10), +0x28/+0x2c = w/h,
+ *   +0x30 = ARGB color, +0x34 = 0x12345678 sentinel.
+ * Executed insofar as it can be verified: magic, format and
+ * destination-bounds checks gate every write; anything that fails a check
+ * is logged and skipped, never guessed at. */
+#define MT85_FMT_ARGVB   12u   /* vendor code for DSPF_ARGB, 4 B/px */
+#define MT85_FILL_LOG_LIMIT 32u
+static unsigned int mt85_fill_logs;
+#define FILLLOG(args...) \
+    do { if (mt85_fill_logs < MT85_FILL_LOG_LIMIT) { \
+             mt85_fill_logs++; printk(KERN_INFO "fbvirt-mt85: rFill " args); } \
+    } while (0)
+
+static void mt85_exec_fill(const unsigned char *payload)
+{
+    const unsigned int *w = (const unsigned int *)payload;
+    unsigned int dst_phys = w[2];   /* +0x08, VERIFIED vs FBIO_SET base */
+    unsigned int x = w[4], y = w[5];        /* +0x10/+0x14 */
+    unsigned int pitch = w[6];      /* +0x18, VERIFIED vs SET pitch */
+    unsigned int fmt = w[8];        /* +0x20, vendor code */
+    unsigned int width = w[10], height = w[11];  /* +0x28/+0x2c VERIFIED */
+    unsigned int color = w[12];     /* +0x30, VERIFIED vs SetColor */
+    unsigned int magic = w[13];     /* +0x34 = 0x12345678 sentinel */
+    unsigned char *base;
+    unsigned long avail, pooldst, rowoff;
+    unsigned int row, col;
+
+    if (magic != 0x12345678u) {
+        FILLLOG("magic 0x%08x != 0x12345678 - skipped\n", magic);
+        return;
+    }
+    if (fmt != MT85_FMT_ARGVB) {
+        /* vendor codes other than 12 (ARGB4444/RGB16/ARGB1555/LUT8) have
+         * no decoded color translation — log and skip, never guess */
+        FILLLOG("fmt %u not vendor-ARGB(12) - skipped\n", fmt);
+        return;
+    }
+    if (x > 8191u || y > 8191u || !width || width > 8192u
+        || !height || height > 8192u) {
+        FILLLOG("implausible rect %u,%u %ux%u - skipped\n", x, y, width,
+                height);
+        return;
+    }
+    if (!pitch || pitch < width * 4u) {
+        FILLLOG("pitch %u < width %u*4 - skipped\n", pitch, width);
+        return;
+    }
+    if (dst_phys >= MT85_POOL0_PHYS
+        && dst_phys < MT85_POOL0_PHYS + MT85_POOL0_SIZE) {
+        base = mt85_pool_mem;
+        pooldst = dst_phys - MT85_POOL0_PHYS;
+        avail = MT85_POOL0_SIZE - pooldst;
+    } else if (dst_phys >= MT85_POOL1_PHYS
+               && dst_phys < MT85_POOL1_PHYS + MT85_POOL1_SIZE) {
+        base = mt85_pool1_mem;
+        pooldst = dst_phys - MT85_POOL1_PHYS;
+        avail = MT85_POOL1_SIZE - pooldst;
+    } else {
+        FILLLOG("dst 0x%08x outside both pools - skipped\n", dst_phys);
+        return;
+    }
+    {
+        /* one-line payload dump for the first fills: field semantics get
+         * verified against the module's own SET-panel ground truth */
+        char line[160];
+        unsigned int i, len = 0;
+        for (i = 0; i < 14 && len + 12 < sizeof(line); i++) {
+            int add = snprintf(line + len, sizeof(line) - len, "%08x ",
+                               w[i]);
+            if (add > 0)
+                len += add;
+        }
+        FILLLOG("payload %s\n", line);
+    }
+    FILLLOG("fill dst=0x%08x color=0x%08x %u,%u %ux%u pitch=%u fmt=%u\n",
+            dst_phys, color, x, y, width, height, pitch, fmt);
+    for (row = 0; row < height; row++) {
+        unsigned char *q;
+        /* rowoff is relative to the DESTINATION (avail is what remains of
+         * the pool from dst on); never add the dst offset twice */
+        rowoff = (unsigned long)(y + row) * pitch + (unsigned long)x * 4u;
+        if (rowoff + (unsigned long)width * 4u > avail) {
+            FILLLOG("row %u clips pool (off %lu + %u > %lu) - truncated\n",
+                    row, rowoff, width * 4u, avail);
+            break;
+        }
+        q = base + pooldst + rowoff;
+        for (col = 0; col < width; col++) {
+            /* byte stores: rowoff need not be 4-aligned and a kernel-mode
+             * unaligned word access on this ARMv6 build is a fixup+warn,
+             * not a silent write */
+            q[0] = color & 0xff;
+            q[1] = (color >> 8) & 0xff;
+            q[2] = (color >> 16) & 0xff;
+            q[3] = (color >> 24) & 0xff;
+            q += 4;
+        }
+    }
+}
+
+/* drain the ring (Rd, Wr] in order, executing what the contract pinned;
+ * unknown ids advance anyway (never EINVAL mid-ring — the gfxdriver's
+ * full-ring path retries forever against an un-drained ring) */
+static unsigned int mt85_ring_consume(const char *req)
+{
+    unsigned int max = *(unsigned int *)(mt85_cmdbuf_mem
+                                         + MT85_RING_OFF_MAXCOUNT);
+    unsigned int rd = *(unsigned int *)(mt85_cmdbuf_mem
+                                         + MT85_RING_OFF_RDPOINT);
+    unsigned int wr = *(unsigned int *)(mt85_cmdbuf_mem
+                                         + MT85_RING_OFF_WRPOINT);
+    unsigned int n = 0;
+
+    /* rd/wr come from a userspace-writable MAP_SHARED header (retail never
+     * writes RdPoint — contract §2.1 VERIFIED — but a buggy/hostile writer
+     * must not send the kernel OOB outside the ring vmalloc region) */
+    if (!max || rd >= max || wr >= max) {
+        printk(KERN_INFO "fbvirt-mt85: %s ring indices out of range "
+               "(max=%u rd=%u wr=%u) - consuming nothing\n", req, max, rd, wr);
+        return 0;
+    }
+    while (rd != wr && n < max) {
+        unsigned char *item = mt85_cmdbuf_mem + MT85_GFX_DRV_PREFIX_SIZE
+                              + MT85_RING_ITEM_STRIDE * (rd + 1);
+        unsigned int cmd = *(unsigned int *)item;
+        unsigned int flag = *(unsigned int *)(item + 4);
+
+        if (mt85_items_logged < MT85_RING_LOG_ITEMS) {
+            mt85_items_logged++;
+            printk(KERN_INFO "fbvirt-mt85: %s item[%u] cmd=0x%x flag=%u "
+                   "(payload %u B)\n", req, n, cmd, flag,
+                   mt85_cmd_payload_bytes(cmd));
+        }
+        if (cmd < 0x200u)
+            mt85_item_count[cmd]++;
+        if (cmd == 0x191u) {
+            /* sync/flush marker {0x191, 1}: no payload, no-op (VERIFIED) */
+        } else if (cmd == 0x01u) {
+            mt85_exec_fill(item + 8);
+        }
+        rd = (rd + 1) % max;
+        n++;
+    }
+    *(unsigned int *)(mt85_cmdbuf_mem + MT85_RING_OFF_RDPOINT) = rd;
+    return n;
+}
+
+static void mt85_ring_dump_counts(void)
+{
+    char line[512];
+    unsigned int i, len = 0;
+
+    for (i = 0; i < 0x200u; i++)
+        if (mt85_item_count[i]
+            && len + 24 < sizeof(line)) {
+            int add = snprintf(line + len, sizeof(line) - len,
+                               " 0x%x=%u", i, mt85_item_count[i]);
+            if (add > 0)
+                len += add;
+        }
+    printk(KERN_INFO "fbvirt-mt85: ring items consumed by cmd:%s\n",
+           len ? line : " (none)");
+}
 
 static int fbvirt_setcolreg(unsigned regno, unsigned red, unsigned green,
                             unsigned blue, unsigned transp,
@@ -504,33 +748,45 @@ static int mt85_ioctl(struct fb_info *info, unsigned int cmd,
         return 0;
     case MT85_FBIO_CMDBUF_WR_LOCK:
     case MT85_FBIO_CMDBUF_WR_UNLOCK:
-        /* ring write lock/unlock: nothing contends in the virtual
-         * model; record and answer success */
+        /* ring write lock/unlock: the retail gfxdriver brackets EVERY emit
+         * iteration with these (returns never checked), so per-call printks
+         * would flood the console — quiet success, first occurrence logged
+         * by mt85_log_req */
         mt85_log_req(cmd);
-        printk(KERN_INFO "fbvirt-mt85: CMDBUF WR %s (0x%lx) -> 0\n",
-               cmd == MT85_FBIO_CMDBUF_WR_LOCK ? "LOCK" : "UNLOCK", arg);
         return 0;
+    case MT85_FBIO_DISPATCHHW_GFX:
+    case MT85_FBIO_CHECKFLUSH:
     case MT85_FBIO_DISPATCHHW_PUB: {
-        /* consume the ring honestly: no command interpreter this pass.
-         * Advance RdPoint to WrPoint (everything submitted is treated
-         * as executed-as-nothing) and log how many items were claimed. */
-        unsigned int rd = *(unsigned int *)(mt85_cmdbuf_mem
-                                            + MT85_RING_OFF_RDPOINT);
-        unsigned int wr = *(unsigned int *)(mt85_cmdbuf_mem
-                                            + MT85_RING_OFF_WRPOINT);
-        unsigned int max = *(unsigned int *)(mt85_cmdbuf_mem
-                                              + MT85_RING_OFF_MAXCOUNT);
-        unsigned int count = 0;
-        if (max && wr != rd)
-            count = (wr + max - rd) % max;
-        *(unsigned int *)(mt85_cmdbuf_mem + MT85_RING_OFF_RDPOINT) = wr;
-        mt85_log_req(cmd);
-        printk(KERN_INFO "fbvirt-mt85: DISPATCHHW(0x%lx) -> consumed %u "
-               "ring items WITHOUT executing them (rd=%u wr=%u max=%u) "
-               "— honest no-op, no command interpreter this pass\n",
-               arg, count, rd, wr, max);
+        /* 0x4651 = retail gfxdriver DISPATCHHW; 0x464d = retail gfxdriver
+         * _mt85CheckFlush (consume + wait — satisfied by synchronous
+         * consumption); 0x4653 = the published-revision DISPATCHHW kept
+         * for any published-source consumer. All three take the ring
+         * header pointer as arg; the module uses its own ring base and
+         * never dereferences the arg (the contract's negative control:
+         * a NULL/invalid ring pointer must not fault). */
+        unsigned int count = mt85_ring_consume("dispatch");
+
+        mt85_dispatch_calls++;
+        if (mt85_dispatch_calls <= 16 || (mt85_dispatch_calls & 0xffu) == 0) {
+            printk(KERN_INFO "fbvirt-mt85: DISPATCH 0x%x call #%u consumed "
+                   "%u items (rd=%u wr=%u)\n", cmd, mt85_dispatch_calls,
+                   count,
+                   *(unsigned int *)(mt85_cmdbuf_mem + MT85_RING_OFF_RDPOINT),
+                   *(unsigned int *)(mt85_cmdbuf_mem + MT85_RING_OFF_WRPOINT));
+            if ((mt85_dispatch_calls & 0xffu) == 0)
+                mt85_ring_dump_counts();
+        }
         return 0;
     }
+    case MT85_FBIO_PALETTE:
+        /* retail 0x4628, issued by _mapColorFormat: 256 ARGB entries + one
+         * leading word; the provider IGNORES the return value (VERIFIED:
+         * mov r0, #0 immediately after the call site) — accept and log is
+         * the honest contract */
+        mt85_log_req(cmd);
+        printk(KERN_INFO "fbvirt-mt85: PALETTE(0x4628) accepted "
+               "(provider ignores the result)\n");
+        return 0;
     case MT85_FBIO_GFX_FLUSH:
     case MT85_FBIO_GFX_WAIT:
         /* legacy flush/wait: with no hardware, completing immediately
@@ -588,8 +844,8 @@ static int __init fbvirt_init(void)
     fbvirt_info->var = (struct fb_var_screeninfo) {
         .xres = FBVIRT_XRES,
         .yres = FBVIRT_YRES,
-        .xres_virtual = FBVIRT_XRES,
-        .yres_virtual = FBVIRT_YRES,
+        .xres_virtual = FBVIRT_XVIRT,
+        .yres_virtual = FBVIRT_YVIRT,
         .bits_per_pixel = FBVIRT_BPP,
         .red = { .offset = 16, .length = 8 },
         .green = { .offset = 8, .length = 8 },
@@ -624,10 +880,14 @@ static int __init fbvirt_init(void)
     memset(mt85_cmdbuf_mem, 0, MT85_CMDBUF_SIZE);
     memset(mt85_debug_mem, 0, MT85_DEBUG_SIZE);
     /* initialize the shared ring header (GFX_DRV_CMDBUF_T prefix stays
-     * zero — kernel pointers never leak — then GFX_LINUX_CMDBUF_T) */
+     * zero — kernel pointers never leak — then the ring header proper):
+     * maxcount per the retail stride arithmetic, RdPoint/WrPoint 0, and
+     * state=1 = immediate-dispatch policy (the gfxdriver then issues
+     * DISPATCHHW after every item — VERIFIED path, and the simplest
+     * correct behavior for a software interpreter) */
     *(unsigned int *)(mt85_cmdbuf_mem + MT85_RING_OFF_MAXCOUNT) =
-        (MT85_CMDBUF_SIZE - MT85_GFX_DRV_PREFIX_SIZE
-         - MT85_GFX_RING_HDR_SIZE) / MT85_RING_ITEM_SIZE;
+        (MT85_CMDBUF_SIZE - MT85_RING_ITEMS_BASE) / MT85_RING_ITEM_SIZE;
+    *(unsigned int *)(mt85_cmdbuf_mem + MT85_RING_OFF_STATE) = 1;
 
     ret = register_framebuffer(fbvirt_info);
     if (ret < 0)
@@ -639,12 +899,14 @@ static int __init fbvirt_init(void)
            fbvirt_info->node);
     printk(KERN_INFO "fbvirt-mt85: vendor contract up: 2 pools "
            "(p0 %u B phys=0x%08x primary/video-only slice, p1 %u B "
-           "phys=0x%08x general slice), ring %u B (maxcount %u), "
-           "debug %u B; retail requests served, unknown -> ENOTTY\n",
+           "phys=0x%08x general slice), ring %u B (maxcount %u x %u B "
+           "items, state=1 immediate), gfxdriver ring ioctls 0x4651/0x464d/"
+           "0x4900/0x4901 live, debug %u B; retail requests served, "
+           "unknown -> ENOTTY\n",
            MT85_POOL0_SIZE, MT85_POOL0_PHYS, MT85_POOL1_SIZE,
            MT85_POOL1_PHYS, MT85_CMDBUF_SIZE,
            *(unsigned int *)(mt85_cmdbuf_mem + MT85_RING_OFF_MAXCOUNT),
-           MT85_DEBUG_SIZE);
+           MT85_RING_ITEM_SIZE, MT85_DEBUG_SIZE);
     return 0;
 
 out_mt85:

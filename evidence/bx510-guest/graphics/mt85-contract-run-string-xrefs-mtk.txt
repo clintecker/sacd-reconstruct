@@ -1,0 +1,319 @@
+# mtk.so string xrefs (resolved literal+base arithmetic -> strings)
+0x001ca4 .text                               r2 = 0x60e4  "MediaTek 85xx"
+0x001cd0 directfb_mt85sys                    r2 = 0x60f4  "mt85sys"
+0x001d48 mt85AdapterCmdBufInit               r1 = 0x6038  "mt85AdapterCmdBufGetCmdBuf"
+0x001d50 mt85AdapterCmdBufInit               r1 = 0x6038  "mt85AdapterCmdBufGetCmdBuf"
+0x001d54 mt85AdapterCmdBufInit               r0 = 0x614c  "%s: u4CmdbufLen = 0x%X
+"
+0x001de0 mt85AdapterCmdBufInit               r1 = 0x6120  "MediaTek/Driver: FBIO_GETCMDBUFLEN failed!
+"
+0x001df8 mt85AdapterCmdBufInit               r0 = 0x60fc  "ptCmdBuff != ((void *)0)"
+0x001dfc mt85AdapterCmdBufInit               r1 = 0x6118  "mt85.c"
+0x001e04 mt85AdapterCmdBufInit               r3 = 0x6038  "mt85AdapterCmdBufGetCmdBuf"
+0x001e60 mt85AdapterCmdBufInit               r1 = 0x6118  "mt85.c"
+0x001ec4 mt85AdapterCmdBufInit               r1 = 0x6190  "mt85"
+0x001ee8 mt85AdapterCmdBufInit               r0 = 0x6198  "/dev/fb0"
+0x001eec mt85AdapterCmdBufInit               r1 = 0x61a4  "/dev/fb/0"
+0x001efc mt85AdapterCmdBufInit               r0 = 0x6198  "/dev/fb0"
+0x0020d8 mt85AdapterCmdBufInit               r1 = 0x6038  "mt85AdapterCmdBufGetCmdBuf"
+0x0020dc mt85AdapterCmdBufInit               r0 = 0x6164  "MediaTek/System: %s: #%d
+"
+0x0020e0 mt85AdapterCmdBufInit               r1 = 0x6038  "mt85AdapterCmdBufGetCmdBuf"
+0x0020fc mt85AdapterCmdBufInit               r0 = 0x6038  "mt85AdapterCmdBufGetCmdBuf"
+0x002100 mt85AdapterCmdBufInit               r0 = 0x6038  "mt85AdapterCmdBufGetCmdBuf"
+0x002104 mt85AdapterCmdBufInit               r1 = 0x6118  "mt85.c"
+0x00210c mt85AdapterCmdBufInit               r3 = 0x6180  "out of memory"
+0x002140 mt85AdapterCmdBufInit               r1 = 0x61b0  "DirectFB/MT85: FBIOGET_FSCREENINFO failed!
+"
+0x002178 mt85AdapterCmdBufInit               r1 = 0x6234  "DirectFB/MT85: Get memory failed!
+"
+0x00219c mt85AdapterCmdBufInit               r1 = 0x61dc  "DirectFB/MT85: FBIO_GETIMAGEBUFFER failed!
+"
+0x0021d4 mt85AdapterCmdBufInit               r1 = 0x6208  "DirectFB/MT85: FBIO_GETMULTIPOOL failed!
+"
+0x002210 mt85AdapterCmdBufInit               r2 = 0x6118  "mt85.c"
+0x002228 mt85AdapterCmdBufInit               r1 = 0x6038  "mt85AdapterCmdBufGetCmdBuf"
+0x00222c mt85AdapterCmdBufInit               r1 = 0x6038  "mt85AdapterCmdBufGetCmdBuf"
+0x002230 mt85AdapterCmdBufInit               r0 = 0x6280  "[5J] %s -> map debug info
+"
+0x00227c mt85AdapterCmdBufInit               r1 = 0x6258  "DirectFB/MT85: Could not mmap pool!
+"
+0x002318 mt85AdapterCmdBufInit               r1 = 0x6258  "DirectFB/MT85: Could not mmap pool!
+"
+0x002360 mt85AdapterCmdBufInit               r9 = 0x6038  "mt85AdapterCmdBufGetCmdBuf"
+0x002364 mt85AdapterCmdBufInit               r3 = 0x6118  "mt85.c"
+0x00236c mt85AdapterCmdBufInit               r9 = 0x6038  "mt85AdapterCmdBufGetCmdBuf"
+0x002378 mt85AdapterCmdBufInit               r3 = 0x6118  "mt85.c"
+0x00237c mt85AdapterCmdBufInit               r1 = 0x6118  "mt85.c"
+0x002390 mt85AdapterCmdBufInit               r3 = 0x6038  "mt85AdapterCmdBufGetCmdBuf"
+0x0023b8 mt85AdapterCmdBufInit               r1 = 0x6190  "mt85"
+0x0023d4 mt85AdapterCmdBufInit               r0 = 0x6198  "/dev/fb0"
+0x0023d8 mt85AdapterCmdBufInit               r1 = 0x61a4  "/dev/fb/0"
+0x0023e8 mt85AdapterCmdBufInit               r0 = 0x6198  "/dev/fb0"
+0x002414 mt85AdapterCmdBufInit               r0 = 0x6198  "/dev/fb0"
+0x002418 mt85AdapterCmdBufInit               r0 = 0x6198  "/dev/fb0"
+0x002444 mt85AdapterCmdBufInit               r3 = 0x6038  "mt85AdapterCmdBufGetCmdBuf"
+0x00244c mt85AdapterCmdBufInit               r12 = 0x62fc  "shared"
+0x002450 mt85AdapterCmdBufInit               r1 = 0x6118  "mt85.c"
+0x00245c mt85AdapterCmdBufInit               r3 = 0x6038  "mt85AdapterCmdBufGetCmdBuf"
+0x002460 mt85AdapterCmdBufInit               r12 = 0x62fc  "shared"
+0x0024bc mt85AdapterCmdBufInit               r0 = 0x6198  "/dev/fb0"
+0x00255c mt85AdapterCmdBufInit               r0 = 0x62d8  "UUU:CONFIG_DIRECTFB_MULTI_MEM_POOL"
+0x0025c8 mt85AdapterCmdBufInit               r1 = 0x6234  "DirectFB/MT85: Get memory failed!
+"
+0x0025ec mt85AdapterCmdBufInit               r1 = 0x6038  "mt85AdapterCmdBufGetCmdBuf"
+0x0025f0 mt85AdapterCmdBufInit               r0 = 0x6164  "MediaTek/System: %s: #%d
+"
+0x0025f4 mt85AdapterCmdBufInit               r1 = 0x6038  "mt85AdapterCmdBufGetCmdBuf"
+0x002614 mt85AdapterCmdBufInit               r0 = 0x6038  "mt85AdapterCmdBufGetCmdBuf"
+0x002618 mt85AdapterCmdBufInit               r0 = 0x6038  "mt85AdapterCmdBufGetCmdBuf"
+0x00261c mt85AdapterCmdBufInit               r3 = 0x6180  "out of memory"
+0x002620 mt85AdapterCmdBufInit               r1 = 0x6118  "mt85.c"
+0x0026d4 mt85AdapterCmdBufInit               r3 = 0x629c  "out of shared memory"
+0x002750 mt85AdapterCmdBufInit               r1 = 0x61dc  "DirectFB/MT85: FBIO_GETIMAGEBUFFER failed!
+"
+0x002878 mt85AdapterCmdBufInit               r2 = 0x6258  "DirectFB/MT85: Could not mmap pool!
+"
+0x002898 mt85AdapterCmdBufInit               r1 = 0x6038  "mt85AdapterCmdBufGetCmdBuf"
+0x00289c mt85AdapterCmdBufInit               r1 = 0x6038  "mt85AdapterCmdBufGetCmdBuf"
+0x0028a0 mt85AdapterCmdBufInit               r0 = 0x6280  "[5J] %s -> map debug info
+"
+0x0028f0 mt85AdapterCmdBufInit               r1 = 0x6208  "DirectFB/MT85: FBIO_GETMULTIPOOL failed!
+"
+0x002918 mt85AdapterCmdBufInit               r1 = 0x6258  "DirectFB/MT85: Could not mmap pool!
+"
+0x002a34 mt85AdapterCmdBufUninit             r1 = 0x634c  "MediaTek/Driver: FBIO_RELCMDBUF failed!
+"
+0x002a48 mt85AdapterCmdBufUninit             r0 = 0x6304  "*************Unmap DirectFB GFX command buffer failed! ERROR_ID = %d
+"
+0x002a5c mt85AdapterCmdBufUninit             r3 = 0x6038  "mt85AdapterCmdBufGetCmdBuf"
+0x002a60 mt85AdapterCmdBufUninit             r0 = 0x61ac  "0"
+0x002a64 mt85AdapterCmdBufUninit             r1 = 0x6118  "mt85.c"
+0x002a6c mt85AdapterCmdBufUninit             r3 = 0x6038  "mt85AdapterCmdBufGetCmdBuf"
+0x002d74 mt85AdapterCmdBufUninit             r3 = 0x6038  "mt85AdapterCmdBufGetCmdBuf"
+0x002d78 mt85AdapterCmdBufUninit             r12 = 0x62fc  "shared"
+0x002d80 mt85AdapterCmdBufUninit             r1 = 0x6118  "mt85.c"
+0x002d88 mt85AdapterCmdBufUninit             r3 = 0x6038  "mt85AdapterCmdBufGetCmdBuf"
+0x002d8c mt85AdapterCmdBufUninit             r12 = 0x62fc  "shared"
+0x002db8 mt85AdapterCmdBufUninit             r1 = 0x6038  "mt85AdapterCmdBufGetCmdBuf"
+0x002dbc mt85AdapterCmdBufUninit             r0 = 0x6164  "MediaTek/System: %s: #%d
+"
+0x002dc0 mt85AdapterCmdBufUninit             r1 = 0x6038  "mt85AdapterCmdBufGetCmdBuf"
+0x002dd4 mt85AdapterCmdBufUninit             r0 = 0x6378  "*************Unmap DirectFB debug info memory failed!"
+0x002de8 mt85AdapterCmdBufUninit             r3 = 0x6038  "mt85AdapterCmdBufGetCmdBuf"
+0x002dec mt85AdapterCmdBufUninit             r0 = 0x61ac  "0"
+0x002df0 mt85AdapterCmdBufUninit             r1 = 0x6118  "mt85.c"
+0x002df8 mt85AdapterCmdBufUninit             r3 = 0x6038  "mt85AdapterCmdBufGetCmdBuf"
+0x002eec mt85_debuginfo                      r1 = 0x642c  "DirectFB/MT85: FBIO_SET failed!
+"
+0x002f08 mt85_debuginfo                      r0 = 0x640c  "data->layer < 2"
+0x002f0c mt85_debuginfo                      r1 = 0x641c  "mt85_primary.c"
+0x002f14 mt85_debuginfo                      r3 = 0x63b0  "primaryRemoveRegion"
+0x002f60 mt85_debuginfo                      r6 = 0x63b0  "primaryRemoveRegion"
+0x00301c mt85_debuginfo                      r1 = 0x642c  "DirectFB/MT85: FBIO_SET failed!
+"
+0x003038 mt85_debuginfo                      r3 = 0x63b0  "primaryRemoveRegion"
+0x00303c mt85_debuginfo                      r0 = 0x640c  "data->layer < 2"
+0x003040 mt85_debuginfo                      r1 = 0x641c  "mt85_primary.c"
+0x003048 mt85_debuginfo                      r3 = 0x63b0  "primaryRemoveRegion"
+0x003090 mt85_debuginfo                      r6 = 0x63b0  "primaryRemoveRegion"
+0x00310c mt85_debuginfo                      r1 = 0x642c  "DirectFB/MT85: FBIO_SET failed!
+"
+0x0031ac mt85xx_check_wait_vsync             r1 = 0x642c  "DirectFB/MT85: FBIO_SET failed!
+"
+0x003258 mt85xx_check_wait_vsync             r1 = 0x642c  "DirectFB/MT85: FBIO_SET failed!
+"
+0x003288 mt85xx_check_wait_vsync             r3 = 0x63b0  "primaryRemoveRegion"
+0x00328c mt85xx_check_wait_vsync             r0 = 0x640c  "data->layer < 2"
+0x003290 mt85xx_check_wait_vsync             r1 = 0x641c  "mt85_primary.c"
+0x003298 mt85xx_check_wait_vsync             r3 = 0x63b0  "primaryRemoveRegion"
+0x0032e8 mt85xx_check_wait_vsync             r1 = 0x641c  "mt85_primary.c"
+0x0032ec mt85xx_check_wait_vsync             r1 = 0x641c  "mt85_primary.c"
+0x003348 mt85xx_check_wait_vsync             r1 = 0x641c  "mt85_primary.c"
+0x003370 mt85xx_check_wait_vsync             r1 = 0x641c  "mt85_primary.c"
+0x00337c mt85xx_check_wait_vsync             r1 = 0x641c  "mt85_primary.c"
+0x003384 mt85xx_check_wait_vsync             r1 = 0x641c  "mt85_primary.c"
+0x003388 mt85xx_check_wait_vsync             r1 = 0x641c  "mt85_primary.c"
+0x003390 mt85xx_check_wait_vsync             r0 = 0x641c  "mt85_primary.c"
+0x0033b0 mt85xx_check_wait_vsync             r1 = 0x641c  "mt85_primary.c"
+0x0033b4 mt85xx_check_wait_vsync             r0 = 0x641c  "mt85_primary.c"
+0x0033c4 mt85xx_check_wait_vsync             r0 = 0x6450  " <<<<<<<<<<<<< MT85 unsp:%d, w:%d,h:%d
+"
+0x003514 mt85xx_check_wait_vsync             r1 = 0x642c  "DirectFB/MT85: FBIO_SET failed!
+"
+0x003574 mt85xx_check_wait_vsync             r0 = 0x6478  " [FOOL Search Found]%d
+"
+0x0035a4 mt85xx_check_wait_vsync             r3 = 0x63b0  "primaryRemoveRegion"
+0x0035a8 mt85xx_check_wait_vsync             r0 = 0x640c  "data->layer < 2"
+0x0035ac mt85xx_check_wait_vsync             r1 = 0x641c  "mt85_primary.c"
+0x0035b4 mt85xx_check_wait_vsync             r3 = 0x63b0  "primaryRemoveRegion"
+0x003610 mt85xx_check_wait_vsync             r0 = 0x63b0  "primaryRemoveRegion"
+0x003624 mt85xx_check_wait_vsync             r2 = 0x6490  "MediaTek 85xx Primary Layer"
+0x00368c mt85xx_check_wait_vsync             r2 = 0x64ac  "MediaTek 85xx Primary Screen"
+0x00397c _mapColorFormat                     r1 = 0x642c  "DirectFB/MT85: FBIO_SET failed!
+"
+0x0039c4 _mapColorFormat                     r1 = 0x64cc  "DirectFB/MT85: FBIO_SET MT85FB_SET_MASK_SAFETY!
+"
+0x0039dc _mapColorFormat                     r3 = 0x63b0  "primaryRemoveRegion"
+0x0039e0 _mapColorFormat                     r0 = 0x640c  "data->layer < 2"
+0x0039e4 _mapColorFormat                     r1 = 0x641c  "mt85_primary.c"
+0x0039ec _mapColorFormat                     r3 = 0x63b0  "primaryRemoveRegion"
+0x003c48 _mapColorFormat                     r2 = 0x6500  "mt85fb Memory"
+0x003cc4 dfb_surfacemanager_create           r9 = 0x656c  "mt85_surfacemanager.c"
+0x003cc8 dfb_surfacemanager_create           r11 = 0x6510  "dfb_surfacemanager_create"
+0x003cd8 dfb_surfacemanager_create           r1 = 0x656c  "mt85_surfacemanager.c"
+0x003cdc dfb_surfacemanager_create           r3 = 0x6510  "dfb_surfacemanager_create"
+0x003d7c dfb_surfacemanager_create           r1 = 0x656c  "mt85_surfacemanager.c"
+0x003d80 dfb_surfacemanager_create           r3 = 0x6510  "dfb_surfacemanager_create"
+0x003d94 dfb_surfacemanager_create           r0 = 0x6510  "dfb_surfacemanager_create"
+0x003d98 dfb_surfacemanager_create           r3 = 0x629c  "out of shared memory"
+0x003d9c dfb_surfacemanager_create           r1 = 0x656c  "mt85_surfacemanager.c"
+0x003db4 dfb_surfacemanager_create           r8 = 0x6584  "manager"
+0x003dc0 dfb_surfacemanager_create           r1 = 0x656c  "mt85_surfacemanager.c"
+0x003dc4 dfb_surfacemanager_create           r3 = 0x6510  "dfb_surfacemanager_create"
+0x003dc8 dfb_surfacemanager_create           r8 = 0x6584  "manager"
+0x003e04 dfb_surfacemanager_create           r0 = 0x6510  "dfb_surfacemanager_create"
+0x003e08 dfb_surfacemanager_create           r1 = 0x656c  "mt85_surfacemanager.c"
+0x003e8c dfb_surfacemanager_destroy          r8 = 0x6510  "dfb_surfacemanager_create"
+0x003e9c dfb_surfacemanager_destroy          r8 = 0x6510  "dfb_surfacemanager_create"
+0x003ea0 dfb_surfacemanager_destroy          r6 = 0x656c  "mt85_surfacemanager.c"
+0x003ea4 dfb_surfacemanager_destroy          r10 = 0x658c  "chunk"
+0x003ec4 dfb_surfacemanager_destroy          r1 = 0x656c  "mt85_surfacemanager.c"
+0x003ed0 dfb_surfacemanager_destroy          r3 = 0x6510  "dfb_surfacemanager_create"
+0x003f04 dfb_surfacemanager_destroy          r3 = 0x6510  "dfb_surfacemanager_create"
+0x003f18 dfb_surfacemanager_destroy          r12 = 0x6584  "manager"
+0x003f1c dfb_surfacemanager_destroy          r1 = 0x656c  "mt85_surfacemanager.c"
+0x003f20 dfb_surfacemanager_destroy          r3 = 0x6510  "dfb_surfacemanager_create"
+0x003f28 dfb_surfacemanager_destroy          r12 = 0x6584  "manager"
+0x0040a8 search_pool                         r0 = 0x6510  "dfb_surfacemanager_create"
+0x0040b0 search_pool                         r0 = 0x6510  "dfb_surfacemanager_create"
+0x0040b4 search_pool                         r1 = 0x656c  "mt85_surfacemanager.c"
+0x0040b8 search_pool                         r3 = 0x6594  "workaround"
+0x004204 dfb_surfacemanager_allocate         r2 = 0x656c  "mt85_surfacemanager.c"
+0x004208 dfb_surfacemanager_allocate         r3 = 0x6510  "dfb_surfacemanager_create"
+0x004210 dfb_surfacemanager_allocate         r2 = 0x656c  "mt85_surfacemanager.c"
+0x004214 dfb_surfacemanager_allocate         r3 = 0x6510  "dfb_surfacemanager_create"
+0x004218 dfb_surfacemanager_allocate         r1 = 0x656c  "mt85_surfacemanager.c"
+0x004228 dfb_surfacemanager_allocate         r3 = 0x6510  "dfb_surfacemanager_create"
+0x00424c dfb_surfacemanager_allocate         r2 = 0x6906  " Switcher"
+0x004258 dfb_surfacemanager_allocate         r2 = 0x6906  " Switcher"
+0x00425c dfb_surfacemanager_allocate         r2 = 0x6906  " Switcher"
+0x004488 dfb_surfacemanager_allocate         r0 = 0x6510  "dfb_surfacemanager_create"
+0x00448c dfb_surfacemanager_allocate         r1 = 0x656c  "mt85_surfacemanager.c"
+0x0048ac dfb_surfacemanager_deallocate       r3 = 0x6510  "dfb_surfacemanager_create"
+0x0048b8 dfb_surfacemanager_deallocate       r12 = 0x65b4  "next"
+0x0048c0 dfb_surfacemanager_deallocate       r1 = 0x656c  "mt85_surfacemanager.c"
+0x0048c8 dfb_surfacemanager_deallocate       r3 = 0x6510  "dfb_surfacemanager_create"
+0x0048cc dfb_surfacemanager_deallocate       r12 = 0x65b4  "next"
+0x004900 dfb_surfacemanager_deallocate       r0 = 0x6510  "dfb_surfacemanager_create"
+0x004904 dfb_surfacemanager_deallocate       r0 = 0x6510  "dfb_surfacemanager_create"
+0x004908 dfb_surfacemanager_deallocate       r1 = 0x656c  "mt85_surfacemanager.c"
+0x004910 dfb_surfacemanager_deallocate       r3 = 0x65a0  "freeing free chunk"
+0x004948 dfb_surfacemanager_deallocate       r3 = 0x6510  "dfb_surfacemanager_create"
+0x00495c dfb_surfacemanager_deallocate       r1 = 0x656c  "mt85_surfacemanager.c"
+0x004964 dfb_surfacemanager_deallocate       r3 = 0x6510  "dfb_surfacemanager_create"
+0x004968 dfb_surfacemanager_deallocate       r12 = 0x65b4  "next"
+0x0049cc dfb_surfacemanager_deallocate       r3 = 0x6610  "DirectFB/fbdev/vt: KD_GRAPHICS failed!
+"
+0x0049d0 dfb_surfacemanager_deallocate       r3 = 0x6610  "DirectFB/fbdev/vt: KD_GRAPHICS failed!
+"
+0x0049dc dfb_surfacemanager_deallocate       r3 = 0x65e8  "DirectFB/fbdev/vt: VT_RELDISP failed
+"
+0x0049e0 dfb_surfacemanager_deallocate       r3 = 0x65e8  "DirectFB/fbdev/vt: VT_RELDISP failed
+"
+0x0049ec dfb_surfacemanager_deallocate       r3 = 0x65c8  "mt85_vt.c"
+0x0049f0 dfb_surfacemanager_deallocate       r3 = 0x65c8  "mt85_vt.c"
+0x0049fc dfb_surfacemanager_deallocate       r3 = 0x65d4  "unexpected vt_sig"
+0x004a00 dfb_surfacemanager_deallocate       r11 = 0x65bc  "vt_thread"
+0x004a04 dfb_surfacemanager_deallocate       r3 = 0x65d4  "unexpected vt_sig"
+0x004b14 dfb_surfacemanager_deallocate       r1 = 0x6610  "DirectFB/fbdev/vt: KD_GRAPHICS failed!
+"
+0x004b28 dfb_surfacemanager_deallocate       r0 = 0x65bc  "vt_thread"
+0x004b30 dfb_surfacemanager_deallocate       r3 = 0x65d4  "unexpected vt_sig"
+0x004b74 dfb_surfacemanager_deallocate       r1 = 0x65e8  "DirectFB/fbdev/vt: VT_RELDISP failed
+"
+0x004b9c dfb_surfacemanager_deallocate       r1 = 0x65e8  "DirectFB/fbdev/vt: VT_RELDISP failed
+"
+0x004c84 dfb_vt_initialize                   r0 = 0x6638  "/dev/tty0"
+0x004c94 dfb_vt_initialize                   r0 = 0x6638  "/dev/tty0"
+0x004dd0 dfb_vt_initialize                   r2 = 0x682c  "/dev/tty%d"
+0x004ed8 dfb_vt_initialize                   r1 = 0x68b4  "DirectFB/fbdev/vt: sigaction failed!
+"
+0x004f80 dfb_vt_initialize                   r1 = 0x66c8  "DirectFB/core/vt: Error opening `/dev/tty0'!
+"
+0x005094 dfb_vt_initialize                   r1 = 0x67d8  "DirectFB/core/vt: VT_ACTIVATE failed!
+"
+0x0050ac dfb_vt_initialize                   r1 = 0x66f8  "DirectFB/core/vt: VT_GETSTATE failed!
+"
+0x005108 dfb_vt_initialize                   r1 = 0x6780  "DirectFB/MT85/vt: FBIOPUT_CON2FBMAP failed!
+"
+0x0051c0 dfb_vt_initialize                   r1 = 0x6780  "DirectFB/MT85/vt: FBIOPUT_CON2FBMAP failed!
+"
+0x00520c dfb_vt_initialize                   r1 = 0x6610  "DirectFB/fbdev/vt: KD_GRAPHICS failed!
+"
+0x005264 dfb_vt_initialize                   r1 = 0x688c  "DirectFB/core/vt: Error opening `%s'!
+"
+0x005280 dfb_vt_initialize                   r1 = 0x6750  "DirectFB/MT85/vt: Could not fstat fb device!
+"
+0x005294 dfb_vt_initialize                   r0 = 0x6644  "/dev/vc/0"
+0x0052a0 dfb_vt_initialize                   r0 = 0x6644  "/dev/vc/0"
+0x0052d8 dfb_vt_initialize                   r1 = 0x6698  "DirectFB/core/vt: Error opening `/dev/vc/0'!
+"
+0x005308 dfb_vt_initialize                   r1 = 0x6750  "DirectFB/MT85/vt: Could not fstat fb device!
+"
+0x005320 dfb_vt_initialize                   r1 = 0x6720  "DirectFB/MT85/vt: FBIOGET_CON2FBMAP failed!
+"
+0x00537c dfb_vt_initialize                   r1 = 0x67b0  "DirectFB/core/vt: Cannot allocate VT!
+"
+0x005394 dfb_vt_initialize                   r1 = 0x6720  "DirectFB/MT85/vt: FBIOGET_CON2FBMAP failed!
+"
+0x0053ac dfb_vt_initialize                   r2 = 0x6838  "/dev/vc/%d"
+0x005420 dfb_vt_initialize                   r1 = 0x6844  "DirectFB/core/vt: Couldn't open neither `/dev/tty%d' nor `/dev/vc/%d'!
+"
+0x00547c dfb_vt_initialize                   r1 = 0x6800  "DirectFB/core/vt: VT_WAITACTIVE failed!
+"
+0x005500 dfb_vt_initialize                   r1 = 0x68dc  "DirectFB/fbdev/vt: VT_SETMODE failed!
+"
+0x005550 dfb_vt_initialize                   r1 = 0x6650  "DirectFB/core/vt: Couldn't open neither `/dev/tty0' nor `/dev/vc/0'!
+"
+0x0055a8 dfb_vt_initialize                   r3 = 0x6904  "VT Switcher"
+0x005834 dfb_vt_shutdown                     r1 = 0x6958  "DirectFB/Keyboard: KD_TEXT failed!
+"
+0x0058c0 dfb_vt_shutdown                     r1 = 0x6a30  "DirectFB/core/vt: Unable to close file descriptor of current VT!
+"
+0x00597c dfb_vt_shutdown                     r1 = 0x6a74  "DirectFB/core/vt: Unable to close file descriptor of tty0!
+"
+0x0059e4 dfb_vt_shutdown                     r1 = 0x6780  "DirectFB/MT85/vt: FBIOPUT_CON2FBMAP failed!
+"
+0x005a4c dfb_vt_shutdown                     r1 = 0x6780  "DirectFB/MT85/vt: FBIOPUT_CON2FBMAP failed!
+"
+0x005a7c dfb_vt_shutdown                     r1 = 0x6924  "DirectFB/fbdev/vt: Unable to restore VT mode!!!
+"
+0x005a94 dfb_vt_shutdown                     r1 = 0x6750  "DirectFB/MT85/vt: Could not fstat fb device!
+"
+0x005aac dfb_vt_shutdown                     r1 = 0x6750  "DirectFB/MT85/vt: Could not fstat fb device!
+"
+0x005adc dfb_vt_shutdown                     r1 = 0x6a00  "DirectFB/core/vt: Unable to disallocate VT!
+"
+0x005b0c dfb_vt_shutdown                     r1 = 0x69bc  "DirectFB/core/vt: Unable to close file descriptor of allocated VT!
+"
+0x005b3c dfb_vt_shutdown                     r1 = 0x699c  "DirectFB/core/vt: VT_WAITACTIVE"
+0x005b6c dfb_vt_shutdown                     r1 = 0x697c  "DirectFB/core/vt: VT_ACTIVATE"
+0x005c18 dfb_vt_detach                       r0 = 0x6ac4  "/dev/tty"
+0x005c34 dfb_vt_detach                       r0 = 0x6ac4  "/dev/tty"
+0x005cbc dfb_vt_detach                       r1 = 0x6ad0  "DirectFB/VT: Opening /dev/tty failed!
+"
+0x005cfc dfb_vt_detach                       r1 = 0x6af8  "DirectFB/VT: TIOCNOTTY on /dev/tty failed
+"
+0x005db8 dfb_vt_switch                       r1 = 0x6b24  "DirectFB/fbdev/vt: VT_ACTIVATE failed
+"
+0x005de0 dfb_vt_switch                       r1 = 0x6b24  "DirectFB/fbdev/vt: VT_ACTIVATE failed
+"
+0x005dec dfb_vt_switch                       r1 = 0x6b24  "DirectFB/fbdev/vt: VT_ACTIVATE failed
+"
+0x005e08 dfb_vt_switch                       r1 = 0x6b24  "DirectFB/fbdev/vt: VT_ACTIVATE failed
+"
+0x006000 dfb_vt_switch                       r1 = 0x6b24  "DirectFB/fbdev/vt: VT_ACTIVATE failed
+"
+0x006018 dfb_vt_switch                       r1 = 0x6b24  "DirectFB/fbdev/vt: VT_ACTIVATE failed
+"

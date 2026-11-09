@@ -1,0 +1,18 @@
+font: TiresiasScreenfont Regular (Release 8.03)
+wrapper: 01000000/08000000 pattern + sfnt length 62560 (= file - 12) [VERIFIED]
+sfnt: 17 tables, glyf outlines, fontRevision 8.03 unitsPerEm 2048
+glyphs: 367 (mapped codepoints 366), hhea ascent 1926 descent -819 lineGap 0
+bbox (font units): (-324, -819, 2152, 1926)
+checksum mismatches (excl. head): none
+coverage ASCII                     95 codepoints  U+0020..U+007E
+coverage Latin-1 Supp.             96 codepoints  U+00A0..U+00FF
+coverage Latin Ext-A              116 codepoints  U+0100..U+017E
+coverage Latin Ext-B                7 codepoints  U+0184..U+01CE
+coverage punct/currency/symbols    41 codepoints  U+02C6..U+2193
+coverage arrows/math                9 codepoints  U+2212..U+266B
+coverage misc                       2 codepoints  U+2713..U+2717
+legacy cmap: pid=1 eid=0 format 6, Mac Roman codes 0..255 (256 entries) — not Unicode, excluded
+mapped glyph kinds: simple=212 composite=144 empty=6
+ASCII advance widths @32px: min 7.3 max 26.5 (em frac 0.228..0.829)
+atlas: 40x48 cells, 366 glyphs -> atlas.png/atlas.bin/atlas.txt (px=32)
+carved sfnt -> out.ttf (62560 bytes)

@@ -1,6 +1,7 @@
 /*
  * bx510_sacd_hud.c — SACD HUD: a cyberpunk console showing what the daemon is
- * doing. PHASE H2-lite.
+ * doing. PHASE H2-lite + H3 host push (tools/hud_push.py -> UDP 20023 ->
+ * host_push_parse(): RANGE/RATE/VERIFY/ETA rendered in the telemetry panels).
  *
  * H1 measured **2 FPS**: it drew into the 1920x1080 primary with one DirectFB
  * FillRectangle per glyph pixel — hundreds of driver calls per text line.
@@ -537,6 +538,52 @@ static void udp_open(void)
     fl = fcntl(udp_fd, F_GETFL, 0);
     fcntl(udp_fd, F_SETFL, fl | O_NONBLOCK);
 }
+
+/* ---- H3 host push: the Mac's capture controller tells us job state ------
+   Grammar (tools/hud_push.py is the reference sender, one datagram per
+   line, ASCII; see its header for the full contract):
+     RANGE done=<n> total=<n>      sectors ripped so far / disc total
+     RATE  mbs=<x.x>               measured throughput, MB/s
+     VERIFY status=ok|fail|run     verify result
+     ETA   s=<n>                   seconds remaining
+   Unknown lines keep the legacy "READ lsn=.." handling below. */
+static unsigned long long hpush_done, hpush_total, hpush_eta_s;
+static double hpush_mbps;
+static char hpush_verify[12];
+static int hpush_have;          /* any host-push field seen at all */
+
+static int host_push_parse(const char *b)
+{
+    if (!strncmp(b, "RANGE ", 6)) {
+        unsigned long long d = 0, t = 0;
+        if (sscanf(b + 6, "done=%llu total=%llu", &d, &t) == 2) {
+            hpush_done = d; hpush_total = t; hpush_have = 1;
+            return 1;
+        }
+        return 0;
+    }
+    if (!strncmp(b, "RATE ", 5)) {
+        double m = 0;
+        if (sscanf(b + 5, "mbs=%lf", &m) == 1) { hpush_mbps = m; hpush_have = 1; return 1; }
+        return 0;
+    }
+    if (!strncmp(b, "VERIFY ", 7)) {
+        char st[12] = "";
+        if (sscanf(b + 7, "status=%11s", st) == 1) {
+            snprintf(hpush_verify, sizeof hpush_verify, "%s", st);
+            hpush_have = 1;
+            return 1;
+        }
+        return 0;
+    }
+    if (!strncmp(b, "ETA ", 4)) {
+        unsigned long long s = 0;
+        if (sscanf(b + 4, "s=%llu", &s) == 1) { hpush_eta_s = s; hpush_have = 1; return 1; }
+        return 0;
+    }
+    return 0;
+}
+
 static void udp_poll(void)
 {
     char b[512];
@@ -546,6 +593,13 @@ static void udp_poll(void)
         n = recv(udp_fd, b, sizeof b - 1, 0);
         if (n <= 0) return;
         b[n] = 0;
+        if (host_push_parse(b)) {
+            /* RANGE and VERIFY belong in the event stream (a verify FAIL is
+               an event); RATE/ETA only update the panels — RATE repeats
+               every second and would flood the ticker. */
+            if (strncmp(b, "RATE ", 5) && strncmp(b, "ETA ", 4)) tick_push(b);
+            continue;
+        }
         {   /* "READ lsn=532104 n=128 got=128" / "OPEN ok" / "CLOSE" */
             unsigned lsn = 0, cnt = 0;
             const char *pl = strstr(b, "lsn=");
@@ -641,6 +695,7 @@ static int ev_head;
 static void ev_classify(const char *ln, int *kind, int *mag)
 {
     *mag = 1;
+    if (strstr(ln, "VERIFY") && strstr(ln, "status=fail")) { *kind = EVK_ERR; *mag = 9; return; }
     if (strstr(ln, "ERR") || strstr(ln, "FAIL") || strstr(ln, "ALERT")) { *kind = EVK_ERR; *mag = 9; return; }
     if (strstr(ln, "RD ") || strstr(ln, "READ")) {
         unsigned v = 1;
@@ -1524,6 +1579,24 @@ static void scene_retro(const hud_t *h, double t, double fps, int frame)
             snprintf(l, sizeof l, "TMP %u%%", h->tmp_pct);
             rtext(l, x + 3, yy, h->tmp_pct > 90 ? 12 : 2); yy += 9;
             rtext(h->note[0] ? h->note : "NOMINAL", x + 3, yy, h->note[0] ? 12 : 2);
+            if (hpush_have) {   /* H3 host push: two compact rows, 13-col panel */
+                int pct = hpush_total ? (int)((double)hpush_done * 100.0
+                                              / (double)hpush_total + 0.5) : 0;
+                char hl[16];
+                int vc = 10;
+                if (!strcmp(hpush_verify, "ok")) vc = 2;
+                else if (!strcmp(hpush_verify, "fail")) vc = 12;
+                else if (!strcmp(hpush_verify, "run")) vc = 4;
+                yy += 9;
+                snprintf(hl, sizeof hl, "H%d%%", pct);
+                rtext(hl, x + 3, yy, 2);
+                snprintf(hl, sizeof hl, "E%llus", hpush_eta_s);
+                rtext_r(hl, x + w - 3, yy, 3);
+                yy += 9;
+                snprintf(hl, sizeof hl, "VFY %s",
+                         hpush_verify[0] ? hpush_verify : "--");
+                rtext(hl, x + 3, yy, vc);
+            }
         }
     }
 
@@ -1707,7 +1780,17 @@ static void scene(const hud_t *h, double t, double fps, int frame)
         text_top(l, x0, y, small, C_PHOS);
         snprintf(l, sizeof l, "TMP %u%%", h->tmp_pct);
         text_top_r(l, CW - pad * 2, y, small, h->tmp_pct > 90 ? C_RED : C_PHOSD);
-        y += lhS + pad;
+        y += lhS;
+        if (hpush_have) {   /* H3: what the HOST controller says, not the daemon */
+            snprintf(l, sizeof l, "HOST %llu/%llu %.0f%% %.1fMB/s E%llus VFY %s",
+                     hpush_done, hpush_total,
+                     hpush_total ? 100.0 * (double)hpush_done / (double)hpush_total : 0.0,
+                     hpush_mbps, hpush_eta_s,
+                     hpush_verify[0] ? hpush_verify : "--");
+            text_top(l, x0, y, small, C_CYAN);
+            y += lhS;
+        }
+        y += pad;
 
         {
             int ah = lhS + lhS / 2 + pad;
@@ -1798,6 +1881,25 @@ int main(int argc, char **argv)
     tick_push("READ lsn=532232 n=128 (256K)");
     tick_push("READ lsn=0 n=128 (256K)");
     tick_push("CLOSE rc=0");
+
+    {   /* H3 selftest hook: feed host-push lines from a file through the SAME
+           host_push_parse() that udp_poll() uses, then print the resulting
+           state so tools/test_hud_push.py can assert the round trip. */
+        const char *ing = getenv("HUD_INGEST");
+        if (ing && ing[0]) {
+            FILE *fi = fopen(ing, "r");
+            char ib[512];
+            if (!fi) {
+                printf("HOSTPUSH: ingest file %s unreadable\n", ing);
+                return 1;
+            }
+            while (fgets(ib, sizeof ib, fi)) host_push_parse(ib);
+            fclose(fi);
+        }
+        printf("HOSTPUSH: have=%d done=%llu total=%llu mbps=%.2f eta=%llu verify=%s\n",
+               hpush_have, hpush_done, hpush_total, hpush_mbps, hpush_eta_s,
+               hpush_verify[0] ? hpush_verify : "--");
+    }
 
     g_visible_w = CW * SCAL; g_visible_h = CH * SCAL;
     typography_set(g_visible_h);

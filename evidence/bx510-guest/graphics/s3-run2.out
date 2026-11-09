@@ -1,0 +1,194 @@
+t85: SET mask=0x40400 plane: pitch=5120 cm=14 1280x720 vis=0 base=0x48465ff0
+fbvirt-mt85: first request 0x4650
+fbvirt-mt85: RELCMDBUF(0x4650 retail, 0x40210020) -> 0 (no-op release; ring unmapped by caller first)
+fbvirt-mt85: GETMULTIPOOL(0x4652 retail) -> num=2 size[0]=8298496 phys[0]=0x48000000 size[1]=16777216 phys[1]=0x4a000000 (88-byte retail struct)
+fbvirt-mt85: mmap pool0 len=8298496 (selector=0)
+PR_MT=0
+/ # echo PR_MT_BEGIN; cat /res/mt85.out; echo PR_MT_END
+PR_MT_BEGIN
+FBDRAW: pattern painted and re-read, 1658880 bytes
+FBASCII_BEGIN
+.......:-------*******#%%%%%%%:::::::-=======*******#@@@@@@@
+.......:-------*******#%%%%%%%:::::::-=======*******#@@@@@@@
+.......:-------*******#%%%%%%%:::::::-=======*******#@@@@@@@
+.......:-------*******#%%%%%%%:::::::-=======*******#@@@@@@@
+.......:-------*******#%%%%%%%:::::::-=======*******#@@@@@@@
+.......:-------*******#%%%%%%%:::::::-=======*******#@@@@@@@
+.........................:::::::::::::::::::::::::::::::::::
+::::::::::::::::::::::::::::--------------------------------
+---------------------------------===========================
+--===================================+++++++++++++++++++++++
+======+++++++++++++++++++++++++++++++++++*******************
++++++++++************************************###############
+============================================================
+============================================================
+============================================================
+============================================================
+============================================================
+============================================================
+FBASCII_END
+FBDRAW: full-frame md5: 7d19af14518cb5c201aedab2cf94e83d  -
+
+   ~~~~~~~~~~~~~~~~~~~~~~~~~~| DirectFB 1.2.7 |~~~~~~~~~~~~~~~~~~~~~~~~~~
+        (c) 2001-2008  The world wide DirectFB Open Source Community
+        (c) 2000-2004  Convergence (integrated media) GmbH
+      ----------------------------------------------------------------
+
+(*) DirectFB/Core: Multi Application Core. (2012-10-27 13:23) 
+(*) Fusion/SHM: Using MADV_REMOVE (2.6.35.0 >= 2.6.19.2)
+(!) Fusion/SHM: Could not find tmpfs mount point, falling back to /dev/shm!
+(*) Direct/Thread: Started 'Fusion Dispatch' (554) [MESSAGING FIFO/FIFO 44/44] <8388608>...
+(*) MediaTek/System: system_initialize: #237
+(*) Direct/Thread: Started 'VT Switcher' (557) [CRITICAL FIFO/FIFO 44/44] <8388608>...
+(*) Direct/Thread: Started 'Keyboard Input' (558) [INPUT FIFO/FIFO 44/44] <8388608>...
+(*) DirectFB/Input: Keyboard 0.9 (directfb.org)
+(*) DirectFB/Graphics: MediaTek 85xx 1.2 (MediaTek)
+(*) DirectFB/Graphics: Acceleration disabled (by 'no-hardware')
+(*) DirectFB/Core/WM: SaWMan 0.2 (directfb.org)
+(*) SaWMan: Initializing stack 0x20197900 for tier 0x255f3000, 0x0, layer 0, context 0x20087000 [3]...
+(*) SaWMan: Initializing stack 0x20197800 for tier 0x255f3e00, 0x0, layer 1, context 0x20087a00 [6]...
+(*) SaWMan/Init: Layer  0:  1280x720, ARGB, options: 0
+(*) SaWMan/Init: Border 0:  1280x720, ARGB, options: 8
+(*) SaWMan/Init: Layer  1:  1280x720, ARGB, options: 0
+(*) SaWMan/Init: Border 1:  1280x720, ARGB, options: 8
+ (!!!)  *** WARNING [letting unprivileged IDirectFBDisplayLayer::GetSurface() call pass until cooperative level handling is finished] *** [idirectfbdisplaylayer.c:174 in IDirectFBDisplayLayer_GetSurface()]
+ (!!!)  *** WARNING [still objects in 'Layer Region Pool'] *** [object.c:241 in fusion_object_pool_destroy()]
+ (!!!)  *** WARNING [still objects in 'Layer Context Pool'] *** [object.c:241 in fusion_object_pool_destroy()]
+ (!!!)  *** WARNING [still objects in 'Surface Pool'] *** [object.c:241 in fusion_object_pool_destroy()]
+(*) MediaTek/System: system_shutdown: #556
+FBMT85: NEGCTL SETMMAPMETHOD=3 -> rc=-1 errno=22 (EINVAL ok) — must fail
+FBMT85: NEGCTL ioctl(0x4666) -> rc=-1 errno=25 (ENOTTY ok) — must be ENOTTY
+FBMT85: NEGCTL mmap(len=0x7ea003, matches no vendor class and exceeds smem_len=8294400) -> 0xffffffff errno=22 - must fail
+FBMT85: NEGCTL PASS (failures=0)
+FBMT85: rung begin (no-hardware software rendering)
+FBMT85: rung (a) target: shipped libdirectfb loaded
+FBMT85: SetOption(no-hardware,1) rc=0
+UUU:CONFIG_DIRECTFB_MULTI_MEM_POOL
+mt85AdapterCmdBufGetCmdBuf: u4CmdbufLen = 0x80000
+[5J] system_initialize -> map debug info
+FBMT85: rung (b) DirectFBCreate rc=0 (OK)
+FBMT85: rungs (a)+(b) REACHED: FBIO_INIT + system_initialize passed, DirectFBCreate SUCCEEDED
+FBMT85: rung (c) primary surface LIVE: 1280x720 fmt=4295684
+FBMT85: rung (d) SetColor+FillRectangle(0,0,1280,720) rc=0
+FBMT85: Flip rc=0 (plane base -> module log shows the phys->pool translation)
+FBMT85: capture pool num=2 size[0]=8298496 phys[0]=0x48000000 (len convention: 8298496)
+FBMT85: capture located surface at pool0+4612080 bytes (pool0=8298496 B, surface=3686400 B => retail alloc length = 3686416 B)
+FBMT85: capture pixels(0,0)=0xff3099e0 (0,1)=0xff3099e0 (w/2,h/2)=0xff3099e0 (w-1,h-1)=0xff3099e0; expected uniform 0xff3099e0
+FBMT85: capture uniformity: 0 sampled mismatches against the independent expectation
+FBMT85: capture md5 (captured vs independently-built expectation — must match):
+bb76dca28f3ed55bfa646e98c58453c6  /res/poolcap.bin
+bb76dca28f3ed55bfa646e98c58453c6  /res/poolexp.bin
+FBMT85: rung (e) pool capture MATCHES the independent expectation
+FBMT85: rung end PASS
+FBDRAW: DONE rc=0
+PR_MT_END
+/ # LD_PRELOAD=/res/shim/tmpredir.so /res/shim/bgstart /res/shim/fbdraw fbmt85hw
+; sleep 25; echo PR_HWDONE=$?
+BG_PID=565
+fbvirt-mt85: FBIO_INIT ok (requested 1280x720 x2880 virt, bpp 32; advertised mode stays 1920x1080@32)
+fbvirt-mt85: GETIMAGEBUFFER -> size=8298496 phys=0x48000000
+fbvirt-mt85: GETMULTIPOOL(0x4652 retail) -> num=2 size[0]=8298496 phys[0]=0x48000000 size[1]=16777216 phys[1]=0x4a000000 (88-byte retail struct)
+fbvirt-mt85: mmap pool0 len=8298496 (selector=0)
+fbvirt-mt85: mmap pool1 len=16781312 (selector=0)
+fbvirt-mt85: GETCMDBUFLEN(0x464f retail) -> 524288
+fbvirt-mt85: mmap gfxcmdbuf len=524288 (selector=0)
+fbvirt-mt85: mmap debuginfo len=4096 (selector=0)
+fbvirt-mt85: FBIO_GET panel size -> 1920x1080
+fbvirt-mt85: FBIO_GET panel size -> 1920x1080
+fbvirt-mt85: FBIO_GET panel size -> 1920x1080
+fbvirt-mt85: FBIO_GET panel size -> 1920x1080
+fbvirt-mt85: first request 0x4900
+fbvirt-mt85: dispatch item[0] cmd=0x1 flag=2 (payload 56 B)
+fbvirt-mt85: rFill payload 000174c0 00000001 48465ff0 00000000 00000000 00000000 00001400 00000000 0000000c 00000000 00000500 000002d0 ff3099e0 12345678 
+fbvirt-mt85: rFill fill dst=0x48465ff0 color=0x000174c0 0,0 1280x720 pitch=5120 fmt=12
+fbvirt-mt85: rFill row 0 clips pool (off 4612080 + 5120 > 3686416) - truncated
+fbvirt-mt85: DISPATCH 0x4651 call #1 consumed 1 items (rd=1 wr=1)
+fbvirt-mt85: first request 0x4901
+fbvirt-mt85: dispatch item[0] cmd=0x191 flag=1 (payload 0 B)
+fbvirt-mt85: DISPATCH 0x4651 call #2 consumed 1 items (rd=2 wr=2)
+fbvirt-mt85: DISPATCH 0x464d call #3 consumed 0 items (rd=2 wr=2)
+fbvirt-mt85: SET plane base 0x48465ff0 -> pool0+4612080 (in bounds)
+fbvirt-mt85: SET mask=0x59efc plane: pitch=5120 cm=14 1280x720 vis=1 base=0x48465ff0
+fbvirt-mt85: SET mask=0x40400 plane: pitch=5120 cm=14 1280x720 vis=0 base=0x48465ff0
+fbvirt-mt85: RELCMDBUF(0x4650 retail, 0x42a78020) -> 0 (no-op release; ring unmapped by caller first)
+PR_HWDONE=0
+/ # echo PR_HW_BEGIN; cat /res/daemon.out; echo PR_HW_END
+PR_HW_BEGIN
+FBDRAW: pattern painted and re-read, 1658880 bytes
+FBASCII_BEGIN
+.......:-------*******#%%%%%%%:::::::-=======*******#@@@@@@@
+.......:-------*******#%%%%%%%:::::::-=======*******#@@@@@@@
+.......:-------*******#%%%%%%%:::::::-=======*******#@@@@@@@
+.......:-------*******#%%%%%%%:::::::-=======*******#@@@@@@@
+.......:-------*******#%%%%%%%:::::::-=======*******#@@@@@@@
+.......:-------*******#%%%%%%%:::::::-=======*******#@@@@@@@
+.........................:::::::::::::::::::::::::::::::::::
+::::::::::::::::::::::::::::--------------------------------
+---------------------------------===========================
+--===================================+++++++++++++++++++++++
+======+++++++++++++++++++++++++++++++++++*******************
++++++++++************************************###############
+============================================================
+============================================================
+============================================================
+============================================================
+============================================================
+============================================================
+FBASCII_END
+FBDRAW: full-frame md5: 7d19af14518cb5c201aedab2cf94e83d  -
+
+   ~~~~~~~~~~~~~~~~~~~~~~~~~~| DirectFB 1.2.7 |~~~~~~~~~~~~~~~~~~~~~~~~~~
+        (c) 2001-2008  The world wide DirectFB Open Source Community
+        (c) 2000-2004  Convergence (integrated media) GmbH
+      ----------------------------------------------------------------
+
+(*) DirectFB/Core: Multi Application Core. (2012-10-27 13:23) 
+(*) Fusion/SHM: Using MADV_REMOVE (2.6.35.0 >= 2.6.19.2)
+(!) Fusion/SHM: Could not find tmpfs mount point, falling back to /dev/shm!
+(*) Direct/Thread: Started 'Fusion Dispatch' (570) [MESSAGING FIFO/FIFO 44/44] <8388608>...
+(*) MediaTek/System: system_initialize: #237
+(*) Direct/Thread: Started 'VT Switcher' (573) [CRITICAL FIFO/FIFO 44/44] <8388608>...
+(*) Direct/Thread: Started 'Keyboard Input' (574) [INPUT FIFO/FIFO 44/44] <8388608>...
+(*) DirectFB/Input: Keyboard 0.9 (directfb.org)
+(*) DirectFB/Graphics: MediaTek 85xx 1.2 (MediaTek)
+(*) DirectFB/Core/WM: SaWMan 0.2 (directfb.org)
+(*) SaWMan: Initializing stack 0x20197900 for tier 0x255f3000, 0x0, layer 0, context 0x20087000 [3]...
+(*) SaWMan: Initializing stack 0x20197800 for tier 0x255f3e00, 0x0, layer 1, context 0x20087a00 [6]...
+(*) SaWMan/Init: Layer  0:  1280x720, ARGB, options: 0
+(*) SaWMan/Init: Border 0:  1280x720, ARGB, options: 8
+(*) SaWMan/Init: Layer  1:  1280x720, ARGB, options: 0
+(*) SaWMan/Init: Border 1:  1280x720, ARGB, options: 8
+ (!!!)  *** WARNING [letting unprivileged IDirectFBDisplayLayer::GetSurface() call pass until cooperative level handling is finished] *** [idirectfbdisplaylayer.c:174 in IDirectFBDisplayLayer_GetSurface()]
+ (!!!)  *** WARNING [still objects in 'Layer Region Pool'] *** [object.c:241 in fusion_object_pool_destroy()]
+ (!!!)  *** WARNING [still objects in 'Layer Context Pool'] *** [object.c:241 in fusion_object_pool_destroy()]
+ (!!!)  *** WARNING [still objects in 'Surface Pool'] *** [object.c:241 in fusion_object_pool_destroy()]
+(*) MediaTek/System: system_shutdown: #556
+FBMT85: rung begin (hardware mode — discovery, may push ring items)
+FBMT85: rung (a) target: shipped libdirectfb loaded
+UUU:CONFIG_DIRECTFB_MULTI_MEM_POOL
+mt85AdapterCmdBufGetCmdBuf: u4CmdbufLen = 0x80000
+[5J] system_initialize -> map debug info
+FBMT85: rung (b) DirectFBCreate rc=0 (OK)
+FBMT85: rungs (a)+(b) REACHED: FBIO_INIT + system_initialize passed, DirectFBCreate SUCCEEDED
+FBMT85: rung (c) primary surface LIVE: 1280x720 fmt=4295684
+DSPF_ARGB1555 = 0x211780, DSPF_RGB16 = 0x200801, DSPF_RGB24 = 0x300c02, DSPF_RGB32 = 0x400c03
+DSPF_ARGB = 0x418c04, DSPF_A8 = 0x118005, DSPF_YUY2 = 0x200806, DSPF_RGB332 = 0x100407
+DSPF_UYVY = 0x200808, DSPF_I420 = 0x8100609, DSPF_YV12 = 0x810060a, DSPF_LUT8 = 0x4011040b
+DSPF_ALUT44 = 0x4011420c, DSPF_AiRGB = 0x80418c0d, DSPF_A1 = 0x383100e, DSPF_NV12 = 0x810060f
+DSPF_NV16 = 0x10100c10, DSPF_ARGB2554 = 0x212711, DSPF_ARGB4444 = 0x214612, DSPF_NV21 = 0x8100613
+DSPF_AYUV = 0x418c14, DSPF_A4 = 0x894015, DSPF_ARGB1666 = 0x311916, DSPF_ARGB6666 = 0x316917
+DSPF_RGB18 = 0x300918, DSPF_LUT2 = 0x41850119, DSPF_RGB444 = 0x20061a, DSPF_RGB555 = 0x20079b, DSPF_BGR555 = 0x20079c
+FBMT85: rung (d) SetColor+FillRectangle(0,0,1280,720) rc=0
+FBMT85: Flip rc=0 (plane base -> module log shows the phys->pool translation)
+FBMT85: rung end PASS
+FBDRAW: DONE rc=0
+PR_HW_END
+/ # echo PR_MT""85_DONE
+PR_MT85_DONE
+--- ladder ---
+PASS  rung-ab (DirectFBCreate)
+PASS  rung-c (live surface)
+PASS  rung-d (FillRectangle)
+PASS  rung-e (pool match)
+PASS  negative-control PASS
+PASS  raw regression md5

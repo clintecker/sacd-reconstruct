@@ -45,6 +45,7 @@
 #include <sys/ioctl.h>
 #include <sys/mman.h>
 #include <unistd.h>
+#include <linux/fb.h>
 
 #include "bx510_fbvirt_mt85.h"
 
@@ -288,13 +289,26 @@ static int mt85_negative_control(void)
            "must be ENOTTY\n", r, errno, errno == ENOTTY ? "ENOTTY ok" :
            "NOT ENOTTY — WRONG");
     fails += (r == 0 || errno != ENOTTY);
-    /* garbage mmap length: the pool length convention decodes to nothing */
-    bad = mmap(NULL, 0x400003, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
-    printf("FBMT85: NEGCTL mmap(len=0x400003, matches no vendor class and "
-           "exceeds smem_len) -> %p errno=%d - must fail\n", bad, errno);
-    fails += (bad != MAP_FAILED);
-    if (bad != MAP_FAILED)
-        munmap(bad, 0x400003);
+    /* garbage mmap length: must match no vendor class AND exceed the smem.
+     * Derived from the device's own fix.smem_len so the invariant survives
+     * module geometry changes (the old fixed 0x400003 silently STOPPED
+     * exceeding smem_len when the module grew to 1920x1080 — the control
+     * passed the mmap and failed its own assertion; rig drift, not a
+     * target change) */
+    {
+        struct fb_fix_screeninfo fi = {0};
+        size_t badlen = 0x400003;
+        int have_fi = ioctl(fd, FBIOGET_FSCREENINFO, &fi) == 0 && fi.smem_len;
+        if (have_fi)
+            badlen = (size_t)fi.smem_len + 0x1000 + 3;
+        bad = mmap(NULL, badlen, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+        printf("FBMT85: NEGCTL mmap(len=0x%zx, matches no vendor class and "
+               "exceeds smem_len=%u) -> %p errno=%d - must fail\n", badlen,
+               have_fi ? fi.smem_len : 0, bad, errno);
+        fails += (bad != MAP_FAILED);
+        if (bad != MAP_FAILED)
+            munmap(bad, badlen);
+    }
     close(fd);
     printf("FBMT85: NEGCTL %s (failures=%d)\n", fails ? "FAILED" : "PASS",
            fails);

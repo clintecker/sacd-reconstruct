@@ -654,6 +654,36 @@ static int host_push_parse(const char *b)
     return 0;
 }
 
+/* legacy client-report line handling (READ lsn=/OPEN/CLOSE): shared by
+   udp_poll() and the HUD_SIM per-frame scenario feed so sim captures show
+   the same event-matrix behavior as the live UDP path. */
+static void legacy_line_handle(char *b)
+{
+    unsigned lsn = 0, cnt = 0;
+    const char *pl = strstr(b, "lsn=");
+    const char *pc = strstr(b, "n=");
+    if (pl && sscanf(pl, "lsn=%u", &lsn) == 1) {
+        if (pc && sscanf(pc, "n=%u", &cnt) == 1 && cnt > 0) {
+            ev_requests++;
+            ev_sectors += cnt;
+            ev_last_lsn = lsn;
+            ev_bytes += (unsigned long long)cnt * SECTOR_BYTES;
+        }
+    }
+    if (b[0]) {
+        unsigned l2 = 0, c2 = 0;
+        const char *pl2 = strstr(b, "lsn="), *pc2 = strstr(b, "n=");
+        if (pl2 && pc2 && sscanf(pl2, "lsn=%u", &l2) == 1
+            && sscanf(pc2, "n=%u", &c2) == 1) {
+            char ev2[40];
+            snprintf(ev2, sizeof ev2, "RD %u+%u", l2, c2);
+            tick_push(ev2);
+        } else {
+            tick_push(b);
+        }
+    }
+}
+
 static void udp_poll(void)
 {
     char b[512];
@@ -670,31 +700,7 @@ static void udp_poll(void)
             if (strncmp(b, "RATE ", 5) && strncmp(b, "ETA ", 4)) tick_push(b);
             continue;
         }
-        {   /* "READ lsn=532104 n=128 got=128" / "OPEN ok" / "CLOSE" */
-            unsigned lsn = 0, cnt = 0;
-            const char *pl = strstr(b, "lsn=");
-            const char *pc = strstr(b, "n=");
-            if (pl && sscanf(pl, "lsn=%u", &lsn) == 1) {
-                if (pc && sscanf(pc, "n=%u", &cnt) == 1 && cnt > 0) {
-                    ev_requests++;
-                    ev_sectors += cnt;
-                    ev_last_lsn = lsn;
-                    ev_bytes += (unsigned long long)cnt * SECTOR_BYTES;
-                }
-            }
-            if (b[0]) {   /* "READ lsn=532104 n=128 got=128" -> "RD 532104+128" */
-                unsigned l2 = 0, c2 = 0;
-                const char *pl2 = strstr(b, "lsn="), *pc2 = strstr(b, "n=");
-                if (pl2 && pc2 && sscanf(pl2, "lsn=%u", &l2) == 1
-                    && sscanf(pc2, "n=%u", &c2) == 1) {
-                    char ev2[40];
-                    snprintf(ev2, sizeof ev2, "RD %u+%u", l2, c2);
-                    tick_push(ev2);
-                } else {
-                    tick_push(b);
-                }
-            }
-        }
+        legacy_line_handle(b);
     }
 }
 
@@ -1979,6 +1985,25 @@ int main(int argc, char **argv)
     else g_fx = 0x17;
     g_rx = g_visible_w / RW; if (g_rx < 1) g_rx = 1;
     for (i = 0; i < frames; i++) {
+        {   /* HUD_INGEST_DIR: per-frame scenario feed (animated captures).
+               Frame i ingests <dir>/ev-<i> through the SAME host_push_parse()
+               the UDP path uses; missing files are skipped. State is
+               cumulative by design (RANGE done= grows, events append). */
+            const char *dir = getenv("HUD_INGEST_DIR");
+            if (dir && dir[0]) {
+                char p[512];
+                FILE *fi;
+                char ib[512];
+                snprintf(p, sizeof p, "%s/ev-%03d", dir, i);
+                fi = fopen(p, "r");
+                if (fi) {
+                    while (fgets(ib, sizeof ib, fi)) {
+                        if (!host_push_parse(ib)) legacy_line_handle(ib);
+                    }
+                    fclose(fi);
+                }
+            }
+        }
         if (getenv("HUD_RETRO")) {
             g_fx = 0;
             scene_retro(&h, 1.7 + i * 0.2, 13.0, i * 4);
@@ -1987,8 +2012,6 @@ int main(int argc, char **argv)
             retro_present(i * 4, 1.7 + i * 0.2);
         }
         else scene(&h, 1.7 + i * 0.2, 13.0, i * 4);
-        fx_apply(i * 4 + 8);
-        amiga_apply(i * 4 + 8, 1.7 + i * 0.2);
         if (getenv("HUD_SIM_ANIM")) {
             char path[256];
             FILE *ff;

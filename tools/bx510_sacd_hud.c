@@ -107,22 +107,92 @@ static unsigned char *g_ttf;
 static int g_font_ok;
 static float g_fsc;            /* scale for the current size */
 
+static unsigned be32(const unsigned char *p)
+{
+    return ((unsigned)p[0] << 24) | ((unsigned)p[1] << 16) | ((unsigned)p[2] << 8) | (unsigned)p[3];
+}
+
+static void font_reset(void)
+{
+    if (g_ttf) free(g_ttf);
+    g_ttf = NULL;
+    memset(&g_font, 0, sizeof g_font);
+    g_font_ok = 0;
+}
+
+/* Load a TrueType/OpenType sfnt with stb_truetype.
+   Accepts either a carved sfnt (ttf/otf) or Sony's /res/font.bin wrapper
+   (12-byte prefix + embedded sfnt; docs/FONT-FORMAT.md). */
 static int font_load(const char *path)
 {
-    FILE *f = fopen(path, "rb");
-    long n;
+    FILE *f;
+    unsigned char *raw = NULL;
+    unsigned char *sf = NULL;
+    size_t n = 0, sf_n = 0;
+
+    if (!path || !path[0]) return 0;
+
+    f = fopen(path, "rb");
     if (!f) return 0;
-    fseek(f, 0, SEEK_END); n = ftell(f); fseek(f, 0, SEEK_SET);
-    if (n <= 0) { fclose(f); return 0; }
-    g_ttf = malloc((size_t)n);
-    if (!g_ttf) { fclose(f); return 0; }
-    if (fread(g_ttf, 1, (size_t)n, f) != (size_t)n) { fclose(f); free(g_ttf); g_ttf = NULL; return 0; }
+    if (fseek(f, 0, SEEK_END) != 0) { fclose(f); return 0; }
+    n = (size_t)ftell(f);
+    if (fseek(f, 0, SEEK_SET) != 0) { fclose(f); return 0; }
+    if (n < 16) { fclose(f); return 0; }
+
+    raw = (unsigned char *)malloc(n);
+    if (!raw) { fclose(f); return 0; }
+    if (fread(raw, 1, n, f) != n) { fclose(f); free(raw); return 0; }
     fclose(f);
+
+    /* Sony wrapper: 12-byte prefix, then sfntVersion 0x00010000. The wrapper
+       carries a big-endian length at +8; trust it only if it fits. */
+    if (n >= 16 && memcmp(raw + 12, "\x00\x01\x00\x00", 4) == 0) {
+        unsigned decl = (n >= 12) ? be32(raw + 8) : 0;
+        sf = raw + 12;
+        sf_n = (decl && 12u + (size_t)decl <= n) ? (size_t)decl : (n - 12);
+    }
+    else {
+        sf = raw;
+        sf_n = n;
+    }
+
+    font_reset();
+    g_ttf = (unsigned char *)malloc(sf_n);
+    if (!g_ttf) { free(raw); return 0; }
+    memcpy(g_ttf, sf, sf_n);
+    free(raw);
+
     if (!stbtt_InitFont(&g_font, g_ttf, stbtt_GetFontOffsetForIndex(g_ttf, 0))) {
-        free(g_ttf); g_ttf = NULL; return 0;
+        font_reset();
+        return 0;
     }
     g_font_ok = 1;
     return 1;
+}
+
+static int font_load_chain(const char *preferred, const char **loaded)
+{
+    const char *cands[8];
+    int n = 0, i;
+
+    if (loaded) *loaded = NULL;
+    if (preferred && preferred[0]) cands[n++] = preferred;
+#ifndef HUD_SIM
+    /* On-device canonical source: Sony's shipped wrapper. */
+    cands[n++] = "/res/font.bin";
+    /* Back-compat for older launchers that staged a carved copy. */
+    cands[n++] = "/tmp/sony-font.ttf";
+#else
+    /* Host sim default: repo fixture (Makefile sets HUD_FONT but this keeps
+       ad-hoc runs working too). */
+    cands[n++] = "evidence/bx510/display-payload/sony-font.ttf";
+    cands[n++] = "sony-font.ttf";
+#endif
+
+    for (i = 0; i < n; i++) {
+        if (font_load(cands[i])) { if (loaded) *loaded = cands[i]; return 1; }
+    }
+    return 0;
 }
 static int ttf_width(const char *str, int px)
 {
@@ -1861,14 +1931,14 @@ int main(int argc, char **argv)
     int frames = (argc > 2) ? atoi(argv[2]) : 1;
     int i;
     FILE *f;
-    const char *fp = getenv("HUD_FONT");
-    if (!fp || !fp[0]) fp = "sony-font.ttf";
+    const char *want = getenv("HUD_FONT");
+    const char *loaded = NULL;
     SCAL = 2;
     pitch_px = CW * SCAL;
     fb = calloc((size_t)pitch_px * CH * SCAL, sizeof(unsigned int));
     if (!fb) return 1;
-    if (font_load(fp)) printf("SIM: font %s\n", fp);
-    else printf("SIM: no font at %s (5x7 fallback)\n", fp);
+    if (font_load_chain(want, &loaded)) printf("SIM: font %s\n", loaded);
+    else printf("SIM: no font (5x7 fallback)\n");
 
     memset(&h, 0, sizeof h);
     h.module_loaded = 1; h.misc_201 = 1; h.listen_2002 = 1; h.clients_2002 = 1;
@@ -2006,16 +2076,35 @@ static int pool_open(const char *dev)
         if (SCAL < 1) SCAL = 1;
         g_visible_w = vi.xres;
         g_visible_h = vi.yres;
-        len = fi.smem_len ? fi.smem_len : (size_t)fi.line_length * vi.yres;
+        size_t hdr = 0;
+        size_t fb_bytes = (size_t)fi.line_length * (size_t)vi.yres;
+        size_t pool_len = fb_bytes + 0x1000u;   /* MT85 pool0: header page + pixels */
+
+        /* Prefer mapping the vendor pool slice (length-dispatched in fbvirt and
+           the retail provider). Fall back to the plain fbdev smem mapping if
+           the device does not honor the pool length class. */
+        len = pool_len;
         m = mmap(NULL, len, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
-        if (m == MAP_FAILED) { printf("HUD: fbdev mmap %zu failed\n", len); close(fd); return 0; }
-        fb = m;
+        if (m != MAP_FAILED) {
+            hdr = 0x1000u;
+            printf("HUD: vendor pool mapped len=%zu (pixels=%zu +0x1000)\n",
+                   len, fb_bytes);
+        } else {
+            len = fi.smem_len ? fi.smem_len : fb_bytes;
+            m = mmap(NULL, len, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+        }
+        if (m == MAP_FAILED) {
+            printf("HUD: fbdev mmap %zu failed\n", len);
+            close(fd);
+            return 0;
+        }
+        fb = (unsigned int *)((unsigned char *)m + hdr);
         pitch_px = fi.line_length / (vi.bits_per_pixel / 8);
         close(fd);
         typography_set(g_visible_h);
         g_rx = g_visible_w / RW; if (g_rx < 1) g_rx = 1;
-        printf("HUD: geom %ux%u scale=%d retro_x%d pitch=%d type head=%d body=%d\n",
-               g_visible_w, g_visible_h, SCAL, g_rx, pitch_px, g_head_px, g_body_px);
+        printf("HUD: geom %ux%u scale=%d retro_x%d pitch=%d type head=%d body=%d (hdr=0x%zx)\n",
+               g_visible_w, g_visible_h, SCAL, g_rx, pitch_px, g_head_px, g_body_px, hdr);
         return 1;
     }
     printf("HUD: fbdev geometry read failed, falling back to pool length\n");
@@ -2023,7 +2112,7 @@ static int pool_open(const char *dev)
     m = mmap(NULL, len, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
     close(fd);
     if (m == MAP_FAILED) { printf("HUD: pool mmap %zu failed\n", len); return 0; }
-    fb = m;
+    fb = (unsigned int *)((unsigned char *)m + 0x1000u);
     pitch_px = CW * SCAL;
     if (getenv("HUD_VISIBLE_H")) typography_set(atoi(getenv("HUD_VISIBLE_H")));
     g_visible_w = g_visible_w ? g_visible_w : CW * SCAL;
@@ -2059,13 +2148,14 @@ int main(int argc, char **argv)
 
     setvbuf(stdout, NULL, _IOLBF, 0);
     if (getenv("HUD_POOL")) {
-        const char *fp2 = getenv("HUD_FONT");
+        const char *want = getenv("HUD_FONT");
+        const char *loaded = NULL;
         int i;
         hud_t hp;
         if (!pool_open(getenv("HUD_POOL")[0] == '1' ? "/dev/fb0" : getenv("HUD_POOL")))
             return 1;
-        if (!fp2 || !fp2[0]) fp2 = "/tmp/sony-font.ttf";
-        if (font_load(fp2)) printf("HUD: font %s\n", fp2);
+        if (font_load_chain(want, &loaded)) printf("HUD: font %s\n", loaded);
+        else printf("HUD: no font loaded — falling back to the 5x7 face\n");
         memset(&hp, 0, sizeof hp);
         hp.module_loaded = 1; hp.misc_201 = 1; hp.listen_2002 = 1; hp.clients_2002 = 1;
         hp.daemon_pid = 4682; hp.uptime_s = 872; hp.memfree_kb = 155 * 1024;
@@ -2135,10 +2225,12 @@ int main(int argc, char **argv)
     udp_open();
     printf("HUD: host channel udp/%d %s\n", HUD_UDP_PORT, udp_fd >= 0 ? "OPEN" : "unavailable");
     {
-        const char *fp = getenv("HUD_FONT");
-        if (!fp || !fp[0]) fp = "/tmp/sony-font.ttf";
-        if (font_load(fp)) printf("HUD: font %s loaded (TiresiasScreenfont)\n", fp);
-        else printf("HUD: font %s NOT loaded — falling back to the 5x7 face\n", fp);
+        const char *want = getenv("HUD_FONT");
+        const char *loaded = NULL;
+        if (font_load_chain(want, &loaded))
+            printf("HUD: font %s loaded (TiresiasScreenfont)\n", loaded);
+        else
+            printf("HUD: no font loaded — falling back to the 5x7 face\n");
     }
     sample(&h, 1);
     ticker_poll(ticker);

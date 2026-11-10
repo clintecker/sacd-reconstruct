@@ -1,0 +1,243 @@
+=== mt85FillRectangle @ 0x5174  (window 0x5174-0x54e4, frame: push 9 regs, sub 0x4c) ===
+  call mt85_debuginfo@plt@0x51fc(ARG0, ARG1, ARG2, sp+0x44) stack(*(('spref',)), *(('spref',)+0x4), *(('spref',)+0x8), *(('spref',)+0xc))
+  printf@0x528c: fmt="[dfb] mt85CmChg error eDfbCm = %d
+"@0x78c0 args=['#8', '#0x418c04', '#0x4011040b'] stackargs=["*(('spref',))", "*(('spref',)+0x4)", "*(('spref',)+0x8)", "*(('spref',)+0xc)"]
+  EMIT@0x52ec: ctx=*(&_h_mt85_Ticket) payload=sp+0x10 cmd=#1 flag=#0 dev=ARG0
+  printf@0x5364: fmt="[%s] x=%d,y=%d,w=%d,h=%d,color=0x%X
+"@0x7884 args=['"mt85FillRectangle"@0x76b8', '*(ARG2)', '*(ARG2+0x4)'] stackargs=["*(('spref',))", "*(('spref',)+0x4)", "*(('spref',)+0x8)", "*(('spref',)+0xc)"]
+  ASSERT@0x5408: expr="mdrv && mdev && rect"@0x786c file="mt85_2d.c"@0x7818 line=#0x752 fn="mt85FillRectangle"@0x76a4
+  ASSERT@0x542c: expr="rFill.pv_dst"@0x7a1c file="mt85_2d.c"@0x7818 line=#0x75a fn="mt85FillRectangle"@0x76a4
+  ASSERT@0x5450: expr="prGfxCmdBuf != ((void *)0)"@0x7850 file="mt85_2d.c"@0x7818 line=#0x751 fn="mt85FillRectangle"@0x76a4
+  printf@0x5468: fmt="[%s] ERROR: prGfxCmdBuf->prGfxMwCmdBuf->u4GfxCmdBufState = %d
+"@0x7a64 args=['"mt85FillRectangle"@0x76b8', '*(*(*(&_h_mt85_Ticket)+0x10)+0x30)', '*(*(&_h_mt85_Ticket)+0x10)'] stackargs=['ARG0', "*(('spref',)+0x4)", "*(('spref',)+0x8)", "*(('spref',)+0xc)"]
+  ASSERT@0x5484: expr="0"@0x7814 file="mt85_2d.c"@0x7818 line=#0x77b fn="mt85FillRectangle"@0x76a4
+  PAYLOAD base=sp+0x10 len=56  (payload offset = stack offset - 0x10)
+  --- field stores (payload-relative; {a|b} = path-dependent) ---
+   +0x00 (4 B) <= {#0|*(&_h_mt85_Ticket)}   [@0x51dc,0x521c]
+   +0x04 (4 B) <= {#0|#1}   [@0x5188,0x5224]
+   +0x08 (4 B) <= {#0|*(ARG1+0x8)}   [@0x518c,0x5228]
+   +0x0c (4 B) <= #0   [@0x5190,0x524c]
+   +0x10 (4 B) <= {#0|*(ARG2)}   [@0x5194,0x5250]
+   +0x14 (4 B) <= {#0|*(ARG2+0x4)}   [@0x5198,0x5254]
+   +0x18 (4 B) <= {#0|*(ARG1+0xc)}   [@0x51a0,0x5258]
+   +0x1c (4 B) <= #0   [@0x51a8,0x525c]
+   +0x20 (4 B) <= {#0|#0xb|#9|{#0xa|#8|#9}|{#0xb|#0xc}|{#0|#0xa|#8|#9}|{#8|#9}}   [@0x51b0,0x529c,0x53a0]
+   +0x24 (1 B) <= #0   [@0x52a4,0x53a4]
+   +0x24 (4 B) <= #0   [@0x51b8]
+   +0x28 (4 B) <= {#0|*(ARG2+0x8)}   [@0x51bc,0x52a8,0x53a8]
+   +0x2c (4 B) <= {#0|*(ARG2+0xc)}   [@0x51c4,0x52ac,0x53ac]
+   +0x30 (4 B) <= {#0|orr(orr(orr(and(*(ARG1+0x2e),#0xf0),*(ARG1+0x2f)),and(*(ARG1+0x2c),#0xf0)),and(*(ARG1+0x2d),#0xf0))|{orr(orr(orr(and(*(ARG1+0x2e),#0xf0),*(ARG1+0x2f)),and(*(ARG1+0x2c),#0xf0)),and(*(ARG1+0x2d),#0xf0))|orr(orr(orr(lsl(*(ARG1+0x2d),#0x10),*(ARG1+0x2c)),*(ARG1+0x2f)),*(ARG1+0x2e))}}   [@0x51c8,0x53b0]
+   +0x34 (4 B) <= {#0|#0x12345678}   [@0x51e0,0x52bc]
+  --- stores outside payload region (frame fields / outgoing args) ---
+   sp+0x00 (4 B) <= ARG0   [@0x52e8]
+
+=== mt85FillRectangleBlend @ 0x1490  (window 0x1490-0x17f8, frame: push 9 regs, sub 0x54) ===
+  memset@0x14c0: dst=sp+0x14 fill=#0 len=#0x3c
+  call mt85_debuginfo@plt@0x14e8(?, ?, ?, &_h_mt85_Ticket) stack(*(('spref',)), *(('spref',)+0x4), *(('spref',)+0x8), *(('spref',)+0xc))
+  printf@0x1574: fmt="[dfb] mt85CmChg error eDfbCm = %d
+"@0x78c0 args=['*(ARG1+0x10)', '#0x418c04', '#0x4011040b'] stackargs=["*(('spref',))", "*(('spref',)+0x4)", "*(('spref',)+0x8)", "*(('spref',)+0xc)"]
+  EMIT@0x15f8: ctx=*(&_h_mt85_Ticket) payload=sp+0x14 cmd=#0x30 flag=#0 dev=ARG0
+  printf@0x1688: fmt="[%s] x=%d,y=%d,w=%d,h=%d,color=0x%X
+"@0x7884 args=['"mt85FillRectangleBlend"@0x7404', '*(ARG2)', '*(ARG2+0x4)'] stackargs=["*(('spref',))", "*(('spref',)+0x4)", "*(('spref',)+0x8)", "*(('spref',)+0xc)"]
+  ASSERT@0x173c: expr="mdrv && mdev && rect"@0x786c file="mt85_2d.c"@0x7818 line=#0x798 fn="mt85FillRectangleBlend"@0x73ec
+  ASSERT@0x1760: expr="0"@0x7814 file="mt85_2d.c"@0x7818 line=#0x7c3 fn="mt85FillRectangleBlend"@0x73ec
+  ASSERT@0x1784: expr="rFillBlend.pv_dst"@0x78ac file="mt85_2d.c"@0x7818 line=#0x7a0 fn="mt85FillRectangleBlend"@0x73ec
+  ASSERT@0x17a8: expr="prGfxCmdBuf != ((void *)0)"@0x7850 file="mt85_2d.c"@0x7818 line=#0x797 fn="mt85FillRectangleBlend"@0x73ec
+  PAYLOAD base=sp+0x14 len=60  (payload offset = stack offset - 0x14)
+  --- field stores (payload-relative; {a|b} = path-dependent) ---
+   +0x00 (4 B) <= *(&_h_mt85_Ticket)   [@0x1508]
+   +0x04 (4 B) <= #1   [@0x1510]
+   +0x08 (4 B) <= *(ARG1+0x8)   [@0x1514]
+   +0x0c (4 B) <= #0   [@0x1538]
+   +0x10 (4 B) <= *(ARG2)   [@0x153c]
+   +0x14 (4 B) <= *(ARG2+0x4)   [@0x1540]
+   +0x18 (4 B) <= *(ARG1+0xc)   [@0x1544]
+   +0x1c (4 B) <= #0   [@0x1548]
+   +0x20 (4 B) <= {#0xb|#0xc|#9|{#0xa|#8|#9}|{#0xa|#9}|{#0|#0xb}}   [@0x1594,0x162c,0x16a4]
+   +0x24 (1 B) <= #0   [@0x1598,0x1634,0x16a8]
+   +0x28 (4 B) <= *(ARG2+0x8)   [@0x159c,0x1638,0x16ac]
+   +0x2c (4 B) <= *(ARG2+0xc)   [@0x15a0,0x163c,0x16b0]
+   +0x30 (4 B) <= {orr(orr(orr(and(*(ARG1+0x2e),#0xf0),*(ARG1+0x2f)),and(*(ARG1+0x2c),#0xf0)),and(*(ARG1+0x2d),#0xf0))|orr(orr(orr(lsl(*(ARG1+0x2d),#0x10),*(ARG1+0x2c)),*(ARG1+0x2f)),*(ARG1+0x2e))}   [@0x16d4,0x1704]
+   +0x34 (4 B) <= #0x12345678   [@0x15c8]
+   +0x38 (1 B) <= *(ARG1+0x2c)   [@0x15b8]
+  --- stores outside payload region (frame fields / outgoing args) ---
+   sp+0x00 (4 B) <= ARG0   [@0x15f4]
+
+=== mt85FillRectangleCompose @ 0x17f8  (window 0x17f8-0x1b48, frame: push 9 regs, sub 0x94) ===
+  memset@0x1828: dst=sp+0x10 fill=#0 len=#0x80
+  call mt85_debuginfo@plt@0x1850(?, ?, ?, &_h_mt85_Ticket) stack(*(('spref',)), *(('spref',)+0x4), *(('spref',)+0x8), *(('spref',)+0xc))
+  printf@0x18cc: fmt="[dfb] mt85CmChg error eDfbCm = %d
+"@0x78c0 args=['*(ARG1+0x10)', '*(ARG2+0x4)', '#0x4011040b'] stackargs=["*(('spref',))", "*(('spref',)+0x4)", "*(('spref',)+0x8)", "*(('spref',)+0xc)"]
+  EMIT@0x1950: ctx=*(&_h_mt85_Ticket) payload=sp+0x10 cmd=#0x27 flag=#0 dev=ARG0
+  printf@0x19d8: fmt="[%s] x=%d,y=%d,w=%d,h=%d,color=0x%X
+"@0x7884 args=['"mt85FillRectangleCompose"@0x7438', '*(ARG2)', '*(ARG2+0x4)'] stackargs=["*(('spref',))", "*(('spref',)+0x4)", "*(('spref',)+0x8)", "*(('spref',)+0xc)"]
+  ASSERT@0x1a88: expr="mdrv && mdev && rect"@0x786c file="mt85_2d.c"@0x7818 line=#0x7e0 fn="mt85FillRectangleCompose"@0x741c
+  ASSERT@0x1aac: expr="0"@0x7814 file="mt85_2d.c"@0x7818 line=#0x808 fn="mt85FillRectangleCompose"@0x741c
+  ASSERT@0x1ad0: expr="rFillBlend.pv_dst"@0x78ac file="mt85_2d.c"@0x7818 line=#0x7e8 fn="mt85FillRectangleCompose"@0x741c
+  ASSERT@0x1af4: expr="prGfxCmdBuf != ((void *)0)"@0x7850 file="mt85_2d.c"@0x7818 line=#0x7df fn="mt85FillRectangleCompose"@0x741c
+  PAYLOAD base=sp+0x10 len=128  (payload offset = stack offset - 0x10)
+  --- field stores (payload-relative; {a|b} = path-dependent) ---
+   +0x00 (4 B) <= *(&_h_mt85_Ticket)   [@0x1870]
+   +0x04 (4 B) <= #1   [@0x1878]
+   +0x20 (4 B) <= *(ARG1+0x8)   [@0x187c]
+   +0x24 (4 B) <= *(ARG2)   [@0x1898]
+   +0x28 (4 B) <= *(ARG2+0x4)   [@0x189c]
+   +0x2c (4 B) <= *(ARG1+0xc)   [@0x18a0]
+   +0x30 (4 B) <= {#0xb|#0xc|#9|{#0xa|#8|#9}|{#0xa|#9}|{#0|#0xb}}   [@0x18e8,0x1984,0x19f4]
+   +0x38 (4 B) <= *(ARG2+0x8)   [@0x18ec,0x1988,0x19f8]
+   +0x3c (4 B) <= *(ARG2+0xc)   [@0x18f0,0x198c,0x19fc]
+   +0x58 (4 B) <= #0x12345678   [@0x1928]
+   +0x64 (1 B) <= #0xffffffff   [@0x1908]
+   +0x68 (4 B) <= *(DATA@0x10498), init=0x7   [@0x192c]
+   +0x6c (1 B) <= #1   [@0x1914]
+   +0x70 (4 B) <= {orr(orr(orr(and(*(ARG1+0x2e),#0xf0),*(ARG1+0x2f)),and(*(ARG1+0x2c),#0xf0)),and(*(ARG1+0x2d),#0xf0))|orr(orr(orr(lsl(*(ARG1+0x2d),#0x10),*(ARG1+0x2c)),*(ARG1+0x2f)),*(ARG1+0x2e))}   [@0x1a20,0x1a50]
+  --- stores outside payload region (frame fields / outgoing args) ---
+   sp+0x00 (4 B) <= ARG0   [@0x194c]
+
+=== mt85DrawRectangle @ 0x4380  (window 0x4380-0x46d4, frame: push 9 regs, sub 0x4c) ===
+  call mt85_debuginfo@plt@0x4408(ARG0, ARG1, ARG2, sp+0x44) stack(*(('spref',)), *(('spref',)+0x4), *(('spref',)+0x8), *(('spref',)+0xc))
+  printf@0x4498: fmt="[dfb] mt85CmChg error eDfbCm = %d
+"@0x78c0 args=['#8', '#0x418c04', '#0x4011040b'] stackargs=["*(('spref',))", "*(('spref',)+0x4)", "*(('spref',)+0x8)", "*(('spref',)+0xc)"]
+  EMIT@0x44f8: ctx=*(&_h_mt85_Ticket) payload=sp+0x10 cmd=#0x28 flag=#0 dev=ARG0
+  printf@0x4570: fmt="[%s] x=%d,y=%d,w=%d,h=%d,color=0x%X
+"@0x7884 args=['"mt85DrawRectangle"@0x7600', '*(ARG2)', '*(ARG2+0x4)'] stackargs=["*(('spref',))", "*(('spref',)+0x4)", "*(('spref',)+0x8)", "*(('spref',)+0xc)"]
+  ASSERT@0x4614: expr="mdrv && mdev && rect"@0x786c file="mt85_2d.c"@0x7818 line=#0x8b3 fn="mt85DrawRectangle"@0x75ec
+  ASSERT@0x4638: expr="rFill.pv_dst"@0x7a1c file="mt85_2d.c"@0x7818 line=#0x8bb fn="mt85DrawRectangle"@0x75ec
+  ASSERT@0x465c: expr="prGfxCmdBuf != ((void *)0)"@0x7850 file="mt85_2d.c"@0x7818 line=#0x8b2 fn="mt85DrawRectangle"@0x75ec
+  ASSERT@0x4680: expr="0"@0x7814 file="mt85_2d.c"@0x7818 line=#0x8db fn="mt85DrawRectangle"@0x75ec
+  PAYLOAD base=sp+0x10 len=56  (payload offset = stack offset - 0x10)
+  --- field stores (payload-relative; {a|b} = path-dependent) ---
+   +0x00 (4 B) <= {#0|*(&_h_mt85_Ticket)}   [@0x43e8,0x4428]
+   +0x04 (4 B) <= {#0|#1}   [@0x4394,0x4430]
+   +0x08 (4 B) <= {#0|*(ARG1+0x8)}   [@0x4398,0x4434]
+   +0x0c (4 B) <= #0   [@0x439c,0x4458]
+   +0x10 (4 B) <= {#0|*(ARG2)}   [@0x43a0,0x445c]
+   +0x14 (4 B) <= {#0|*(ARG2+0x4)}   [@0x43a4,0x4460]
+   +0x18 (4 B) <= {#0|*(ARG1+0xc)}   [@0x43ac,0x4464]
+   +0x1c (4 B) <= #0   [@0x43b4,0x4468]
+   +0x20 (4 B) <= {#0|#0xb|#9|{#0xa|#8|#9}|{#0xb|#0xc}|{#0|#0xa|#8|#9}|{#8|#9}}   [@0x43bc,0x44a8,0x45ac]
+   +0x24 (1 B) <= #0   [@0x44b0,0x45b0]
+   +0x24 (4 B) <= #0   [@0x43c4]
+   +0x28 (4 B) <= {#0|*(ARG2+0x8)}   [@0x43c8,0x44b4,0x45b4]
+   +0x2c (4 B) <= {#0|*(ARG2+0xc)}   [@0x43d0,0x44b8,0x45b8]
+   +0x30 (4 B) <= {#0|orr(orr(orr(and(*(ARG1+0x2e),#0xf0),*(ARG1+0x2f)),and(*(ARG1+0x2c),#0xf0)),and(*(ARG1+0x2d),#0xf0))|{orr(orr(orr(and(*(ARG1+0x2e),#0xf0),*(ARG1+0x2f)),and(*(ARG1+0x2c),#0xf0)),and(*(ARG1+0x2d),#0xf0))|orr(orr(orr(lsl(*(ARG1+0x2d),#0x10),*(ARG1+0x2c)),*(ARG1+0x2f)),*(ARG1+0x2e))}}   [@0x43d4,0x45bc]
+   +0x34 (4 B) <= {#0|#0x12345678}   [@0x43ec,0x44c8]
+  --- stores outside payload region (frame fields / outgoing args) ---
+   sp+0x00 (4 B) <= ARG0   [@0x44f4]
+
+=== mt85DrawRectangleCompose @ 0x46d4  (window 0x46d4-0x4abc, frame: push 9 regs, sub 0x94) ===
+  memset@0x4704: dst=sp+0x10 fill=#0 len=#0x80
+  call mt85_debuginfo@plt@0x472c(?, ?, ?, &_h_mt85_Ticket) stack(*(('spref',)), *(('spref',)+0x4), *(('spref',)+0x8), *(('spref',)+0xc))
+  printf@0x47a8: fmt="[dfb] mt85CmChg error eDfbCm = %d
+"@0x78c0 args=['*(ARG1+0x10)', '*(ARG2+0x4)', '#0x4011040b'] stackargs=["*(('spref',))", "*(('spref',)+0x4)", "*(('spref',)+0x8)", "*(('spref',)+0xc)"]
+  printf@0x47f0: fmt="[dfb] mt85CmChg error eDfbCm = %d
+"@0x78c0 args=['*(ARG1+0x10)', '*(ARG2+0x4)', '#0x4011040b'] stackargs=["*(('spref',))", "*(('spref',)+0x4)", "*(('spref',)+0x8)", "*(('spref',)+0xc)"]
+  EMIT@0x4874: ctx=*(&_h_mt85_Ticket) payload=sp+0x10 cmd=#0x29 flag=#0 dev=ARG0
+  printf@0x4904: fmt="[%s] x=%d,y=%d,w=%d,h=%d,color=0x%X
+"@0x7884 args=['"mt85DrawRectangleCompose"@0x7630', '*(ARG2)', '*(ARG2+0x4)'] stackargs=["*(('spref',))", "*(('spref',)+0x4)", "*(('spref',)+0x8)", "*(('spref',)+0xc)"]
+  ASSERT@0x49f0: expr="mdrv && mdev && rect"@0x786c file="mt85_2d.c"@0x7818 line=#0x8f6 fn="mt85DrawRectangleCompose"@0x7614
+  ASSERT@0x4a14: expr="0"@0x7814 file="mt85_2d.c"@0x7818 line=#0x91e fn="mt85DrawRectangleCompose"@0x7614
+  ASSERT@0x4a38: expr="rFillBlend.pv_dst"@0x78ac file="mt85_2d.c"@0x7818 line=#0x8fe fn="mt85DrawRectangleCompose"@0x7614
+  ASSERT@0x4a5c: expr="prGfxCmdBuf != ((void *)0)"@0x7850 file="mt85_2d.c"@0x7818 line=#0x8f5 fn="mt85DrawRectangleCompose"@0x7614
+  PAYLOAD base=sp+0x10 len=128  (payload offset = stack offset - 0x10)
+  --- field stores (payload-relative; {a|b} = path-dependent) ---
+   +0x00 (4 B) <= *(&_h_mt85_Ticket)   [@0x474c]
+   +0x04 (4 B) <= #1   [@0x4754]
+   +0x18 (4 B) <= {#0xa|#0xb|#0xc|#8|#9|{#0|#0xb}}   [@0x47b4,0x48a0,0x4910,0x4920,0x4998]
+   +0x20 (4 B) <= *(ARG1+0x8)   [@0x4758]
+   +0x24 (4 B) <= *(ARG2)   [@0x4774]
+   +0x28 (4 B) <= *(ARG2+0x4)   [@0x4778]
+   +0x2c (4 B) <= *(ARG1+0xc)   [@0x477c]
+   +0x30 (4 B) <= {#0xb|#0xc|#9|{#0xa|#8|#9}|{#0xa|#9}|{#0|#0xb}}   [@0x480c,0x48b0,0x4930]
+   +0x38 (4 B) <= *(ARG2+0x8)   [@0x4810,0x48b4,0x4934]
+   +0x3c (4 B) <= *(ARG2+0xc)   [@0x4814,0x48b8,0x4938]
+   +0x58 (4 B) <= #0x12345678   [@0x484c]
+   +0x64 (1 B) <= *(ARG1+0x2c)   [@0x482c]
+   +0x68 (4 B) <= *(DATA@0x10498), init=0x7   [@0x4850]
+   +0x6c (1 B) <= #1   [@0x4838]
+   +0x70 (4 B) <= {orr(orr(orr(and(*(ARG1+0x2e),#0xf0),*(ARG1+0x2f)),and(*(ARG1+0x2c),#0xf0)),and(*(ARG1+0x2d),#0xf0))|orr(orr(orr(lsl(*(ARG1+0x2d),#0x10),*(ARG1+0x2c)),*(ARG1+0x2f)),*(ARG1+0x2e))}   [@0x495c,0x498c]
+  --- stores outside payload region (frame fields / outgoing args) ---
+   sp+0x00 (4 B) <= ARG0   [@0x4870]
+
+=== mt85FillTriangle @ 0x4abc  (window 0x4abc-0x4e0c, frame: push 9 regs, sub 0x6c) ===
+  memset@0x4aec: dst=sp+0x28 fill=#0 len=#0x40
+  call mt85_debuginfo@plt@0x4b14(?, ?, ?, &_h_mt85_Ticket) stack(*(('spref',)), *(('spref',)+0x4), *(('spref',)+0x8), *(('spref',)+0xc))
+  printf@0x4bc0: fmt="[dfb] mt85CmChg error eDfbCm = %d
+"@0x78c0 args=['*(ARG1+0x10)', '#0x418c04', '#8'] stackargs=['*(ARG2+0x8)', '*(ARG2+0xc)', '*(ARG2+0x10)', '*(ARG2+0x14)']
+  EMIT@0x4c10: ctx=*(&_h_mt85_Ticket) payload=sp+0x28 cmd=#0x2c flag=#0 dev=ARG0
+  printf@0x4cb4: fmt="[%s] x1=%d,y1=%d,x2=%d,y2=%d,x3=%d,y3=%d,color=0x%X
+"@0x7a2c args=['"mt85FillTriangle"@0x7660', '*(ARG2)', '*(ARG2+0x4)'] stackargs=['*(ARG2+0x8)', '*(ARG2+0xc)', '*(ARG2+0x10)', '*(ARG2+0x14)']
+  ASSERT@0x4d4c: expr="mdrv && mdev && rect"@0x786c file="mt85_2d.c"@0x7818 line=#0x824 fn="mt85FillTriangle"@0x764c
+  ASSERT@0x4d70: expr="rFill.pv_dst"@0x7a1c file="mt85_2d.c"@0x7818 line=#0x82d fn="mt85FillTriangle"@0x764c
+  ASSERT@0x4d94: expr="prGfxCmdBuf != ((void *)0)"@0x7850 file="mt85_2d.c"@0x7818 line=#0x823 fn="mt85FillTriangle"@0x764c
+  ASSERT@0x4db8: expr="0"@0x7814 file="mt85_2d.c"@0x7818 line=#0x84f fn="mt85FillTriangle"@0x764c
+  PAYLOAD base=sp+0x28 len=64  (payload offset = stack offset - 0x28)
+  --- field stores (payload-relative; {a|b} = path-dependent) ---
+   +0x00 (4 B) <= *(&_h_mt85_Ticket)   [@0x4b34]
+   +0x04 (4 B) <= #1   [@0x4b3c]
+   +0x08 (4 B) <= *(ARG1+0x8)   [@0x4b40]
+   +0x0c (4 B) <= #0   [@0x4b74]
+   +0x10 (4 B) <= *(ARG2)   [@0x4b78]
+   +0x14 (4 B) <= *(ARG2+0x4)   [@0x4b7c]
+   +0x18 (4 B) <= *(ARG2+0x8)   [@0x4b80]
+   +0x1c (4 B) <= *(ARG2+0xc)   [@0x4b84]
+   +0x20 (4 B) <= *(ARG2+0x10)   [@0x4b68]
+   +0x24 (4 B) <= *(ARG2+0x14)   [@0x4b88]
+   +0x28 (4 B) <= *(ARG1+0xc)   [@0x4b8c]
+   +0x2c (4 B) <= #0   [@0x4b90]
+   +0x30 (4 B) <= {#0xb|#0xc|#9|{#0xa|#8|#9}|{#0|#0xa|#8|#9}|{#8|#9}}   [@0x4bc8,0x4ce8,0x4d1c]
+   +0x34 (1 B) <= #0   [@0x4bd0,0x4cec,0x4d20]
+   +0x38 (4 B) <= {orr(orr(orr(and(*(ARG1+0x2e),#0xf0),*(ARG1+0x2f)),and(*(ARG1+0x2c),#0xf0)),and(*(ARG1+0x2d),#0xf0))|orr(orr(orr(lsl(*(ARG1+0x2d),#0x10),*(ARG1+0x2c)),*(ARG1+0x2f)),*(ARG1+0x2e))}   [@0x4cf0,0x4d24]
+   +0x3c (4 B) <= #0x12345678   [@0x4be0]
+  --- stores outside payload region (frame fields / outgoing args) ---
+   sp+0x00 (4 B) <= ARG0   [@0x4c0c]
+   sp+0x00 (4 B) <= *(ARG2+0x8)   [@0x4c88]
+   sp+0x04 (4 B) <= *(ARG2+0xc)   [@0x4c98]
+   sp+0x08 (4 B) <= *(ARG2+0x10)   [@0x4ca8]
+   sp+0x0c (4 B) <= *(ARG2+0x14)   [@0x4cac]
+   sp+0x10 (4 B) <= orr(orr(orr(lsl(*(ARG1+0x2d),#0x10),*(ARG1+0x2c)),*(ARG1+0x2f)),*(ARG1+0x2e))   [@0x4cb0]
+   sp+0x1c (4 B) <= *(ARG2+0xc)   [@0x4c60]
+   sp+0x24 (4 B) <= orr(orr(orr(lsl(*(ARG1+0x2d),#0x10),*(ARG1+0x2c)),*(ARG1+0x2f)),*(ARG1+0x2e))   [@0x4c7c]
+
+=== mt85FillTriangleCompose @ 0x4e0c  (window 0x4e0c-0x5174, frame: push 9 regs, sub 0x74) ===
+  memset@0x4e3c: dst=sp+0x28 fill=#0 len=#0x48
+  call mt85_debuginfo@plt@0x4e64(?, ?, ?, &_h_mt85_Ticket) stack(*(('spref',)), *(('spref',)+0x4), *(('spref',)+0x8), *(('spref',)+0xc))
+  printf@0x4f10: fmt="[dfb] mt85CmChg error eDfbCm = %d
+"@0x78c0 args=['*(ARG1+0x10)', '#0x418c04', '#8'] stackargs=['*(ARG2+0x8)', '*(ARG2+0xc)', '*(ARG2+0x10)', '*(ARG2+0x14)']
+  EMIT@0x4f74: ctx=*(&_h_mt85_Ticket) payload=sp+0x28 cmd=#0x2d flag=#0 dev=ARG0
+  printf@0x5018: fmt="[%s] x1=%d,y1=%d,x2=%d,y2=%d,x3=%d,y3=%d,color=0x%X
+"@0x7a2c args=['"mt85FillTriangleCompose"@0x768c', '*(ARG2)', '*(ARG2+0x4)'] stackargs=['*(ARG2+0x8)', '*(ARG2+0xc)', '*(ARG2+0x10)', '*(ARG2+0x14)']
+  ASSERT@0x50b0: expr="mdrv && mdev && rect"@0x786c file="mt85_2d.c"@0x7818 line=#0x86b fn="mt85FillTriangleCompose"@0x7674
+  ASSERT@0x50d4: expr="rFill.pv_dst"@0x7a1c file="mt85_2d.c"@0x7818 line=#0x874 fn="mt85FillTriangleCompose"@0x7674
+  ASSERT@0x50f8: expr="prGfxCmdBuf != ((void *)0)"@0x7850 file="mt85_2d.c"@0x7818 line=#0x86a fn="mt85FillTriangleCompose"@0x7674
+  ASSERT@0x511c: expr="0"@0x7814 file="mt85_2d.c"@0x7818 line=#0x898 fn="mt85FillTriangleCompose"@0x7674
+  PAYLOAD base=sp+0x28 len=72  (payload offset = stack offset - 0x28)
+  --- field stores (payload-relative; {a|b} = path-dependent) ---
+   +0x00 (4 B) <= *(&_h_mt85_Ticket)   [@0x4e84]
+   +0x04 (4 B) <= #1   [@0x4e8c]
+   +0x08 (4 B) <= *(ARG1+0x8)   [@0x4e90]
+   +0x0c (4 B) <= #0   [@0x4ec4]
+   +0x10 (4 B) <= *(ARG2)   [@0x4ec8]
+   +0x14 (4 B) <= *(ARG2+0x4)   [@0x4ecc]
+   +0x18 (4 B) <= *(ARG2+0x8)   [@0x4ed0]
+   +0x1c (4 B) <= *(ARG2+0xc)   [@0x4ed4]
+   +0x20 (4 B) <= *(ARG2+0x10)   [@0x4eb8]
+   +0x24 (4 B) <= *(ARG2+0x14)   [@0x4ed8]
+   +0x28 (4 B) <= *(ARG1+0xc)   [@0x4edc]
+   +0x2c (4 B) <= #0   [@0x4ee0]
+   +0x30 (4 B) <= {#0xb|#0xc|#9|{#0xa|#8|#9}|{#0|#0xa|#8|#9}|{#8|#9}}   [@0x4f18,0x504c,0x5080]
+   +0x34 (1 B) <= #0   [@0x4f20,0x5050,0x5084]
+   +0x38 (4 B) <= {orr(orr(orr(and(*(ARG1+0x2e),#0xf0),*(ARG1+0x2f)),and(*(ARG1+0x2c),#0xf0)),and(*(ARG1+0x2d),#0xf0))|orr(orr(orr(lsl(*(ARG1+0x2d),#0x10),*(ARG1+0x2c)),*(ARG1+0x2f)),*(ARG1+0x2e))}   [@0x5054,0x5088]
+   +0x3c (4 B) <= #0x12345678   [@0x4f48]
+   +0x40 (1 B) <= *(ARG1+0x2c)   [@0x4f28]
+   +0x44 (4 B) <= *(DATA@0x10498), init=0x7   [@0x4f3c]
+  --- stores outside payload region (frame fields / outgoing args) ---
+   sp+0x00 (4 B) <= ARG0   [@0x4f70]
+   sp+0x00 (4 B) <= *(ARG2+0x8)   [@0x4fec]
+   sp+0x04 (4 B) <= *(ARG2+0xc)   [@0x4ffc]
+   sp+0x08 (4 B) <= *(ARG2+0x10)   [@0x500c]
+   sp+0x0c (4 B) <= *(ARG2+0x14)   [@0x5010]
+   sp+0x10 (4 B) <= orr(orr(orr(lsl(*(ARG1+0x2d),#0x10),*(ARG1+0x2c)),*(ARG1+0x2f)),*(ARG1+0x2e))   [@0x5014]
+   sp+0x1c (4 B) <= *(ARG2+0xc)   [@0x4fc4]
+   sp+0x24 (4 B) <= orr(orr(orr(lsl(*(ARG1+0x2d),#0x10),*(ARG1+0x2c)),*(ARG1+0x2f)),*(ARG1+0x2e))   [@0x4fe0]
+

@@ -309,6 +309,17 @@ static int mt85_negative_control(void)
         if (bad != MAP_FAILED)
             munmap(bad, badlen);
     }
+    /* contract §4 item 6 negative control: DISPATCHHW must not fault on a
+     * NULL/invalid ring pointer, and must reject it with a proper error. */
+    errno = 0;
+    r = ioctl(fd, MT85_FBIO_DISPATCHHW_GFX, 0);
+    {
+        int ok = (r < 0 && errno == EFAULT);
+        printf("FBMT85: NEGCTL DISPATCHHW(arg=NULL) -> rc=%d errno=%d (%s) — must be EFAULT\n",
+               r, errno, ok ? "EFAULT ok" : "WRONG");
+        printf("FBMT85: NEGCTL DISPATCHHW_NULL %s\n", ok ? "PASS" : "FAIL");
+        fails += !ok;
+    }
     close(fd);
     printf("FBMT85: NEGCTL %s (failures=%d)\n", fails ? "FAILED" : "PASS",
            fails);
@@ -337,6 +348,8 @@ static int mt85_pool_capture(int *ret_w, int *ret_h)
         printf("FBMT85: capture open fb0 FAILED: %s\n", strerror(errno));
         return 1;
     }
+    memset(mp, 0, sizeof(mp));
+    mpw[0] = MT85_RETAIL_POOL_SLICE_NUM; /* request up to the retail max */
     if (ioctl(fd, MT85_FBIO_GETMULTIPOOL, mp) < 0) {
         printf("FBMT85: capture GETMULTIPOOL FAILED: %s\n", strerror(errno));
         close(fd);
@@ -443,6 +456,279 @@ static int mt85_pool_capture(int *ret_w, int *ret_h)
     return got != want;
 }
 
+/* ---- Hardware leg: pixel-verify the command-ring rFill --------------
+   The "hardware" DirectFB path may emit a command-ring rFill. fbvirt
+   executes it (kernel-side) against the MT85 pool; this verifier reads the
+   SAME rFill payload words the module logs (dst=w[2], color=w[12]) and
+   md5-compares the filled pixels against an independently-built expectation.
+
+   Also carries contract §4 item 6 controls:
+     - DISPATCHHW must reject NULL ring pointers with EFAULT (no fault),
+     - the gfxdriver's full-ring retry loop must make progress once the
+       consumer drains (bounded by the call returning + header advance). */
+
+typedef struct {
+    unsigned int dst_phys, x, y, pitch, fmt, w, h, color, magic;
+    int slot;
+} mt85_rfill_t;
+
+static void *mt85_ring_map(size_t *ret_len)
+{
+    unsigned int ring_len = 0;
+    int fd = open_fb();
+    void *ring;
+
+    if (fd < 0) {
+        printf("FBMT85HW: ring map open fb0 FAILED: %s\n", strerror(errno));
+        return NULL;
+    }
+    if (ioctl(fd, MT85_FBIO_GETCMDBUFLEN, &ring_len) < 0 || !ring_len) {
+        printf("FBMT85HW: ring GETCMDBUFLEN FAILED: %s\n", strerror(errno));
+        close(fd);
+        return NULL;
+    }
+    ring = mmap(NULL, ring_len, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+    close(fd);
+    if (ring == MAP_FAILED) {
+        printf("FBMT85HW: ring mmap %u FAILED: %s\n", ring_len,
+               strerror(errno));
+        return NULL;
+    }
+    if (ret_len)
+        *ret_len = ring_len;
+    return ring;
+}
+
+static int mt85_ring_find_rfill(void *ring, unsigned int maxcount,
+                               mt85_rfill_t *out)
+{
+    unsigned int i;
+    int found = 0;
+    mt85_rfill_t best;
+
+    memset(&best, 0, sizeof(best));
+    best.slot = -1;
+
+    for (i = 0; i < maxcount; i++) {
+        unsigned char *item = (unsigned char *)ring + MT85_GFX_DRV_PREFIX_SIZE
+                            + MT85_RING_ITEM_STRIDE * (i + 1);
+        unsigned int cmd = *(unsigned int *)item;
+        const unsigned int *w;
+
+        if (cmd != 0x01u)
+            continue;
+        w = (const unsigned int *)(item + 8);
+        if (w[13] != 0x12345678u)
+            continue;
+        /* best-effort plausibility (avoid false positives on stale slots) */
+        if (!w[10] || !w[11] || w[10] > 8192u || w[11] > 8192u)
+            continue;
+        best.slot = (int)i;
+        best.dst_phys = w[2];
+        best.x = w[4];
+        best.y = w[5];
+        best.pitch = w[6];
+        best.fmt = w[8];
+        best.w = w[10];
+        best.h = w[11];
+        best.color = w[12];
+        best.magic = w[13];
+        found = 1;
+    }
+    if (!found)
+        return 1;
+    if (out)
+        *out = best;
+    return 0;
+}
+
+static int mt85_hw_ring_fill_verify(void *ring, size_t ring_len)
+{
+    unsigned int maxcount = *(unsigned int *)((unsigned char *)ring + MT85_RING_OFF_MAXCOUNT);
+    mt85_rfill_t p;
+    int fd;
+    unsigned char mp[MT85_RETAIL_POOL_BYTES];
+    unsigned int *mpw = (unsigned int *)mp;
+    unsigned int num, pi;
+    void *pool;
+    size_t pool_len = 0, pool_size = 0;
+    unsigned int phys_base = 0;
+    unsigned long pooldst, start;
+    size_t bytes;
+    unsigned char *cap = NULL, *exp = NULL;
+    int row;
+    int ok = 0;
+
+    (void)ring_len;
+
+    if (!maxcount || maxcount > 100000u) {
+        printf("FBMT85HW: FAIL: implausible ring maxcount=%u\n", maxcount);
+        return 1;
+    }
+    if (mt85_ring_find_rfill(ring, maxcount, &p)) {
+        printf("FBMT85HW: FAIL: no rFill item found in the ring\n");
+        return 1;
+    }
+    printf("FBMT85HW: rFill payload(slot=%d) dst=0x%08x color=0x%08x %u,%u %ux%u pitch=%u fmt=%u magic=0x%08x\n",
+           p.slot, p.dst_phys, p.color, p.x, p.y, p.w, p.h, p.pitch, p.fmt,
+           p.magic);
+
+    fd = open_fb();
+    if (fd < 0) {
+        printf("FBMT85HW: FAIL: open fb0: %s\n", strerror(errno));
+        return 1;
+    }
+    /* ensure any pending items are consumed before capture (valid arg = ring+32) */
+    errno = 0;
+    {
+        void *ring_hdr = (unsigned char *)ring + MT85_GFX_DRV_PREFIX_SIZE;
+        int r = ioctl(fd, MT85_FBIO_DISPATCHHW_GFX, ring_hdr);
+        printf("FBMT85HW: DISPATCHHW(rc=%d errno=%d)\n", r, errno);
+    }
+
+    memset(mp, 0, sizeof(mp));
+    if (ioctl(fd, MT85_FBIO_GETMULTIPOOL, mp) < 0) {
+        printf("FBMT85HW: FAIL: GETMULTIPOOL: %s\n", strerror(errno));
+        close(fd);
+        return 1;
+    }
+    num = mpw[0];
+    if (num < 1 || num > MT85_RETAIL_POOL_SLICE_NUM) {
+        printf("FBMT85HW: FAIL: GETMULTIPOOL bad num=%u\n", num);
+        close(fd);
+        return 1;
+    }
+
+    for (pi = 0; pi < num; pi++) {
+        unsigned int base = mpw[MT85_RETAIL_MP_OFF_PHYS / 4 + pi];
+        unsigned int sz = mpw[MT85_RETAIL_MP_OFF_SIZE / 4 + pi];
+        if (p.dst_phys >= base && p.dst_phys < base + sz) {
+            phys_base = base;
+            pool_size = sz;
+            pool_len = (size_t)sz + (size_t)pi * 0x1000u;
+            break;
+        }
+    }
+    if (!pool_len) {
+        printf("FBMT85HW: FAIL: dst 0x%08x outside all pools\n", p.dst_phys);
+        close(fd);
+        return 1;
+    }
+    pool = mmap(NULL, pool_len, PROT_READ, MAP_SHARED, fd, 0);
+    if (pool == MAP_FAILED) {
+        printf("FBMT85HW: FAIL: pool mmap len=%zu: %s\n", pool_len,
+               strerror(errno));
+        close(fd);
+        return 1;
+    }
+
+    if (p.fmt != 12u) {
+        printf("FBMT85HW: FAIL: unsupported fmt=%u (expected vendor-ARGB=12)\n",
+               p.fmt);
+        goto out;
+    }
+    if (!p.w || !p.h || p.w > 8192u || p.h > 8192u || !p.pitch
+        || p.pitch < p.w * 4u) {
+        printf("FBMT85HW: FAIL: implausible fill geometry w=%u h=%u pitch=%u\n",
+               p.w, p.h, p.pitch);
+        goto out;
+    }
+
+    pooldst = (unsigned long)(p.dst_phys - phys_base);
+    start = pooldst + (unsigned long)p.y * (unsigned long)p.pitch
+          + (unsigned long)p.x * 4u;
+    if (start + ((unsigned long)p.h - 1u) * (unsigned long)p.pitch
+        + (unsigned long)p.w * 4u > pool_size) {
+        printf("FBMT85HW: FAIL: fill region OOB (start=%lu size=%zu)\n",
+               start, pool_size);
+        goto out;
+    }
+
+    bytes = (size_t)p.w * (size_t)p.h * 4u;
+    cap = malloc(bytes);
+    exp = malloc(bytes);
+    if (!cap || !exp) {
+        printf("FBMT85HW: FAIL: malloc(%zu)\n", bytes);
+        goto out;
+    }
+
+    for (row = 0; row < (int)p.h; row++) {
+        const unsigned char *src = (const unsigned char *)pool + start
+                                 + (unsigned long)row * (unsigned long)p.pitch;
+        memcpy(cap + (size_t)row * (size_t)p.w * 4u, src, (size_t)p.w * 4u);
+    }
+    {
+        unsigned int i;
+        unsigned int *ew = (unsigned int *)exp;
+        for (i = 0; i < bytes / 4; i++)
+            ew[i] = p.color;
+    }
+
+    {
+        FILE *f = fopen("/res/hwfillcap.bin", "wb");
+        if (f) { fwrite(cap, 1, bytes, f); fclose(f); }
+    }
+    {
+        FILE *f = fopen("/res/hwfillexp.bin", "wb");
+        if (f) { fwrite(exp, 1, bytes, f); fclose(f); }
+    }
+
+    ok = (memcmp(cap, exp, bytes) == 0);
+    printf("FBMT85HW: capture md5 (captured vs independently-built expectation — must match):\n");
+    fflush(stdout);
+    system("md5sum /res/hwfillcap.bin /res/hwfillexp.bin");
+    printf("FBMT85HW: ring fill pixel-VERIFY %s\n", ok ? "PASS" : "FAIL");
+
+out:
+    if (cap) free(cap);
+    if (exp) free(exp);
+    munmap(pool, pool_len);
+    close(fd);
+    return ok ? 0 : 1;
+}
+
+static int mt85_hw_full_ring_retry(IDirectFBSurface_min *s, void *ring)
+{
+    unsigned int *p_max = (unsigned int *)((unsigned char *)ring + MT85_RING_OFF_MAXCOUNT);
+    unsigned int *p_rd  = (unsigned int *)((unsigned char *)ring + MT85_RING_OFF_RDPOINT);
+    unsigned int *p_wr  = (unsigned int *)((unsigned char *)ring + MT85_RING_OFF_WRPOINT);
+    unsigned int *p_state = (unsigned int *)((unsigned char *)ring + MT85_RING_OFF_STATE);
+    unsigned int orig_max = *p_max;
+    unsigned int orig_state = *p_state;
+    unsigned int C = 8;
+    unsigned int rd_before = 0, wr_before = C - 1;
+    unsigned int rd_after, wr_after;
+    int r, ok;
+    unsigned int i;
+
+    *p_max = C;
+    *p_state = 0;               /* not immediate: allow the ring to fill */
+    *p_rd = rd_before;
+    *p_wr = wr_before;
+    for (i = 1; i < C; i++) {
+        unsigned char *item = (unsigned char *)ring + MT85_GFX_DRV_PREFIX_SIZE
+                            + MT85_RING_ITEM_STRIDE * i;
+        *(unsigned int *)item = 0x191u;        /* sync marker (no payload) */
+        *(unsigned int *)(item + 4) = 1u;
+    }
+
+    r = s->SetColor(s, FBMT85_FILL_R, FBMT85_FILL_G, FBMT85_FILL_B,
+                    FBMT85_FILL_A);
+    r |= s->FillRectangle(s, 0, 0, 8, 8);
+    r |= s->Flip(s, NULL, 0);
+    rd_after = *p_rd;
+    wr_after = *p_wr;
+
+    ok = (r == 0 && wr_after != wr_before);
+    printf("FBMT85HW: FULLRING before rd=%u wr=%u max=%u; after rd=%u wr=%u; rc=%d\n",
+           rd_before, wr_before, C, rd_after, wr_after, r);
+    printf("FBMT85HW: FULLRING RETRY %s\n", ok ? "PASS" : "FAIL");
+
+    *p_max = orig_max;
+    *p_state = orig_state;
+    return ok ? 0 : 1;
+}
+
 static int mt85_directfb_rung(int software_only)
 {
     void *h, *dfb = NULL, *layer = NULL, *surface = NULL;
@@ -521,6 +807,18 @@ static int mt85_directfb_rung(int software_only)
     printf("FBMT85: Flip rc=%d (plane base -> module log shows the "
            "phys->pool translation)\n", r);
     bad |= r;
+    if (!software_only && !bad) {
+        size_t ring_len = 0;
+        void *ring = mt85_ring_map(&ring_len);
+        if (!ring) {
+            printf("FBMT85HW: FAIL: could not map ring\n");
+            bad |= 1;
+        } else {
+            bad |= mt85_hw_ring_fill_verify(ring, ring_len);
+            bad |= mt85_hw_full_ring_retry(s, ring);
+            munmap(ring, ring_len);
+        }
+    }
     s->Release(s);
     l->Release(l);
     d->Release(d);

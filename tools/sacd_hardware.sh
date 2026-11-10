@@ -71,7 +71,7 @@ SHA_FBMD5="049b09654766530b093c280621983a84943f057527c6364e1634cc63dd8331ba"
 # Tier-1 probe: real DirectFB against the player's own 1.2 libs (vendor pool path)
 SHA_DFB="51e797486b8b9733f51fdd22929dd88993a4e899351431a371115c777e9c614f"
 # the HUD (docs/HUD-DESIGN.md); H0 = static layout mock on the same stack
-SHA_HUD="6334bda98e53d43fa476fda3f350af0cc2e7e77f503782848c74d972ce5795d2"
+SHA_HUD="a5d93775635365af1873cabef5ec020efa844be3e99557d0cfb3b5fdf2ecc1bb"  # rebuilt 2026-11-09: + Sony wrapped /res/font.bin direct load + font_load_chain (font-hud lane; was 6334bda9... pre-font)
 ISO_SIZE_EXPECTED=2179497984
 
 HW_HOST="${HW_HOST:-10.20.1.236}"

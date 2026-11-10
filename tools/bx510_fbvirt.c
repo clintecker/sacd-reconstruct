@@ -760,21 +760,31 @@ static int mt85_ioctl(struct fb_info *info, unsigned int cmd,
         /* 0x4651 = retail gfxdriver DISPATCHHW; 0x464d = retail gfxdriver
          * _mt85CheckFlush (consume + wait — satisfied by synchronous
          * consumption); 0x4653 = the published-revision DISPATCHHW kept
-         * for any published-source consumer. All three take the ring
-         * header pointer as arg; the module uses its own ring base and
-         * never dereferences the arg (the contract's negative control:
-         * a NULL/invalid ring pointer must not fault). */
-        unsigned int count = mt85_ring_consume("dispatch");
+         * for any published-source consumer.
+         *
+         * All three take the ring header pointer as arg, but the module
+         * consumes from its own ring base. Still, a NULL/invalid userspace
+         * pointer must not be silently accepted: reject it with -EFAULT
+         * without faulting (contract §4 item 6 negative control). */
+        unsigned char probe;
+        if (!arg || copy_from_user(&probe, (void __user *)arg, 1)) {
+            printk(KERN_INFO "fbvirt-mt85: DISPATCH 0x%x rejected bad ring arg 0x%lx\n",
+                   cmd, arg);
+            return -EFAULT;
+        }
 
-        mt85_dispatch_calls++;
-        if (mt85_dispatch_calls <= 16 || (mt85_dispatch_calls & 0xffu) == 0) {
-            printk(KERN_INFO "fbvirt-mt85: DISPATCH 0x%x call #%u consumed "
-                   "%u items (rd=%u wr=%u)\n", cmd, mt85_dispatch_calls,
-                   count,
-                   *(unsigned int *)(mt85_cmdbuf_mem + MT85_RING_OFF_RDPOINT),
-                   *(unsigned int *)(mt85_cmdbuf_mem + MT85_RING_OFF_WRPOINT));
-            if ((mt85_dispatch_calls & 0xffu) == 0)
-                mt85_ring_dump_counts();
+        {
+            unsigned int count = mt85_ring_consume("dispatch");
+            mt85_dispatch_calls++;
+            if (mt85_dispatch_calls <= 16 || (mt85_dispatch_calls & 0xffu) == 0) {
+                printk(KERN_INFO "fbvirt-mt85: DISPATCH 0x%x call #%u consumed "
+                       "%u items (rd=%u wr=%u)\n", cmd, mt85_dispatch_calls,
+                       count,
+                       *(unsigned int *)(mt85_cmdbuf_mem + MT85_RING_OFF_RDPOINT),
+                       *(unsigned int *)(mt85_cmdbuf_mem + MT85_RING_OFF_WRPOINT));
+                if ((mt85_dispatch_calls & 0xffu) == 0)
+                    mt85_ring_dump_counts();
+            }
         }
         return 0;
     }

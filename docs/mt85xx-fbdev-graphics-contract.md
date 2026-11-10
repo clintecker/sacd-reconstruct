@@ -368,11 +368,106 @@ Static decode (superseded where contradicted above):
 | +0x30 | u32 = 0 | constant |
 | +0x34 | u32 = **0x12345678** | literal word@0x54a0 — likely a magic/sentinel the kernel validates |
 
-The other struct families (rBitblt 112–128 B, rStretch 108–132 B,
-rFillBlend 60–128 B) follow the same shape (buffer pointers validated by
-`pv_src`/`pv_dst` asserts, rect pairs, format code); their field maps are
-NOT yet decoded — record as OPEN (next technique: same wrapper-window decode
-per wrapper; each is 0x2c0–0x380 bytes of straight-line code).
+The other struct families were left OPEN in the first pass; they are
+now decoded in §3.3–§3.8 below (run of 2026-11-10, same staged binary,
+tool: `mt85_payload_extract.py`). That run also **statically confirms the
+S3 empirical correction**: payload +0x00 is the value of `_h_mt85_Ticket`
+(the mtk.so adapter-ticket heap pointer, GOT slot 0x10478,
+R_ARM_GLOB_DAT — VERIFIED), and +0x30 is the SetColor color assembled
+from four `mdev` state bytes (§3.3/§3.8) — the old “+0x00 = color” reading
+was a misattribution of the same global-load chain. The full 56-byte static
+map below matches the observed s3-run3.log rFill dump word-for-word (14/14
+words, §3.8).
+
+---
+
+### 3.3 Payload field maps: the blit/stretch family (static decode, tool: mt85_payload_extract.py)
+
+All VERIFIED as disassembly-store positions from the wrapper windows; the
+retained per-store evidence (exact instruction addresses) is
+`mt85-extraction/mt85_payload_maps_blit.txt` (11 wrappers) and
+`mt85_payload_maps_fill.txt` (7 wrappers). Common shape across every
+family: +0x00 = `_h_mt85_Ticket` heap pointer (the adapter ticket),
++0x04 = 1, format-code words at +0x18/+0x30 (the DSPF switch values),
+pitch/geometry from the DirectFB CardState args, and the **0x12345678
+sentinel at +0x58 for the bitblt family (124/128-byte payloads) vs +0x34
+for the fill family (56-byte payloads)** — the sentinel is always in the
+LAST payload word of the struct as memset-zeroed then selectively stored.
+
+mt85Blit (cmd 0x02, 124 B) — ARG1 = CardState, ARG2 = src rect, ARG3 = dst
+buffer, ARG4 = dst rect:
+
+| offset | value | source |
+|---|---|---|
+| +0x00 | u32 ticket | `*(&_h_mt85_Ticket)` |
+| +0x04 | u32 = 1 | constant |
+| +0x08 | u32 | CardState+0x1c (INFERRED: src phys addr) |
+| +0x0c/+0x10 | u32 pair | src rect x,y (ARG2) |
+| +0x14 | u32 | CardState+0x20 (INFERRED: src pitch) |
+| +0x18 | u32 fmt-code | DSPF switch (0x8..0xc family) |
+| +0x1c | u8 = 0 | constant |
+| +0x20 | u32 | CardState+0x8 (INFERRED: dst phys addr) |
+| +0x24/+0x28 | u32 pair | ARG3/ARG4 (dst) |
+| +0x2c | u32 | CardState+0xc (INFERRED: dst pitch) |
+| +0x30 | u32 fmt-code | DSPF switch (dst) |
+| +0x34 | u8 = 0 | constant |
+| +0x38/+0x3c | u32 pair | ARG2+8/+0xc (src rect w,h) |
+| +0x58 | u32 **0x12345678** | sentinel |
+| +0x64 | u8 | CardState+0x2c (INFERRED: blit flags) |
+
+mt85StretchBlit (cmd 0x0f, 108 B) — same layout with ARG3 = drect:
++0x00 ticket, +0x04 = 1, +0x08 CardState+0x1c, +0x0c/+0x10 srect x/y,
++0x14 CardState+0x20, +0x18 fmt, +0x1c u8=0, +0x20 CardState+0x8,
++0x24/+0x28 drect x/y, +0x2c CardState+0xc, +0x30 fmt, +0x34 u8=0,
++0x38/+0x3c drect w/h (ARG2+8/+0xc), **+0x58 sentinel 0x12345678**,
++0x64/+0x68 drect dw/dh (ARG3+8/+0xc).
+
+Blending/color-key/PM variants (cmds 0x03, 0x2e, 0x2f, 0x34–0x38, 0x3a)
+share the same skeleton with family-specific extra words (blend
+coefficients, colorkey, alpha) between +0x40 and the sentinel; per-store
+detail in the extraction file. Payload lengths per cmd id are already
+pinned in §3.1 and re-confirmed here (124/128/108/132/112/120 B).
+
+### 3.4 Fill-family variants (static decode)
+
+mt85FillRectangleBlend (0x30, 60 B), mt85FillRectangleCompose (0x27,
+128 B), mt85DrawRectangle (0x28, 56 B), mt85DrawRectangleCompose (0x29,
+128 B), mt85FillTriangle (0x2c, 64 B), mt85FillTriangleCompose (0x2d,
+72 B): same +0x00 ticket / +0x04 = 1 / fmt-code / sentinel pattern;
+sentinel at +0x34 for the 56/60/64 B payloads, at the tail word for the
+128 B compose payloads. Full store lists in
+`mt85_payload_maps_fill.txt`.
+
+### 3.5 Sentinel position rule (VERIFIED cross-family)
+
+The 0x12345678 sentinel sits in the last 4 bytes of each struct as the
+memset region defines it: +0x34 (fill, 56–72 B payloads), +0x58 (bitblt
+family, 124–132 B payloads). This is consistent with a kernel-side
+"struct version/validity" check and gives a cheap rig assertion: any
+executed item must carry the sentinel at its family's tail word.
+
+### 3.6 The +0x00 ticket word (refines §3.2's empirical correction)
+
+Every wrapper stores `_h_mt85_Ticket`'s VALUE (the mtk.so adapter-ticket
+heap pointer, GOT slot 0x10478 R_ARM_GLOB_DAT — VERIFIED) at payload
++0x00. The S3 payload dump's +0x00 = 0x174c0 is therefore that heap
+pointer, not color — statically confirmed (the "color at +0x00" reading
+was a misattribution of the same global-load chain). The empirical
+mapping (color at +0x30) stands, now with its static explanation.
+
+### 3.7 Color assembly (the +0x30 word)
+
++0x30 is assembled from four CardState bytes (ARG1+0x2c..0x2f) with
+shift/rotate chains (`orr(orr(orr(and(x,0xf0),y),and(z,0xf0)),w)`
+family) — the SetColor ARGB word, matching the rung's 0xff3099e0.
+
+### 3.8 Per-store provenance
+
+Every field row above corresponds to one or more `@0xADDR`-annotated
+store records in the extraction files; rerun `mt85_payload_extract.py`
+(kept beside them) to regenerate. Path-dependent stores are marked
+`{a|b}` in the raw output (branch-dependent constants, e.g. the format
+switch); the doc records the dominant path.
 
 ---
 
@@ -425,19 +520,23 @@ Corrections and additions against the current `tools/bx510_fbvirt.c`
    i*0x1000, ring = GETCMDBUFLEN value, debug = 4096, all at offset 0) —
    the retail provider issues no selector ioctl; length dispatch is the
    demonstrated mechanism (MT85-RESULTS).
-6. **Negative control additions:** assert `0x4651` with a NULL/invalid ring
-   pointer does not fault; assert the gfxdriver's full-ring retry
-   (DISPATCHHW → usleep → re-lock) terminates once the consumer drains.
+6. **Negative controls (updated to the implemented semantics).**
+   `0x4651` with a NULL/unreadable ring pointer is REJECTED by fbvirt with
+   **-EFAULT** (implemented 2026-11-09, bx510_fbvirt.c; the control asserts
+   rc<0 && errno==EFAULT and that the guest survives — VERIFIED PASS,
+   guest-gate-run.log). The original wording "does not fault" meant the
+   same thing operationally (no kernel OOPS); the module returns the error
+   rather than tolerating the pointer. Also implemented and PASSing: the
+   full-ring retry control (DISPATCHHW → usleep → re-lock terminates once
+   the consumer drains).
 
 ---
 
 ## 5. OPEN items (with reasons and next techniques)
 
-1. **Exact payload layouts for rBitblt / rStretch / rFillBlend.** The
-   field maps were only decoded for rFill (§3.2). Next technique: the same
-   wrapper-window decode per wrapper (0x22c0, 0x1f08, 0x17f8, …) — each
-   builds its payload on-stack with straight-line stores, exactly like
-   0x5174 did.
+1. **Exact payload layouts for rBitblt / rStretch / rFillBlend.** RESOLVED
+   2026-11-09 — the wrapper-window decode completed for all 18 wrappers
+   (§§3.3–3.4); evidence: `mt85-extraction/mt85_payload_maps_{fill,blit}.txt`.
 2. **Unrouted emitter ids 4, 21 (0x15), 29 (0x1d), 50 (0x32), 302 (0x12e).**
    No caller found in libdirectfb_mt85.so. Next technique: find the
    GraphicsDeviceFuncs table construction inside the staged

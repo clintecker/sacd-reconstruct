@@ -8,7 +8,9 @@ HERE="$(cd "$(dirname "$0")" && pwd)"
 EXP="$(cd "$HERE/.." && pwd)"
 DP="$EXP/evidence/bx510/display-payload"
 
-scp -q -o BatchMode=yes -P "$P" "$HERE/bx510_hud_repro.py" "$HERE/bx510_fbdump.c" "$DP/sony-font.ttf" "$DP/sacd_hud" "$H:/tmp/"
+# NOTE: bx510_fbmt85_repro.py is staged for the VM-side record ONLY (the guest
+# gate leg runs bx510_hud_repro.py; the fbmt85 ladder is fired separately).
+scp -q -o BatchMode=yes -P "$P" "$HERE/bx510_hud_repro.py" "$HERE/bx510_fbmt85_repro.py" "$HERE/bx510_fbdump.c" "$DP/sony-font.ttf" "$DP/sacd_hud" "$H:/tmp/"
 
 cat > /tmp/hud_guest_run.sh <<'INNER'
 set -eu
@@ -17,12 +19,13 @@ E=~/bx510-emu/emulator
 ~/gnuarm/bin/arm-none-linux-gnueabi-strip $E/fbdump || true
 cp /tmp/sacd_hud $E/sacd_hud
 cp /tmp/bx510_hud_repro.py $E/
+cp /tmp/bx510_fbmt85_repro.py $E/
 cp /tmp/sony-font.ttf $E/
 cd $E
 timeout 900 python3 bx510_hud_repro.py --qemu work/build/qemu-system-arm \
   --images ../images --shim /tmp/tmpredir.so --fbmod /tmp/mt85mod2/bx510_fbvirt.ko \
   --hud ./sacd_hud --fbdump ./fbdump --font ./sony-font.ttf \
-  --log /tmp/hud_guest.log --secs 2 --pool-ofs 0 >/dev/null 2>&1 || true
+  --log /tmp/hud_guest.log --secs 2 --dump pool --scale 3 --pool-ofs 4096 >/dev/null 2>&1 || true
 INNER
 
 ssh -o BatchMode=yes -p "$P" "$H" 'sh -s' < /tmp/hud_guest_run.sh >/dev/null 2>&1 || true

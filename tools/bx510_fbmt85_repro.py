@@ -21,9 +21,11 @@ Guest sequence (controls first, every suite):
      with no-hardware software rendering: FBIO_INIT -> ... ->
      DirectFBCreate -> FillRectangle -> Flip -> pool capture + md5 vs an
      independently built expectation
-  4. DISCOVERY: `fbdraw fbmt85hw` under bgstart (may wedge — bounded by
-     the sleep; its output is catted, never gating the rung evidence);
-     the retail gfxdriver may push command-ring items (module logs them)
+  4. DISCOVERY/GATING: `fbdraw fbmt85hw` under bgstart (bounded by the
+     sleep; the retail gfxdriver pushes command-ring items). Since the S3
+     ring work this leg is GATING: ring-fill pixel-verify + FULLRING retry
+     + DISPATCHHW-NULL are part of the success ladder (see checks below).
+     Its discovery history: it was report-only before the ring was real.
 
 Success ladder (printed markers, evidence in the UART transcript):
   FBMT85: rung (a)+(b) ... DirectFBCreate SUCCEEDED   -> rungs a+b
@@ -35,8 +37,8 @@ Run from ~/bx510-emu/emulator on the lab VM:
 
   python3 bx510_fbmt85_repro.py --qemu work/build/qemu-system-arm \\
       --images ../images --shim /tmp/tmpredir.so --bgstart /tmp/bgstart \\
-      --fbmod /tmp/mt85mod/bx510_fbvirt.ko --fbdraw /tmp/mt85mod/fbdraw \\
-      --timeout 900 --log /tmp/mt85mod/run.log
+      --fbmod /tmp/mt85mod2/bx510_fbvirt.ko --fbdraw /tmp/mt85mod2/fbdraw \\
+      --timeout 900 --log /tmp/mt85mod2/run.log
 """
 import argparse
 import io
@@ -152,8 +154,14 @@ def main():
             "rung-d (FillRectangle)": b"rung (d)" in log and b"rc=0" in log,
             "rung-e (pool match)": b"pool capture MATCHES" in log,
             "negative-control PASS": b"NEGCTL PASS" in log,
+            "negctl: DISPATCHHW NULL": b"NEGCTL DISPATCHHW_NULL PASS" in log,
             "raw regression md5": RAW_REGRESSION_MD5.encode() in log,
         }
+        if not a.skip_hw:
+            checks.update({
+                "hw: ring fill pixel-verified": b"FBMT85HW: ring fill pixel-VERIFY PASS" in log,
+                "hw: full-ring retry terminates": b"FBMT85HW: FULLRING RETRY PASS" in log,
+            })
         print("--- ladder ---")
         for name, ok in checks.items():
             print(f"{'PASS' if ok else 'MISS'}  {name}")

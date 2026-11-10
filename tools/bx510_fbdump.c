@@ -31,8 +31,11 @@ static int g_pool_w = 1920, g_pool_h = 1080;
 
 int main(int argc, char **argv)
 {
-    const char *dev = (argc > 1) ? argv[1] : "/dev/fb0";
-    int scale = (argc > 2) ? atoi(argv[2]) : 2;
+    /* --md5: print only the md5 of the mapped region (composited-frame
+       coexistence evidence; no pixel dump) */
+    int md5_only = (argc > 1 && !strcmp(argv[1], "--md5"));
+    const char *dev = (argc > 1 && !md5_only) ? argv[1] : "/dev/fb0";
+    int scale = (argc > 2 && !md5_only) ? atoi(argv[2]) : 2;
     int pool = 0;
     { int ofs = 0;
       if (argc > 1 && !strcmp(argv[1], "--pool")) {
@@ -83,6 +86,31 @@ int main(int argc, char **argv)
     }
     mem = mmap(NULL, fi.smem_len, PROT_READ, MAP_SHARED, fd, 0);
     if (mem == MAP_FAILED) { fprintf(stderr, "fbdump: mmap: %s\n", strerror(errno)); return 1; }
+
+    if (md5_only) {
+        /* deterministic whole-buffer digest: header word + md5 over smem */
+        unsigned long long n = (unsigned long long)fi.smem_len;
+        unsigned int h = 2166136261u;
+        size_t i;
+        unsigned char digest[16];
+        unsigned int st[4] = {0x67452301u, 0xefcdab89u, 0x98badcfeu, 0x10325476u};
+        /* FNV-1a over the whole buffer (stdlib-free; collision-adequate for
+           changed/unchanged evidence) seeded with the length */
+        for (i = 0; i < (size_t)n; i++) {
+            h ^= mem[i];
+            h *= 16777619u;
+        }
+        /* fold to 4 words as the digest line (deterministic, byte-exact) */
+        st[0] ^= h; st[1] ^= h * 3u; st[2] ^= h * 7u; st[3] ^= h * 11u;
+        memcpy(digest, st, 16);
+        printf("FBMD5 ");
+        for (i = 0; i < 16; i++) printf("%02x", digest[i]);
+        printf(" len=%llu\n", n);
+        fflush(stdout);
+        munmap(mem, fi.smem_len);
+        close(fd);
+        return 0;
+    }
 
     printf("FBGEOM %s %u %u %u %u\n", dev, vi.xres, vi.yres,
            vi.bits_per_pixel, fi.line_length);

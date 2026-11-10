@@ -1,0 +1,19 @@
+{
+  "bdpdrv": {
+    "guest_path": "/lib/modules/2.6.35/BDP/bdpdrv.ko",
+    "sha256": "6604f6cd6c204c3399ac047f389f47162b06a3f6576159f21b4e8aaf3a72cf54",
+    "size": 8122068,
+    "staged_via_fe_test_data": false
+  },
+  "duration_s": 3.461,
+  "images": "/home/aftermath/bx510-emu/images",
+  "mmio_log": "/tmp/bdpdrv-trace.mmio.log",
+  "nand_fixture": "/tmp/bdpdrv-trace.fixture.img",
+  "payload": {
+    "dd_blocks": 3,
+    "tar_bytes": 12288
+  },
+  "qemu": "/home/aftermath/bx510-emu/emulator/work/build/qemu-system-arm",
+  "ts_utc": "2026-11-10T04:55:07Z",
+  "uart_log": "/tmp/bdpdrv-trace.uart.log"
+}

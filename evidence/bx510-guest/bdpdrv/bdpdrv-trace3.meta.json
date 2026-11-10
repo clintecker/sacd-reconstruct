@@ -1,0 +1,14 @@
+{
+  "bdpdrv_rootfs_copy": {
+    "md5": "fd3542eeeb6881bcd715fc1b83519ba3",
+    "sha256": "6604f6cd6c204c3399ac047f389f47162b06a3f6576159f21b4e8aaf3a72cf54",
+    "size": 8122068
+  },
+  "duration_s": 4.212,
+  "images": "/home/aftermath/bx510-emu/images",
+  "mmio_log": "/tmp/bdpdrv-trace3.mmio.log",
+  "nand_fixture": "/tmp/bdpdrv-trace3.fixture.img",
+  "qemu": "/home/aftermath/bx510-emu/emulator/work/build/qemu-system-arm",
+  "ts_utc": "2026-11-10T05:00:53Z",
+  "uart_log": "/tmp/bdpdrv-trace3.uart.log"
+}

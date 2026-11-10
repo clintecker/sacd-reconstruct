@@ -1,0 +1,94 @@
+bdpdrv.ko undefined symbols: 260
+undefined with NO provider among BDP/*.ko: 161
+  MISSING Assert
+  MISSING BIM_ClearIrq
+  MISSING BIM_DisableIrq
+  MISSING BIM_EnableIrq
+  MISSING BIM_GETHWSemaphore
+  MISSING BIM_GetResetIrKey
+  MISSING BIM_GetSysHaltResetMode
+  MISSING BIM_IsIrqEnabled
+  MISSING BIM_IsIrqPending
+  MISSING BIM_RegResetIrKey
+  MISSING BIM_ReleaseHWSemaphore
+  MISSING BIM_SetSysHaltResetMode
+  MISSING BSP_CleanDCacheRange
+  MISSING BSP_FlushDCacheRange
+  MISSING BSP_InvDCacheRange
+  MISSING BSP_dma_map_single
+  MISSING BSP_dma_map_vaddr
+  MISSING BSP_dma_unmap_single
+  MISSING BSP_dma_unmap_vaddr
+  MISSING CKGEN_AgtGetClk
+  MISSING CKGEN_AgtOffClk
+  MISSING CKGEN_AgtOnClk
+  MISSING CKGEN_AgtSelClk
+  MISSING Ethernet_suspend
+  MISSING HAL_Delay_us
+  MISSING HAL_GetDeltaTime
+  MISSING HAL_GetFineTick
+  MISSING HAL_GetRawTime
+  MISSING HAL_GetTime
+  MISSING HalCriticalEnd
+  MISSING HalCriticalStart
+  MISSING HalFlushInvalidateDCache
+  MISSING Printf
+  MISSING SYS_Printf
+  MISSING StarSetEcoPrm
+  MISSING TzServiceCall
+  MISSING UTIL_Printf
+  MISSING _SupportiPod
+  MISSING __aeabi_idiv
+  MISSING __aeabi_idivmod
+  MISSING __aeabi_lasr
+  MISSING __aeabi_llsl
+  MISSING __aeabi_llsr
+  MISSING __aeabi_uidiv
+  MISSING __aeabi_uidivmod
+  MISSING __aeabi_uldivmod
+  MISSING __aeabi_unwind_cpp_pr0
+  MISSING __aeabi_unwind_cpp_pr1
+  MISSING __bug
+  MISSING __const_udelay
+  MISSING __copy_from_user
+  MISSING __copy_to_user
+  MISSING __init_waitqueue_head
+  MISSING __kmalloc
+  MISSING __memzero
+  MISSING __mutex_init
+  MISSING __wake_up
+  MISSING _fgHWByDrv
+  MISSING _fgHWBySquash
+  MISSING _gBspGetFuncID
+  MISSING add_wait_queue
+  MISSING bsp_pinget
+  MISSING bsp_pinset
+  MISSING cdev_add
+  MISSING cdev_del
+  MISSING cdev_init
+  MISSING contig_page_data
+  MISSING default_wake_function
+  MISSING device_register_proprietary
+  MISSING device_unregister_proprietary
+  MISSING do_gettimeofday
+  MISSING dump_stack
+  MISSING fgHalCount0OverFlow
+  MISSING fgHalCount1OverFlow
+  MISSING fgRunBelowSegmentBefore
+  MISSING filp_close
+  MISSING filp_open
+  MISSING free_irq
+  MISSING free_mt85xx_reserve_mem
+  MISSING free_mt85xx_sata_mem
+  ... 81 more
+
+Top provider modules (count of bdpdrv undefineds they define):
+    64  osai.ko
+    16  kmem.ko
+     9  rm.ko
+     7  drvcli.ko
+     3  cbagent.ko
+
+Suggested preload set (>=10 provided symbols):
+  osai.ko
+  kmem.ko

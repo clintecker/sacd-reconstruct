@@ -28,6 +28,57 @@
 #include <asm/outercache.h>
 #include <stdarg.h>
 
+
+/* ==== TWO-PART BUILD (Run C33+) =====================================
+   The stub compiles twice:
+     STUB_PART_A  - tiny provider loaded FIRST: exports only what the
+                    real drvcli.ko needs (UTIL_Printf + the two log
+                    switches drvcli imports and nothing in the guest
+                    kernel or BDP set provides).
+     default (B)  - the full stub MINUS the CLI framework symbols
+                    (real drvcli provides them) and minus part-A's.
+   Order in the probe: drvcli.ko -> osal_stub_a.ko -> osal_stub.ko -> bdpdrv.
+   ==================================================================== */
+#ifdef STUB_PART_A
+unsigned int g_u4disable_log;
+EXPORT_SYMBOL(g_u4disable_log);
+unsigned int g_u4enable_log_droped;
+EXPORT_SYMBOL(g_u4enable_log_droped);
+
+MODULE_LICENSE("Proprietary");
+MODULE_AUTHOR("aftermath (instrument)");
+MODULE_DESCRIPTION("BX510 OSAL stub part A: drvcli provider (INSTRUMENT)");
+
+/* UTIL_Printf: drvcli.ko imports it; defined here (part A) so the REAL
+   CLI framework links against a live print primitive. */
+static int osal_stub_vprintk_a(const char *tag, const char *fmt, va_list ap)
+{
+  if (!fmt) {
+    printk(KERN_INFO "[OSAL_STUB] %s: <NULL fmt>\n", tag);
+    return 0;
+  }
+  return vprintk(fmt, ap);
+}
+int UTIL_Printf(const char *fmt, ...)
+{
+  va_list ap; int rc;
+  va_start(ap, fmt);
+  rc = osal_stub_vprintk_a("UTIL", fmt, ap);
+  va_end(ap);
+  return rc;
+}
+EXPORT_SYMBOL(UTIL_Printf);
+
+static int __init osal_stub_init(void)
+{
+  printk(KERN_INFO "[OSAL_STUB] part A loaded (provider for drvcli)\n");
+  return 0;
+}
+static void __exit osal_stub_exit(void) { }
+module_init(osal_stub_init);
+module_exit(osal_stub_exit);
+#else
+
 MODULE_LICENSE("Proprietary");
 MODULE_AUTHOR("aftermath (instrument)");
 MODULE_DESCRIPTION("BX510 OSAL/HAL symbol stub exports (INSTRUMENT)");
@@ -222,8 +273,6 @@ int Printf(const char *fmt, ...) { va_list ap; int rc; STUB_ONCE(); va_start(ap,
 EXPORT_SYMBOL(Printf);
 int SYS_Printf(const char *fmt, ...) { va_list ap; int rc; STUB_ONCE(); va_start(ap, fmt); rc = osal_stub_vprintk("SYS_Printf", fmt, ap); va_end(ap); return rc; }
 EXPORT_SYMBOL(SYS_Printf);
-int UTIL_Printf(const char *fmt, ...) { va_list ap; int rc; STUB_ONCE(); va_start(ap, fmt); rc = osal_stub_vprintk("UTIL_Printf", fmt, ap); va_end(ap); return rc; }
-EXPORT_SYMBOL(UTIL_Printf);
 int vdbg_printf(const char *fmt, ...) { va_list ap; int rc; STUB_ONCE(); va_start(ap, fmt); rc = osal_stub_vprintk("vdbg_printf", fmt, ap); va_end(ap); return rc; }
 EXPORT_SYMBOL(vdbg_printf);
 /* VERIFIED convention CORRECTION (Run C6 prep; overturns the C2-era
@@ -240,10 +289,6 @@ void Assert(const char *expr, const char *file, unsigned long line) {
          expr ? expr : "(null)", file ? file : "(null)", line);
 }
 EXPORT_SYMBOL(Assert);
-unsigned long StrToHex(const char *s, ...) { STUB_ONCE(); return simple_strtoul(s, NULL, 16); }
-EXPORT_SYMBOL(StrToHex);
-long StrToInt(const char *s, ...) { STUB_ONCE(); return (long)simple_strtol(s, NULL, 10); }
-EXPORT_SYMBOL(StrToInt);
 
 /* ---- data-class exports (VERIFIED usage-classified via
    tools/bx510_ko_symbol_classify.py against bdpdrv.ko + all 69 BDP
@@ -261,9 +306,13 @@ EXPORT_SYMBOL(_gBspGetFuncID);
 unsigned long _fgHWByDrv;      /* data: bdpdrv writes it (lit@0x1c6cac) */
 EXPORT_SYMBOL(_fgHWByDrv);
 
+/* NOTE (Run C33+): cli_init / x_cli_attach_cmd_tbl / x_cli_detach_cmd_tbl /
+   x_cli_parser / x_cli_parser_arg / StrToHex / StrToInt are NOT stubbed —
+   the real drvcli.ko (guest rootfs BDP set, zero undefined syms) provides
+   them and is insmodded BEFORE this stub so bdpdrv links against the REAL
+   CLI framework (a live runtime command channel instead of no-ops). */
+
 /* ---- generic stubs for the remaining missing symbols ---- */
-unsigned long x_cli_attach_cmd_tbl(unsigned long a0, ...) { STUB_ONCE(); return 0; }
-EXPORT_SYMBOL(x_cli_attach_cmd_tbl);
 unsigned long _x_mem_part_create(unsigned long a0, ...) { STUB_ONCE(); return 0; }
 EXPORT_SYMBOL(_x_mem_part_create);
 unsigned long GetCbkCmdTbl(unsigned long a0, ...) { STUB_ONCE(); return 0; }
@@ -310,12 +359,8 @@ unsigned long init_static_memory(const char *name, unsigned long flag,
 EXPORT_SYMBOL(init_static_memory);
 unsigned long x_rm_reg_conn_list(unsigned long a0, ...) { STUB_ONCE(); return 0; }
 EXPORT_SYMBOL(x_rm_reg_conn_list);
-unsigned long x_cli_detach_cmd_tbl(unsigned long a0, ...) { STUB_ONCE(); return 0; }
-EXPORT_SYMBOL(x_cli_detach_cmd_tbl);
 unsigned long u4HalGetTTB1(unsigned long a0, ...) { STUB_ONCE(); return 0; }
 EXPORT_SYMBOL(u4HalGetTTB1);
-unsigned long x_cli_parser(unsigned long a0, ...) { STUB_ONCE(); return 0; }
-EXPORT_SYMBOL(x_cli_parser);
 unsigned long x_reg_isr_ex(unsigned long a0, ...) { STUB_ONCE(); return 0; }
 EXPORT_SYMBOL(x_reg_isr_ex);
 unsigned long HalFlushInvalidateDCache(unsigned long a0, ...) { STUB_ONCE(); return 0; }
@@ -368,8 +413,6 @@ unsigned long u4HalGetCountRegister1(unsigned long a0, ...) { STUB_ONCE(); retur
 EXPORT_SYMBOL(u4HalGetCountRegister1);
 unsigned long os_cli_show_mem_all_detail(unsigned long a0, ...) { STUB_ONCE(); return 0; }
 EXPORT_SYMBOL(os_cli_show_mem_all_detail);
-unsigned long cli_init(unsigned long a0, ...) { STUB_ONCE(); return 0; }
-EXPORT_SYMBOL(cli_init);
 unsigned long x_mem_part_create(unsigned long a0, ...) { STUB_ONCE(); return 0; }
 EXPORT_SYMBOL(x_mem_part_create);
 unsigned long x_thread_self(unsigned long a0, ...) { STUB_ONCE(); return 0; }
@@ -416,8 +459,6 @@ unsigned long vCBAgent_SyncCb_Nfy(unsigned long a0, ...) { STUB_ONCE(); return 0
 EXPORT_SYMBOL(vCBAgent_SyncCb_Nfy);
 unsigned long x_rm_reg_conn_excl_list(unsigned long a0, ...) { STUB_ONCE(); return 0; }
 EXPORT_SYMBOL(x_rm_reg_conn_excl_list);
-unsigned long x_cli_parser_arg(unsigned long a0, ...) { STUB_ONCE(); return 0; }
-EXPORT_SYMBOL(x_cli_parser_arg);
 unsigned long x_mem_fill_caller(unsigned long a0, ...) { STUB_ONCE(); return 0; }
 EXPORT_SYMBOL(x_mem_fill_caller);
 unsigned long GetOsCmdTbl(unsigned long a0, ...) { STUB_ONCE(); return 0; }
@@ -1014,3 +1055,4 @@ static int __init osal_stub_init(void)
 static void __exit osal_stub_exit(void) { printk(KERN_INFO "[OSAL_STUB] unloaded\n"); }
 module_init(osal_stub_init);
 module_exit(osal_stub_exit);
+#endif /* STUB_PART_A */

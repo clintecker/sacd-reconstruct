@@ -205,6 +205,10 @@ static uint64_t bx510_read(void *opaque, hwaddr off, unsigned size)
         return s->gfx_kicked ? 0xa0000000u : 0u;
     case 0x4800: /* second engine slot (RLE/SE; RLE_HwReset) */
         return s->gfx2_kicked ? 0xa0000000u : 0u;
+    case 0x8118: /* FastLogo_STATUS: vAudInitThread polls until ==0x40
+                  * (logo playback finished / idle). We boot straight to
+                  * idle. VERIFIED Run C23-28: poll-only, never written. */
+        return 0x40u;
     case 0x5100: return s->adsp_port;
     case 0x5108: return s->adsp_data;   /* readback verify */
     case 0x510c: return s->adsp_mode;

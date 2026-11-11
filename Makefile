@@ -417,6 +417,14 @@ sacd-selftest:
 # OS. VM tree: ~/bx510-emu (emulator kit, images/, pre-staged qemu tarball —
 # the build script's own download path is bypassed so nothing leaves the VM).
 
+## SACD :: sacd-stub-build :: stage + build BOTH OSAL stub parts on the lab VM (one source, -DSTUB_PART_A split; vermagic-patched) :: outputs /tmp/osal_a/bx510_osal_stub_a.ko + /tmp/osal_b/bx510_osal_stub.ko — load order stub_a -> drvcli -> stub_b -> bdpdrv
+.PHONY: sacd-stub-build
+sacd-stub-build:
+	$(VM_SSH) 'mkdir -p /tmp/osal_src'
+	$(VM_SCP) experiments/sacd_reconstruct/tools/bx510_osal_stub.c $(VM_USER)@$(VM_HOST):/tmp/
+	$(VM_SCP) experiments/sacd_reconstruct/tools/bx510_stub_build.sh experiments/sacd_reconstruct/tools/bx510_vermagic_patch.py $(VM_USER)@$(VM_HOST):/tmp/
+	$(VM_SSH) 'sh /tmp/bx510_stub_build.sh'
+
 ## SACD :: sacd-emu-build :: build the full-system sony-bx510 QEMU on the lab VM :: the pinned 9.2.4 tarball is pre-staged (SHA f3cc1c4e… verified at stage time) so build.sh performs no outbound fetch; JOBS=6
 .PHONY: sacd-emu-build
 sacd-emu-build:

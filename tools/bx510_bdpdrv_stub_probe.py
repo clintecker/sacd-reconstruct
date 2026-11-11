@@ -28,13 +28,15 @@ def sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def build_tar(stubko: Path) -> bytes:
+def build_tar(stubko: Path, stuba_ko: Path) -> bytes:
     buf = io.BytesIO()
-    blob = stubko.read_bytes()
     with tarfile.open(fileobj=buf, mode="w", format=tarfile.USTAR_FORMAT) as arc:
-        entry = tarfile.TarInfo("shim/osal_stub.ko")
-        entry.size, entry.mode = len(blob), 0o755
-        arc.addfile(entry, io.BytesIO(blob))
+        for name, path in (("shim/osal_stub.ko", stubko),
+                           ("shim/osal_stub_a.ko", stuba_ko)):
+            blob = path.read_bytes()
+            entry = tarfile.TarInfo(name)
+            entry.size, entry.mode = len(blob), 0o755
+            arc.addfile(entry, io.BytesIO(blob))
     return buf.getvalue()
 
 
@@ -43,7 +45,9 @@ def main():
     p.add_argument("--qemu", required=True, type=Path)
     p.add_argument("--images", required=True, type=Path)
     p.add_argument("--stubko", required=True, type=Path,
-                   help="host path to the built osal stub module")
+                   help="host path to the built osal stub module (part B)")
+    p.add_argument("--stuba-ko", required=True, type=Path,
+                   help="host path to the stub part-A provider module")
     p.add_argument("--bdpdrv-host", required=True, type=Path,
                    help="host path to bdpdrv.ko for hashing/pinning")
     p.add_argument("--bdpdrv-guest", required=True, type=str,
@@ -61,7 +65,8 @@ def main():
     stubko = a.stubko.resolve(strict=True)
     bdpdrv_host = a.bdpdrv_host.resolve(strict=True)
 
-    payload = build_tar(stubko)
+    stuba_ko = a.stuba_ko.resolve(strict=True)
+    payload = build_tar(stubko, stuba_ko)
     parts = json.loads((images / "manifest.json").read_text())["partitions"]
     part = next(x for x in parts if x["name"] == "fe_test_data")
     if part["records"] or len(payload) > part["size"]:
@@ -75,10 +80,26 @@ def main():
         "echo STUB_BEGIN",
         "ls -l /res/shim; echo STUB_LS=$?",
         "md5sum /res/shim/osal_stub.ko; echo STUB_MD5=$?",
+        "insmod /res/shim/osal_stub_a.ko; echo STUBA_INSMOD=$?",
+        f"insmod {a.bdpdrv_guest.rsplit('/',1)[0]}/drvcli.ko; echo DRVCLI_INSMOD=$?",
         "insmod /res/shim/osal_stub.ko; echo STUB_INSMOD=$?",
         "grep osal_stub /res/proc/modules; echo STUB_MOD=$?",
         f"insmod {a.bdpdrv_guest}; echo BDPDRV_INSMOD=$?",
         "grep bdpdrv /res/proc/modules; echo BDPDRV_MOD=$?",
+        # CLI runtime channel (Run C35+): drvcli registers char major 244;
+        # make the node and exercise the driver's real command tables
+        "grep 244 /res/proc/devices; echo CLI_MAJOR=$?",
+        "mknod /res/clidev c 244 0; echo CLI_MKNOD=$?",
+        "ls -l /res/clidev; echo CLI_NODE=$?",
+        "mknod /res/null c 1 3; echo CLI_NULLNODE=$?",
+        "echo help > /res/clidev; echo CLI_HELP_SENT=$?",
+        "cat /res/clidev > /res/cliout & sleep 3; echo CMD > /res/clidev 2>/dev/null; echo ver > /res/clidev; echo CLI_SENT=$?; sleep 2; head -c 3000 /res/cliout; echo CLI_READ_DONE",
+        # post-load runtime-surface inventory (Run C31+)
+        "cat /res/proc/devices; echo INVENTORY_DEVICES=$?",
+        "cat /res/proc/misc; echo INVENTORY_MISC=$?",
+        "ls -1 /dev 2>&1 | head -40; echo INVENTORY_DEV=$?",
+        "cat /res/proc/partitions; echo INVENTORY_PART=$?",
+        "grep -iE 'bdp|sacd' /res/proc/kallsyms | tail -8; echo INVENTORY_KSYM=$?",
         "echo STUB_DONE",
     ]
     wanted = [b"STUB_DONE"]
@@ -115,6 +136,11 @@ def main():
             "guest_path": a.bdpdrv_guest,
             "sha256": sha256(bdpdrv_host),
             "size": bdpdrv_host.stat().st_size,
+        },
+        "osal_stub_a": {
+            "host_path": str(stuba_ko),
+            "sha256": sha256(stuba_ko),
+            "size": stuba_ko.stat().st_size,
         },
         "osal_stub": {
             "host_path": str(stubko),

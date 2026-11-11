@@ -75,7 +75,13 @@ static int strcasecmp_k(const char *a, const char *b) {
 }
 
 /* ---- special-case function stubs ---- */
-void *x_memset(void *dst, int c, unsigned long n, ...) { STUB_ONCE(); return memset(dst, c, n); }
+void *x_memset(void *dst, int c, unsigned long n, ...) {
+  STUB_ONCE();
+  if (n >= 0x1000)
+    printk(KERN_INFO "[OSAL_STUB] x_memset dst=%px n=%#lx caller=%pf\n",
+           dst, n, __builtin_return_address(0));
+  return memset(dst, c, n);
+}
 EXPORT_SYMBOL(x_memset);
 void *x_memcpy(void *dst, const void *src, unsigned long n, ...) { STUB_ONCE(); return memcpy(dst, src, n); }
 EXPORT_SYMBOL(x_memcpy);
@@ -399,10 +405,23 @@ EXPORT_SYMBOL(x_thread_self);
 
 unsigned long x_thread_delay(unsigned long a0, ...) {
   static unsigned long __n;
+  unsigned long lr = (unsigned long)__builtin_return_address(0);
   __n++;
   if (__n <= 4 || (__n & 0xff) == 0)
     printk(KERN_INFO "[OSAL_STUB] x_thread_delay #%lu arg=%lu caller=%pf\n",
-           __n, a0, __builtin_return_address(0));
+           __n, a0, (void *)lr);
+  /* Run C17 decisive instrument: the vGCPU_InstanceDestroy bit2-poll site
+     is at .ko offset 0x174394 (LR of the delay call). From LR we recover
+     the module base and read the GCPU slot-0 state word (base+0xb18e4)
+     the poller is spinning on. */
+  if ((lr & 0xff) == 0x94 && a0 == 1) {
+    unsigned long base = lr - 0x174394;
+    unsigned int *w = (unsigned int *)(base + 0xb18e4);
+    static unsigned long __p;
+    __p++;
+    if ((__p & 0xff) == 0)
+      printk(KERN_INFO "[OSAL_STUB] gcpu slot0 state=%#x base=%#lx\n", *w, base);
+  }
   msleep(a0 > 100 ? 100 : a0);
   return 0;
 }
@@ -446,7 +465,8 @@ EXPORT_SYMBOL(GetOsCmdTbl);
      x_msg_q_send(h, msg, size, pri)             0 = OSR_OK
      x_msg_q_receive(&idx, &msg, &size, &h, cnt, option)  option=1 = WAIT
      x_thread_create(&h, name, stack, pri, fct, flag, arg)  (fct on stack arg 5)
-     x_thread_exit(code); x_thread_get_name(h, buf); x_thread_get_pri(h, &pri)
+     x_thread_exit(code); x_thread_get_name(h, char **ppName) -> stores
+     POINTER to name (sites reload it for memcmp); x_thread_get_pri(h, &pri)
    All success returns are 0 (cmp r0,#0 / beq-ok patterns).
    Handles are kernel object pointers; 0 never returned on success.
    ===================================================================== */
@@ -547,7 +567,11 @@ unsigned long x_ev_group_wait_event(unsigned long h, unsigned long mask, unsigne
 {
   struct osal_ev *o = (struct osal_ev *)h;
   unsigned long f, r;
-  STUB_COUNTED("x_ev_group_wait_event");
+  static unsigned long __n;
+  __n++;
+  if (__n <= 4 || (__n & 0xff) == 0)
+    printk(KERN_INFO "[OSAL_STUB] ev_wait #%lu h=%px mask=%#lx op=%lu cur=%#lx caller=%pf\n",
+           __n, o, mask, op, o ? o->flags : 0, __builtin_return_address(0));
   if (!o) return 1;
   /* observed op 5 = OR_CONSUME */
   wait_event(o->wq, ({ unsigned long fl;
@@ -621,13 +645,21 @@ unsigned long x_msg_q_send(unsigned long h, void *msg, unsigned long size, unsig
 {
   struct osal_mq *o = (struct osal_mq *)h;
   unsigned long f;
+  static unsigned long __n;
+  __n++;
   if (!o || !msg) return 1;
+  if (__n <= 8 || (__n & 0xff) == 0)
+    printk(KERN_INFO "[OSAL_STUB] mq_send #%lu h=%px w0=%#x caller=%pf\n",
+           __n, o, *(unsigned int *)msg, __builtin_return_address(0));
   spin_lock_irqsave(&o->lock, f);
   if (o->count >= o->depth) { spin_unlock_irqrestore(&o->lock, f); return 1; }
   memcpy(o->buf + o->tail * o->msg_size, msg, min(size, o->msg_size));
   o->tail = (o->tail + 1) % o->depth;
   o->count++;
   spin_unlock_irqrestore(&o->lock, f);
+  /* receivers wait on the shared osal_mq_wq (Run C14: waking only the
+     per-queue wq left the GCPU worker parked on an empty-wait forever) */
+  wake_up_all(&osal_mq_wq);
   wake_up_all(&o->wq);
   return 0;
 }
@@ -637,7 +669,11 @@ unsigned long x_msg_q_receive(unsigned short *p_idx, void *msg, unsigned long *p
 {
   struct osal_mq *chosen;
   unsigned long i, f;
-  STUB_COUNTED("x_msg_q_receive");
+  static unsigned long __n;
+  __n++;
+  if (__n <= 16 || (__n & 0xff) == 0)
+    printk(KERN_INFO "[OSAL_STUB] mq_recv #%lu h0=%px cnt=%lu caller=%pf\n",
+           __n, cnt ? (void *)ph[0] : NULL, cnt, __builtin_return_address(0));
   if (!ph || !cnt) return 1;
   /* option 1 = WAIT (observed): block until any queue has a message */
   wait_event(osal_mq_wq, ({ int have = 0;
@@ -749,22 +785,34 @@ unsigned long x_thread_create(unsigned long *ph, const char *name, unsigned long
 EXPORT_SYMBOL(x_thread_create);
 unsigned long x_thread_exit(unsigned long code, ...)
 {
+  struct osal_thr *e;
+  unsigned long f;
   STUB_ONCE();
+  printk(KERN_INFO "[OSAL_STUB] x_thread_exit caller=%pf\n",
+         __builtin_return_address(0));
+  /* Sony threads always exit through here; complete_and_exit below means
+     osal_thread_fn's cleanup never runs. Deregister NOW so get_name/get_pri
+     on this handle fail (Run C18: vGCPU_InstanceDestroy polls get_name
+     until it fails — a live-looking dead handle = infinite poll). */
+  spin_lock_irqsave(&osal_threads_lock, f);
+  list_for_each_entry(e, &osal_threads, list)
+    if (e->tsk == current) { list_del(&e->list); kfree(e); break; }
+  spin_unlock_irqrestore(&osal_threads_lock, f);
   /* do_exit is not EXPORTed to modules in 2.6.35; complete_and_exit is. */
   complete_and_exit(NULL, 0);
   return 0; /* unreachable */
 }
 EXPORT_SYMBOL(x_thread_exit);
-unsigned long x_thread_get_name(unsigned long h, char *buf, ...)
+unsigned long x_thread_get_name(unsigned long h, char **ppName, ...)
 {
   struct task_struct *t = (struct task_struct *)h;
   STUB_ONCE();
-  if (!t || !buf) return 1;
+  if (!t || !ppName) return 1;
   if (!osal_thread_live(t)) return 1;  /* dead handle: thread exited */
-  /* get_task_comm is not EXPORTed in 2.6.35; read comm directly (racy,
-     instrument-grade). comm is TASK_COMM_LEN=16; caller bufs observed 16. */
-  memcpy(buf, t->comm, 16);
-  buf[15] = '\0';
+  /* VERIFIED ABI (Run C15 oops): second arg is char ** -- call sites
+     re-load [sp] and pass it to x_memcmp, so we must STORE a pointer
+     (to the task's comm), not copy a string into a buffer. */
+  *ppName = t->comm;
   return 0;
 }
 EXPORT_SYMBOL(x_thread_get_name);
@@ -779,15 +827,28 @@ unsigned long x_thread_get_pri(unsigned long h, unsigned char *ppri, ...)
 }
 EXPORT_SYMBOL(x_thread_get_pri);
 
+/* Run C19 instrument: print EVERY allocation (ptr,size,caller) so an
+   unmapped-page memset can be traced to the allocation that produced it. */
+static void alloc_trace(const char *fn, void *p, unsigned long sz)
+{
+  static unsigned long __n;
+  __n++;
+  if (__n <= 512)
+    printk(KERN_INFO "[OSAL_STUB] alloc %s -> %px size=%lu\n", fn, p, sz);
+}
+
 /* ---- memory: large allocations must not go through kmalloc (2.6.35
    kmalloc caps far below the 27.7 MB FBM request; Run C6 showed
    "x_alloc_aligned_ch1_mem fail, size=27734048"). Route big allocs to
    vmalloc; free discriminates via is_vmalloc_addr(). ---- */
 void *x_mem_alloc(unsigned long sz, ...)
 {
+  void *p;
   STUB_ONCE();
   if (!sz) sz = 1;
-  return (sz > (256u << 10)) ? vmalloc(sz) : kmalloc(sz, GFP_KERNEL);
+  p = (sz > (256u << 10)) ? vmalloc(sz) : kmalloc(sz, GFP_KERNEL);
+  alloc_trace("x_mem_alloc", p, sz);
+  return p;
 }
 EXPORT_SYMBOL(x_mem_alloc);
 void *_x_mem_alloc(unsigned long sz, ...) { return x_mem_alloc(sz); }
@@ -806,6 +867,7 @@ void *x_mem_calloc(unsigned long n, unsigned long sz, ...)
   unsigned long total = n * sz;
   void *p;
   STUB_ONCE();
+  alloc_trace("x_mem_calloc", NULL, total);
   if (!total) total = 1;
   if (total > (256u << 10)) {
     p = vmalloc(total);
@@ -837,13 +899,21 @@ void *x_mem_realloc(void *p, unsigned long sz, ...)
 EXPORT_SYMBOL(x_mem_realloc);
 void *_x_mem_realloc(void *p, unsigned long sz, ...) { return x_mem_realloc(p, sz); }
 EXPORT_SYMBOL(_x_mem_realloc);
-void *x_mem_aligned_alloc(unsigned long align, unsigned long sz, ...)
+/* VERIFIED ABI order (Run C21): callers pass (SIZE, ALIGN) —
+   vKmDrvInitGenData calls x_alloc_aligned_mem(0x10000, 0x20) and memsets
+   0x10000 bytes; our old (align, sz) reading vmalloc'd the ALIGN (32
+   bytes) and the 64KB memset ran off the end. */
+void *x_mem_aligned_alloc(unsigned long sz, unsigned long align, ...)
 {
+  void *p;
   STUB_ONCE();
   if (!sz) sz = 1;
   if (align > 64 || sz > (256u << 10))
-    return vmalloc(sz);        /* page-aligned: satisfies align <= 4096 */
-  return kmalloc(sz, GFP_KERNEL);
+    p = vmalloc(sz);        /* page-aligned: satisfies align <= 4096 */
+  else
+    p = kmalloc(sz, GFP_KERNEL);
+  alloc_trace("x_mem_aligned_alloc", p, sz);
+  return p;
 }
 EXPORT_SYMBOL(x_mem_aligned_alloc);
 void x_mem_aligned_free(void *p, ...)
@@ -855,9 +925,12 @@ void x_mem_aligned_free(void *p, ...)
 EXPORT_SYMBOL(x_mem_aligned_free);
 void *x_mem_valloc(unsigned long sz, ...)
 {
+  void *p;
   STUB_ONCE();
   if (!sz) sz = 1;
-  return vmalloc(sz);
+  p = vmalloc(sz);
+  alloc_trace("x_mem_valloc", p, sz);
+  return p;
 }
 EXPORT_SYMBOL(x_mem_valloc);
 void x_mem_vfree(void *p, ...)

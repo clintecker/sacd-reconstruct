@@ -52,6 +52,9 @@ def main():
     p.add_argument("--unimp", required=True, type=Path)
     p.add_argument("--meta", required=True, type=Path)
     p.add_argument("--timeout", type=float, default=120.0)
+    p.add_argument("--qemu-extra", default="",
+                   help="extra QEMU argv appended verbatim (e.g. '-s' for a "
+                        "gdbserver on :1234 for post-mortem attach)")
     a = p.parse_args()
 
     images = a.images.resolve(strict=True)
@@ -88,6 +91,8 @@ def main():
             f.seek(part["offset"])
             f.write(payload)
         argv = command(a.qemu.resolve(strict=True), images, "shell", nand)
+        if a.qemu_extra:
+            argv[1:1] = a.qemu_extra.split()
         unimp = td / "unimp.log"
         argv[1:1] = ["-d", "unimp", "-D", str(unimp)]
         marker_ok = True

@@ -30,6 +30,14 @@ cp /tmp/bx510_osal_stub.c stub_part_b.c
 printf 'obj-m := bx510_osal_stub.o\nbx510_osal_stub-objs := stub_part_b.o\n' > Makefile
 make -C "$KDIR" ARCH=arm M="$PWD" modules EXTRA_CFLAGS="$FLAGS" >/tmp/buildB.log 2>&1
 
+# clidrive (kernel-side CLI runtime driver; needs drvcli loaded first)
+rm -rf /tmp/osal_c && mkdir -p /tmp/osal_c
+cd /tmp/osal_c
+cp /tmp/bx510_clidrive.c bx510_clidrive.c
+printf 'obj-m := bx510_clidrive.o\n' > Makefile
+make -C "$KDIR" ARCH=arm M="$PWD" modules EXTRA_CFLAGS="$FLAGS" >/tmp/buildC.log 2>&1
+
 python3 /tmp/bx510_vermagic_patch.py /tmp/osal_a/bx510_osal_stub_a.ko
 python3 /tmp/bx510_vermagic_patch.py /tmp/osal_b/bx510_osal_stub.ko
-ls -l /tmp/osal_a/bx510_osal_stub_a.ko /tmp/osal_b/bx510_osal_stub.ko
+python3 /tmp/bx510_vermagic_patch.py /tmp/osal_c/bx510_clidrive.ko
+ls -l /tmp/osal_a/bx510_osal_stub_a.ko /tmp/osal_b/bx510_osal_stub.ko /tmp/osal_c/bx510_clidrive.ko

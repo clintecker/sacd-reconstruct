@@ -285,8 +285,19 @@ EXPORT_SYMBOL(vdbg_printf);
    fired (string pointers are never 0), silently swallowing every
    failing assert. Now: every call IS a fired assert. */
 void Assert(const char *expr, const char *file, unsigned long line) {
-  printk(KERN_INFO "[OSAL_STUB] Assert FIRED: %s (%s:%lu)\n",
-         expr ? expr : "(null)", file ? file : "(null)", line);
+  /* Globally rate-limited (Run C40: four hot sites interleave, defeating
+     single-site memory; the flood itself interleaved probe output).
+     First 24 asserts print; then every 4096th carries a summary. */
+  static unsigned long __tot;
+  __tot++;
+  if (__tot <= 24) {
+    printk(KERN_INFO "[OSAL_STUB] Assert FIRED: %s (%s:%lu)\n",
+           expr ? expr : "(null)", file ? file : "(null)", line);
+    return;
+  }
+  if ((__tot & 0xfff) == 0)
+    printk(KERN_INFO "[OSAL_STUB] Assert x%lu total (last: %s:%lu)\n",
+           __tot, file ? file : "?", line);
 }
 EXPORT_SYMBOL(Assert);
 

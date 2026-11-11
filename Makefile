@@ -421,7 +421,7 @@ sacd-selftest:
 .PHONY: sacd-stub-build
 sacd-stub-build:
 	$(VM_SSH) 'mkdir -p /tmp/osal_src'
-	$(VM_SCP) experiments/sacd_reconstruct/tools/bx510_osal_stub.c $(VM_USER)@$(VM_HOST):/tmp/
+	$(VM_SCP) experiments/sacd_reconstruct/tools/bx510_osal_stub.c experiments/sacd_reconstruct/tools/bx510_clidrive.c $(VM_USER)@$(VM_HOST):/tmp/
 	$(VM_SCP) experiments/sacd_reconstruct/tools/bx510_stub_build.sh experiments/sacd_reconstruct/tools/bx510_vermagic_patch.py $(VM_USER)@$(VM_HOST):/tmp/
 	$(VM_SSH) 'sh /tmp/bx510_stub_build.sh'
 

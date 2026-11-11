@@ -28,13 +28,20 @@ def sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def build_tar(stubko: Path, stuba_ko: Path) -> bytes:
+def build_tar(stubko: Path, stuba_ko: Path,
+              extra: dict[str, bytes] | None = None) -> bytes:
     buf = io.BytesIO()
     with tarfile.open(fileobj=buf, mode="w", format=tarfile.USTAR_FORMAT) as arc:
         for name, path in (("shim/osal_stub.ko", stubko),
                            ("shim/osal_stub_a.ko", stuba_ko)):
             blob = path.read_bytes()
             entry = tarfile.TarInfo(name)
+            entry.size, entry.mode = len(blob), 0o755
+            arc.addfile(entry, io.BytesIO(blob))
+        for name, blob in (extra or {}).items():
+            entry = tarfile.TarInfo(name)
+            # 0755: extras may include executables (Run C45: clicmd 0644
+            # -> "Permission denied" in the guest).
             entry.size, entry.mode = len(blob), 0o755
             arc.addfile(entry, io.BytesIO(blob))
     return buf.getvalue()
@@ -48,6 +55,14 @@ def main():
                    help="host path to the built osal stub module (part B)")
     p.add_argument("--stuba-ko", required=True, type=Path,
                    help="host path to the stub part-A provider module")
+    p.add_argument("--kscript", type=Path,
+                   default=Path(__file__).resolve().parent / "kcheck.sh",
+                   help="guest-side check script staged as shim/kcheck.sh "
+                        "(Run C43 lesson: long one-liners get truncated by "
+                        "the guest shell — multi-checks go through files)")
+    p.add_argument("--extra-file", action="append", default=[],
+                   metavar="NAME=PATH",
+                   help="stage an additional file into shim/ (repeatable)")
     p.add_argument("--bdpdrv-host", required=True, type=Path,
                    help="host path to bdpdrv.ko for hashing/pinning")
     p.add_argument("--bdpdrv-guest", required=True, type=str,
@@ -66,7 +81,14 @@ def main():
     bdpdrv_host = a.bdpdrv_host.resolve(strict=True)
 
     stuba_ko = a.stuba_ko.resolve(strict=True)
-    payload = build_tar(stubko, stuba_ko)
+    kscript_bytes = a.kscript.read_bytes() if a.kscript.exists() else b""
+    extra = {"shim/kcheck.sh": kscript_bytes}
+    for spec in a.extra_file:
+        name, _, path = spec.partition("=")
+        if not name or not path:
+            raise SystemExit(f"bad --extra-file {spec!r}; want NAME=PATH")
+        extra[f"shim/{name}"] = Path(path).read_bytes()
+    payload = build_tar(stubko, stuba_ko, extra)
     parts = json.loads((images / "manifest.json").read_text())["partitions"]
     part = next(x for x in parts if x["name"] == "fe_test_data")
     if part["records"] or len(payload) > part["size"]:
@@ -100,6 +122,15 @@ def main():
         "ls -1 /dev 2>&1 | head -40; echo INVENTORY_DEV=$?",
         "cat /res/proc/partitions; echo INVENTORY_PART=$?",
         "grep -iE 'bdp|sacd' /res/proc/kallsyms | tail -8; echo INVENTORY_KSYM=$?",
+        # SATA/CDROM stack loadability check — via staged script file
+        "sh /res/shim/kcheck.sh; echo KEXP2_DONE",
+        # CLI runtime channel (Run C45+): ioctl ABI 0xc0014502 -> x_cli_parser
+        "/res/shim/clicmd help; echo CLI_EXEC_RC=$?",
+        "sleep 2; echo CLI_DRAIN1",
+        # Run C49: kernel-side driver — x_cli_set_mode(5) + x_cli_parser via
+        # module param (cli output is SerPrintStr-polled UART + printk)
+        "insmod /res/shim/bx510_clidrive.ko; echo CLIDRIVE_RC=$?",
+        "sleep 3; echo CLI_DRAIN2",
         "echo STUB_DONE",
     ]
     wanted = [b"STUB_DONE"]

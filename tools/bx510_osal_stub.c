@@ -274,8 +274,6 @@ unsigned long x_rm_unreg_comp(unsigned long a0, ...) { STUB_ONCE(); return 0; }
 EXPORT_SYMBOL(x_rm_unreg_comp);
 unsigned long x_timer_start(unsigned long a0, ...) { STUB_ONCE(); return 0; }
 EXPORT_SYMBOL(x_timer_start);
-unsigned long x_kmem_block_aligned_alloc(unsigned long a0, ...) { STUB_ONCE(); return 0; }
-EXPORT_SYMBOL(x_kmem_block_aligned_alloc);
 /* init_static_memory(name, cached_flag, size, align) -> pointer.
    VERIFIED call convention from drv_MemUtil_Init (bdpdrv 0x12700c/0x127034/
    0x12704c): returns the carved pointer, 0 on failure; the driver asserts
@@ -310,26 +308,18 @@ unsigned long init_static_memory(const char *name, unsigned long flag,
   return g_ism_tab[g_ism_n++].ptr;
 }
 EXPORT_SYMBOL(init_static_memory);
-unsigned long x_kmem_addr_user_to_kernel(unsigned long a0, ...) { STUB_ONCE(); return 0; }
-EXPORT_SYMBOL(x_kmem_addr_user_to_kernel);
 unsigned long x_rm_reg_conn_list(unsigned long a0, ...) { STUB_ONCE(); return 0; }
 EXPORT_SYMBOL(x_rm_reg_conn_list);
-unsigned long x_kmem_create_handle(unsigned long a0, ...) { STUB_ONCE(); return 0; }
-EXPORT_SYMBOL(x_kmem_create_handle);
 unsigned long x_cli_detach_cmd_tbl(unsigned long a0, ...) { STUB_ONCE(); return 0; }
 EXPORT_SYMBOL(x_cli_detach_cmd_tbl);
 unsigned long u4HalGetTTB1(unsigned long a0, ...) { STUB_ONCE(); return 0; }
 EXPORT_SYMBOL(u4HalGetTTB1);
 unsigned long x_cli_parser(unsigned long a0, ...) { STUB_ONCE(); return 0; }
 EXPORT_SYMBOL(x_cli_parser);
-unsigned long addr_kernel_to_user(unsigned long a0, ...) { STUB_ONCE(); return 0; }
-EXPORT_SYMBOL(addr_kernel_to_user);
 unsigned long x_reg_isr_ex(unsigned long a0, ...) { STUB_ONCE(); return 0; }
 EXPORT_SYMBOL(x_reg_isr_ex);
 unsigned long HalFlushInvalidateDCache(unsigned long a0, ...) { STUB_ONCE(); return 0; }
 EXPORT_SYMBOL(HalFlushInvalidateDCache);
-unsigned long x_kmem_block_info(unsigned long a0, ...) { STUB_ONCE(); return 0; }
-EXPORT_SYMBOL(x_kmem_block_info);
 unsigned long x_rm_reg_group_type(unsigned long a0, ...) { STUB_ONCE(); return 0; }
 EXPORT_SYMBOL(x_rm_reg_group_type);
 unsigned long vHalCounterStop(unsigned long a0, ...) { STUB_ONCE(); return 0; }
@@ -340,8 +330,6 @@ unsigned long x_rm_reg_smp_cb(unsigned long a0, ...) { STUB_ONCE(); return 0; }
 EXPORT_SYMBOL(x_rm_reg_smp_cb);
 unsigned long x_rm_reg_comp(unsigned long a0, ...) { STUB_ONCE(); return 0; }
 EXPORT_SYMBOL(x_rm_reg_comp);
-unsigned long x_kmem_block_handle(unsigned long a0, ...) { STUB_ONCE(); return 0; }
-EXPORT_SYMBOL(x_kmem_block_handle);
 unsigned long i4LockDecryResource(unsigned long a0, ...) { STUB_ONCE(); return 0; }
 EXPORT_SYMBOL(i4LockDecryResource);
 unsigned long x_timer_create(unsigned long a0, ...) { STUB_ONCE(); return 0; }
@@ -358,8 +346,6 @@ unsigned long fgHalCount1OverFlow(unsigned long a0, ...) { STUB_ONCE(); return 0
 EXPORT_SYMBOL(fgHalCount1OverFlow);
 unsigned long vHalICacheHitRateStart(unsigned long a0, ...) { STUB_ONCE(); return 0; }
 EXPORT_SYMBOL(vHalICacheHitRateStart);
-unsigned long x_kmem_sync_table(unsigned long a0, ...) { STUB_ONCE(); return 0; }
-EXPORT_SYMBOL(x_kmem_sync_table);
 unsigned long x_timer_stop(unsigned long a0, ...) { STUB_ONCE(); return 0; }
 EXPORT_SYMBOL(x_timer_stop);
 unsigned long x_rm_reg_comp_excl_list(unsigned long a0, ...) { STUB_ONCE(); return 0; }
@@ -370,8 +356,6 @@ unsigned long GetRmkCmdTbl(unsigned long a0, ...) { STUB_ONCE(); return 0; }
 EXPORT_SYMBOL(GetRmkCmdTbl);
 unsigned long x_mem_part_alloc(unsigned long a0, ...) { STUB_ONCE(); return 0; }
 EXPORT_SYMBOL(x_mem_part_alloc);
-unsigned long x_kmem_block_sliced_aligned_alloc(unsigned long a0, ...) { STUB_ONCE(); return 0; }
-EXPORT_SYMBOL(x_kmem_block_sliced_aligned_alloc);
 unsigned long x_timer_delete(unsigned long a0, ...) { STUB_ONCE(); return 0; }
 EXPORT_SYMBOL(x_timer_delete);
 unsigned long x_reg_isr(unsigned long a0, ...) { STUB_ONCE(); return 0; }
@@ -382,16 +366,12 @@ unsigned long u4HalGetCountRegister0(unsigned long a0, ...) { STUB_ONCE(); retur
 EXPORT_SYMBOL(u4HalGetCountRegister0);
 unsigned long u4HalGetCountRegister1(unsigned long a0, ...) { STUB_ONCE(); return 0; }
 EXPORT_SYMBOL(u4HalGetCountRegister1);
-unsigned long x_kmem_block_alloc(unsigned long a0, ...) { STUB_ONCE(); return 0; }
-EXPORT_SYMBOL(x_kmem_block_alloc);
 unsigned long os_cli_show_mem_all_detail(unsigned long a0, ...) { STUB_ONCE(); return 0; }
 EXPORT_SYMBOL(os_cli_show_mem_all_detail);
 unsigned long cli_init(unsigned long a0, ...) { STUB_ONCE(); return 0; }
 EXPORT_SYMBOL(cli_init);
 unsigned long x_mem_part_create(unsigned long a0, ...) { STUB_ONCE(); return 0; }
 EXPORT_SYMBOL(x_mem_part_create);
-unsigned long x_kmem_destroy_handle(unsigned long a0, ...) { STUB_ONCE(); return 0; }
-EXPORT_SYMBOL(x_kmem_destroy_handle);
 unsigned long x_thread_self(unsigned long a0, ...) { STUB_ONCE(); return 0; }
 EXPORT_SYMBOL(x_thread_self);
 /* Run C4 instrument: print-once hides hot loops. Counter-print the park
@@ -432,18 +412,10 @@ unsigned long u4Jtag_Condition(unsigned long a0, ...) { STUB_ONCE(); return 0; }
 EXPORT_SYMBOL(u4Jtag_Condition);
 unsigned long vSet_Dram_BW(unsigned long a0, ...) { STUB_ONCE(); return 0; }
 EXPORT_SYMBOL(vSet_Dram_BW);
-unsigned long x_kmem_block_aligned_free(unsigned long a0, ...) { STUB_ONCE(); return 0; }
-EXPORT_SYMBOL(x_kmem_block_aligned_free);
-unsigned long addr_user_to_kernel(unsigned long a0, ...) { STUB_ONCE(); return 0; }
-EXPORT_SYMBOL(addr_user_to_kernel);
 unsigned long vCBAgent_SyncCb_Nfy(unsigned long a0, ...) { STUB_ONCE(); return 0; }
 EXPORT_SYMBOL(vCBAgent_SyncCb_Nfy);
 unsigned long x_rm_reg_conn_excl_list(unsigned long a0, ...) { STUB_ONCE(); return 0; }
 EXPORT_SYMBOL(x_rm_reg_conn_excl_list);
-unsigned long x_kmem_kernel_address(unsigned long a0, ...) { STUB_ONCE(); return 0; }
-EXPORT_SYMBOL(x_kmem_kernel_address);
-unsigned long x_kmem_block_free(unsigned long a0, ...) { STUB_ONCE(); return 0; }
-EXPORT_SYMBOL(x_kmem_block_free);
 unsigned long x_cli_parser_arg(unsigned long a0, ...) { STUB_ONCE(); return 0; }
 EXPORT_SYMBOL(x_cli_parser_arg);
 unsigned long x_mem_fill_caller(unsigned long a0, ...) { STUB_ONCE(); return 0; }
@@ -939,6 +911,77 @@ void x_mem_vfree(void *p, ...)
   vfree(p);
 }
 EXPORT_SYMBOL(x_mem_vfree);
+
+
+/* ---- x_kmem_* block allocator (Run C26+).
+   VERIFIED ABI (from assert strings + i4Gfx_CmdBuf_AllocFstMemBlk
+   0x193244): x_kmem_block_alloc(chunk_size) / x_kmem_block_aligned_alloc
+   (size, align) return a HANDLE (0 = fail); x_kmem_kernel_address(h_mem)
+   converts a handle to a kernel pointer; the crash showed
+   kernel_address(block_aligned_alloc(...)) must be nonzero and the
+   driver writes fields at [ptr+0x24]. Handles here ARE kernel pointers
+   (identity conversion). (size, align) order matches x_alloc_aligned_mem. */
+void *x_kmem_block_aligned_alloc(unsigned long sz, unsigned long align, ...)
+{
+  void *p;
+  STUB_COUNTED("x_kmem_block_aligned_alloc");
+  if (!sz) sz = 1;
+  if (align > 64 || sz > (256u << 10))
+    p = vmalloc(sz);
+  else
+    p = kmalloc(sz, GFP_KERNEL);
+  alloc_trace("x_kmem_block_aligned_alloc", p, sz);
+  return p;
+}
+EXPORT_SYMBOL(x_kmem_block_aligned_alloc);
+void x_kmem_block_aligned_free(void *h, ...)
+{
+  STUB_ONCE();
+  if (!h) return;
+  if (is_vmalloc_addr(h)) vfree(h); else kfree(h);
+}
+EXPORT_SYMBOL(x_kmem_block_aligned_free);
+void *x_kmem_block_alloc(unsigned long chunk_size, ...)
+{
+  void *p;
+  STUB_COUNTED("x_kmem_block_alloc");
+  if (!chunk_size) chunk_size = 1;
+  p = (chunk_size > (256u << 10)) ? vmalloc(chunk_size) : kmalloc(chunk_size, GFP_KERNEL);
+  alloc_trace("x_kmem_block_alloc", p, chunk_size);
+  return p;
+}
+EXPORT_SYMBOL(x_kmem_block_alloc);
+void x_kmem_block_free(void *h, ...)
+{
+  STUB_ONCE();
+  if (!h) return;
+  if (is_vmalloc_addr(h)) vfree(h); else kfree(h);
+}
+EXPORT_SYMBOL(x_kmem_block_free);
+unsigned long x_kmem_kernel_address(unsigned long h_mem, ...)
+{
+  STUB_COUNTED("x_kmem_kernel_address");
+  return h_mem;   /* handles are kernel pointers in this instrument */
+}
+EXPORT_SYMBOL(x_kmem_kernel_address);
+unsigned long x_kmem_create_handle(unsigned long a0, ...) { STUB_ONCE(); return 0; }
+EXPORT_SYMBOL(x_kmem_create_handle);
+unsigned long x_kmem_destroy_handle(unsigned long a0, ...) { STUB_ONCE(); return 0; }
+EXPORT_SYMBOL(x_kmem_destroy_handle);
+unsigned long x_kmem_block_handle(unsigned long a0, ...) { STUB_ONCE(); return 0; }
+EXPORT_SYMBOL(x_kmem_block_handle);
+unsigned long x_kmem_block_info(unsigned long a0, ...) { STUB_ONCE(); return 0; }
+EXPORT_SYMBOL(x_kmem_block_info);
+unsigned long x_kmem_block_sliced_aligned_alloc(unsigned long a0, ...) { STUB_ONCE(); return 0; }
+EXPORT_SYMBOL(x_kmem_block_sliced_aligned_alloc);
+unsigned long x_kmem_sync_table(unsigned long a0, ...) { STUB_ONCE(); return 0; }
+EXPORT_SYMBOL(x_kmem_sync_table);
+unsigned long x_kmem_addr_user_to_kernel(unsigned long a0, ...) { STUB_ONCE(); return 0; }
+EXPORT_SYMBOL(x_kmem_addr_user_to_kernel);
+unsigned long addr_kernel_to_user(unsigned long a0, ...) { STUB_ONCE(); return 0; }
+EXPORT_SYMBOL(addr_kernel_to_user);
+unsigned long addr_user_to_kernel(unsigned long a0, ...) { STUB_ONCE(); return 0; }
+EXPORT_SYMBOL(addr_user_to_kernel);
 
 static int __init osal_stub_init(void)
 {

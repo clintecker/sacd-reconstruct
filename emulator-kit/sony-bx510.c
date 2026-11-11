@@ -53,6 +53,18 @@ struct Bx510State {
     uint8_t rx[64];
     unsigned rx_head, rx_count;
     uint32_t mac[64];
+    /* Minimal GFX/2D engine model (Phase C): the driver's GFX_HwReset
+     * kicks 0xa0000000/0xc00001f0 then polls status until
+     * (st & 0xc0000000)==0x80000000 && (st & 0x30000000)==0x20000000,
+     * i.e. a read of 0xa0000000. Before the kick (write of 0x0 to the
+     * cmd/status reg) reads return 0, matching the rmw observed on the
+     * wire (read 0 -> write 0xf0000000 -> write 0x0). */
+    bool gfx_kicked, gfx2_kicked;
+    uint32_t gfx_cmd, gfx_cmd2, gfx2_cmd, gfx2_cmd2;
+    /* ADSP load-table port (vAudHalSetDspLoadTable): index[0x110] +
+     * data[0x108] with readback verify, mode[0x10c], port[0x100].
+     * Model: last-written-value readback on the seen registers. */
+    uint32_t adsp_port, adsp_idx, adsp_data, adsp_mode;
     uint16_t phy[32];
     int64_t tick_deadline;
 };
@@ -189,6 +201,14 @@ static uint64_t bx510_read(void *opaque, hwaddr off, unsigned size)
         ns = MAX((int64_t)0, s->tick_deadline - qemu_clock_get_ns(QEMU_CLOCK_VIRTUAL));
         return muldiv64(ns, BX_BUS_HZ, NANOSECONDS_PER_SECOND);
     case BX_BIM + 0x78: return s->control;
+    case 0x4000: /* GFX engine status/command */
+        return s->gfx_kicked ? 0xa0000000u : 0u;
+    case 0x4800: /* second engine slot (RLE/SE; RLE_HwReset) */
+        return s->gfx2_kicked ? 0xa0000000u : 0u;
+    case 0x5100: return s->adsp_port;
+    case 0x5108: return s->adsp_data;   /* readback verify */
+    case 0x510c: return s->adsp_mode;
+    case 0x5110: return s->adsp_idx;
     default:
         qemu_log_mask(LOG_UNIMP, "bx510: unimplemented read 0x%" HWADDR_PRIx " (%u)\n",
                       off + BX_IO_BASE, size);
@@ -243,6 +263,29 @@ static void bx510_write(void *opaque, hwaddr off, uint64_t val, unsigned size)
         break;
     case BX_BIM + 0x60: s->reload = val; bx510_schedule(s); break;
     case BX_BIM + 0x78: s->control = val; bx510_schedule(s); break;
+    case 0x4000: /* GFX engine: 0xa0000000/0xf0000000 = command words,
+                  * 0x0 = GO. (VERIFIED Run C22-25: GFX_HwReset kick.) */
+        s->gfx_cmd = val;
+        if (val == 0) {
+            s->gfx_kicked = true;
+        }
+        break;
+    case 0x4010: s->gfx_cmd2 = val; break;
+    case 0x4104:
+    case 0x4134: break;
+    case 0x4800:
+        s->gfx2_cmd = val;
+        if (val == 0) {
+            s->gfx2_kicked = true;
+        }
+        break;
+    case 0x4810: s->gfx2_cmd2 = val; break;
+    case 0x4804:
+    case 0x4834: break;
+    case 0x5100: s->adsp_port = val; break;
+    case 0x5108: s->adsp_data = val; break;
+    case 0x510c: s->adsp_mode = val; break;
+    case 0x5110: s->adsp_idx = val; break;
     default:
         qemu_log_mask(LOG_UNIMP, "bx510: unimplemented write 0x%" HWADDR_PRIx " = 0x%" PRIx64 " (%u)\n",
                       off + BX_IO_BASE, val, size);

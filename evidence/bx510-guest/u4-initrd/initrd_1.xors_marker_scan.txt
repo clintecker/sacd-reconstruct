@@ -1,0 +1,6 @@
+XoRS first_offset -1
+SRoX first_offset -1
+XorS first_offset -1
+RoXS first_offset -1
+XOR first_offset -1
+xor first_offset -1

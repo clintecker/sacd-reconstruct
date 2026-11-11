@@ -1,0 +1,57 @@
+file: evidence/bx510-guest/u4-initrd/pulled/key_blocks/key_block_1.bin
+size_bytes: 1048576
+
+overall_entropy_bits_per_byte: 0.000000
+overall_chi2_uniform_256: 267386880.00 (df=255)
+
+block_entropy_bits_per_byte: block_size=4096
+  blocks: 256
+  min: 0.000000
+  max: 0.000000
+  mean: 0.000000
+  stdev: 0.000000
+
+duplicate_blocks:
+  bs=8     blocks=131072   unique=1        dupes=131071   top_dupe_count=131072
+  bs=16    blocks=65536    unique=1        dupes=65535    top_dupe_count=65536
+  bs=32    blocks=32768    unique=1        dupes=32767    top_dupe_count=32768
+  bs=64    blocks=16384    unique=1        dupes=16383    top_dupe_count=16384
+  bs=256   blocks=4096     unique=1        dupes=4095     top_dupe_count=4096
+  bs=4096  blocks=256      unique=1        dupes=255      top_dupe_count=256
+
+period_match_ratio: (expected ~0.00390625 for random)
+  period=1  ratio=1.000000
+  period=2  ratio=1.000000
+  period=3  ratio=1.000000
+  period=4  ratio=1.000000
+  period=8  ratio=1.000000
+  period=16 ratio=1.000000
+  period=32 ratio=1.000000
+
+tail_u32:
+  tail_le: 0xffffffff
+  tail_be: 0xffffffff
+
+checksum_hypotheses_over_data_excluding_last4:
+  xor32_le(body): 0xffffffff match_tail_le=True match_tail_be=True
+  crc32(body):    0x722d458a match_tail_le=False match_tail_be=False
+
+xor_known_plaintext_offset0_guesses:
+  NOTE: Only reports repeating-key lengths k where k < len(magic) (to avoid the trivial k==len(magic) always-fit case).
+  magic=cpio_newc_070701 len=6
+    (no consistent repeating-key length found)
+  magic=cpio_newc_070702 len=6
+    (no consistent repeating-key length found)
+  magic=gzip len=3
+    (no consistent repeating-key length found)
+  magic=xz len=6
+    (no consistent repeating-key length found)
+  magic=lz4_frame len=4
+    (no consistent repeating-key length found)
+  magic=zstd_frame len=4
+    (no consistent repeating-key length found)
+  magic=lzop len=9
+    (no consistent repeating-key length found)
+
+fixed_offset_fs_tells:
+  ext_superblock_magic_at_0x438: 0xffff (expected 0xef53)

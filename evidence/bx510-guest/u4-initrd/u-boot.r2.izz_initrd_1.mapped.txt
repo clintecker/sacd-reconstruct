@@ -1,0 +1,2 @@
+[35mWARN:[0m using oba to load the syminfo from different mapaddress
+1346 0x00041476 0x00041476 8   9            ascii   initrd_1

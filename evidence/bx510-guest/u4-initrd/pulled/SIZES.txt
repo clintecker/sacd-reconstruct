@@ -1,0 +1,8 @@
+   62684 evidence/bx510-guest/u4-initrd/pulled/arm2-fastboot.bin
+  532976 evidence/bx510-guest/u4-initrd/pulled/initrd_1.bin
+ 2285632 evidence/bx510-guest/u4-initrd/pulled/kernel.uImage
+    7536 evidence/bx510-guest/u4-initrd/pulled/manifest.json
+  131072 evidence/bx510-guest/u4-initrd/pulled/rootfs_enc_it_1.bin
+     714 evidence/bx510-guest/u4-initrd/pulled/SHA256SUMS.txt
+  291196 evidence/bx510-guest/u4-initrd/pulled/u-boot.bin
+ 3311810 total

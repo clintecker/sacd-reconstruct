@@ -1,0 +1,1 @@
+xz: evidence/bx510-guest/u4-initrd/pulled/initrd_1.bin: File format not recognized

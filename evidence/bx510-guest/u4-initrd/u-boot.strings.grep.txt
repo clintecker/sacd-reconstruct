@@ -1,0 +1,17 @@
+189:231679 checksum bad
+539:242199 checksum calculation
+933:251838 ramdisk
+1015:253287 [UPG]find xor signal, signal offset = 0x%X
+1016:253331 [appendXOR] last u4XorChecksum = 0x%08x !! 
+1017:253376 [UPG] xor checksume unmatch, xor checksume cal by upg = 0x%X, xor checksume from be = 0x%X
+1131:258700 [ODD]======= Calculate FE firmware checksum =======
+1329:267382 initrd_1
+1330:267391 initrd_2
+1333:267429 root=/dev/ram0 rw initrd=0x%08x,%dM 
+1334:267466 root=/dev/ram0 rw initrd=0x%08x,0x%08x 
+1354:267748 initrd addr
+1356:267771 initrd size
+1391:268685 [MT85XX Boot] Bad Header hdr. checksum error.
+1603:275955 UBI error: %s: %s reference count %d, destroy anyway
+1696:280442 UBI error: %s: two LEBs with same sequence number %llu
+1734:289104 bootargs=noinitrd root=/dev/mtdblock7 ro 

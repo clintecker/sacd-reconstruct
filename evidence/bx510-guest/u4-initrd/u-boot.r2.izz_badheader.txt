@@ -1,0 +1,1 @@
+[35mWARN:[0m using oba to load the syminfo from different mapaddress

@@ -1,0 +1,40 @@
+
+evidence/bx510-guest/u4-initrd/pulled/u-boot.bin:     file format binary
+
+
+Disassembly of section .data:
+
+00000000 <.data>:
+       0:	160000ea 	strne	r0, [r0], -sl, ror #1
+       4:	14f09fe5 	ldrbtne	r9, [r0], #4069	@ 0xfe5
+       8:	14f09fe5 	ldrbtne	r9, [r0], #4069	@ 0xfe5
+       c:	14f09fe5 	ldrbtne	r9, [r0], #4069	@ 0xfe5
+      10:	14f09fe5 	ldrbtne	r9, [r0], #4069	@ 0xfe5
+      14:	14f09fe5 	ldrbtne	r9, [r0], #4069	@ 0xfe5
+      18:	14f09fe5 	ldrbtne	r9, [r0], #4069	@ 0xfe5
+      1c:	14f09fe5 	ldrbtne	r9, [r0], #4069	@ 0xfe5
+      20:	0001f004 	andeq	pc, r1, r4
+      24:	6001f004 	andvs	pc, r1, r4
+      28:	c001f004 	andgt	pc, r1, r4
+      2c:	2002f004 	andcs	pc, r2, r4
+      30:	4003f004 	andmi	pc, r3, r4
+      34:	a003f004 	andge	pc, r3, r4
+      38:	e003f004 	and	pc, r3, r4
+      3c:	78563412 	ldmdavc	r6, {r1, r4, sl, ip, sp}^
+      40:	e4ad109b 	strt	r1, [sp], #155	@ 0x9b
+      44:	0000f004 	andeq	pc, r0, r4
+      48:	0000f004 	andeq	pc, r0, r4
+      4c:	7c71f404 	ldclvc	4, cr15, [r1], #-16
+      50:	2c35f904 			@ <UNDEFINED> instruction: 0x2c35f904
+      54:	b901da4e 	stmdblt	r1, {r1, r2, r3, r6, r9, fp, ip, lr, pc}
+      58:	dec0ad0b 	cdple	13, 12, cr10, cr0, cr11, {0}
+      5c:	dec0ad0b 	cdple	13, 12, cr10, cr0, cr11, {0}
+      60:	00000fe1 	andeq	r0, r0, r1, ror #31
+      64:	1f00c0e3 	svcne	0x0000c0e3
+      68:	d30080e3 	movwle	r8, #227	@ 0xe3
+      6c:	00f029e1 	rscseq	r2, r0, r1, ror #19
+      70:	78004fe2 	stmdavc	r0, {r1, r5, r6, r7, r8, r9, sl, fp, lr}
+      74:	040080e2 	streq	r8, [r0], #-226	@ 0xffffff1e
+      78:	4020a0e3 	eormi	sl, r0, r3, ror #1
+      7c:	022080e0 	eoreq	r8, r0, #224	@ 0xe0
+      80:	0010a0e3 	andseq	sl, r0, r3, ror #1

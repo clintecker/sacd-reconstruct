@@ -1,0 +1,120 @@
+load_ramdisk=
+noinitrd
+retain_initrd
+keepinitrd
+initrd
+hci_encrypt_req
+hci_encrypt_change_evt
+hci_cc_write_encrypt_mode
+hci_cs_set_conn_encrypt
+l2cap_check_encryption
+l2cap_encrypt_timeout
+gss_krb5_aes_make_key
+tzap!
+tzli
+tzlib
+tzlib+
+ttzli
+<2>initrd overwritten (0x%08lx < 0x%08lx) - disabling it.
+/initrd.image
+<6>Unpacking initramfs...
+<4>unwind: 'Refuse to unwind' instruction %04lx
+<3>INITRD: 0x%08lx+0x%08lx extends beyond physical memory - disabling initrd
+<3>INITRD: 0x%08lx+0x%08lx overlaps in-use memory region - disabling initrd
+initrd
+trusted.
+/home/aokino/MSB8G/msb8g_BX_R_0257/mtk/BDP_Linux_8560/linux-2.6.35/crypto/api.c
+cryptomgr
+crypto
+/home/aokino/MSB8G/msb8g_BX_R_0257/mtk/BDP_Linux_8560/linux-2.6.35/crypto/algapi.c
+/home/aokino/MSB8G/msb8g_BX_R_0257/mtk/BDP_Linux_8560/linux-2.6.35/crypto/scatterwalk.c
+/home/aokino/MSB8G/msb8g_BX_R_0257/mtk/BDP_Linux_8560/linux-2.6.35/crypto/aead.c
+/home/aokino/MSB8G/msb8g_BX_R_0257/mtk/BDP_Linux_8560/linux-2.6.35/crypto/ablkcipher.c
+/home/aokino/MSB8G/msb8g_BX_R_0257/mtk/BDP_Linux_8560/linux-2.6.35/crypto/blkcipher.c
+/home/aokino/MSB8G/msb8g_BX_R_0257/mtk/BDP_Linux_8560/linux-2.6.35/crypto/chainiv.c
+cryptomgr_probe
+cryptomgr_test
+/home/aokino/MSB8G/msb8g_BX_R_0257/mtk/BDP_Linux_8560/linux-2.6.35/crypto/algboss.c
+encryption
+decryption
+/home/aokino/MSB8G/msb8g_BX_R_0257/mtk/BDP_Linux_8560/linux-2.6.35/crypto/testmgr.c
+__driver-cbc-aes-aesni
+__driver-ecb-aes-aesni
+ccm(aes)
+cryptd(__driver-ecb-aes-aesni)
+cryptd(__ghash-pclmulqdqni)
+ctr(aes)
+cts(cbc(aes))
+ecb(__aes-aesni)
+ecb(aes)
+gcm(aes)
+lrw(aes)
+pcbc(fcrypt)
+rfc3686(ctr(aes))
+rfc4309(ccm(aes))
+vmac(aes)
+xcbc(aes)
+xts(aes)
+Tiger - A Fast New Hash Function, by Ross Anderson and Eli Biham, proceedings of Fast Software Encryption 3, Cambridge, 1996.
+decrypt size is too large
+<3>UBI error: %s: refuse attaching mtd%d - it is already emulated on top of UBI
+crypt
+rfc4106(gcm(aes))
+rfc4543(gcm(aes))
+<7><Bluetooth> debug func:%s line:%d  encrypt %d sk_type %x 
+<4>gss_kerberos_mech: unable to initialize crypto algorithm %s
+<4>gss_kerberos_mech: error setting key for crypto algorithm %s
+<4>gss_kerberos_mech: unsupported encryption key algorithm %d
+aes128-cts
+aes256-cts
+%s: error %u getting decrypted_hdr
+/home/aokino/MSB8G/msb8g_BX_R_0257/mtk/BDP_Linux_8560/linux-2.6.35/net/sunrpc/auth_gss/gss_krb5_crypto.c
+RPC:       gss_k5encrypt: tfm iv size too large %d
+RPC:       krb5_encrypt returns %d
+RPC:       gss_k5decrypt: tfm iv size too large %d
+RPC:       gss_k5decrypt returns %d
+<7>lib80211_crypt: unregistered algorithm '%s'
+<7>lib80211_crypt: registered algorithm '%s'
+<7>%s: entries remaining in delayed crypt deletion list
+ face | tus | link level noise |  nwid  crypt   frag  retry   misc | beacon | %d
+tx refused but queue active
+sys_tz
+crypto_has_alg
+crypto_destroy_tfm
+crypto_alloc_tfm
+crypto_find_alg
+crypto_create_tfm
+crypto_alloc_base
+__crypto_alloc_tfm
+crypto_shoot_alg
+crypto_alg_mod_lookup
+crypto_probing_notify
+crypto_larval_lookup
+crypto_alg_lookup
+crypto_larval_kill
+crypto_larval_alloc
+crypto_mod_put
+crypto_mod_get
+crypto_chain
+crypto_alg_sem
+crypto_alg_list
+kcrypto_wq
+crypto_xor
+crypto_inc
+crypto_tfm_in_queue
+crypto_dequeue_request
+__crypto_dequeue_request
+crypto_enqueue_request
+crypto_init_queue
+crypto_alloc_instance
+crypto_alloc_instance2
+crypto_attr_u32
+crypto_attr_alg2
+crypto_attr_alg_name
+crypto_check_attr_type
+crypto_get_attr_type
+crypto_unregister_notifier
+crypto_register_notifier
+crypto_spawn_tfm2
+crypto_spawn_tfm
+crypto_drop_spawn

@@ -1,0 +1,27 @@
+[35mWARN:[0m using oba to load the syminfo from different mapaddress
+[33mINFO:[0m Analyze all flags starting with sym. and entry0 (aa)
+[33mINFO:[0m Analyze imports (af@@@i)
+[33mINFO:[0m Analyze symbols (af@@@s)
+[33mINFO:[0m Analyze all functions arguments/locals (afva@@F)
+[33mINFO:[0m Analyze function calls (aac)
+[35mWARN:[0m Cannot find basic block case for jmptbl switch from 0x04f25158 bbdelta = 8. Try -e anal.jmptbl.split=true and let us know
+[33mINFO:[0m find and analyze function preludes (aap)
+[33mINFO:[0m Analyze len bytes of instructions for references (aar)
+[33mINFO:[0m Finding and parsing C++ vtables (avrr)
+[33mINFO:[0m Analyzing methods (af @@ method.*)
+[33mINFO:[0m Emulate functions to find computed references (aaef)
+[33mINFO:[0m Recovering local variables (afva@@@F)
+[33mINFO:[0m Type matching analysis for all functions (aaft)
+[33mINFO:[0m Propagate noreturn information (aanr)
+[33mINFO:[0m Use -AA or aaaa to perform additional experimental analysis
+[33mINFO:[0m Finding xrefs in noncode sections (e anal.in=io.maps.x; aav)
+[33mINFO:[0m aav: 0x04f00000-0x04f4717c in 0x4f00000-0x4f4717c
+fcn.04f1f7b4 0x4f1f830 [DATA:r--] ldr[38;2;204;204;204m r2[0m,[38;2;193;156;0m[38;2;193;156;0m aav.[38;2;193;156;0m0x04f414a5[0m
+fcn.04f1f7b4 0x4f1f83c [DATA:r--] ldr[38;2;204;204;204m r2[0m,[38;2;204;204;204m [0m[[38;2;204;204;204mr3[0m,[38;2;193;156;0m[38;2;193;156;0m [38;2;19;161;14m0x1c[0m][38;2;204;204;204m[0m
+fcn.04f1f7b4 0x4f1f848 [DATA:r--] ldr[38;2;204;204;204m r1[0m,[38;2;204;204;204m [0m[[38;2;204;204;204mr3[0m,[38;2;193;156;0m[38;2;193;156;0m [38;2;19;161;14m0x18[0m][38;2;204;204;204m[0m
+fcn.04f1f7b4 0x4f1f860 [DATA:r--] ldrb[38;2;204;204;204m r2[0m,[38;2;193;156;0m[38;2;193;156;0m [0m[[38;2;193;156;0mvar_57h[0m][38;2;204;204;204m[0m
+fcn.04f1f7b4 0x4f1f878 [DATA:r--] ldrb[38;2;204;204;204m r1[0m,[38;2;204;204;204m [0m[[38;2;204;204;204mr1[0m,[38;2;204;204;204m r3[0m][38;2;204;204;204m[0m
+fcn.04f1f7b4 0x4f1f894 [DATA:r--] ldreq[38;2;204;204;204m r3[0m,[38;2;193;156;0m[38;2;193;156;0m aav.[38;2;193;156;0m0x04f414a5[0m
+fcn.04f1f7b4 0x4f1f898 [DATA:r--] ldreq[38;2;204;204;204m r1[0m,[38;2;204;204;204m [0m[[38;2;204;204;204mr3[0m,[38;2;193;156;0m[38;2;193;156;0m [38;2;19;161;14m0x1c[0m][38;2;204;204;204m[0m
+(nofunc) 0x4f1fa08 [NULL:r--] ldrbteq[38;2;204;204;204m r1[0m,[38;2;204;204;204m [0m[[38;2;204;204;204mr4[0m][38;2;193;156;0m[0m,[38;2;193;156;0m[38;2;193;156;0m aav.[38;2;193;156;0m0x04f414a5[0m
+fcn.04f1f7b4 0x4f1f8bc [DATA:r--] ldr[38;2;204;204;204m r2[0m,[38;2;193;156;0m[38;2;193;156;0m str.root_dev_ram0_rw_initrd[38;2;19;161;14m0x_08x_[38;2;19;161;14m0x_08x_[0m

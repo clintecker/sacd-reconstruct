@@ -1,0 +1,8 @@
+evidence/bx510-guest/u4-initrd/pulled/arm2-fastboot.bin:   data
+evidence/bx510-guest/u4-initrd/pulled/initrd_1.bin:        data
+evidence/bx510-guest/u4-initrd/pulled/kernel.uImage:       u-boot legacy uImage, , Linux/ARM, OS Kernel Image (Not compressed), 2285568 bytes, Thu Sep 20 00:03:37 2018, Load Address: 0XDA00000, Entry Point: 0XDA00000, Header CRC: 0X6486887, Data CRC: 0X9A49C90F
+evidence/bx510-guest/u4-initrd/pulled/manifest.json:       JSON data
+evidence/bx510-guest/u4-initrd/pulled/rootfs_enc_it_1.bin: data
+evidence/bx510-guest/u4-initrd/pulled/SHA256SUMS.txt:      ASCII text
+evidence/bx510-guest/u4-initrd/pulled/SIZES.txt:           ASCII text
+evidence/bx510-guest/u4-initrd/pulled/u-boot.bin:          data

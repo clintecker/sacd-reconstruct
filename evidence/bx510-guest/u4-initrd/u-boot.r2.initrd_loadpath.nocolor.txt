@@ -1,0 +1,94 @@
+fcn.04f1f748 0x4f1f760 [DATA:r--] ldr r0, str.initrd_1
+fcn.04f1f748 0x4f1f76c [DATA:r--] mov r6, r0
+│       ┌─< 0x04f1f7f8      0f00000a       beq 0x4f1f83c
+│       │   0x04f1f7fc      00029fe5       ldr r0, [0x04f1fa04]        ; [0x4f1fa04:4]=0x4f4719c
+│       │   0x04f1f800      d0ffffeb       bl fcn.04f1f748
+│       │   0x04f1f804      004050e2       subs r4, r0, 0
+│      ┌──< 0x04f1f808      7600000a       beq 0x4f1f9e8
+│      ││   0x04f1f80c      1c2094e5       ldr r2, [r4, 0x1c]
+│      ││   0x04f1f810      181094e5       ldr r1, [r4, 0x18]
+│      ││   0x04f1f814      060062e0       rsb r0, r2, r6
+│      ││   0x04f1f818      1c0a00eb       bl fcn.04f22090
+│      ││   0x04f1f81c      1c3094e5       ldr r3, [r4, 0x1c]
+│      ││   0x04f1f820      08008de2       add r0, sp, 8
+│      ││   0x04f1f824      232aa0e1       lsr r2, r3, 0x14
+│      ││   0x04f1f828      00208de5       str r2, [sp]
+│      ││   0x04f1f82c      4010a0e3       mov r1, 0x40                ; '@'
+│      ││   0x04f1f830      d0219fe5       ldr r2, aav.0x04f414a5      ; [0x4f414a5:4]=0x746f6f72 ; "root=/dev/ram0 rw initrd=0x%08x,%dM "
+│      ││   0x04f1f834      063063e0       rsb r3, r3, r6
+│     ┌───< 0x04f1f838      200000ea       b 0x4f1f8c0
+│     │││   ; CODE XREF from fcn.04f1f7b4 @ 0x4f1f7f8(x)
+│     ││└─> 0x04f1f83c      1c2093e5       ldr r2, [r3, 0x1c]          ; 0x4f414a5 ; "root=/dev/ram0 rw initrd=0x%08x,%dM "
+│     ││    0x04f1f840      0f0012e3       tst r2, 0xf
+│     ││┌─< 0x04f1f844      1600001a       bne 0x4f1f8a4
+│     │││   0x04f1f848      181093e5       ldr r1, [r3, 0x18]          ; 0x4f414a5 ; "root=/dev/ram0 rw initrd=0x%08x,%dM "
+│     │││   0x04f1f84c      48008de2       add r0, sp, 0x48
+│     │││   0x04f1f850      011082e0       add r1, r2, r1
+│     │││   0x04f1f854      101041e2       sub r1, r1, 0x10
+│     │││   0x04f1f858      1020a0e3       mov r2, 0x10
+│     │││   0x04f1f85c      eb84ffeb       bl fcn.04f00c10
+│     │││   0x04f1f860      5720dde5       ldrb r2, [var_57h]          ; 0x4f414a5 ; "root=/dev/ram0 rw initrd=0x%08x,%dM "
+│     │││   0x04f1f864      000052e3       cmp r2, 0
+│     │││   0x04f1f868      10306212       rsbne r3, r2, 0x10
+│    ┌────< 0x04f1f86c      0500001a       bne 0x4f1f888
+│   ┌─────< 0x04f1f870      0b0000ea       b 0x4f1f8a4
+│   │││││   ; CODE XREF from fcn.04f1f7b4 @ 0x4f1f88c(x)
+│  ┌──────> 0x04f1f874      48108de2       add r1, sp, 0x48
+│  ╎│││││   0x04f1f878      0310d1e7       ldrb r1, [r1, r3]           ; 0x4f414a5 ; "root=/dev/ram0 rw initrd=0x%08x,%dM "
+│  ╎│││││   0x04f1f87c      020051e1       cmp r1, r2
+│ ┌───────< 0x04f1f880      0700001a       bne 0x4f1f8a4
+│ │╎│││││   0x04f1f884      013083e2       add r3, r3, 1
+│ │╎│││││   ; CODE XREF from fcn.04f1f7b4 @ 0x4f1f86c(x)
+│ │╎│└────> 0x04f1f888      0f0053e3       cmp r3, 0xf
+│ │└──────< 0x04f1f88c      f8ffffda       ble 0x4f1f874
+│ │ │ │││   0x04f1f890      100053e3       cmp r3, 0x10
+│ │ │ │││   0x04f1f894      60319f05       ldreq r3, [0x04f1f9fc]      ; [0x4f414a5:4]=0x746f6f72 ; "root=/dev/ram0 rw initrd=0x%08x,%dM "
+│ │ │ │││   0x04f1f898      1c109305       ldreq r1, [r3, 0x1c]        ; 0x4f414a5 ; "root=/dev/ram0 rw initrd=0x%08x,%dM "
+│ │ │ │││   0x04f1f89c      01206200       rsbeq r2, r2, r1
+│ │ │ │││   0x04f1f8a0      1c208305       streq r2, [r3, 0x1c]
+│ │ │ │││   ; CODE XREFS from fcn.04f1f7b4 @ 0x4f1f844(x), 0x4f1f870(x), 0x4f1f880(x)
+│ └─└───└─> 0x04f1f8a4      50319fe5       ldr r3, [0x04f1f9fc]        ; [0x4f1f9fc:4]=0x4f61830
+│     ││    0x04f1f8a8      08008de2       add r0, sp, 8
+│     ││    0x04f1f8ac      1c2093e5       ldr r2, [r3, 0x1c]
+│     ││    0x04f1f8b0      4010a0e3       mov r1, 0x40                ; '@'
+│     ││    0x04f1f8b4      00208de5       str r2, [sp]
+│     ││    0x04f1f8b8      183093e5       ldr r3, [r3, 0x18]
+│     ││    0x04f1f8bc      48219fe5       ldr r2, str.root_dev_ram0_rw_initrd0x_08x_0x_08x_ ; [0x4f414ca:4]=0x746f6f72 ; "root_dev_ram0_rw_initrd0x_08x_0x_08x_"
+│     ││    ; CODE XREF from fcn.04f1f7b4 @ 0x4f1f838(x)
+│     └───> 0x04f1f8c0      08408de2       add r4, sp, 8
+│      │    0x04f1f8c4      fb1100eb       bl fcn.04f240b8
+│      │    0x04f1f8c8      0400a0e1       mov r0, r4
+│      │    0x04f1f8cc      f80d00eb       bl fcn.04f230b4
+│      │    0x04f1f8d0      24519fe5       ldr r5, [0x04f1f9fc]        ; [0x4f1f9fc:4]=0x4f61830
+│      │    0x04f1f8d4      0020a0e1       mov r2, r0
+│      │    0x04f1f8d8      0410a0e1       mov r1, r4
+│      │    0x04f1f8dc      2c0085e2       add r0, r5, 0x2c
+│      │    0x04f1f8e0      9e0d00eb       bl fcn.04f22f60
+│      │    0x04f1f8e4      24019fe5       ldr r0, str.consolettyMT0_kgdbocttyMT0_ ; [0x4f414f2:4]=0x736e6f63 ; "consolettyMT0_kgdbocttyMT0_"
+            ; XREFS: CALL 0x04f1f244  CALL 0x04f1f818  CALL 0x04f20f08  
+            ; XREFS: CALL 0x04f213b4  CALL 0x04f21be8  CALL 0x04f21e30  
+            ; XREFS: CALL 0x04f22340  
+┌ 80: fcn.04f22090 (int32_t arg1, int32_t arg2);
+│ `- args(r0, r1) vars(4:sp[0x8..0x18])
+│           0x04f22090      1f402de9       push {r0, r1, r2, r3, r4, lr}
+│           0x04f22094      44309fe5       ldr r3, aav.0x04f44c88      ; [0x4f44c88:4]=-1
+│           0x04f22098      00c093e5       ldr ip, [r3]                ; 0x4f44c88
+│                                                                      ; aav.0x04f44c88
+│           0x04f2209c      10308de2       add r3, sp, 0x10
+│           0x04f220a0      042023e5       str r2, [r3, -4]!
+│           0x04f220a4      00308de5       str r3, [sp]
+│           0x04f220a8      34309fe5       ldr r3, [0x04f220e4]        ; [0x4f220e4:4]=0x4f498f8
+│           0x04f220ac      04008de5       str r0, [var_4h]            ; arg1
+│           0x04f220b0      b000a0e3       mov r0, 0xb0
+│           0x04f220b4      903c20e0       mla r0, r0, ip, r3
+│           0x04f220b8      0120a0e1       mov r2, r1                  ; arg2
+│           0x04f220bc      0030a0e3       mov r3, 0
+│           0x04f220c0      552100eb       bl fcn.04f2a61c
+│           0x04f220c4      004050e2       subs r4, r0, 0
+│       ┌─< 0x04f220c8      0100000a       beq 0x4f220d4
+│       │   0x04f220cc      14009fe5       ldr r0, str._mtk_nand_read__nand_read_skip_bad_ERROR. ; [0x4f42452:4]=0x6b746d5b ; "_mtk_nand_read__nand_read_skip_bad_ERROR."
+│       │   0x04f220d0      0dceffeb       bl fcn.04f1590c
+│       │   ; CODE XREF from fcn.04f22090 @ 0x4f220c8(x)
+│       └─> 0x04f220d4      0400a0e1       mov r0, r4
+│           0x04f220d8      10d08de2       add sp, sp, 0x10
+└           0x04f220dc      1080bde8       pop {r4, pc}

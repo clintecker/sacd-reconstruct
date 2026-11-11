@@ -1,0 +1,197 @@
+12:109580 SGPUUPGS
+17:137916 SGPUUPGSgrab8@-
+19:138644 UPGS
+131:230960 [UPG]Enable D_USB_CLI_FLAG?<Y/N>
+132:230994 [UPG]Reboot Platform?<Y/N>
+133:231022 [UPG]TimeOut. End.
+426:238992 Not Force UPG mode! 
+772:248366 [UPG]Flag D_DIAG_MODE Successful
+773:248400 [UPG]Flag D_USB_CLI_FLAG Successful
+774:248437 [UPG]Platform Rebooting...
+776:248484 [UPG]Upgrade image successfully
+777:248517 [UPG]Enable D_DIAG_MODE?<Y/N>
+778:248548 [UPG]D_DIAG_MODE Flag...Cancel
+779:248580 [UPG]D_USB_CLI_FLAG...Cancel
+780:248610 [UPG]Upgrade End.
+786:248688 [UPG]List partition info table
+787:248720 [UPG]List partition info table successfully
+788:248765 [UPG]List partition info table failed
+789:248804 [UPG]Reload Backend image successfully
+790:248844 [UPG]Reload Backend image failed
+791:248878 [UPG]Upgrade partially backend image successfully
+792:248929 [UPG]Upgrade partially backend image failed
+793:248974 [UPG]Upgrade BE image successfully
+794:249010 [UPG]Upgrade FE image successfully
+795:249046 [UPG]Flash Upgrade Finish 
+796:249074 [UPG]Flash Upgrade Failed 
+797:249102 [UPG]Upgrade partially backend image partid=%d
+798:249150 [UPG]Reload Backend image
+1000:252541 [UPG_ERROR]upg_main.c creat szMtdPartsCmd failed
+1001:252591 [UPG_DEBUG]eraseDataFromNand , partition id = %d, u4PartSize = %d, u4OffsetFromFlash = %d 
+1002:252683 [UPG_ERROR]eraseDataFromNand failed, partition id = %d, u4PartSize = %d, u4OffsetFromFlash = %d 
+1003:252781 [UPG]ubi part ubi run_command:%s 
+1004:252817 [UPG]ubi part ubi run_command:%s fail
+1007:252885 [UPG_DEBUG]upg_main.c create volume %s 
+1008:252926 [UPG_ERROR]upg_main.c create volume name failed
+1009:252975 [UPG_DEBUG]run_command:create volume cmd = %s, ret:%d
+1010:253030 [UPG_ERROR]run_command:ubi create volume failed,command = %s,
+1012:253100 [UPG_ERROR]upg_main.c vSetUBIMountEnv set mtdparts failed, mtdparts = %s 
+1013:253175 [UPG_ERROR]upg_main.c vSetUBIMountEnv set mtdids failed
+1014:253232 [UPG_DEBUG]upg_main.c vSetUBIMountEnv set mtdparts OK
+1015:253287 [UPG]find xor signal, signal offset = 0x%X
+1016:253331 [appendXOR] last u4XorChecksum = 0x%08x !! 
+1017:253376 [UPG] xor checksume unmatch, xor checksume cal by upg = 0x%X, xor checksume from be = 0x%X
+1018:253468 [UPG]get region value head addr:0x%X
+1020:253518 [UPG]Cannot find region name in region area
+1021:253563 [UPG] find region value in region area,add = 0x%08x,region value len = %d
+1022:253638 [UPG]Cannot find region value in region area! 
+1023:253689 [UPG]region value in be unmatch with u-boot value! 
+1024:253742 [UPG]Cannot find region area in be image! 
+1025:253786 [UPG]get pit head addr:0x%X
+1026:253815 [UPG]get pit tail addr:0x%X
+1027:253844 [UPG]findPITFromFinalBinaryImage u4PITHeadSigAddr=0x%X u4PITTailSigAddr=0x%X
+1028:253922 [UPG_ERROR]findPITFromFinalBinaryImage not found PIT head and tail sig
+1029:253994 [UPG]upg_main.c current nand size = %d, PITI u4Nansize = %d 
+1030:254056 [UPG]upg_main.c findPITFromFinalBinaryImage got 1024 PIT 
+1031:254115 [UPG]findPITFromFinalBinaryImage PIT data dump:
+1043:254417 [UPG_ERROR]findPITFromFinalBinaryImage error, Cannot find PIT table from BE which match with nand size =0x%X
+1044:254527 [UPG]start to find microbe version from binary
+1045:254575 [UPG]find microbe version from binary
+1046:254614 [UPG]u4MicrobeVer:%04d
+1047:254638 [UPG]u1pImgStartMbVerAddr:%02x
+1048:254670 [UPG]end to find microbe version from binary
+1052:254781 [UPG]Fail to find microbe version from binary
+1054:254846 [UPG]get bit head addr:0x%X
+1055:254875 [UPG]get bit tail addr:0x%X
+1056:254904 [UPG]findBITFromFinalBinaryImage u4BITHeadSigAddr=0x%X u4BITTailSigAddr=0x%X
+1057:254982 [UPG_ERROR]findBITFromFinalBinaryImage not found BIT head and tail sig
+1058:255054 [UPG]findBITFromFinalBinaryImage[i=%2d,partid=%2d,u4OffsetFromFinalImg=0x%8X,u4BinSize=0x%8X,u4OffsetFromPart=0x%8X
+1060:255227 [UPG]findBITFromFinalBinaryImage BIT data dump:
+1074:255772 [UPG_ERROR]start usb fail!! 
+1075:255802 [UPG_ERROR]find matched file maloc memory failed.
+1077:255869 [UPG_ERROR]cannot find matched file %s in path s% 
+1079:255937 [UPG_ERROR]loadImage invalid image type:%d
+1080:255981 [UPG_ERROR]loadImage maloc memory failed.
+1081:256024 [UPG_ERROR]loadImage full path is NULL
+1082:256064 [UPG]loadImage full path:%s
+1083:256093 [UPG]loadImage after usbGetImage u4pImgStartAddr:0x%x, u4pImgSize=0x%x
+1084:256165 [UPG]loadImage after usbGetImage,image size > 100M,  u4pImgSize=0x%x
+1085:256235 [UPG_DEBUG] loadImage from USB upgall path failed
+1086:256286 [UPG]loadFWImage full path:%s
+1087:256317 [UPG]loadImage after from USB upgfw path usbGetImage u4pImgStartAddr:0x%x, u4pImgSize=0x%x
+1088:256409 [UPG_ERROR] loadBEImage from USB failed
+1089:256450 [UPG_ERROR] loadImage from TFTP 
+1093:256525 [UPG]tftploadfilecmd run_command:%s  ret:%d
+1094:256570 [UPG_ERROR]call cmd: %s failed
+1095:256602 [UPG_ERROR]loadFile tftpfilesize==NULL
+1096:256642 [UPG_ERROR]loadFile tftpfilesize==0
+1097:256679 [UPG]loadFile filesize=0x%X
+1098:256708 [UPG]write data to nand partid=%d, u4OffsetFromPart=0x%x, u4PartOffsetFromFlash=0x%x
+1100:256856 [UPG] upgFinalImgToNand eighth bytes is:0x%8x 0x%8x
+1101:256909 [UPG_ERROR]upgFinalImgToNand 1 write data to nand failed
+1102:256967 [UPG]upgFinalImgToNand u4AllBinsSize=0x%X
+1103:257010 [UPG_ERROR]upgFinalImgToNand malloc(size=0x%X) failed
+1106:257185 [UPG]upgFinalImgToNand,backup adv_boot_cfg_data,u4AlignedAllBinSize < 0x90000 ! 
+1107:257267 [UPG_ERROR] back up adv_boot_cfg_data  failed
+1108:257314 [UPG_DEBUG] back up adv_boot_cfg_data  success! buf-addr = 0x%08x
+1109:257381 [UPG]write data to nand more bins partid=%d, u4OffsetFromPart=0x%x, u4PartOffsetFromFlash=0x%x
+1111:257539 [UPG]upgFinalImgToNand more bins eighth bytes is:0x%8x 0x%8x
+1112:257601 [UPG_ERROR]upgFinalImgToNand 2 write data to nand failed
+1113:257659 [UPG]findPITFromFinalBinaryImage[i=%2d,name=%16s,partid=%2d,partinfo=%2d,offset=0x%8X,size=0x%8X
+1114:257757 [UPG_ERROR]findPITFromFinalBinaryImage error, unknown pit version = 0x%08x 
+1115:257834 [UPG]reloadBE loadImage u4ImgStartAddr=0x%x, u4ImgSize=0x%x
+1116:257895 [UPG_ERROR]reloadBE loadImage failed
+1117:257933 [UPG]listPITForBE loadImage u4ImgStartAddr=0x%x, u4ImgSize=0x%x
+1118:257998 [UPG_ERROR] listPITForBE loadImage failed
+1119:258041 [UPG_ERROR] listPITForBE findBITFromFinalBinaryImage failed
+1120:258102 [UPG_ERROR]listPITForBE findPITFromFinalBinaryImage failed
+1124:258317 [UPG]writePartBE loadImage u4ImgStartAddr=0x%x, u4ImgSize=0x%x
+1125:258381 [UPG_ERROR] writePartBE loadImage failed
+1126:258423 [UPG_ERROR] writePartBE findBITFromFinalBinaryImage failed
+1127:258483 [UPG_ERROR]writePartBE findPITFromFinalBinaryImage failed
+1128:258542 [UPG_ERROR]writePartBE invalid part id: %d
+1130:258642 [UPG_ERROR]writePartBE write binary to nand flash failed
+1132:258753 [UPG] FE firmware CheckSum OK !!
+1133:258787 [UPG] FE firmware CheckSum Failed : 0x%x !!
+1134:258832 [UPG] FE firmware without CheckSum..
+1135:258870 [UPG_ERROR] findPITFromNand malloc memory failed
+1136:258920 [UPG]findPITFromNand malloc memory addr:0x%X
+1137:258966 [UPG_ERROR] findPITFromNand read nand failed
+1138:259012 [UPG]findPITFromNand get pit head addr(old pit format):0x%X
+1139:259073 [UPG]findPITFromNand get pit head addr(new pit format):0x%X
+1140:259134 [UPG]findPITFromNand get pit tail addr:0x%X
+1141:259179 [UPG]findPITFromNand u4ADAPPITHEADSIGAddr=0x%X u4ADAPPITTAILSIGAddr=0x%X
+1142:259253 [UPG] findPITFromNand[i=%2d, name=%16s, partid=%2d, partinfo=%2d, offset=0x%8X, size=0x%8X
+1143:259345 [UPG_ERROR]findPITFromNand failed:not found PIT head and tail sig
+1144:259412 [UPG_ERROR]FE parts(fe, fe_bak, fe_test) info is invalid
+1145:259470 [UPG_ERROR] FE image size[0x%x] > FE Part size[0x%x]
+1146:259524 [UPG_ERROR] FE image size[0x%x] >  FE Bak Part size[0x%x]
+1147:259583 [UPG_ERROR] fgFEBakExist malloc memory failed
+1148:259630 [UPG]fgFEBakExist malloc memory addr:0x%X
+1149:259673 [UPG_ERROR] read FE bak image from nand failed
+1157:259998 [UPG]upgFEImage loadImage u4ImgStartAddr=0x%x, u4ImgSize=0x%x
+1158:260061 [UPG_ERROR] upgFEImage loadImage failed
+1159:260102 [UPG_ERROR] Loaded image is not a valid FE image
+1160:260152 [UPG_ERROR] Find PIT from nand failed, pls upgrade Backend image firtly
+1161:260225 [UPG_ERROR]UPG FE, maloc memory for search file failed.
+1163:260292 [UPG](loadImage->load fe_upg.id ) full path:%s
+1164:260340 [UPG_ERROR](fe_upg.id -> id) = %d .
+1165:260377 [UPG]upgFEImage update imgstartAddr and size, u4ImgStartAddr=0x%x, u4ImgSize=0x%x
+1166:260460 [UPG_ERROR] Upgrade FE image failed, set partition info env fail,ret:%d
+1168:260567 [UPG_ERROR] FE image size is not matched with partition size
+1169:260629 [UPG_ERROR]i_set_upg_status_by_upg failed
+1170:260672 [UPG] Write FE image to FE part (partid=%d, offset=0x%x, size=0x%x)
+1171:260741 [UPG_ERROR] Write FE image to nand failed
+1172:260784 [UPG] Write FE image to FE Bak part (partid=%d, offset=0x%x, size=0x%x)
+1173:260857 [UPG_ERROR] Write FE bak image to nand failed
+1174:260904 [UPG] FE bak image exist
+1175:260930 [UPG] Erase FE FA (partid=%d, offset=0x%x, size=0x%x)
+1176:260985 [UPG_ERROR] Erase FE FA failed
+1177:261017 [UPG]upgBEImage loadImage u4ImgStartAddr=0x%x, u4ImgSize=0x%x
+1178:261080 [UPG_ERROR] upgBEImage loadImage here
+1179:261119 [UPG_ERROR] upgBEImage loadImage failed
+1180:261160 [UPG_ERROR] Upgrade BE image CheckXorValueFromFinalBinaryImage failed
+1181:261231 [UPG]upgBEImage loaded image u4ImgSize=0x%X, u4pImgStartAddr=0x%X
+1182:261298 [UPG_ERROR] Upgrade BE image findPITFromFinalBinaryImage failed
+1184:261378 [UPG_ERROR]upg binary check fail, unsupported bin, pls check your upg binary file!
+1186:261478 [UPG_ERROR] back up nand flash -> read nand failed
+1187:261530 [UPG_ERROR]back up nand flash -> eraseDataFromNand failed, partition id = %d, u4PartSize = %d, u4OffsetFromFlash = %d 
+1188:261650 [UPG_DEBUG]back up nand flash, all back up size = %d > 19M!! 
+1189:261713 [UPG_ERROR] Update Adaptive pit failed
+1190:261753 [UPG_ERROR] Upgrade BE image findBITFromFinalBinaryImage failed
+1191:261818 [UPG_ERROR] Upgrade BE image failed, set UBI env fail,ret:%d
+1194:262028 [UPG_ERROR] Upgrade BE image,i4CreateVolume failed, ret:%d
+1195:262088 [UPG]write PIT data to nand partid=%d, u4OffsetFromPart=0x%x, u4PartOffsetFromFlash=0x%x                   u4PartSize=0x%x, memstartaddr=0x%x, size=0x%x
+1196:262242 [UPG] upgPITToNand eighth bytes is:0x%8x 0x%8x
+1197:262290 [UPG_ERROR]upgPITToNand 1 write data to nand failed
+1200:262436 [UPG_ERROR] Upgrade BE image write partid[%d] to nand failed
+1201:262498 [UPG_ERROR]write back up nand flash -> write nand failed
+1202:262556 [UPG_ERROR] Upgrade BE image findMBVersionFromFinalBinaryImage start
+1203:262626 [UPG_ERROR] Upgrade BE image findMBVersionFromFinalBinaryImage end
+1204:262694 [UPG_DEBUG]back up nand flash fail, failed pit name = %s!! 
+1205:262755 [UPG_DEBUG]write back up nand flash fail, failed pit name = %s!! 
+1206:262822 [UPG]upg_usb.c call cmd: usb start
+1208:262868 [UPG]startUSB run_command:%s  ret:%d
+1210:262929 [UPG_ERROR]upg_usb.c loadFile failed
+1211:262967 [UPG]loadFile run_command:%s ret:%d
+1212:263004 [UPG_ERROR]loadFile failed
+1213:263032 [UPG_ERROR]loadFile filesize==0
+1214:263065 [UPG_ERROR]find file from usb %d failed
+1215:263106 [UPG_ERROR]cannot find file %s from usb 
+1305:265948 [UPG_ERROR] erase nand failed
+1306:265979 UPG_ERROR read data from nand failed
+1307:266017 [UPG]upg_flash.c readDataFromNandByPar,u4PartInfo=%d, u4PartFormat=%d
+1309:266097 [UPG]upg_flash.c befor read, i4NFBPartitionWrite >> u4PartID=%d, u4OffsetFromPart=%d, u4MemStartAddr=0x%08x,u4MemSize=%d,mtdbuffer=%s 
+1310:266233 [UPG]upg_flash.c, i4NFBPartitionRead >> u4PartID=%d, u4OffsetFromPart=%d, u4MemStartAddr=0x%08x,u4MemSize=%d,mtdbuffer=%s 
+1313:266449 [UPG] upg_flash.c writeDataToNand  u4PartID=%d, u4MemStartAddr=0x%x, u4MemSize=ox%x
+1315:266569 [UPG] upg_flash.c writeDataToNand eighth bytes is:0x%8x 0x%8x
+1316:266632 [UPG]upg_flash.c u4PartInfo=%d, u4PartFormat=%d
+1317:266681 [UPG]upg_flash.c befor write, i4NFBPartitionWrite >> u4PartID=%d, u4OffsetFromPart=%d, u4MemStartAddr=0x%08x,u4MemSize=%d,mtdbuffer=%s 
+1318:266818 [UPG_ERROR]upg_flash.c i4NFBPartitionWrite failed
+1319:266869 [UPG]upg_flash.c, i4NFBPartitionWrite >> u4PartID=%d, u4OffsetFromPart=%d, u4MemStartAddr=0x%08x,u4MemSize=%d,mtdbuffer=%s 
+1320:266994 [UPG_ERROR]upg_flash.c i4NFBPartitionRead failed
+1321:267044 [UPG_ERROR]upg_flash.c write data to nand read back check failed
+1324:267163 [UPG_DEBUG]upg_flash.c create volume %s 
+1325:267205 [UPG_ERROR]upg_flash.c create volume name failed
+1326:267255 [UPG_DEBUG]upg_flash run_command: cmd = %s, ret:%d
+1327:267307 [UPG_ERROR]upg_flash run_command:write volume failed,command = %s,

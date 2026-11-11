@@ -1,0 +1,6 @@
+2e84f931415dde0c9e85fc2c9f11c1cde64af8097acbbc117a3d2bff259f66af  evidence/bx510-guest/u4-initrd/pulled/arm2-fastboot.bin
+737ebf52971947ad5742f2e7356d20546ae35f51ac0d9deecd6393a4a5503dc5  evidence/bx510-guest/u4-initrd/pulled/initrd_1.bin
+10bb0fba4eb26c5b1ebf798f4d4669dc8b5899d520be294d333c318a360be2d7  evidence/bx510-guest/u4-initrd/pulled/kernel.uImage
+84dc59d8bfe4bcf9550ff8990133d459bd0dcfed75a9fb4eac84c8651c8f8bf9  evidence/bx510-guest/u4-initrd/pulled/manifest.json
+42ad7847c9d5e26d326d958206db274a21d3d32afbb629413d47120354fb5255  evidence/bx510-guest/u4-initrd/pulled/rootfs_enc_it_1.bin
+40f19951773da0b180c4719c6d12dd2cea222b29f777f6c69d559fb85d9ac03b  evidence/bx510-guest/u4-initrd/pulled/u-boot.bin

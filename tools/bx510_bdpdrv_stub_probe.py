@@ -186,7 +186,10 @@ def main():
         if a.qemu_extra:
             argv[1:1] = a.qemu_extra.split()
         unimp = td / "unimp.log"
-        argv[1:1] = ["-d", "unimp", "-D", str(unimp)]
+        # -d flags accumulate as a comma list in ONE arg; a second -d arg
+        # REPLACES the mask (C68 lesson: '-d unimp' + extra '-d guest_errors'
+        # silently dropped unimp -> the trace lost every unimplemented line).
+        argv[1:1] = ["-d", "unimp,guest_errors", "-D", str(unimp)]
         marker_ok = True
         try:
             observe(argv, commands, wanted, a.timeout, a.uart)

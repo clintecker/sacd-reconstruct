@@ -1,3 +1,4 @@
 *.o
 !incoming/**/*.o
 gccbuild/obj/
+__pycache__/

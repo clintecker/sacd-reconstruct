@@ -36,6 +36,12 @@ OBJECT_DECLARE_SIMPLE_TYPE(Bx510State, BX510_MACHINE)
 #define BX_BIM     0x8000u
 #define BX_UART    0xc000u
 #define BX_T0_IRQ  (1u << 27)
+/* VERIFIED kernel-iomap.md (BIM group decode): SATA/ATAPI port = virq 53 ->
+ * BIM group 1, pending 0x70008138 bit 21 (pending2/mask2); FE/SVOIF = virq 18
+ * -> group 0, pending 0x70008030 bit 18 (pending/mask). The sata module
+ * hard-codes these (registers its platform device with no resources). */
+#define BX_FE_IRQ   (1u << 18)
+#define BX_SATA_IRQ (1u << 21)
 #define BX_BUS_HZ  135000000u
 #define BX_UART_TX_EMPTY (1u << 5)
 #define BX_UART_RX_READY (1u << 7)
@@ -89,6 +95,14 @@ struct Bx510State {
     uint32_t sata_ist, sata_im; /* IRQ status (W1C) + mask */
     /* simple LBA -> disc offset state for read tracking */
     uint64_t sata_reads;
+    /* FE boot-code SRAM FIFO (VERIFIED decode sata-fw-load.md sec 5a:
+     * driver writes bytes at 0xfd324184 with write-pointer 0xfd324180
+     * incrementing per byte; readback verifies through the SAME data
+     * address 0xfd324184). FIFO storage + both counters. */
+    uint8_t sram_fifo[0x4000];
+    bool fe_booted;          /* set on 0x5c704 |= 0x601 (FE reset release) */
+    uint32_t sram_wptr;      /* value of 0xfd324180 */
+    uint32_t sram_ridx;      /* readback cursor (bytes consumed) */
 };
 
 static uint32_t bx510_l1_pending(Bx510State *s)
@@ -231,7 +245,23 @@ static uint64_t bx510_read(void *opaque, hwaddr off, unsigned size)
                   * (logo playback finished / idle). We boot straight to
                   * idle. VERIFIED Run C23-28: poll-only, never written. */
         return 0x40u;
+    case 0x5c804: /* FE control/status (VERIFIED port_start decode: the
+                   * state==1 fast path polls [0xfd05cfff-0x7fb] up to
+                   * 150x10ms testing bit 16 = FE reset/boot done; the RMW
+                   * here is the 'clear default interrupt' the loader does).
+                   * Bit 16 sets once the FE release (0x5c704 |= 0x601)
+                   * happened. */
+        return s->fe_booted ? 0x10000u : 0u;
     /* ---- SATA/ATAPI (bus 0x7000a000, off 0xa000) ---- */
+    case 0x324180: /* FE SRAM FIFO write pointer readback */
+        return s->sram_wptr;
+    case 0x324184: /* FE SRAM FIFO data: pops the byte stream in write order */
+        qemu_log_mask(LOG_GUEST_ERROR, "bx510: FE-SRAM FIFO read idx=%u val=%02x\n",
+                      s->sram_ridx, s->sram_ridx < sizeof(s->sram_fifo) ? s->sram_fifo[s->sram_ridx] : 0);
+        if (s->sram_ridx < sizeof(s->sram_fifo)) {
+            return s->sram_fifo[s->sram_ridx++];
+        }
+        return 0;
     case 0xa600: /* PHY_CTRL00: signature readback + reset bit0 */
         return 0xa000414du | (s->sata_present ? 0x370000u : 0x220000u);
     case 0xa610: /* LNK_CTRL08: link state bits[21:16] */
@@ -292,7 +322,18 @@ static void bx510_write(void *opaque, hwaddr off, uint64_t val, unsigned size)
     case BX_UART + 0x04: s->uart_mode = val; break;
     case BX_UART + 0x28: s->uart_comm = val; break;
     case BX_BIM + 0x13c: s->mask2 = val; bx510_update_irq(s); break;
-    case BX_BIM + 0x138: case BX_BIM + 0x140: break; /* level-sensitive NFI */
+    case BX_BIM + 0x138:
+        /* group1 pending is W1C (kernel-iomap.md BIM decode: groups mirror
+         * the 0x30/0x34/0x38 shape). The SATA ISR acks here — without this
+         * the raised BX_SATA_IRQ never clears and the level line storms
+         * (C73 ENOSPC: the interrupt storm flooded the UART). */
+        s->pending2 &= ~val;
+        bx510_update_irq(s);
+        break;
+    case BX_BIM + 0x140:
+        s->pending2 &= ~val;   /* cascade group ack (same W1C shape) */
+        bx510_update_irq(s);
+        break;
     case BX_BIM + 0x1b4:
         /* The single CPU writes the same bit to acquire and release it. */
         s->hsem ^= val;
@@ -341,10 +382,21 @@ static void bx510_write(void *opaque, hwaddr off, uint64_t val, unsigned size)
          * ATAPI identity; driver reads via the 16-bit data port (+0x000). */
         if (s->sata_cmd == 0xa1 && s->sata_present) {
             s->sata_ist |= 0x1u;      /* command done IRQ */
+            s->pending2 |= BX_SATA_IRQ;   /* virq 53 (VERIFIED kernel-iomap.md) */
             bx510_update_irq(s);
         } else if (s->sata_cmd) {
             s->sata_ist |= 0x1u;      /* complete everything for now */
+            s->pending2 |= BX_SATA_IRQ;
             bx510_update_irq(s);
+        }
+        break;
+    case 0x324180: /* FE SRAM FIFO write pointer */
+        qemu_log_mask(LOG_GUEST_ERROR, "bx510: FE-SRAM FIFO wptr=%u\n", (unsigned)val);
+        s->sram_wptr = val;
+        break;
+    case 0x324184: /* FE SRAM FIFO data byte */
+        if (s->sram_wptr < sizeof(s->sram_fifo)) {
+            s->sram_fifo[s->sram_wptr++] = (uint8_t)val;
         }
         break;
     case 0xa000: /* PIO data port write (16-bit) — record, no-op */
@@ -357,6 +409,19 @@ static void bx510_write(void *opaque, hwaddr off, uint64_t val, unsigned size)
         s->sata_im = val;
         bx510_update_irq(s);
         break;
+    case 0x5c704: /* FE reset release (i4IdeDrvBootup: |= 0x601 arms the FE).
+                     virq 18 = BIM group0 bit18 (VERIFIED kernel-iomap.md):
+                     the release is what 'polling frontend reset interrupt'
+                     waits for. */
+        if (val & 0x601) {
+            s->fe_booted = true;
+            s->pending |= BX_FE_IRQ;
+            bx510_update_irq(s);
+        }
+        break;
+    case 0x5c500: case 0x5c600: case 0x5c604: case 0x5c708: case 0x5c780:
+    case 0x60004: case 0x90308: case 0x9030c: case 0x90324:
+        break; /* FE/clock/DRAM-wrapper control writes accepted silently */
     case 0xa600: case 0xa610: case 0xa648:
     case 0xa400: case 0xa480: case 0x62c:
         break; /* accepted silently */
@@ -422,6 +487,10 @@ static void bx510_reset(void *opaque)
     s->mac[0x74 / 4] = 0x77; /* AHB signature tested by the Sony driver */
     s->phy[3] = 0x0430;     /* internal Vitesse PHY identifier */
     s->sata_ist = s->sata_im = 0;
+    s->fe_booted = false;
+    s->sram_wptr = 0;
+    s->sram_ridx = 0;
+    memset(s->sram_fifo, 0, sizeof(s->sram_fifo));
     s->sata_cmd = 0;
     memset(s->tf, 0, sizeof(s->tf));
     mt8560_nfi_reset(&s->nfi);
@@ -445,7 +514,7 @@ static void bx510_init(MachineState *machine)
                              machine->ram, 0, MIN(machine->ram_size, 256 * MiB));
     memory_region_add_subregion(get_system_memory(), 0xc0000000u, &s->drama_alias);
     memory_region_init_io(&s->io, OBJECT(machine), &bx510_ops, s,
-                          "mt8560.peripherals", 0x400000);
+                          "mt8560.peripherals", 0x1000000);
     memory_region_add_subregion(get_system_memory(), BX_IO_BASE, &s->io);
     mt8560_nfi_init(&s->nfi, OBJECT(machine), get_system_memory(),
                     qemu_allocate_irq(bx510_nfi_irq, s, 0));

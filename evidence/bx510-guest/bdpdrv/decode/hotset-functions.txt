@@ -1,0 +1,87 @@
+0x7002420c  R=12013  W=1     
+    executed: IRRX_PollMtkIr @ 0x3102dc   -- single ldr + tst #0x40000 per call, once per IRRC thread loop = 12013 reads
+    all owners: IRHW_RxInit(0x30fff4W), IRHW_RxRdConf(0x30fe98R), IRHW_RxWrConf(0x30fec8W), IRRX_PollMtkIr(0x3102dcR), IR_RxEnable(0x30fefcR/0x30ff04W/0x30ff5cR/0x30ff64W), i4IrHWUninit(0x3100a4R/0x3100b0W)
+0x700240f4  R=1237   W=1237  
+    executed: i4VfdScanKeyWithDriver @ 0x31a2f4   -- ldr/bic #15/str pair before every VFD burst = the 1234 RMW pairs
+    all owners: IFcon_Init(0x30faa4R/0x30faacW), _CEC_Init(0x2e2174R/0x2e2180W), i4VFD_Resume(0x319ff8R/0x31a000W), i4VfdScanKeyWithDriver(0x31a2f4R/0x31a300W), i4Vfd_set_driver_cmd_init(0x319c7cR/0x319c84W), vInitDDCLine(0x2e3698R/0x2e36a0W/0x2e36a4R/0x2e36acW)
+0x70050300  R=0      W=1232  
+    executed: i4VFDIndirectSIFCmdRegMode @ 0x31901c   -- cmd word0 write, first in each 22-23 line trace cycle
+    all owners: IFcon_Init(0x30f9f4W), i4VFDCopySIFCmdRegMode(0x319124W), i4VFDDirectSIFCmdRegMode(0x318dbcW), i4VFDIndirectSIFCmdRegMode(0x31901cW), i4VFDMessageSIFCmdRegMode(0x319178W)
+0x70050304  R=0      W=1232  
+    executed: i4VFDIndirectSIFCmdRegMode @ 0x319038   -- cmd word1 write, immediately after 0x300
+    all owners: i4VFDDirectSIFCmdRegMode(0x318dd8W), i4VFDIndirectSIFCmdRegMode(0x319038W)
+0x70050308  R=1232   W=0     
+    executed: i4VFDIndirectSIFCmdRegMode @ 0x319058   -- readback word0 after the 0x31/0x30 kick
+    all owners: IFcon_Init(0x30faf8W), i4VFDDirectSIFCmdRegMode(0x318e20W/0x318e9cW/0x318eb4R), i4VFDIndirectSIFCmdRegMode(0x319058R), i4VFDMessageSIFCmdRegMode(0x31919cW)
+0x7005030c  R=1232   W=0     
+    executed: i4VFDIndirectSIFCmdRegMode @ 0x31907c   -- readback word1
+    all owners: i4VFDDirectSIFCmdRegMode(0x318e44W/0x318ea0W/0x318ed8R), i4VFDIndirectSIFCmdRegMode(0x31907cR), i4VFDMessageSIFCmdRegMode(0x3191c0W)
+0x70050310  R=1232   W=0     
+    executed: i4VFDIndirectSIFCmdRegMode @ 0x31909c   -- readback word2
+    all owners: IFcon_Init(0x30fb1cW), _ExtInt2Isr(0x30f894R/0x30f910R), i4VFDDirectSIFCmdRegMode(0x318e68W/0x318ea4W/0x318ef8R), i4VFDIndirectSIFCmdRegMode(0x31909cR), i4VFDMessageSIFCmdRegMode(0x3191e4W)
+0x70050314  R=1232   W=0     
+    executed: i4VFDIndirectSIFCmdRegMode @ 0x3190bc   -- readback word3
+    all owners: i4VFDDirectSIFCmdRegMode(0x318e8cW/0x318ea8W/0x318f18R), i4VFDIndirectSIFCmdRegMode(0x3190bcR), i4VFDMessageSIFCmdRegMode(0x319208W)
+0x70050320  R=3712   W=2473  
+    executed: i4VFDTrigRegModeStart @ 0x318c8c   -- write 0x31 then 0x30 (0x318cb4) per cycle; read by i4VFDWaitBusy @0x318af8
+    all owners: IFconWaitHWBusy(0x30f774R), IFcon_Init(0x30fa1cW/0x30fa44W), _ExtInt2Isr(0x30f844W/0x30f8c8W), i4VFDAcceleratorRst(0x318b18R/0x318b40W/0x318b68W), i4VFDEnPinForSIF(0x318accW), i4VFDTrigQueModeStart(0x318be0W/0x318c08W), i4VFDTrigRegModeStart(0x318c8cW/0x318cb4W), i4VFDWaitBusy(0x318af8R)
+0x70047108  R=453    W=453   
+    executed: vAudHalSetDspLoadTable @ 0x04b544   -- table word write (0x4b544) then readback (0x4b568) per entry
+    all owners: vAudHalSetDspLoadTable(0x4b544W/0x4b568R)
+0x70047110  R=0      W=907   
+    executed: vAudHalSetDspLoadTable @ 0x04b538   -- index port: 0-write + index-write per entry = 907 writes
+    all owners: vAudHalSetDspLoadTable(0x4b538W/0x4b564W/0x4b59cW)
+0x700000c0  R=26     W=0     
+    executed: NOT ESTABLISHED
+    all owners: AUD_HwInit(0x1333fcR/0x133408W/0x13340cR/0x133414W/0x133418R/0x133420W/0x133434R/0x133444W/0x133448R/0x133454W/0x133458R/0x133464W/0x133468R/0x133470W/0x133474R/0x13347cW/0x133480R/0x133488W/0x13348cR/0x133494R/0x13349cW/0x1334a0R/0x1334a8W/0x1334acR/0x1334b4W/0x1334b8R/0x1334c0W/0x1334c4R/0x1334ccW/0x133508R/0x133518W), _AudLineInInit(0x4eec8R/0x4eed4W), vAIN_ACK_CFG_Multi(0x4d354R/0x4d360W/0x4d44cR/0x4d458W/0x4d45cR/0x4d468W), vExtSPDIFInIRQInit(0x13426cR/0x134278W), vHal_SetCcirOutPinMux(0x27e8d0R/0x27e8d8W/0x27e8f4R/0x27e900W/0x27e968R/0x27e978W), vInitPwm(0x1303a4R/0x1303b0W/0x1303b4R/0x1303c4W), vSetMICClk(0x4d780R/0x4d788W/0x4d78cR/0x4d794W/0x4d798R/0x4d7a0W/0x4d7acR/0x4d7b4W)
+0x700000c8  R=30     W=0     
+    executed: NOT ESTABLISHED
+    all owners: AUD_HwInit(0x13351cR/0x133528W), vExtSPDIFInIRQInit(0x13427cR/0x134288W)
+0x700000cc  R=14     W=0     
+    executed: NOT ESTABLISHED
+    all owners: _SACDCLI_InputMonitor(0xc6ee8W), _SACDCLI_OutputMonitor(0xc6f28W), vInitPwm(0x1303c8R/0x1303d0W)
+0x70000180  R=9      W=9     
+    executed: NOT ESTABLISHED
+    all owners: NONE RESOLVED
+0x700001a0  R=8      W=8     
+    executed: NOT ESTABLISHED
+    all owners: NONE RESOLVED
+0x7002117c  R=14     W=12    
+    executed: NOT ESTABLISHED
+    all owners: _AudCmdCheckHdmiOutput(0x44138R/0x44150R), vDSTNormalDouble(0x2d07e4R/0x2d07e8R/0x2d07f8W), vDisableDsdConfig(0x2d0780R/0x2d0788W), vEnableDSTConfig(0x2d07b8R/0x2d07bcR/0x2d07ccW), vEnableDsdConfig(0x2d0760R/0x2d0770W), vHalMuteHDMIAudio(0x2d0238R/0x2d0244W), vHalUnMuteHDMIAudio(0x2d0220R/0x2d0228W), vIsDsdBitEnable(0x2d0798R), vSetHdmiHighBitrate(0x2d0454R/0x2d0460W/0x2d0478R/0x2d0480W)
+0x70021184  R=0      W=20    
+    executed: NOT ESTABLISHED
+    all owners: vHalBypassHDMI_NCTS(0x2cff78W/0x2cff80W/0x2cff88W/0x2cffd8W), vHalHDMI_NCTS(0x2cfdc0W/0x2cfdc8W/0x2cfdccW/0x2cff2cW)
+0x70021188  R=0      W=22    
+    executed: NOT ESTABLISHED
+    all owners: _InfoframeSetting(0x2e72d4W/0x2e7328W/0x2e737cW/0x2e7408W/0x2e7660W/0x2e76bcW/0x2e7718W/0x2e77c4W), _SendAVIFrame.clone.0(0x2e7044W/0x2e7048W/0x2e704cW/0x2e7050W/0x2e7054W/0x2e7058W/0x2e7060W/0x2e7064W/0x2e7068W/0x2e706cW/0x2e7070W/0x2e7074W/0x2e7078W/0x2e707cW), vHalSendACPInfoFrame(0x2d15b0W/0x2d15f4W), vHalSendAVIInfoFrame(0x2d126cW/0x2d1290W/0x2d12b4W/0x2d12d8W/0x2d12fcW/0x2d1324W/0x2d1358W), vHalSendAudioInfoFrame(0x2cfbf8W/0x2cfc1cW/0x2cfc40W/0x2cfc68W/0x2cfc88W/0x2cfcb0W/0x2cfce4W), vHalSendGamutPacket(0x2d1448W/0x2d1494W), vHalSendHdmiPacket(0x2d1f6cW), vHalSendISRC1InfoFrame(0x2d16e4W/0x2d1720W), vHalSendSPDInfoFrame(0x2d1138W/0x2d116cW), vHalSendVendorSpecificInfoFrame(0x2d0f80W/0x2d0fa8W/0x2d0fd0W/0x2d0ff8W/0x2d1018W/0x2d103cW)
+0x70005028  R=18     W=16    
+    executed: NOT ESTABLISHED
+    all owners: NONE RESOLVED
+0x700050c0  R=7      W=7     
+    executed: NOT ESTABLISHED
+    all owners: AUD_AoutCfg(0x132d44R/0x132d4cW/0x132da4R/0x132dacW/0x132e08R/0x132e10W/0x133054R/0x133068W), _AudCmdDSDTest(0x47558R/0x47564W), _AudCmdExchangeIEC(0x44318R/0x44320W/0x4432cR/0x44334W), _AudLineInInit(0x4ee94R/0x4eea0W), _vAClkHWSetting(0x131f70R/0x131f80W/0x13208cR/0x1320b8R/0x1320c0W), vAIN_ACK_CFG_Multi(0x4d3a0R/0x4d3b4W/0x4d470R/0x4d480W), vAud1BckCFG(0x131d80R/0x131d8cW), vAudin_Init(0x4d2e0R), vSelectHDMI1Source(0x1338fcR/0x13392cR/0x133934W)
+0x700050cc  R=9      W=9     
+    executed: NOT ESTABLISHED
+    all owners: AUD_AoutCfg(0x132d6cR/0x132d74W/0x132d78R/0x132d80W/0x132d84R/0x132dd0R/0x132dd8W/0x132ddcR/0x132de4W/0x132de8R/0x132df0W/0x132e60R/0x132e68W/0x132e6cR/0x132e74W/0x132e78R/0x132e80W/0x133078R/0x13308cW), _AudMicInInit(0x44074R/0x44080W/0x4efa4R/0x4efb0W), _vAClkHWSetting(0x1320d0R/0x1320e4R/0x1320f8R/0x132104W), vAIN_ACK_CFG_Multi(0x4d3b8R/0x4d3c4W), vAud2BckCFG(0x131e44R/0x131e50W), vAudHalSetDspABEnableDramAccess(0x4b2e8R/0x4b2f0W), vAudHalSetDspABHwRegInit(0x4b648R/0x4b650W), vAudHalSetDspABWorkingDramBlock(0x4b168R/0x4b17cW), vAudHalSetDspEnableDramAccess(0x4b318R/0x4b320W), vAudHalSetDspHwRegInit(0x4b6b4R/0x4b6bcW), vAudHalSetDspWorkingDramBlock(0x4b248R/0x4b260W), vSetMICClk(0x4d734R/0x4d744W/0x4d748R/0x4d758W)
+0x70003810  R=8      W=6     
+    executed: NOT ESTABLISHED
+    all owners: vGetGammaReg(0x2d1a9cR), vHalBlackHDMIOnly(0x2d0270R/0x2d027cW), vHalUnBlackHDMIOnly(0x2d02c0R/0x2d02d4W), vInitHdmiGamma(0x2d1afcR/0x2d1b1cW), vSetHdmiYscale(0x2d1b74R/0x2d1b80W), vWriteGammaReg(0x2d1a5cR/0x2d1a74W)
+0x70047028  R=12     W=11    
+    executed: NOT ESTABLISHED
+    all owners: vAudHalSetAdspCOff(0x3f74cR/0x3f758W/0x3f764R/0x3f770W)
+0x70024580  R=6      W=6     
+    executed: NOT ESTABLISHED
+    all owners: NONE RESOLVED
+0x70024594  R=6      W=6     
+    executed: NOT ESTABLISHED
+    all owners: _CEC_Isr(0x2e1cd0R/0x2e1d10R/0x2e1fc4R)
+0x70024188  R=5      W=5     
+    executed: NOT ESTABLISHED
+    all owners: DDCM_RanAddr_Write(0x21fe60R), IRHW_RxInit(0x31000cR/0x310014W), SIF_RanAddr_Write(0x21f63cR), VSFHW_SramClk(0x130bf8W), VSFHW_SramStatus(0x130c10R), _CEC_Init(0x2e2184R/0x2e2190W), _DDCMRead(0x21ec14R), _SifMRead(0x21f024R), _vCommonSRAMInit(0x2accc8R/0x2accd0W), i4EtherDrv_Init(0x1350c8R/0x1350d0W), i4HDMI_Resume(0x2d414cW), i4NR_Suspend(0x2a67a0R/0x2a67a8W), i4NR_Uninit(0x2a7294R/0x2a72a0W)
+0x70024144  R=4      W=6     
+    executed: NOT ESTABLISHED
+    all owners: CEC_DRVInit(0x2e0b6cR/0x2e0b74W), IRHW_RxInit(0x310050R/0x310058W), IRHW_RxStop(0x310080R/0x310088W), IR_RxEnable(0x30ff24R/0x30ff2cW/0x30ff38R/0x30ff40W), i4DDCM_Resume(0x21eafcR/0x21eb04W), i4DDCM_Suspend(0x21eac8R/0x21ead0W), i4SIFM_Resume(0x21ea2cR/0x21ea34W), i4SIFM_Suspend(0x21e9f8R/0x21ea00W), vCECTaskMain(0x2e0a4cR/0x2e0a54W), vCecIsr(0x2e08e0R/0x2e08e8W/0x2e08f0R/0x2e08f8W)
+0x700241cc  R=1      W=1     
+    executed: NOT ESTABLISHED
+    all owners: NONE RESOLVED

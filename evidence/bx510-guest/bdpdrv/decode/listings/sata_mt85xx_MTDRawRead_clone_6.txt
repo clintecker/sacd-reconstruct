@@ -1,0 +1,454 @@
+
+/tmp/bdpdrv/sata_mt85xx_mod.ko:	file format elf32-littlearm
+
+Disassembly of section .text:
+
+00000484 <sata_mt85xx_MTDRawRead.clone.6>:
+00000484  push       {r4, r5, r6, r7, r8, r9, r10, r11, lr}
+00000488  sub        sp, sp, #132
+0000048c  mov        r4, sp
+00000490  bic        r12, r4, #8128
+00000494  bic        r12, r12, #63
+00000498  str        r12, [sp, #0x24]
+0000049c  ldr        r6, [sp, #0x24]
+000004a0  ldr        r12, [r12, #0x18]
+000004a4  ldr        r7, [sp, #0x24]
+000004a8  ldr        r6, [r6, #0x8]
+000004ac  mov        r4, #1
+000004b0  mov        r5, #0
+000004b4  str        r0, [sp, #0x34]
+000004b8  orr        r12, r12, #3
+000004bc  mov        lr, #0
+000004c0  strd       r4, r5, [sp, #120]
+000004c4  str        r6, [sp, #0x30]
+000004c8  str        lr, [r7, #0x8]
+000004cc  str        r12, [r7, #0x18]
+000004d0  str        r3, [sp, #0x28]
+000004d4  mov        r4, r1
+000004d8  mov        r11, r2
+000004dc  mcr        p15, #0x0, r12, c3, c0, #0x0
+000004e0  mov        r6, #0
+000004e4  mcr        p15, #0x0, r6, c7, c5, #0x4
+000004e8  ldr        r0, [sp, #0x34]
+000004ec  mov        r1, r6
+000004f0  mov        r2, r6
+000004f4  bl         0x4f4 <sata_mt85xx_MTDRawRead.clone.6+0x70> @ imm = #-0x8
+000004f4  R_ARM_CALL sys_open
+000004f8  cmp        r0, #0
+000004fc  str        r0, [sp, #0x14]
+00000500  blt        0x820 <sata_mt85xx_MTDRawRead.clone.6+0x39c> @ imm = #0x318
+00000504  ldr        r0, [sp, #0x14]
+00000508  ldr        r1, [pc, #0x55c]        @ 0xa6c <sata_mt85xx_MTDRawRead.clone.6+0x5e8>  ; POOL[0xa6c] = 0x80204d01 (2149600513)
+0000050c  add        r2, sp, #56
+00000510  bl         0x510 <sata_mt85xx_MTDRawRead.clone.6+0x8c> @ imm = #-0x8
+00000510  R_ARM_CALL sys_ioctl
+00000514  cmp        r0, #0
+00000518  bne        0x918 <sata_mt85xx_MTDRawRead.clone.6+0x494> @ imm = #0x3f8
+0000051c  ldr        r3, [sp, #0x4c]
+00000520  cmp        r3, #448
+00000524  beq        0x894 <sata_mt85xx_MTDRawRead.clone.6+0x410> @ imm = #0x368
+00000528  cmp        r3, #224
+0000052c  beq        0x67c <sata_mt85xx_MTDRawRead.clone.6+0x1f8> @ imm = #0x148
+00000530  cmp        r3, #128
+00000534  beq        0x67c <sata_mt85xx_MTDRawRead.clone.6+0x1f8> @ imm = #0x140
+00000538  cmp        r3, #64
+0000053c  bne        0x9a0 <sata_mt85xx_MTDRawRead.clone.6+0x51c> @ imm = #0x45c
+00000540  ldr        r3, [sp, #0x48]
+00000544  cmp        r3, #2048
+00000548  bne        0x688 <sata_mt85xx_MTDRawRead.clone.6+0x204> @ imm = #0x138
+0000054c  add        r12, sp, #104
+00000550  ldr        r1, [pc, #0x518]        @ 0xa70 <sata_mt85xx_MTDRawRead.clone.6+0x5ec>  ; POOL[0xa70] = 0x80104d12 (2148551954)
+00000554  ldr        r0, [sp, #0x14]
+00000558  mov        r2, r12
+0000055c  str        r12, [sp, #0x8]
+00000560  bl         0x560 <sata_mt85xx_MTDRawRead.clone.6+0xdc> @ imm = #-0x8
+00000560  R_ARM_CALL sys_ioctl
+00000564  subs       r1, r0, #0
+00000568  bne        0x7f8 <sata_mt85xx_MTDRawRead.clone.6+0x374> @ imm = #0x288
+0000056c  ldr        r10, [pc, #0x500]       @ 0xa74 <sata_mt85xx_MTDRawRead.clone.6+0x5f0>  ; POOL[0xa74] -> SHN_UNDEF+0x0  (ide_log_en)
+00000570  ldr        r3, [r10]
+00000574  tst        r3, #32
+00000578  moveq      r2, #1
+0000057c  streq      r2, [sp, #0x2c]
+00000580  bne        0xa14 <sata_mt85xx_MTDRawRead.clone.6+0x590> @ imm = #0x48c
+00000584  mov        r0, #0
+00000588  ldr        r12, [sp, #0x40]
+0000058c  mov        r1, r0
+00000590  subs       r2, r0, r12
+00000594  sbc        r3, r1, #0
+00000598  ldr        r4, [sp, #0x48]
+0000059c  lsr        r8, r3, #31
+000005a0  cmp        r11, #0
+000005a4  moveq      r8, #0
+000005a8  andne      r8, r8, #1
+000005ac  cmp        r8, #0
+000005b0  str        r4, [sp, #0x20]
+000005b4  beq        0x6f0 <sata_mt85xx_MTDRawRead.clone.6+0x26c> @ imm = #0x134
+000005b8  ldr        r7, [sp, #0x20]
+000005bc  add        r6, sp, #88
+000005c0  ldr        r3, [sp, #0x44]
+000005c4  str        r6, [sp, #0xc]
+000005c8  mov        r9, r0
+000005cc  mov        r6, r7
+000005d0  asr        r7, r6, #31
+000005d4  mov        r8, r0
+000005d8  mov        r4, #0
+000005dc  mov        r5, #0
+000005e0  strd       r6, r7, [sp, #24]
+000005e4  rsb        r3, r3, #0
+000005e8  and        r6, r4, r3
+000005ec  ldr        r3, [sp, #0x78]
+000005f0  mov        r7, #0
+000005f4  cmp        r3, r6
+000005f8  bne        0x608 <sata_mt85xx_MTDRawRead.clone.6+0x184> @ imm = #0x8
+000005fc  ldr        r3, [sp, #0x7c]
+00000600  cmp        r3, r7
+00000604  beq        0x624 <sata_mt85xx_MTDRawRead.clone.6+0x1a0> @ imm = #0x18
+00000608  ldr        r0, [sp, #0x14]
+0000060c  ldr        r1, [pc, #0x464]        @ 0xa78 <sata_mt85xx_MTDRawRead.clone.6+0x5f4>  ; POOL[0xa78] = 0x40084d0b (1074285835) float=2.1297
+00000610  add        r2, sp, #120
+00000614  strd       r6, r7, [sp, #120]
+00000618  bl         0x618 <sata_mt85xx_MTDRawRead.clone.6+0x194> @ imm = #-0x8
+00000618  R_ARM_CALL sys_ioctl
+0000061c  subs       r9, r0, #0
+00000620  blt        0x8a4 <sata_mt85xx_MTDRawRead.clone.6+0x420> @ imm = #0x27c
+00000624  cmp        r9, #0
+00000628  beq        0x738 <sata_mt85xx_MTDRawRead.clone.6+0x2b4> @ imm = #0x108
+0000062c  ldr        r3, [r10]
+00000630  tst        r3, #32
+00000634  bne        0x988 <sata_mt85xx_MTDRawRead.clone.6+0x504> @ imm = #0x34c
+00000638  ldrd       r2, r3, [sp, #24]
+0000063c  ldr        r1, [sp, #0x40]
+00000640  adds       r4, r4, r2
+00000644  adc        r5, r5, r3
+00000648  mov        r3, #0
+0000064c  cmp        r11, r8
+00000650  movls      r2, #0
+00000654  movhi      r2, #1
+00000658  cmp        r3, r5
+0000065c  mov        r3, #1
+00000660  bgt        0x66c <sata_mt85xx_MTDRawRead.clone.6+0x1e8> @ imm = #0x4
+00000664  beq        0x6e0 <sata_mt85xx_MTDRawRead.clone.6+0x25c> @ imm = #0x74
+00000668  mov        r3, #0
+0000066c  tst        r2, r3
+00000670  beq        0x6f0 <sata_mt85xx_MTDRawRead.clone.6+0x26c> @ imm = #0x78
+00000674  ldr        r3, [sp, #0x44]
+00000678  b          0x5e4 <sata_mt85xx_MTDRawRead.clone.6+0x160> @ imm = #-0x9c
+0000067c  ldr        r3, [sp, #0x48]
+00000680  cmp        r3, #4096
+00000684  beq        0x54c <sata_mt85xx_MTDRawRead.clone.6+0xc8> @ imm = #-0x140
+00000688  ldr        r3, [pc, #0x3e4]        @ 0xa74 <sata_mt85xx_MTDRawRead.clone.6+0x5f0>  ; POOL[0xa74] -> SHN_UNDEF+0x0  (ide_log_en)
+0000068c  ldr        r3, [r3]
+00000690  tst        r3, #32
+00000694  bne        0xa00 <sata_mt85xx_MTDRawRead.clone.6+0x57c> @ imm = #0x364
+00000698  ldr        r0, [sp, #0x14]
+0000069c  bl         0x69c <sata_mt85xx_MTDRawRead.clone.6+0x218> @ imm = #-0x8
+0000069c  R_ARM_CALL sys_close
+000006a0  ldr        r7, [sp, #0x24]
+000006a4  ldr        r12, [sp, #0x30]
+000006a8  ldr        r3, [r7, #0x18]
+000006ac  cmp        r12, #0
+000006b0  moveq      r2, #3
+000006b4  movne      r2, #1
+000006b8  bic        r3, r3, #3
+000006bc  orr        r3, r2, r3
+000006c0  str        r12, [r7, #0x8]
+000006c4  str        r3, [r7, #0x18]
+000006c8  mcr        p15, #0x0, r3, c3, c0, #0x0
+000006cc  mov        r3, #0
+000006d0  mcr        p15, #0x0, r3, c7, c5, #0x4
+000006d4  mvn        r0, #0
+000006d8  add        sp, sp, #132
+000006dc  pop        {r4, r5, r6, r7, r8, r9, r10, r11, pc}
+000006e0  cmp        r1, r4
+000006e4  bls        0x668 <sata_mt85xx_MTDRawRead.clone.6+0x1e4> @ imm = #-0x84
+000006e8  tst        r2, r3
+000006ec  bne        0x674 <sata_mt85xx_MTDRawRead.clone.6+0x1f0> @ imm = #-0x80
+000006f0  cmp        r11, r8
+000006f4  bhi        0x8f4 <sata_mt85xx_MTDRawRead.clone.6+0x470> @ imm = #0x1f8
+000006f8  ldr        r0, [sp, #0x14]
+000006fc  bl         0x6fc <sata_mt85xx_MTDRawRead.clone.6+0x278> @ imm = #-0x8
+000006fc  R_ARM_CALL sys_close
+00000700  ldr        r4, [sp, #0x24]
+00000704  ldr        r6, [sp, #0x30]
+00000708  ldr        r3, [r4, #0x18]
+0000070c  cmp        r6, #0
+00000710  moveq      r2, #3
+00000714  movne      r2, #1
+00000718  bic        r3, r3, #3
+0000071c  str        r6, [r4, #0x8]
+00000720  orr        r3, r2, r3
+00000724  str        r3, [r4, #0x18]
+00000728  mcr        p15, #0x0, r3, c3, c0, #0x0
+0000072c  mov        r0, #0
+00000730  mcr        p15, #0x0, r0, c7, c5, #0x4
+00000734  b          0x6d8 <sata_mt85xx_MTDRawRead.clone.6+0x254> @ imm = #-0x64
+00000738  ldr        r12, [pc, #0x33c]       @ 0xa7c <sata_mt85xx_MTDRawRead.clone.6+0x5f8>  ; POOL[0xa7c] -> SHN_UNDEF+0x0  (sata_mtd_read_buf)
+0000073c  ldr        r0, [sp, #0x14]
+00000740  ldr        r2, [sp, #0x20]
+00000744  ldr        r1, [r12]
+00000748  strd       r4, r5, [sp]
+0000074c  bl         0x74c <sata_mt85xx_MTDRawRead.clone.6+0x2c8> @ imm = #-0x8
+0000074c  R_ARM_CALL sys_pread64
+00000750  ldr        lr, [sp, #0x20]
+00000754  cmp        lr, r0
+00000758  bne        0x8d0 <sata_mt85xx_MTDRawRead.clone.6+0x44c> @ imm = #0x170
+0000075c  ldr        r1, [sp, #0x20]
+00000760  ldr        r3, [pc, #0x314]        @ 0xa7c <sata_mt85xx_MTDRawRead.clone.6+0x5f8>  ; POOL[0xa7c] -> SHN_UNDEF+0x0  (sata_mtd_read_buf)
+00000764  ldr        r2, [sp, #0x28]
+00000768  rsb        r6, r8, r11
+0000076c  cmp        r6, r1
+00000770  movhs      r6, r1
+00000774  add        r0, r2, r8
+00000778  ldr        r1, [r3]
+0000077c  mov        r2, r6
+00000780  bl         0x780 <sata_mt85xx_MTDRawRead.clone.6+0x2fc> @ imm = #-0x8
+00000780  R_ARM_CALL memcpy
+00000784  ldr        r7, [sp, #0x2c]
+00000788  add        r8, r8, r6
+0000078c  cmp        r7, #0
+00000790  beq        0x638 <sata_mt85xx_MTDRawRead.clone.6+0x1b4> @ imm = #-0x160
+00000794  ldr        r0, [sp, #0x14]
+00000798  ldr        r1, [pc, #0x2d0]        @ 0xa70 <sata_mt85xx_MTDRawRead.clone.6+0x5ec>  ; POOL[0xa70] = 0x80104d12 (2148551954)
+0000079c  add        r2, sp, #88
+000007a0  bl         0x7a0 <sata_mt85xx_MTDRawRead.clone.6+0x31c> @ imm = #-0x8
+000007a0  R_ARM_CALL sys_ioctl
+000007a4  cmp        r0, #0
+000007a8  bne        0x940 <sata_mt85xx_MTDRawRead.clone.6+0x4bc> @ imm = #0x190
+000007ac  ldr        r3, [sp, #0x6c]
+000007b0  ldr        r2, [sp, #0x5c]
+000007b4  cmp        r3, r2
+000007b8  beq        0x7c8 <sata_mt85xx_MTDRawRead.clone.6+0x344> @ imm = #0x8
+000007bc  ldr        r1, [r10]
+000007c0  tst        r1, #32
+000007c4  bne        0xa54 <sata_mt85xx_MTDRawRead.clone.6+0x5d0> @ imm = #0x288
+000007c8  ldr        r3, [sp, #0x68]
+000007cc  ldr        r2, [sp, #0x58]
+000007d0  cmp        r3, r2
+000007d4  beq        0x7e4 <sata_mt85xx_MTDRawRead.clone.6+0x360> @ imm = #0x8
+000007d8  ldr        r1, [r10]
+000007dc  tst        r1, #32
+000007e0  bne        0x9e8 <sata_mt85xx_MTDRawRead.clone.6+0x564> @ imm = #0x200
+000007e4  ldr        r12, [sp, #0xc]
+000007e8  ldr        lr, [sp, #0x8]
+000007ec  ldm        r12, {r0, r1, r2, r3}
+000007f0  stm        lr, {r0, r1, r2, r3}
+000007f4  b          0x638 <sata_mt85xx_MTDRawRead.clone.6+0x1b4> @ imm = #-0x1c4
+000007f8  ldr        r10, [pc, #0x274]       @ 0xa74 <sata_mt85xx_MTDRawRead.clone.6+0x5f0>  ; POOL[0xa74] -> SHN_UNDEF+0x0  (ide_log_en)
+000007fc  ldr        r3, [r10]
+00000800  ands       r3, r3, #32
+00000804  streq      r3, [sp, #0x2c]
+00000808  beq        0x584 <sata_mt85xx_MTDRawRead.clone.6+0x100> @ imm = #-0x28c
+0000080c  ldr        r0, [pc, #0x26c]        @ 0xa80 <sata_mt85xx_MTDRawRead.clone.6+0x5fc>  ; POOL[0xa80] -> .rodata.str1.4+0x214  "[IDE] No ECC status information available, ret = %d"  (.rodata.str1.4)
+00000810  bl         0x810 <sata_mt85xx_MTDRawRead.clone.6+0x38c> @ imm = #-0x8
+00000810  R_ARM_CALL printk
+00000814  mov        r1, #0
+00000818  str        r1, [sp, #0x2c]
+0000081c  b          0x584 <sata_mt85xx_MTDRawRead.clone.6+0x100> @ imm = #-0x2a0
+00000820  orr        r4, r4, #94371840
+00000824  ldr        r3, [pc, #0x258]        @ 0xa84 <sata_mt85xx_MTDRawRead.clone.6+0x600>  ; POOL[0xa84] = 0x000fff00 (1048320)
+00000828  lsr        r1, r4, #20
+0000082c  and        r3, r4, r3
+00000830  and        r2, r4, #255
+00000834  orr        r2, r2, r1, lsl #8
+00000838  ldr        r0, [sp, #0x34]
+0000083c  mov        r1, #8576
+00000840  orr        r2, r2, r3, lsl #12
+00000844  bl         0x844 <sata_mt85xx_MTDRawRead.clone.6+0x3c0> @ imm = #-0x8
+00000844  R_ARM_CALL sys_mknod
+00000848  cmp        r0, r6
+0000084c  blt        0x960 <sata_mt85xx_MTDRawRead.clone.6+0x4dc> @ imm = #0x10c
+00000850  mov        r1, r6
+00000854  ldr        r0, [sp, #0x34]
+00000858  mov        r2, r6
+0000085c  bl         0x85c <sata_mt85xx_MTDRawRead.clone.6+0x3d8> @ imm = #-0x8
+0000085c  R_ARM_CALL sys_open
+00000860  cmp        r0, #0
+00000864  str        r0, [sp, #0x14]
+00000868  bge        0x504 <sata_mt85xx_MTDRawRead.clone.6+0x80> @ imm = #-0x36c
+0000086c  ldr        r3, [pc, #0x200]        @ 0xa74 <sata_mt85xx_MTDRawRead.clone.6+0x5f0>  ; POOL[0xa74] -> SHN_UNDEF+0x0  (ide_log_en)
+00000870  ldr        r3, [r3]
+00000874  tst        r3, #32
+00000878  beq        0x6a0 <sata_mt85xx_MTDRawRead.clone.6+0x21c> @ imm = #-0x1e0
+0000087c  ldr        r1, [pc, #0x204]        @ 0xa88 <sata_mt85xx_MTDRawRead.clone.6+0x604>  ; POOL[0xa88] -> .rodata+0x0  "sata_mt85xx_MTDRawRead"  (.rodata)
+00000880  ldr        r2, [pc, #0x204]        @ 0xa8c <sata_mt85xx_MTDRawRead.clone.6+0x608>  ; POOL[0xa8c] = 0x000001b1 (433)
+00000884  ldr        r3, [sp, #0x34]
+00000888  ldr        r0, [pc, #0x200]        @ 0xa90 <sata_mt85xx_MTDRawRead.clone.6+0x60c>  ; POOL[0xa90] -> .rodata.str1.4+0x130  (.rodata.str1.4)
+0000088c  bl         0x88c <sata_mt85xx_MTDRawRead.clone.6+0x408> @ imm = #-0x8
+0000088c  R_ARM_CALL printk
+00000890  b          0x6a0 <sata_mt85xx_MTDRawRead.clone.6+0x21c> @ imm = #-0x1f8
+00000894  ldr        r3, [sp, #0x48]
+00000898  cmp        r3, #8192
+0000089c  bne        0x688 <sata_mt85xx_MTDRawRead.clone.6+0x204> @ imm = #-0x21c
+000008a0  b          0x54c <sata_mt85xx_MTDRawRead.clone.6+0xc8> @ imm = #-0x35c
+000008a4  ldr        r3, [r10]
+000008a8  tst        r3, #32
+000008ac  beq        0x698 <sata_mt85xx_MTDRawRead.clone.6+0x214> @ imm = #-0x21c
+000008b0  ldr        r12, [sp, #0x78]
+000008b4  ldr        r1, [pc, #0x1cc]        @ 0xa88 <sata_mt85xx_MTDRawRead.clone.6+0x604>  ; POOL[0xa88] -> .rodata+0x0  "sata_mt85xx_MTDRawRead"  (.rodata)
+000008b8  ldr        r2, [pc, #0x1d4]        @ 0xa94 <sata_mt85xx_MTDRawRead.clone.6+0x610>  ; POOL[0xa94] = 0x000001ea (490)
+000008bc  mov        r3, r9
+000008c0  ldr        r0, [pc, #0x1d0]        @ 0xa98 <sata_mt85xx_MTDRawRead.clone.6+0x614>  ; POOL[0xa98] -> .rodata.str1.4+0x248  (.rodata.str1.4)
+000008c4  str        r12, [sp]
+000008c8  bl         0x8c8 <sata_mt85xx_MTDRawRead.clone.6+0x444> @ imm = #-0x8
+000008c8  R_ARM_CALL printk
+000008cc  b          0x698 <sata_mt85xx_MTDRawRead.clone.6+0x214> @ imm = #-0x23c
+000008d0  ldr        r3, [r10]
+000008d4  tst        r3, #32
+000008d8  beq        0x698 <sata_mt85xx_MTDRawRead.clone.6+0x214> @ imm = #-0x248
+000008dc  ldr        r1, [pc, #0x1a4]        @ 0xa88 <sata_mt85xx_MTDRawRead.clone.6+0x604>  ; POOL[0xa88] -> .rodata+0x0  "sata_mt85xx_MTDRawRead"  (.rodata)
+000008e0  ldr        r2, [pc, #0x1b4]        @ 0xa9c <sata_mt85xx_MTDRawRead.clone.6+0x618>  ; POOL[0xa9c] = 0x000001fd (509)
+000008e4  mov        r3, r4
+000008e8  ldr        r0, [pc, #0x1b0]        @ 0xaa0 <sata_mt85xx_MTDRawRead.clone.6+0x61c>  ; POOL[0xaa0] -> .rodata.str1.4+0x2d4  (.rodata.str1.4)
+000008ec  bl         0x8ec <sata_mt85xx_MTDRawRead.clone.6+0x468> @ imm = #-0x8
+000008ec  R_ARM_CALL printk
+000008f0  b          0x698 <sata_mt85xx_MTDRawRead.clone.6+0x214> @ imm = #-0x260
+000008f4  ldr        r3, [r10]
+000008f8  tst        r3, #32
+000008fc  beq        0x698 <sata_mt85xx_MTDRawRead.clone.6+0x214> @ imm = #-0x26c
+00000900  ldr        r1, [pc, #0x180]        @ 0xa88 <sata_mt85xx_MTDRawRead.clone.6+0x604>  ; POOL[0xa88] -> .rodata+0x0  "sata_mt85xx_MTDRawRead"  (.rodata)
+00000904  mov        r2, r8
+00000908  mov        r3, r11
+0000090c  ldr        r0, [pc, #0x190]        @ 0xaa4 <sata_mt85xx_MTDRawRead.clone.6+0x620>  ; POOL[0xaa4] -> .rodata.str1.4+0x3b0  (.rodata.str1.4)
+00000910  bl         0x910 <sata_mt85xx_MTDRawRead.clone.6+0x48c> @ imm = #-0x8
+00000910  R_ARM_CALL printk
+00000914  b          0x698 <sata_mt85xx_MTDRawRead.clone.6+0x214> @ imm = #-0x284
+00000918  ldr        r3, [pc, #0x154]        @ 0xa74 <sata_mt85xx_MTDRawRead.clone.6+0x5f0>  ; POOL[0xa74] -> SHN_UNDEF+0x0  (ide_log_en)
+0000091c  ldr        r3, [r3]
+00000920  tst        r3, #32
+00000924  beq        0x698 <sata_mt85xx_MTDRawRead.clone.6+0x214> @ imm = #-0x294
+00000928  mov        r3, r0
+0000092c  ldr        r1, [pc, #0x154]        @ 0xa88 <sata_mt85xx_MTDRawRead.clone.6+0x604>  ; POOL[0xa88] -> .rodata+0x0  "sata_mt85xx_MTDRawRead"  (.rodata)
+00000930  ldr        r2, [pc, #0x170]        @ 0xaa8 <sata_mt85xx_MTDRawRead.clone.6+0x624>  ; POOL[0xaa8] = 0x000001b9 (441)
+00000934  ldr        r0, [pc, #0x170]        @ 0xaac <sata_mt85xx_MTDRawRead.clone.6+0x628>  ; POOL[0xaac] -> .rodata.str1.4+0x150  (.rodata.str1.4)
+00000938  bl         0x938 <sata_mt85xx_MTDRawRead.clone.6+0x4b4> @ imm = #-0x8
+00000938  R_ARM_CALL printk
+0000093c  b          0x698 <sata_mt85xx_MTDRawRead.clone.6+0x214> @ imm = #-0x2ac
+00000940  ldr        r3, [r10]
+00000944  tst        r3, #32
+00000948  beq        0x698 <sata_mt85xx_MTDRawRead.clone.6+0x214> @ imm = #-0x2b8
+0000094c  ldr        r1, [pc, #0x134]        @ 0xa88 <sata_mt85xx_MTDRawRead.clone.6+0x604>  ; POOL[0xa88] -> .rodata+0x0  "sata_mt85xx_MTDRawRead"  (.rodata)
+00000950  ldr        r2, [pc, #0x158]        @ 0xab0 <sata_mt85xx_MTDRawRead.clone.6+0x62c>  ; POOL[0xab0] = 0x0000020f (527)
+00000954  ldr        r0, [pc, #0x158]        @ 0xab4 <sata_mt85xx_MTDRawRead.clone.6+0x630>  ; POOL[0xab4] -> .rodata.str1.4+0x304  (.rodata.str1.4)
+00000958  bl         0x958 <sata_mt85xx_MTDRawRead.clone.6+0x4d4> @ imm = #-0x8
+00000958  R_ARM_CALL printk
+0000095c  b          0x698 <sata_mt85xx_MTDRawRead.clone.6+0x214> @ imm = #-0x2cc
+00000960  ldr        r3, [pc, #0x10c]        @ 0xa74 <sata_mt85xx_MTDRawRead.clone.6+0x5f0>  ; POOL[0xa74] -> SHN_UNDEF+0x0  (ide_log_en)
+00000964  ldr        r3, [r3]
+00000968  tst        r3, #32
+0000096c  beq        0x6a0 <sata_mt85xx_MTDRawRead.clone.6+0x21c> @ imm = #-0x2d4
+00000970  ldr        r1, [pc, #0x110]        @ 0xa88 <sata_mt85xx_MTDRawRead.clone.6+0x604>  ; POOL[0xa88] -> .rodata+0x0  "sata_mt85xx_MTDRawRead"  (.rodata)
+00000974  ldr        r2, [pc, #0x13c]        @ 0xab8 <sata_mt85xx_MTDRawRead.clone.6+0x634>  ; POOL[0xab8] = 0x000001aa (426)
+00000978  ldr        r3, [sp, #0x34]
+0000097c  ldr        r0, [pc, #0x138]        @ 0xabc <sata_mt85xx_MTDRawRead.clone.6+0x638>  ; POOL[0xabc] -> .rodata.str1.4+0x110  (.rodata.str1.4)
+00000980  bl         0x980 <sata_mt85xx_MTDRawRead.clone.6+0x4fc> @ imm = #-0x8
+00000980  R_ARM_CALL printk
+00000984  b          0x6a0 <sata_mt85xx_MTDRawRead.clone.6+0x21c> @ imm = #-0x2ec
+00000988  ldr        r1, [sp, #0x34]
+0000098c  mov        r2, r4
+00000990  mov        r3, r4
+00000994  ldr        r0, [pc, #0x124]        @ 0xac0 <sata_mt85xx_MTDRawRead.clone.6+0x63c>  ; POOL[0xac0] -> .rodata.str1.4+0x298  (.rodata.str1.4)
+00000998  bl         0x998 <sata_mt85xx_MTDRawRead.clone.6+0x514> @ imm = #-0x8
+00000998  R_ARM_CALL printk
+0000099c  b          0x638 <sata_mt85xx_MTDRawRead.clone.6+0x1b4> @ imm = #-0x36c
+000009a0  cmp        r3, #32
+000009a4  bne        0x9b8 <sata_mt85xx_MTDRawRead.clone.6+0x534> @ imm = #0xc
+000009a8  ldr        r3, [sp, #0x48]
+000009ac  cmp        r3, #1024
+000009b0  bne        0x688 <sata_mt85xx_MTDRawRead.clone.6+0x204> @ imm = #-0x330
+000009b4  b          0x54c <sata_mt85xx_MTDRawRead.clone.6+0xc8> @ imm = #-0x470
+000009b8  cmp        r3, #16
+000009bc  bne        0x9d0 <sata_mt85xx_MTDRawRead.clone.6+0x54c> @ imm = #0xc
+000009c0  ldr        r3, [sp, #0x48]
+000009c4  cmp        r3, #512
+000009c8  bne        0x688 <sata_mt85xx_MTDRawRead.clone.6+0x204> @ imm = #-0x348
+000009cc  b          0x54c <sata_mt85xx_MTDRawRead.clone.6+0xc8> @ imm = #-0x488
+000009d0  cmp        r3, #8
+000009d4  bne        0x688 <sata_mt85xx_MTDRawRead.clone.6+0x204> @ imm = #-0x354
+000009d8  ldr        r3, [sp, #0x48]
+000009dc  cmp        r3, #256
+000009e0  beq        0x54c <sata_mt85xx_MTDRawRead.clone.6+0xc8> @ imm = #-0x49c
+000009e4  b          0x688 <sata_mt85xx_MTDRawRead.clone.6+0x204> @ imm = #-0x364
+000009e8  rsb        r2, r3, r2
+000009ec  ldr        r1, [pc, #0x94]         @ 0xa88 <sata_mt85xx_MTDRawRead.clone.6+0x604>  ; POOL[0xa88] -> .rodata+0x0  "sata_mt85xx_MTDRawRead"  (.rodata)
+000009f0  mov        r3, r4
+000009f4  ldr        r0, [pc, #0xc8]         @ 0xac4 <sata_mt85xx_MTDRawRead.clone.6+0x640>  ; POOL[0xac4] -> .rodata.str1.4+0x374  (.rodata.str1.4)
+000009f8  bl         0x9f8 <sata_mt85xx_MTDRawRead.clone.6+0x574> @ imm = #-0x8
+000009f8  R_ARM_CALL printk
+000009fc  b          0x7e4 <sata_mt85xx_MTDRawRead.clone.6+0x360> @ imm = #-0x220
+00000a00  ldr        r1, [pc, #0x80]         @ 0xa88 <sata_mt85xx_MTDRawRead.clone.6+0x604>  ; POOL[0xa88] -> .rodata+0x0  "sata_mt85xx_MTDRawRead"  (.rodata)
+00000a04  ldr        r2, [pc, #0xbc]         @ 0xac8 <sata_mt85xx_MTDRawRead.clone.6+0x644>  ; POOL[0xac8] = 0x000001c6 (454)
+00000a08  ldr        r0, [pc, #0xbc]         @ 0xacc <sata_mt85xx_MTDRawRead.clone.6+0x648>  ; POOL[0xacc] -> .rodata.str1.4+0x188  (.rodata.str1.4)
+00000a0c  bl         0xa0c <sata_mt85xx_MTDRawRead.clone.6+0x588> @ imm = #-0x8
+00000a0c  R_ARM_CALL printk
+00000a10  b          0x698 <sata_mt85xx_MTDRawRead.clone.6+0x214> @ imm = #-0x380
+00000a14  ldr        r0, [pc, #0xb4]         @ 0xad0 <sata_mt85xx_MTDRawRead.clone.6+0x64c>  ; POOL[0xad0] -> .rodata.str1.4+0x1b8  (.rodata.str1.4)
+00000a18  ldr        r1, [sp, #0x6c]
+00000a1c  ldr        r2, [sp, #0x68]
+00000a20  bl         0xa20 <sata_mt85xx_MTDRawRead.clone.6+0x59c> @ imm = #-0x8
+00000a20  R_ARM_CALL printk
+00000a24  ldr        r3, [r10]
+00000a28  tst        r3, #32
+00000a2c  moveq      r3, #1
+00000a30  streq      r3, [sp, #0x2c]
+00000a34  beq        0x584 <sata_mt85xx_MTDRawRead.clone.6+0x100> @ imm = #-0x4b8
+00000a38  ldr        r0, [pc, #0x94]         @ 0xad4 <sata_mt85xx_MTDRawRead.clone.6+0x650>  ; POOL[0xad4] -> .rodata.str1.4+0x1e4  (.rodata.str1.4)
+00000a3c  ldr        r1, [sp, #0x70]
+00000a40  ldr        r2, [sp, #0x74]
+00000a44  bl         0xa44 <sata_mt85xx_MTDRawRead.clone.6+0x5c0> @ imm = #-0x8
+00000a44  R_ARM_CALL printk
+00000a48  mov        lr, #1
+00000a4c  str        lr, [sp, #0x2c]
+00000a50  b          0x584 <sata_mt85xx_MTDRawRead.clone.6+0x100> @ imm = #-0x4d4
+00000a54  rsb        r2, r3, r2
+00000a58  ldr        r1, [pc, #0x28]         @ 0xa88 <sata_mt85xx_MTDRawRead.clone.6+0x604>  ; POOL[0xa88] -> .rodata+0x0  "sata_mt85xx_MTDRawRead"  (.rodata)
+00000a5c  mov        r3, r4
+00000a60  ldr        r0, [pc, #0x70]         @ 0xad8 <sata_mt85xx_MTDRawRead.clone.6+0x654>  ; POOL[0xad8] -> .rodata.str1.4+0x334  (.rodata.str1.4)
+00000a64  bl         0xa64 <sata_mt85xx_MTDRawRead.clone.6+0x5e0> @ imm = #-0x8
+00000a64  R_ARM_CALL printk
+00000a68  b          0x7c8 <sata_mt85xx_MTDRawRead.clone.6+0x344> @ imm = #-0x2a8
+00000a6c  01         4d 20 80  	.word	0x80204d01
+00000a70  12         4d 10 80  	.word	0x80104d12
+00000a74  00         00 00 00  	.word	0x00000000
+00000a74  R_ARM_ABS32 ide_log_en
+00000a78  0b         4d 08 40  	.word	0x40084d0b
+00000a7c  00         00 00 00  	.word	0x00000000
+00000a7c  R_ARM_ABS32 sata_mtd_read_buf
+00000a80  14         02 00 00  	.word	0x00000214
+00000a80  R_ARM_ABS32 .rodata.str1.4
+00000a84  00         ff 0f 00  	.word	0x000fff00
+00000a88  00         00 00 00  	.word	0x00000000
+00000a88  R_ARM_ABS32 .rodata
+00000a8c  b1         01 00 00  	.word	0x000001b1
+00000a90  30         01 00 00  	.word	0x00000130
+00000a90  R_ARM_ABS32 .rodata.str1.4
+00000a94  ea         01 00 00  	.word	0x000001ea
+00000a98  48         02 00 00  	.word	0x00000248
+00000a98  R_ARM_ABS32 .rodata.str1.4
+00000a9c  fd         01 00 00  	.word	0x000001fd
+00000aa0  d4         02 00 00  	.word	0x000002d4
+00000aa0  R_ARM_ABS32 .rodata.str1.4
+00000aa4  b0         03 00 00  	.word	0x000003b0
+00000aa4  R_ARM_ABS32 .rodata.str1.4
+00000aa8  b9         01 00 00  	.word	0x000001b9
+00000aac  50         01 00 00  	.word	0x00000150
+00000aac  R_ARM_ABS32 .rodata.str1.4
+00000ab0  0f         02 00 00  	.word	0x0000020f
+00000ab4  04         03 00 00  	.word	0x00000304
+00000ab4  R_ARM_ABS32 .rodata.str1.4
+00000ab8  aa         01 00 00  	.word	0x000001aa
+00000abc  10         01 00 00  	.word	0x00000110
+00000abc  R_ARM_ABS32 .rodata.str1.4
+00000ac0  98         02 00 00  	.word	0x00000298
+00000ac0  R_ARM_ABS32 .rodata.str1.4
+00000ac4  74         03 00 00  	.word	0x00000374
+00000ac4  R_ARM_ABS32 .rodata.str1.4
+00000ac8  c6         01 00 00  	.word	0x000001c6
+00000acc  88         01 00 00  	.word	0x00000188
+00000acc  R_ARM_ABS32 .rodata.str1.4
+00000ad0  b8         01 00 00  	.word	0x000001b8
+00000ad0  R_ARM_ABS32 .rodata.str1.4
+00000ad4  e4         01 00 00  	.word	0x000001e4
+00000ad4  R_ARM_ABS32 .rodata.str1.4
+00000ad8  34         03 00 00  	.word	0x00000334
+00000ad8  R_ARM_ABS32 .rodata.str1.4

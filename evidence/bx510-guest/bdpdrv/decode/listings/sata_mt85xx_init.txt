@@ -1,0 +1,464 @@
+
+/tmp/bdpdrv/sata_mt85xx_mod.ko:	file format elf32-littlearm
+
+Disassembly of section .init.text:
+
+00000788 <sata_mt85xx_init>:
+00000788  ldr        r3, [pc, #0x588]        @ 0xd18 <sata_mt85xx_init+0x590>  ; POOL[0xd18] -> SHN_UNDEF+0x0  (mt85xx_fefwmem_base)
+0000078c  push       {r4, r5, r6, r7, r8, r9, r10, r11, lr}
+00000790  sub        sp, sp, #20
+00000794  ldr        r4, [r3]
+00000798  cmp        r4, #0
+0000079c  bne        0x81c <sata_mt85xx_init+0x94> @ imm = #0x78
+000007a0  ldr        r0, [pc, #0x574]        @ 0xd1c <sata_mt85xx_init+0x594>  ; POOL[0xd1c] -> .rodata.str1.4+0x1da0  (.rodata.str1.4)
+000007a4  bl         0x7a4 <sata_mt85xx_init+0x1c> @ imm = #-0x8
+000007a4  R_ARM_CALL printk
+000007a8  mov        r0, #4
+000007ac  bl         0x7ac <sata_mt85xx_init+0x24> @ imm = #-0x8
+000007ac  R_ARM_CALL vFL_SetSinfo4Reg
+000007b0  mov        r0, #2
+000007b4  bl         0x7b4 <sata_mt85xx_init+0x2c> @ imm = #-0x8
+000007b4  R_ARM_CALL fgFL_ChkSinfo4Reg
+000007b8  cmp        r0, #0
+000007bc  moveq      r4, r0
+000007c0  beq        0x804 <sata_mt85xx_init+0x7c> @ imm = #0x3c
+000007c4  b          0x7dc <sata_mt85xx_init+0x54> @ imm = #0x10
+000007c8  ldr        r0, [pc, #0x550]        @ 0xd20 <sata_mt85xx_init+0x598>  ; POOL[0xd20] = 0x3ffffcc8 (1073741000) float=1.9999
+000007cc  bl         0x7cc <sata_mt85xx_init+0x44> @ imm = #-0x8
+000007cc  R_ARM_CALL __const_udelay
+000007d0  subs       r5, r5, #1
+000007d4  bhs        0x7c8 <sata_mt85xx_init+0x40> @ imm = #-0x14
+000007d8  add        r4, r4, #1
+000007dc  mov        r0, #2
+000007e0  bl         0x7e0 <sata_mt85xx_init+0x58> @ imm = #-0x8
+000007e0  R_ARM_CALL fgFL_ChkSinfo4Reg
+000007e4  cmp        r0, #0
+000007e8  beq        0x7fc <sata_mt85xx_init+0x74> @ imm = #0xc
+000007ec  cmp        r4, #5
+000007f0  beq        0x80c <sata_mt85xx_init+0x84> @ imm = #0x14
+000007f4  mov        r5, #100
+000007f8  b          0x7d0 <sata_mt85xx_init+0x48> @ imm = #-0x30
+000007fc  cmp        r4, #4
+00000800  bgt        0x80c <sata_mt85xx_init+0x84> @ imm = #0x4
+00000804  ldr        r2, [pc, #0x518]        @ 0xd24 <sata_mt85xx_init+0x59c>  ; POOL[0xd24] -> .rodata.str1.4+0x1d90  "done"  (.rodata.str1.4)
+00000808  b          0x810 <sata_mt85xx_init+0x88> @ imm = #0x0
+0000080c  ldr        r2, [pc, #0x514]        @ 0xd28 <sata_mt85xx_init+0x5a0>  ; POOL[0xd28] -> .rodata.str1.4+0x1d98  "timeout"  (.rodata.str1.4)
+00000810  ldr        r0, [pc, #0x514]        @ 0xd2c <sata_mt85xx_init+0x5a4>  ; POOL[0xd2c] -> .rodata.str1.4+0x1dc8  (.rodata.str1.4)
+00000814  mov        r1, r4
+00000818  bl         0x818 <sata_mt85xx_init+0x90> @ imm = #-0x8
+00000818  R_ARM_CALL printk
+0000081c  ldr        r3, [pc, #0x50c]        @ 0xd30 <sata_mt85xx_init+0x5a8>  ; POOL[0xd30] -> SHN_UNDEF+0x0  (ide_log_en)
+00000820  ldr        r3, [r3]
+00000824  tst        r3, #32
+00000828  beq        0x834 <sata_mt85xx_init+0xac> @ imm = #0x4
+0000082c  ldr        r0, [pc, #0x500]        @ 0xd34 <sata_mt85xx_init+0x5ac>  ; POOL[0xd34] -> .rodata.str1.4+0x1de8  (.rodata.str1.4)
+00000830  bl         0x830 <sata_mt85xx_init+0xa8> @ imm = #-0x8
+00000830  R_ARM_CALL printk
+00000834  ldr        r3, [pc, #0x4f4]        @ 0xd30 <sata_mt85xx_init+0x5a8>  ; POOL[0xd30] -> SHN_UNDEF+0x0  (ide_log_en)
+00000838  ldr        r3, [r3]
+0000083c  tst        r3, #32
+00000840  beq        0x85c <sata_mt85xx_init+0xd4> @ imm = #0x14
+00000844  ldr        r3, [pc, #0x4ec]        @ 0xd38 <sata_mt85xx_init+0x5b0>  ; POOL[0xd38] -> SHN_UNDEF+0x0  (sata_int_ldr_fw)
+00000848  ldr        r0, [pc, #0x4ec]        @ 0xd3c <sata_mt85xx_init+0x5b4>  ; POOL[0xd3c] -> .rodata.str1.4+0x1e20  (.rodata.str1.4)
+0000084c  ldr        r1, [r3]
+00000850  ldr        r3, [pc, #0x4e8]        @ 0xd40 <sata_mt85xx_init+0x5b8>  ; POOL[0xd40] -> SHN_UNDEF+0x0  (svoif_int_ldr_dram)
+00000854  ldr        r2, [r3]
+00000858  bl         0x858 <sata_mt85xx_init+0xd0> @ imm = #-0x8
+00000858  R_ARM_CALL printk
+0000085c  ldr        r4, [pc, #0x4e0]        @ 0xd44 <sata_mt85xx_init+0x5bc>  ; POOL[0xd44] -> .bss+0x80  (.bss)
+00000860  ldr        lr, [pc, #0x4e0]        @ 0xd48 <sata_mt85xx_init+0x5c0>  ; POOL[0xd48] = 0xfd05cfff (4245016575)
+00000864  mov        r12, #0
+00000868  mov        r1, r12
+0000086c  str        r12, [lr, #-0x7ff]
+00000870  mov        r2, r12
+00000874  str        r12, [r4, #0xc]
+00000878  str        r12, [r4, #0x10]
+0000087c  str        r12, [r4, #0x14]
+00000880  str        r12, [r4, #0x18]
+00000884  mov        r3, r12
+00000888  ldr        r0, [pc, #0x4bc]        @ 0xd4c <sata_mt85xx_init+0x5c4>  ; POOL[0xd4c] -> .rodata.str1.4+0x1e60  "sata_mt85xx_0"  (.rodata.str1.4)
+0000088c  str        r12, [sp]
+00000890  str        r12, [sp, #0x4]
+00000894  bl         0x894 <sata_mt85xx_init+0x10c> @ imm = #-0x8
+00000894  R_ARM_CALL __create_workqueue_key
+00000898  mov        r1, #39
+0000089c  str        r0, [r4, #0x4]
+000008a0  bl         0x8a0 <sata_mt85xx_init+0x118> @ imm = #-0x8
+000008a0  R_ARM_CALL set_workqueue_priority
+000008a4  ldr        r2, [pc, #0x4a4]        @ 0xd50 <sata_mt85xx_init+0x5c8>  ; POOL[0xd50] -> SHN_UNDEF+0x0  (sata_hw_seg_buf)
+000008a8  ldr        r3, [pc, #0x4a4]        @ 0xd54 <sata_mt85xx_init+0x5cc>  ; POOL[0xd54] -> .data+0x70  (.data)
+000008ac  ldr        r2, [r2]
+000008b0  cmp        r2, #0
+000008b4  movne      r2, #17
+000008b8  moveq      r1, #1
+000008bc  strhne     r2, [r3, #160]
+000008c0  strheq     r1, [r3, #160]
+000008c4  bl         0x8c4 <sata_mt85xx_init+0x13c> @ imm = #-0x8
+000008c4  R_ARM_CALL sata_mt85xx_init_int_ldr
+000008c8  cmp        r0, #0
+000008cc  movlt      r2, #1
+000008d0  ldrlt      r3, [pc, #0x46c]        @ 0xd44 <sata_mt85xx_init+0x5bc>  ; POOL[0xd44] -> .bss+0x80  (.bss)
+000008d4  strlt      r2, [r3]
+000008d8  ldr        r3, [pc, #0x450]        @ 0xd30 <sata_mt85xx_init+0x5a8>  ; POOL[0xd30] -> SHN_UNDEF+0x0  (ide_log_en)
+000008dc  ldr        r3, [r3]
+000008e0  tst        r3, #8
+000008e4  beq        0x8f4 <sata_mt85xx_init+0x16c> @ imm = #0x8
+000008e8  ldr        r0, [pc, #0x468]        @ 0xd58 <sata_mt85xx_init+0x5d0>  ; POOL[0xd58] -> .rodata.str1.4+0x1e70  (.rodata.str1.4)
+000008ec  mov        r1, #0
+000008f0  bl         0x8f0 <sata_mt85xx_init+0x168> @ imm = #-0x8
+000008f0  R_ARM_CALL printk
+000008f4  ldr        r3, [pc, #0x434]        @ 0xd30 <sata_mt85xx_init+0x5a8>  ; POOL[0xd30] -> SHN_UNDEF+0x0  (ide_log_en)
+000008f8  ldr        r2, [pc, #0x45c]        @ 0xd5c <sata_mt85xx_init+0x5d4>  ; POOL[0xd5c] -> .rodata+0x368  (.rodata)
+000008fc  mov        r1, #0
+00000900  ldr        r3, [r3]
+00000904  str        r2, [sp, #0x8]
+00000908  tst        r3, #1
+0000090c  str        r1, [sp, #0xc]
+00000910  beq        0x91c <sata_mt85xx_init+0x194> @ imm = #0x4
+00000914  ldr        r0, [pc, #0x444]        @ 0xd60 <sata_mt85xx_init+0x5d8>  ; POOL[0xd60] -> .rodata.str1.4+0x1e94  (.rodata.str1.4)
+00000918  bl         0x918 <sata_mt85xx_init+0x190> @ imm = #-0x8
+00000918  R_ARM_CALL printk
+0000091c  mov        r1, #0
+00000920  ldr        r0, [pc, #0x43c]        @ 0xd64 <sata_mt85xx_init+0x5dc>  ; POOL[0xd64] -> .rodata.str1.4+0x1eb4  "sata_mt85xx"  (.rodata.str1.4)
+00000924  mov        r2, r1
+00000928  mov        r3, r1
+0000092c  bl         0x92c <sata_mt85xx_init+0x1a4> @ imm = #-0x8
+0000092c  R_ARM_CALL platform_device_register_simple
+00000930  cmn        r0, #4096
+00000934  mov        r4, r0
+00000938  bhi        0xcac <sata_mt85xx_init+0x524> @ imm = #0x36c
+0000093c  mvn        r2, #0
+00000940  mov        r3, #0
+00000944  add        r5, r0, #8
+00000948  strd       r2, r3, [r0, #200]
+0000094c  add        r1, sp, #8
+00000950  mov        r0, r5
+00000954  mov        r2, #1
+00000958  bl         0x958 <sata_mt85xx_init+0x1d0> @ imm = #-0x8
+00000958  R_ARM_CALL ata_host_alloc_pinfo
+0000095c  ldr        r8, [pc, #0x3cc]        @ 0xd30 <sata_mt85xx_init+0x5a8>  ; POOL[0xd30] -> SHN_UNDEF+0x0  (ide_log_en)
+00000960  subs       r6, r0, #0
+00000964  beq        0xc88 <sata_mt85xx_init+0x500> @ imm = #0x31c
+00000968  b          0x984 <sata_mt85xx_init+0x1fc> @ imm = #0x14
+0000096c  ldr        r3, [pc, #0x3d0]        @ 0xd44 <sata_mt85xx_init+0x5bc>  ; POOL[0xd44] -> .bss+0x80  (.bss)
+00000970  mov        r2, #0
+00000974  mov        r0, r4
+00000978  str        r2, [r3, #0x18]
+0000097c  bl         0x97c <sata_mt85xx_init+0x1f4> @ imm = #-0x8
+0000097c  R_ARM_CALL platform_device_unregister
+00000980  b          0xce0 <sata_mt85xx_init+0x558> @ imm = #0x358
+00000984  ldr        r7, [pc, #0x3b8]        @ 0xd44 <sata_mt85xx_init+0x5bc>  ; POOL[0xd44] -> .bss+0x80  (.bss)
+00000988  mov        r10, #0
+0000098c  add        r2, r7, #32
+00000990  ldr        r3, [r7, #0x10]
+00000994  str        r2, [r6, #0xc]
+00000998  add        r12, r3, #1
+0000099c  lsl        r2, r3, #6
+000009a0  lsl        r9, r3, #8
+000009a4  lsl        r11, r3, #5
+000009a8  mov        lr, #1
+000009ac  str        r10, [r6, #0x4]
+000009b0  str        r12, [r7, #0x10]
+000009b4  str        r3, [r7, #0x24]
+000009b8  str        r2, [r7, #0x2c]
+000009bc  mov        r1, #208
+000009c0  str        lr, [r7, #0x28]
+000009c4  ldr        r0, [pc, #0x39c]        @ 0xd68 <sata_mt85xx_init+0x5e0>  ; POOL[0xd68] -> SHN_UNDEF+0x0  (kmalloc_caches)
+000009c8  str        r10, [r7, #0x20]
+000009cc  str        r9, [r7, #0x30]
+000009d0  str        r11, [r7, #0x34]
+000009d4  str        r10, [r7, #0x38]
+000009d8  str        r10, [r7, #0x3c]
+000009dc  str        r10, [r7, #0x40]
+000009e0  str        r4, [r7, #0x248]
+000009e4  bl         0x9e4 <sata_mt85xx_init+0x25c> @ imm = #-0x8
+000009e4  R_ARM_CALL kmem_cache_alloc
+000009e8  mov        r1, #208
+000009ec  str        r0, [r7, #0x44]
+000009f0  ldr        r0, [pc, #0x370]        @ 0xd68 <sata_mt85xx_init+0x5e0>  ; POOL[0xd68] -> SHN_UNDEF+0x0  (kmalloc_caches)
+000009f4  bl         0x9f4 <sata_mt85xx_init+0x26c> @ imm = #-0x8
+000009f4  R_ARM_CALL kmem_cache_alloc
+000009f8  ldr        r2, [pc, #0x350]        @ 0xd50 <sata_mt85xx_init+0x5c8>  ; POOL[0xd50] -> SHN_UNDEF+0x0  (sata_hw_seg_buf)
+000009fc  ldr        r3, [r8]
+00000a00  str        r10, [r7, #0x70]
+00000a04  ldr        r12, [r2]
+00000a08  tst        r3, #64
+00000a0c  str        r10, [r7, #0x78]
+00000a10  str        r10, [r7, #0x7c]
+00000a14  str        r12, [r7, #0x80]
+00000a18  str        r0, [r7, #0x48]
+00000a1c  bne        0xc6c <sata_mt85xx_init+0x4e4> @ imm = #0x248
+00000a20  ldr        r7, [pc, #0x31c]        @ 0xd44 <sata_mt85xx_init+0x5bc>  ; POOL[0xd44] -> .bss+0x80  (.bss)
+00000a24  add        r0, r7, #32
+00000a28  bl         0xa28 <sata_mt85xx_init+0x2a0> @ imm = #-0x8
+00000a28  R_ARM_CALL sata_mt85xx_cache_reset
+00000a2c  ldr        r3, [r7, #0x28]
+00000a30  mov        r2, #0
+00000a34  cmp        r3, #1
+00000a38  mov        r3, #1
+00000a3c  str        r2, [r7, #0x228]
+00000a40  str        r3, [r7, #0x230]
+00000a44  str        r2, [r7, #0x240]
+00000a48  str        r2, [r7, #0x234]
+00000a4c  str        r2, [r7, #0x238]
+00000a50  str        r2, [r7, #0x23c]
+00000a54  str        r2, [r7, #0x244]
+00000a58  str        r2, [r7, #0x24c]
+00000a5c  str        r2, [r7, #0x250]
+00000a60  ldr        r3, [r6, #0x1c]
+00000a64  bne        0xb9c <sata_mt85xx_init+0x414> @ imm = #0x130
+00000a68  b          0xbfc <sata_mt85xx_init+0x474> @ imm = #0x18c
+00000a6c  ldr        r7, [pc, #0x2d0]        @ 0xd44 <sata_mt85xx_init+0x5bc>  ; POOL[0xd44] -> .bss+0x80  (.bss)
+00000a70  mov        r8, #0
+00000a74  add        r3, r7, #724
+00000a78  str        r3, [r7, #0x2d4]
+00000a7c  str        r3, [r7, #0x2d8]
+00000a80  ldr        r3, [pc, #0x2e4]        @ 0xd6c <sata_mt85xx_init+0x5e4>  ; POOL[0xd6c] -> .text+0x6c94  (sata_mt85xx_qc_issu_task)
+00000a84  mov        r2, r8
+00000a88  str        r3, [r7, #0x2dc]
+00000a8c  add        r0, r7, #736
+00000a90  mov        r1, r8
+00000a94  str        r8, [r7, #0x2d0]
+00000a98  bl         0xa98 <sata_mt85xx_init+0x310> @ imm = #-0x8
+00000a98  R_ARM_CALL init_timer_key
+00000a9c  add        r0, r7, #768
+00000aa0  add        r1, r7, #832
+00000aa4  bl         0xaa4 <sata_mt85xx_init+0x31c> @ imm = #-0x8
+00000aa4  R_ARM_CALL __init_waitqueue_head
+00000aa8  add        r3, r7, #780
+00000aac  str        r3, [r7, #0x30c]
+00000ab0  str        r3, [r7, #0x310]
+00000ab4  ldr        r3, [pc, #0x2b4]        @ 0xd70 <sata_mt85xx_init+0x5e8>  ; POOL[0xd70] -> .text+0x4540  (_sata_mt85xx_svoif_interrupt_handler)
+00000ab8  add        r0, r7, #792
+00000abc  mov        r1, r8
+00000ac0  mov        r2, r8
+00000ac4  str        r3, [r7, #0x314]
+00000ac8  str        r8, [r7, #0x308]
+00000acc  bl         0xacc <sata_mt85xx_init+0x344> @ imm = #-0x8
+00000acc  R_ARM_CALL init_timer_key
+00000ad0  add        r12, r7, #588
+00000ad4  str        r8, [r7, #0x334]
+00000ad8  add        r3, r7, #576
+00000adc  str        r12, [sp]
+00000ae0  ldr        r0, [pc, #0x28c]        @ 0xd74 <sata_mt85xx_init+0x5ec>  ; POOL[0xd74] -> .rodata.str1.4+0x1ec0  (.rodata.str1.4)
+00000ae4  mov        r12, #800
+00000ae8  mov        r1, r8
+00000aec  add        r2, r7, #32
+00000af0  str        r12, [sp, #0x4]
+00000af4  bl         0xaf4 <sata_mt85xx_init+0x36c> @ imm = #-0x8
+00000af4  R_ARM_CALL printk
+00000af8  ldr        r3, [r7, #0x28]
+00000afc  ldr        r12, [pc, #0x274]       @ 0xd78 <sata_mt85xx_init+0x5f0>  ; POOL[0xd78] -> .data+0x98  (.data)
+00000b00  cmp        r3, #1
+00000b04  bne        0xb54 <sata_mt85xx_init+0x3cc> @ imm = #0x48
+00000b08  b          0xb78 <sata_mt85xx_init+0x3f0> @ imm = #0x68
+00000b0c  cmp        r6, #0
+00000b10  bne        0xb34 <sata_mt85xx_init+0x3ac> @ imm = #0x1c
+00000b14  mov        r0, r5
+00000b18  bl         0xb18 <sata_mt85xx_init+0x390> @ imm = #-0x8
+00000b18  R_ARM_CALL dev_get_drvdata
+00000b1c  ldr        r3, [pc, #0x220]        @ 0xd44 <sata_mt85xx_init+0x5bc>  ; POOL[0xd44] -> .bss+0x80  (.bss)
+00000b20  mov        r2, #1
+00000b24  str        r2, [r3, #0x14]
+00000b28  str        r2, [r3, #0x18]
+00000b2c  str        r0, [r3, #0x340]
+00000b30  b          0xce0 <sata_mt85xx_init+0x558> @ imm = #0x1a8
+00000b34  ldr        r3, [pc, #0x1f4]        @ 0xd30 <sata_mt85xx_init+0x5a8>  ; POOL[0xd30] -> SHN_UNDEF+0x0  (ide_log_en)
+00000b38  ldr        r3, [r3]
+00000b3c  tst        r3, #1
+00000b40  beq        0x96c <sata_mt85xx_init+0x1e4> @ imm = #-0x1dc
+00000b44  mov        r1, r6
+00000b48  ldr        r0, [pc, #0x22c]        @ 0xd7c <sata_mt85xx_init+0x5f4>  ; POOL[0xd7c] -> .rodata.str1.4+0x1ef8  (.rodata.str1.4)
+00000b4c  bl         0xb4c <sata_mt85xx_init+0x3c4> @ imm = #-0x8
+00000b4c  R_ARM_CALL printk
+00000b50  b          0x96c <sata_mt85xx_init+0x1e4> @ imm = #-0x1ec
+00000b54  ldr        r1, [r7, #0x24]
+00000b58  mov        r0, r6
+00000b5c  add        r1, r1, #53
+00000b60  ldr        r2, [pc, #0x218]        @ 0xd80 <sata_mt85xx_init+0x5f8>  ; POOL[0xd80] -> .text+0x63c8  (sata_mt85xx_interrupt)
+00000b64  mov        r3, #128
+00000b68  str        r12, [sp]
+00000b6c  bl         0xb6c <sata_mt85xx_init+0x3e4> @ imm = #-0x8
+00000b6c  R_ARM_CALL ata_host_activate
+00000b70  mov        r6, r0
+00000b74  b          0xb0c <sata_mt85xx_init+0x384> @ imm = #-0x70
+00000b78  ldr        r1, [r7, #0x24]
+00000b7c  mov        r0, r6
+00000b80  add        r1, r1, #18
+00000b84  ldr        r2, [pc, #0x1f8]        @ 0xd84 <sata_mt85xx_init+0x5fc>  ; POOL[0xd84] -> .text+0x346c  (svoif_mt85xx_interrupt)
+00000b88  mov        r3, #128
+00000b8c  str        r12, [sp]
+00000b90  bl         0xb90 <sata_mt85xx_init+0x408> @ imm = #-0x8
+00000b90  R_ARM_CALL ata_host_activate
+00000b94  mov        r6, r0
+00000b98  b          0xb0c <sata_mt85xx_init+0x384> @ imm = #-0x94
+00000b9c  ldr        r1, [r7, #0x2c]
+00000ba0  str        r2, [r3, #0x54]
+00000ba4  add        r12, r1, #4
+00000ba8  add        r0, r1, #28
+00000bac  add        r2, r1, #56
+00000bb0  add        r9, r1, #8
+00000bb4  add        r10, r1, #12
+00000bb8  add        r8, r1, #16
+00000bbc  add        r7, r1, #20
+00000bc0  add        lr, r1, #24
+00000bc4  str        r1, [r3, #0x1c]
+00000bc8  str        r1, [r3, #0x20]
+00000bcc  str        r12, [r3, #0x24]
+00000bd0  str        r12, [r3, #0x28]
+00000bd4  str        r9, [r3, #0x2c]
+00000bd8  str        r10, [r3, #0x30]
+00000bdc  str        r8, [r3, #0x34]
+00000be0  str        r7, [r3, #0x38]
+00000be4  str        lr, [r3, #0x3c]
+00000be8  str        r0, [r3, #0x40]
+00000bec  str        r0, [r3, #0x44]
+00000bf0  str        r2, [r3, #0x48]
+00000bf4  str        r2, [r3, #0x4c]
+00000bf8  b          0xa6c <sata_mt85xx_init+0x2e4> @ imm = #-0x194
+00000bfc  add        r1, r7, #688
+00000c00  str        r1, [r3, #0x38]
+00000c04  ldr        r1, [pc, #0x17c]        @ 0xd88 <sata_mt85xx_init+0x600>  ; POOL[0xd88] -> .bss+0x334  (.bss)
+00000c08  add        r11, r7, #660
+00000c0c  str        r1, [r3, #0x3c]
+00000c10  ldr        r1, [pc, #0x174]        @ 0xd8c <sata_mt85xx_init+0x604>  ; POOL[0xd8c] -> .bss+0x338  (.bss)
+00000c14  add        r9, r7, #664
+00000c18  str        r1, [r3, #0x40]
+00000c1c  ldr        r1, [pc, #0x16c]        @ 0xd90 <sata_mt85xx_init+0x608>  ; POOL[0xd90] -> .bss+0x33c  (.bss)
+00000c20  add        r10, r7, #668
+00000c24  str        r1, [r3, #0x44]
+00000c28  ldr        r1, [pc, #0x164]        @ 0xd94 <sata_mt85xx_init+0x60c>  ; POOL[0xd94] -> .bss+0x340  (.bss)
+00000c2c  add        r8, r7, #672
+00000c30  add        lr, r7, #676
+00000c34  add        r12, r7, #680
+00000c38  add        r0, r7, #684
+00000c3c  add        r7, r7, #708
+00000c40  str        r11, [r3, #0x1c]
+00000c44  str        r9, [r3, #0x20]
+00000c48  str        r10, [r3, #0x24]
+00000c4c  str        r8, [r3, #0x28]
+00000c50  str        lr, [r3, #0x2c]
+00000c54  str        r12, [r3, #0x30]
+00000c58  str        r0, [r3, #0x34]
+00000c5c  str        r1, [r3, #0x48]
+00000c60  str        r7, [r3, #0x4c]
+00000c64  str        r2, [r3, #0x54]
+00000c68  b          0xa6c <sata_mt85xx_init+0x2e4> @ imm = #-0x204
+00000c6c  ldr        r1, [r7, #0x28]
+00000c70  ldr        r2, [r7, #0x24]
+00000c74  ldr        r3, [r7, #0x44]
+00000c78  ldr        r0, [pc, #0x118]        @ 0xd98 <sata_mt85xx_init+0x610>  ; POOL[0xd98] -> .rodata.str1.4+0x1f20  (.rodata.str1.4)
+00000c7c  str        r12, [sp]
+00000c80  bl         0xc80 <sata_mt85xx_init+0x4f8> @ imm = #-0x8
+00000c80  R_ARM_CALL printk
+00000c84  b          0xa20 <sata_mt85xx_init+0x298> @ imm = #-0x26c
+00000c88  ldr        r3, [r8]
+00000c8c  tst        r3, #1
+00000c90  mvneq      r6, #11
+00000c94  beq        0x96c <sata_mt85xx_init+0x1e4> @ imm = #-0x330
+00000c98  mov        r1, r6
+00000c9c  ldr        r0, [pc, #0xf8]         @ 0xd9c <sata_mt85xx_init+0x614>  ; POOL[0xd9c] -> .rodata.str1.4+0x1f54  (.rodata.str1.4)
+00000ca0  bl         0xca0 <sata_mt85xx_init+0x518> @ imm = #-0x8
+00000ca0  R_ARM_CALL printk
+00000ca4  mvn        r6, #11
+00000ca8  b          0x96c <sata_mt85xx_init+0x1e4> @ imm = #-0x344
+00000cac  ldr        r3, [pc, #0x7c]         @ 0xd30 <sata_mt85xx_init+0x5a8>  ; POOL[0xd30] -> SHN_UNDEF+0x0  (ide_log_en)
+00000cb0  ldr        r2, [pc, #0x8c]         @ 0xd44 <sata_mt85xx_init+0x5bc>  ; POOL[0xd44] -> .bss+0x80  (.bss)
+00000cb4  mov        r1, #0
+00000cb8  ldr        r3, [r3]
+00000cbc  str        r1, [r2, #0x18]
+00000cc0  tst        r3, #1
+00000cc4  bne        0xcd0 <sata_mt85xx_init+0x548> @ imm = #0x4
+00000cc8  mov        r6, r4
+00000ccc  b          0xce0 <sata_mt85xx_init+0x558> @ imm = #0xc
+00000cd0  mov        r1, r0
+00000cd4  ldr        r0, [pc, #0xc4]         @ 0xda0 <sata_mt85xx_init+0x618>  ; POOL[0xda0] -> .rodata.str1.4+0x1f80  (.rodata.str1.4)
+00000cd8  bl         0xcd8 <sata_mt85xx_init+0x550> @ imm = #-0x8
+00000cd8  R_ARM_CALL printk
+00000cdc  b          0xcc8 <sata_mt85xx_init+0x540> @ imm = #-0x1c
+00000ce0  ldr        r3, [pc, #0x48]         @ 0xd30 <sata_mt85xx_init+0x5a8>  ; POOL[0xd30] -> SHN_UNDEF+0x0  (ide_log_en)
+00000ce4  ldr        r3, [r3]
+00000ce8  tst        r3, #8
+00000cec  beq        0xd00 <sata_mt85xx_init+0x578> @ imm = #0xc
+00000cf0  ldr        r0, [pc, #0xac]         @ 0xda4 <sata_mt85xx_init+0x61c>  ; POOL[0xda4] -> .rodata.str1.4+0x1fb8  (.rodata.str1.4)
+00000cf4  mov        r1, #0
+00000cf8  mov        r2, r6
+00000cfc  bl         0xcfc <sata_mt85xx_init+0x574> @ imm = #-0x8
+00000cfc  R_ARM_CALL printk
+00000d00  ldr        r3, [pc, #0x40]         @ 0xd48 <sata_mt85xx_init+0x5c0>  ; POOL[0xd48] = 0xfd05cfff (4245016575)
+00000d04  ldr        r2, [pc, #0x9c]         @ 0xda8 <sata_mt85xx_init+0x620>  ; POOL[0xda8] = 0x4f474f4c (1330073420) float=3.34386e+09
+00000d08  mov        r0, #0
+00000d0c  str        r2, [r3, #-0xfef]
+00000d10  add        sp, sp, #20
+00000d14  pop        {r4, r5, r6, r7, r8, r9, r10, r11, pc}
+00000d18  00         00 00 00  	.word	0x00000000
+00000d18  R_ARM_ABS32 mt85xx_fefwmem_base
+00000d1c  a0         1d 00 00  	.word	0x00001da0
+00000d1c  R_ARM_ABS32 .rodata.str1.4
+00000d20  c8         fc ff 3f  	.word	0x3ffffcc8
+00000d24  90         1d 00 00  	.word	0x00001d90
+00000d24  R_ARM_ABS32 .rodata.str1.4
+00000d28  98         1d 00 00  	.word	0x00001d98
+00000d28  R_ARM_ABS32 .rodata.str1.4
+00000d2c  c8         1d 00 00  	.word	0x00001dc8
+00000d2c  R_ARM_ABS32 .rodata.str1.4
+00000d30  00         00 00 00  	.word	0x00000000
+00000d30  R_ARM_ABS32 ide_log_en
+00000d34  e8         1d 00 00  	.word	0x00001de8
+00000d34  R_ARM_ABS32 .rodata.str1.4
+00000d38  00         00 00 00  	.word	0x00000000
+00000d38  R_ARM_ABS32 sata_int_ldr_fw
+00000d3c  20         1e 00 00  	.word	0x00001e20
+00000d3c  R_ARM_ABS32 .rodata.str1.4
+00000d40  00         00 00 00  	.word	0x00000000
+00000d40  R_ARM_ABS32 svoif_int_ldr_dram
+00000d44  80         00 00 00  	.word	0x00000080
+00000d44  R_ARM_ABS32 .bss
+00000d48  ff         cf 05 fd  	.word	0xfd05cfff
+00000d4c  60         1e 00 00  	.word	0x00001e60
+00000d4c  R_ARM_ABS32 .rodata.str1.4
+00000d50  00         00 00 00  	.word	0x00000000
+00000d50  R_ARM_ABS32 sata_hw_seg_buf
+00000d54  70         00 00 00  	.word	0x00000070
+00000d54  R_ARM_ABS32 .data
+00000d58  70         1e 00 00  	.word	0x00001e70
+00000d58  R_ARM_ABS32 .rodata.str1.4
+00000d5c  68         03 00 00  	.word	0x00000368
+00000d5c  R_ARM_ABS32 .rodata
+00000d60  94         1e 00 00  	.word	0x00001e94
+00000d60  R_ARM_ABS32 .rodata.str1.4
+00000d64  b4         1e 00 00  	.word	0x00001eb4
+00000d64  R_ARM_ABS32 .rodata.str1.4
+00000d68  94         02 00 00  	.word	0x00000294
+00000d68  R_ARM_ABS32 kmalloc_caches
+00000d6c  00         00 00 00  	.word	0x00000000
+00000d6c  R_ARM_ABS32 sata_mt85xx_qc_issu_task
+00000d70  00         00 00 00  	.word	0x00000000
+00000d70  R_ARM_ABS32 _sata_mt85xx_svoif_interrupt_handler
+00000d74  c0         1e 00 00  	.word	0x00001ec0
+00000d74  R_ARM_ABS32 .rodata.str1.4
+00000d78  98         00 00 00  	.word	0x00000098
+00000d78  R_ARM_ABS32 .data
+00000d7c  f8         1e 00 00  	.word	0x00001ef8
+00000d7c  R_ARM_ABS32 .rodata.str1.4
+00000d80  00         00 00 00  	.word	0x00000000
+00000d80  R_ARM_ABS32 sata_mt85xx_interrupt
+00000d84  00         00 00 00  	.word	0x00000000
+00000d84  R_ARM_ABS32 svoif_mt85xx_interrupt
+00000d88  34         03 00 00  	.word	0x00000334
+00000d88  R_ARM_ABS32 .bss
+00000d8c  38         03 00 00  	.word	0x00000338
+00000d8c  R_ARM_ABS32 .bss
+00000d90  3c         03 00 00  	.word	0x0000033c
+00000d90  R_ARM_ABS32 .bss
+00000d94  40         03 00 00  	.word	0x00000340
+00000d94  R_ARM_ABS32 .bss
+00000d98  20         1f 00 00  	.word	0x00001f20
+00000d98  R_ARM_ABS32 .rodata.str1.4
+00000d9c  54         1f 00 00  	.word	0x00001f54
+00000d9c  R_ARM_ABS32 .rodata.str1.4
+00000da0  80         1f 00 00  	.word	0x00001f80
+00000da0  R_ARM_ABS32 .rodata.str1.4
+00000da4  b8         1f 00 00  	.word	0x00001fb8
+00000da4  R_ARM_ABS32 .rodata.str1.4
+00000da8  4c         4f 47 4f  	.word	0x4f474f4c

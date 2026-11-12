@@ -387,7 +387,7 @@ sacd-sync:
 ## SACD :: sacd-verify :: clean-checkout release build + every check, on the VM :: make verify in reconstruct/ — builds from tracked sources, prints candidate SHA-256, runs fn_diff/interface/status/division/pool checks against that exact file; reproducible bit-identical across runs
 .PHONY: sacd-verify
 sacd-verify:
-	$(VM_SSH) 'cd ~/$(SACD_VM)/reconstruct && VERIFY_PY=$(SACD_PY) sh ../tools/release_verify.sh'
+	$(VM_SSH) 'VERIFY_PY=$(SACD_PY) sh $$HOME/$(SACD_VM)/tools/release_verify.sh'
 
 ## SACD :: sacd-rig [DISC=~/sacd-verify/firebird.iso] [OUT=<stamp>] :: QEMU protocol rig: original vs release candidate over the same disc fixture :: replays DISC_OPEN→SIZE→READ×3→CLOSE→reconnect→repeat against both daemons under sacd_rig.so, compares transcripts (result codes, payload hashes), pulls manifests as evidence — pkill-stale hygiene included because a wedged daemon holds port 2002
 .PHONY: sacd-rig

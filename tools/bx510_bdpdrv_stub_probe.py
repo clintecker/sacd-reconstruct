@@ -82,7 +82,10 @@ def main():
 
     stuba_ko = a.stuba_ko.resolve(strict=True)
     kscript_bytes = a.kscript.read_bytes() if a.kscript.exists() else b""
-    extra = {"shim/kcheck.sh": kscript_bytes}
+    procc_path = a.kscript.parent / "procc.sh"
+    procc_bytes = procc_path.read_bytes() if procc_path.exists() else b""
+    extra = {"shim/kcheck.sh": kscript_bytes,
+             "shim/procc.sh": procc_bytes}
     for spec in a.extra_file:
         name, _, path = spec.partition("=")
         if not name or not path:
@@ -99,6 +102,8 @@ def main():
         "mount -t tmpfs tmpfs /res; /bin/mknod /res/test-bdev b 31 10; /bin/mkdir -p /res/shim /res/proc",
         f"/bin/dd if=/res/test-bdev bs=4096 count={blocks} 2>/res/dd.err | /bin/tar -xf - -C /res",
         "mount -t proc proc /res/proc; echo STUB_PROC=$?",
+        # bdpdrv opens /proc/... at the LITERAL path; shell mode lacks /proc
+        "mkdir -p /proc; mount -t proc proc /proc; echo ROOTPROC=$?",
         "echo STUB_BEGIN",
         "ls -l /res/shim; echo STUB_LS=$?",
         "md5sum /res/shim/osal_stub.ko; echo STUB_MD5=$?",
@@ -106,6 +111,7 @@ def main():
         f"insmod {a.bdpdrv_guest.rsplit('/',1)[0]}/drvcli.ko; echo DRVCLI_INSMOD=$?",
         "insmod /res/shim/osal_stub.ko; echo STUB_INSMOD=$?",
         "grep osal_stub /res/proc/modules; echo STUB_MOD=$?",
+        "insmod /res/shim/bx510_feboot.ko; echo FEB_INSMOD=$?",
         f"insmod {a.bdpdrv_guest}; echo BDPDRV_INSMOD=$?",
         "grep bdpdrv /res/proc/modules; echo BDPDRV_MOD=$?",
         # CLI runtime channel (Run C35+): drvcli registers char major 244;
@@ -124,6 +130,7 @@ def main():
         "grep -iE 'bdp|sacd' /res/proc/kallsyms | tail -8; echo INVENTORY_KSYM=$?",
         # SATA/CDROM stack loadability check — via staged script file
         "sh /res/shim/kcheck.sh; echo KEXP2_DONE",
+        "sh /res/shim/procc.sh; echo PROCCHECK_DONE",
         "ls /res/proc/kallsyms; grep -c sata /res/proc/kallsyms; grep -c . /res/proc/kallsyms; echo KCUR_DONE",
         # CLI runtime channel (Run C45+): ioctl ABI 0xc0014502 -> x_cli_parser
         "/res/shim/clicmd help; echo CLI_EXEC_RC=$?",

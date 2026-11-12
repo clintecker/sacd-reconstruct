@@ -10,7 +10,13 @@ def command(qemu, images, mode, nand=None):
     nand = nand or images / "nand.img"
     # QEMU's comma-separated drive/device syntax escapes a literal comma by doubling it.
     quote = lambda p: str(p).replace(",", ",,")
-    args = [str(qemu), "-M", "sony-bx510", "-m", "512M", "-display", "none",
+    args = [str(qemu)]
+    mo = os.environ.get("BX510_MACHINE_OPTS", "")
+    if mo:
+        args += ["-M", "sony-bx510," + mo]
+    else:
+        args += ["-M", "sony-bx510"]
+    args += ["-m", "512M", "-display", "none",
             "-serial", "stdio", "-monitor", "none", "-nic", "none",
             "-drive", f"if=mtd,format=raw,file={quote(nand)},snapshot=on"]
     if mode == "uboot":
@@ -29,7 +35,7 @@ def command(qemu, images, mode, nand=None):
     elif mode == "shell":
         args.extend(["-kernel", str(images / "kernel.uImage"), "-append",
                      "console=ttyMT0,115200 mem=512M root=/dev/mtdblock17 "
-                     "rootfstype=squashfs ro init=/bin/sh"])
+                     "rootfstype=squashfs ro init=/bin/sh slub_debug=FZ"])
     else:
         raise ValueError(f"unknown boot mode: {mode}")
     return args

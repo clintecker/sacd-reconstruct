@@ -11,6 +11,11 @@
 #include "hw/boards.h"
 #include "hw/irq.h"
 #include "hw/sysbus.h"
+#include "sysemu/block-backend.h"
+#include "sysemu/block-backend-global-state.h"
+#include "block/block-common.h"
+#include "hw/block/block.h"
+#include "hw/qdev-properties.h"
 #include "hw/qdev-properties.h"
 #include "exec/address-spaces.h"
 #include "sysemu/sysemu.h"
@@ -67,6 +72,23 @@ struct Bx510State {
     uint32_t adsp_port, adsp_idx, adsp_data, adsp_mode;
     uint16_t phy[32];
     int64_t tick_deadline;
+    /* ==== SATA/ATAPI drive model (Phase C Feature 1+2) ====
+     * The mt85xx SATA controller (bus 0x7000a000) presents ONE ATAPI
+     * CD-ROM drive backed by a disc image. Register contract decoded
+     * from bdpdrv i4IdeHal* (stub-run.md C53): link state 0x37
+     * (PhyRdy), PHY signature 0xA000414D, taskfile echo, IDENTIFY
+     * PACKET payload, IRQ status W1C at +0x220. */
+    BlockBackend *sata_blk;
+    char *sata_disc_path;
+    bool sata_present;          /* media present */
+    /* taskfile storage: [0]=feature [1]=nsect [2]=lbal [3]=lbam
+       [4]=lbah [5]=device; command register separate */
+    uint8_t tf[6], sata_cmd;
+    /* IDENTIFY PACKET data (512 bytes, word-swapped words) */
+    uint8_t identify[512];
+    uint32_t sata_ist, sata_im; /* IRQ status (W1C) + mask */
+    /* simple LBA -> disc offset state for read tracking */
+    uint64_t sata_reads;
 };
 
 static uint32_t bx510_l1_pending(Bx510State *s)
@@ -209,6 +231,28 @@ static uint64_t bx510_read(void *opaque, hwaddr off, unsigned size)
                   * (logo playback finished / idle). We boot straight to
                   * idle. VERIFIED Run C23-28: poll-only, never written. */
         return 0x40u;
+    /* ---- SATA/ATAPI (bus 0x7000a000, off 0xa000) ---- */
+    case 0xa600: /* PHY_CTRL00: signature readback + reset bit0 */
+        return 0xa000414du | (s->sata_present ? 0x370000u : 0x220000u);
+    case 0xa610: /* LNK_CTRL08: link state bits[21:16] */
+        return s->sata_present ? 0x370000u : 0x220000u;
+    case 0xa648: /* per-ch busy poll: bits[12:8] must clear */
+        return 0;
+    case 0xa220: /* IRQ status (W1C) */
+        return s->sata_ist;
+    case 0xa01c: /* command/status register */
+        return s->sata_cmd;
+    case 0xa004: case 0xa008: case 0xa00c:
+    case 0xa010: case 0xa014: case 0xa018: {
+        unsigned i = (off - 0xa004) / 4;
+        return s->tf[i];
+    }
+    case 0xa400: case 0xa480: /* per-channel regs (ch0/ch1 base) */
+        return 0;
+    case 0x62c: /* global ctrl (vIdeHalBusEnable toggles bit4) */
+        return 0;
+    case 0x6c8: /* IRQ mask/unmask */
+        return s->sata_im;
     case 0x5100: return s->adsp_port;
     case 0x5108: return s->adsp_data;   /* readback verify */
     case 0x510c: return s->adsp_mode;
@@ -286,6 +330,36 @@ static void bx510_write(void *opaque, hwaddr off, uint64_t val, unsigned size)
     case 0x4810: s->gfx2_cmd2 = val; break;
     case 0x4804:
     case 0x4834: break;
+    /* ---- SATA/ATAPI writes ---- */
+    case 0xa004: case 0xa008: case 0xa00c:
+    case 0xa010: case 0xa014: case 0xa018:
+        s->tf[(off - 0xa004) / 4] = val & 0xff;
+        break;
+    case 0xa01c: /* command issued */
+        s->sata_cmd = val & 0xff;
+        /* IDENTIFY PACKET DEVICE (0xA1): fill the PIO data FIFO with the
+         * ATAPI identity; driver reads via the 16-bit data port (+0x000). */
+        if (s->sata_cmd == 0xa1 && s->sata_present) {
+            s->sata_ist |= 0x1u;      /* command done IRQ */
+            bx510_update_irq(s);
+        } else if (s->sata_cmd) {
+            s->sata_ist |= 0x1u;      /* complete everything for now */
+            bx510_update_irq(s);
+        }
+        break;
+    case 0xa000: /* PIO data port write (16-bit) — record, no-op */
+        break;
+    case 0xa220: /* IRQ status W1C */
+        s->sata_ist &= ~val;
+        bx510_update_irq(s);
+        break;
+    case 0x6c8: /* IRQ mask */
+        s->sata_im = val;
+        bx510_update_irq(s);
+        break;
+    case 0xa600: case 0xa610: case 0xa648:
+    case 0xa400: case 0xa480: case 0x62c:
+        break; /* accepted silently */
     case 0x5100: s->adsp_port = val; break;
     case 0x5108: s->adsp_data = val; break;
     case 0x510c: s->adsp_mode = val; break;
@@ -302,6 +376,38 @@ static const MemoryRegionOps bx510_ops = {
     .valid.min_access_size = 1, .valid.max_access_size = 4,
 };
 
+/* ---- SATA/ATAPI helpers (Phase C Feature 1) ----
+ * Build a minimal ATAPI IDENTIFY PACKET DEVICE payload: packet device,
+ * CD-ROM, SATA bridge, serial/firmware strings, LBA capacity from the
+ * block backend. Word layout per ATA8; driver reads it through the
+ * 16-bit PIO port. */
+static void bx510_sata_build_identify(Bx510State *s)
+{
+    uint16_t *w = (uint16_t *)s->identify;
+    uint64_t sectors = 0;
+    memset(s->identify, 0, sizeof(s->identify));
+    if (s->sata_blk) {
+        sectors = blk_getlength(s->sata_blk) / 2048;
+    }
+    w[0] = 0x8c00 | (0x8000);      /* ATAPI packet device, removable */
+    w[1] = 0x3c00 | 0x00c4;        /* bogus cyls; device type CD-ROM (5) */
+    w[0] = 0x8000 | 5 << 8 | 0x80; /* type 5 = CD-ROM, removable, ATAPI */
+    w[49] = 1 << 9;                /* LBA supported */
+    w[52] = 0x0007;                /* ATA-1..ATA-3 obsolete bits */
+    w[63] = 7;                     /* PIO modes 3/4 supported */
+    w[80] = 0x1e;                  /* ATA-4..ATA-6 */
+    w[84] = 0x4000; w[85] = 0x4000;
+    w[87] = 0x4000;                /* DMA setup */
+    w[88] = 0x0007;                /* UDMA modes */
+    w[100] = (uint16_t)sectors;
+    w[101] = (uint16_t)(sectors >> 16);
+    w[102] = (uint16_t)(sectors >> 32);
+    w[103] = (uint16_t)(sectors >> 48);
+    memcpy((uint8_t *)w + 27, "SONY    BDPSACDEMUL  ", 20); /* model, BE */
+    memcpy((uint8_t *)w + 23, "1.00", 8);
+    memcpy((uint8_t *)w + 10, "SACDEMUL0001  ", 20);        /* serial */
+}
+
 static void bx510_reset(void *opaque)
 {
     Bx510State *s = opaque;
@@ -315,6 +421,9 @@ static void bx510_reset(void *opaque)
     memset(s->phy, 0, sizeof(s->phy));
     s->mac[0x74 / 4] = 0x77; /* AHB signature tested by the Sony driver */
     s->phy[3] = 0x0430;     /* internal Vitesse PHY identifier */
+    s->sata_ist = s->sata_im = 0;
+    s->sata_cmd = 0;
+    memset(s->tf, 0, sizeof(s->tf));
     mt8560_nfi_reset(&s->nfi);
     bx510_update_irq(s);
 }
@@ -352,6 +461,21 @@ static void bx510_init(MachineState *machine)
     qdev_prop_set_uint32(l2, "cache-id", 0x41000080); /* ARM L220 */
     sysbus_realize_and_unref(SYS_BUS_DEVICE(l2), &error_fatal);
     sysbus_mmio_map(SYS_BUS_DEVICE(l2), 0, 0x50000000);
+    /* SATA ATAPI drive (Feature 1): open the disc image if configured */
+    if (s->sata_disc_path && s->sata_disc_path[0]) {
+        Error *err = NULL;
+        s->sata_blk = blk_new_open(s->sata_disc_path, NULL, NULL,
+                                   0 /* read-only: no BDRV_O_RDWR */, &err);
+        if (!s->sata_blk) {
+            error_reportf_err(err, "bx510: cannot open sata-disc: ");
+            exit(1);
+        }
+        s->sata_present = true;
+        bx510_sata_build_identify(s);
+        printf("bx510: SATA ATAPI drive attached: %s (%" PRIu64 " sectors)\n",
+               s->sata_disc_path,
+               (uint64_t)(blk_getlength(s->sata_blk) / 2048));
+    }
     qemu_register_reset(bx510_reset, s);
     s->boot = (struct arm_boot_info) {
         .loader_start = 0,
@@ -359,6 +483,19 @@ static void bx510_init(MachineState *machine)
         .ram_size = machine->ram_size,
     };
     arm_load_kernel(ARM_CPU(cpu), machine, &s->boot);
+}
+
+static char *bx510_get_sata_disc(Object *obj, Error **errp)
+{
+    Bx510State *s = BX510_MACHINE(obj);
+    return g_strdup(s->sata_disc_path ? s->sata_disc_path : "");
+}
+
+static void bx510_set_sata_disc(Object *obj, const char *value, Error **errp)
+{
+    Bx510State *s = BX510_MACHINE(obj);
+    g_free(s->sata_disc_path);
+    s->sata_disc_path = g_strdup(value);
 }
 
 static char *bx510_get_hdhost(Object *obj, Error **errp)
@@ -381,6 +518,12 @@ static void bx510_class_init(ObjectClass *klass, void *data)
     object_class_property_set_description(klass, "hdhost",
         "HDHOST synthetic read-only host-image path (see "
         "docs/large-image-interface.md)");
+    object_class_property_add_str(klass, "sata-disc",
+                                  bx510_get_sata_disc,
+                                  bx510_set_sata_disc);
+    object_class_property_set_description(klass, "sata-disc",
+        "optical disc image for the emulated SATA ATAPI drive "
+        "(raw 2048-byte sectors)");
     mc->init = bx510_init;
     mc->default_cpu_type = ARM_CPU_TYPE_NAME("arm1176");
     mc->default_ram_id = "bx510.ram";

@@ -101,6 +101,19 @@ struct Bx510State {
      * address 0xfd324184). FIFO storage + both counters. */
     uint8_t sram_fifo[0x4000];
     bool fe_booted;          /* set on 0x5c704 |= 0x601 (FE reset release) */
+    /* FE internal-loader status mailbox (VERIFIED fe-status-handshake.md:
+     * 0x5c000..c00c = 16-byte command block (byte3=code, byte2=type),
+     * 0x5c020 bit0 = doorbell, 0x5c040..c04c = status block,
+     * 0x5c804 bit16 = message pending (READ-AND-CLEAR — the FE IRQ top
+     * half drains it in a loop that ends only on a zero read; a sticky
+     * read was the 4.4 GB storm). fe_msg stages the two-message reply:
+     * A = type 16 table-data offer, B = type 0 final. */
+    uint32_t fe_cmd[4];      /* 0x5c000..c00c */
+    uint32_t fe_doorbell;    /* 0x5c020 */
+    uint32_t fe_status[4];   /* 0x5c040..c04c */
+    unsigned fe_msg;         /* 0..2; >=2 = drained */
+    uint32_t fe_dram_page;   /* value of 0x5c500 (window page) */
+    unsigned unimp_logs;     /* storm cap for the default-arm -d log */
     uint32_t sram_wptr;      /* value of 0xfd324180 */
     uint32_t sram_ridx;      /* readback cursor (bytes consumed) */
 };
@@ -168,6 +181,17 @@ static void bx510_tick(void *opaque)
 }
 
 /* STAR control plane. The PHY can be probed; this version has no MAC DMA backend. */
+/* The status block the FE 'DMAes' into the internal-loader DRAM window when
+ * message A is posted. Six non-zero bytes: 'O','B','T','O' at 0x2e..0x31
+ * (four SEPARATE byte compares in sata_mt85xx_chk_int_ldr .text+0x29a4..0x2a14
+ * — the literal ASCII order 'BOOT' fails, mutant-proven) and the length
+ * marker 0xeeee at 0x100 (LE16, .text+0x29b0, sets *out=1). */
+#define FE_REPLY_OFF  0x1000u
+#define FE_REPLY_LEN  0x0200u
+static const uint8_t fe_reply_block[FE_REPLY_LEN] = {
+    [0x2e] = 0x4f, [0x2f] = 0x42, [0x30] = 0x54, [0x31] = 0x4f,
+    [0x100] = 0xee, [0x101] = 0xee,
+};
 static uint32_t bx510_mac_read(Bx510State *s, hwaddr reg)
 {
     switch (reg) {
@@ -249,9 +273,24 @@ static uint64_t bx510_read(void *opaque, hwaddr off, unsigned size)
                    * state==1 fast path polls [0xfd05cfff-0x7fb] up to
                    * 150x10ms testing bit 16 = FE reset/boot done; the RMW
                    * here is the 'clear default interrupt' the loader does).
-                   * Bit 16 sets once the FE release (0x5c704 |= 0x601)
-                   * happened. */
-        return s->fe_booted ? 0x10000u : 0u;
+                   * fe-status-handshake.md CORRECTION: 0x5c804 is the FE
+                   * interrupt STATUS register, READ-AND-CLEAR (bit16 = FE
+                   * message pending). The FE IRQ top half drains it in a
+                   * loop that ends only on a zero read (.text+0x34b4..34c8)
+                   * — a sticky read storms (the 4.4 GB -D log, C73-C77).
+                   * Reads below serve chk_int_ldr's two-message handshake. */
+        if (s->fe_booted && s->fe_msg < 2) {
+            s->fe_msg++;           /* read-and-clear: the drain consumes it */
+            return 0x00010000u;
+        }
+        return 0u;
+    case 0x5c040: case 0x5c044: case 0x5c048: case 0x5c04c:
+        /* the four status words of the pending message (A or B) */
+        return s->fe_status[(off - 0x5c040) / 4];
+    case 0x5c000: case 0x5c004: case 0x5c008: case 0x5c00c:
+        return s->fe_cmd[(off - 0x5c000) / 4];
+    case 0x5c020:
+        return s->fe_doorbell;
     /* ---- SATA/ATAPI (bus 0x7000a000, off 0xa000) ---- */
     case 0x324180: /* FE SRAM FIFO write pointer readback */
         return s->sram_wptr;
@@ -288,8 +327,10 @@ static uint64_t bx510_read(void *opaque, hwaddr off, unsigned size)
     case 0x510c: return s->adsp_mode;
     case 0x5110: return s->adsp_idx;
     default:
-        qemu_log_mask(LOG_UNIMP, "bx510: unimplemented read 0x%" HWADDR_PRIx " (%u)\n",
-                      off + BX_IO_BASE, size);
+        if (s->unimp_logs++ < 200000) {
+            qemu_log_mask(LOG_UNIMP, "bx510: unimplemented read 0x%" HWADDR_PRIx " (%u)\n",
+                          off + BX_IO_BASE, size);
+        }
         return 0;
     }
 }
@@ -416,6 +457,59 @@ static void bx510_write(void *opaque, hwaddr off, uint64_t val, unsigned size)
         s->sata_im = val;
         bx510_update_irq(s);
         break;
+    case 0x5c000: case 0x5c004: case 0x5c008: case 0x5c00c:
+        s->fe_cmd[(off - 0x5c000) / 4] = val;
+        break;
+    case 0x5c020: /* doorbell (fe-status-handshake.md: bit0). byte3 of the
+                   * command word0 drives the reply sequence: 0xa1 = chk
+                   * entry (post message A: type-16 table-data offer), 0x10
+                   * = table-data ack (post message B: type 0 final). */
+        s->fe_doorbell = val;
+        {
+            unsigned code = (s->fe_cmd[0] >> 24) & 0xff;
+            unsigned type = (s->fe_cmd[0] >> 16) & 0xff;
+            if (code == 0xa1) {
+                s->fe_msg = 0;
+            } else if (type == 0x10) {
+                s->fe_msg = 1;
+            }
+            /* message A: status words = {type16 | DRAM off 0x1000, len 0x200}
+             * (VERIFIED: word0 byte2=16 consumed at .text+0x2914 cmp r2,#16;
+             * word1 = DRAM offset .text+0x291c..38; word2 = length clamp
+             * .text+0x2924). Message B: word0 = 0 -> the block-inspect path
+             * (.text+0x299c). */
+            if (s->fe_msg == 0) {
+                s->fe_status[0] = 0x00100000u;
+                s->fe_status[1] = FE_REPLY_OFF;
+                s->fe_status[2] = FE_REPLY_LEN;
+                s->fe_status[3] = 0;
+                /* 'DMA' the status block into the DRAM window the driver
+                 * programmed at 0x5c500 (page << 22). Skip when never
+                 * programmed — don't scribble low RAM. */
+                if (s->fe_dram_page) {
+                    hwaddr win = ((hwaddr)(s->fe_dram_page & 0xff)) << 22;
+                    int i;
+                    for (i = 0; i < FE_REPLY_LEN; i++) {
+                        stb_phys(&address_space_memory, win + FE_REPLY_OFF + i,
+                                 fe_reply_block[i]);
+                    }
+                }
+                s->pending |= BX_FE_IRQ;   /* message pending -> FE IRQ */
+                bx510_update_irq(s);
+            } else if (s->fe_msg == 1) {
+                s->fe_status[0] = 0;
+                s->fe_status[1] = 0;
+                s->fe_status[2] = 0;
+                s->fe_status[3] = 0;
+                s->fe_msg = 2;             /* drained */
+                s->pending |= BX_FE_IRQ;
+                bx510_update_irq(s);
+            }
+        }
+        break;
+    case 0x5c500: /* FE DRAM window page (xfer_int_ldr_fw .text+0x1940) */
+        s->fe_dram_page = val;
+        break;
     case 0x5c704: /* FE reset release (i4IdeDrvBootup: |= 0x601 arms the FE).
                      virq 18 = BIM group0 bit18 (VERIFIED kernel-iomap.md):
                      the release is what 'polling frontend reset interrupt'
@@ -426,9 +520,10 @@ static void bx510_write(void *opaque, hwaddr off, uint64_t val, unsigned size)
             bx510_update_irq(s);
         }
         break;
-    case 0x5c500: case 0x5c600: case 0x5c604: case 0x5c708: case 0x5c780:
+    case 0x5c600: case 0x5c604: case 0x5c708: case 0x5c780:
     case 0x60004: case 0x90308: case 0x9030c: case 0x90324:
-        break; /* FE/clock/DRAM-wrapper control writes accepted silently */
+        break; /* FE/clock/DRAM-wrapper control writes accepted silently
+                * (0x5c500 has its own case above — the DRAM window page) */
     case 0xa600: case 0xa610: case 0xa648:
     case 0xa400: case 0xa480: case 0x62c:
         break; /* accepted silently */
@@ -437,10 +532,13 @@ static void bx510_write(void *opaque, hwaddr off, uint64_t val, unsigned size)
     case 0x510c: s->adsp_mode = val; break;
     case 0x5110: s->adsp_idx = val; break;
     default:
-        qemu_log_mask(LOG_UNIMP, "bx510: unimplemented write 0x%" HWADDR_PRIx " = 0x%" PRIx64 " (%u)\n",
-                      off + BX_IO_BASE, val, size);
+        if (s->unimp_logs++ < 200000) {
+            qemu_log_mask(LOG_UNIMP, "bx510: unimplemented write 0x%" HWADDR_PRIx " = 0x%" PRIx64 " (%u)\n",
+                          off + BX_IO_BASE, val, size);
+        }
     }
 }
+
 
 static const MemoryRegionOps bx510_ops = {
     .read = bx510_read, .write = bx510_write,
@@ -495,6 +593,12 @@ static void bx510_reset(void *opaque)
     s->phy[3] = 0x0430;     /* internal Vitesse PHY identifier */
     s->sata_ist = s->sata_im = 0;
     s->fe_booted = false;
+    memset(s->fe_cmd, 0, sizeof(s->fe_cmd));
+    memset(s->fe_status, 0, sizeof(s->fe_status));
+    s->fe_doorbell = 0;
+    s->fe_msg = 0;          /* message A pending once fe_booted (C89: the
+                             * pre-AACS inline poll reads 0x5c804 FIRST) */
+    s->fe_dram_page = 0;
     s->sram_wptr = 0;
     s->sram_ridx = 0;
     memset(s->sram_fifo, 0, sizeof(s->sram_fifo));

@@ -256,4 +256,6 @@ semantics that satisfies both phases of the driver.
 * **Still open:** why the model logs 4.4 GB of `unimplemented write 0x7005c804 =
   0x10000` in the same run (a post-`port_start` poll loop; that storm is what makes
   `-d` artifacts dangerous to capture at all — cap or drop the log after the FE
-  stage).
+  stage). **Answered in `fe-status-handshake.md` §5:** it is the FE IRQ top half
+  (`svoif_mt85xx_interrupt` `.text+0x34b4`), whose read-and-clear drain loop only
+  ends on a zero read of `0x7005c804` — the model returns a constant `0x10000`.

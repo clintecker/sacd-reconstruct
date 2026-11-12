@@ -172,6 +172,11 @@ def main():
         "insmod /res/shim/bx510_clidrive.ko; echo CLIDRIVE_RC=$?",
         "sleep 3; echo CLI_DRAIN2",
         "echo STUB_DONE",
+        # clean guest shutdown (C85 lesson): QEMU flushes its -D log on a
+        # CLEAN exit only — SIGTERM/SIGINT from the probe lose the whole
+        # trace (0-byte mmio artifacts). poweroff makes the kernel exit
+        # QEMU properly, so the log lands even when the run hangs earlier.
+        "/sbin/poweroff -f; echo POWEROFF_ISSUED",
     ]
     wanted = [b"STUB_DONE"]
 

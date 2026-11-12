@@ -51,4 +51,8 @@ grep -wq mem_map /res/proc/kallsyms && echo KEXP2-mem_map=yes || echo KEXP2-mem_
 grep -wq sata_hw_seg_buf /res/proc/kallsyms && echo KEXP2-sata_hw_seg_buf=yes || echo KEXP2-sata_hw_seg_buf=no
 grep -wq cdrom_log_en /res/proc/kallsyms && echo KEXP2-cdrom_log_en=yes || echo KEXP2-cdrom_log_en=no
 grep -wq ide_log_en /res/proc/kallsyms && echo KEXP2-ide_log_en=yes || echo KEXP2-ide_log_en=no
+# sr_mod deps check (Run C53)
+for s in __aeabi_uidivmod __memzero __scsi_print_command _clear_bit_le _find_first_zero_bit_le bcd2bin blk_queue_logical_block_size del_gendisk scsi_execute scsi_ioctl scsi_mode_sense scsi_register_driver scsi_set_medium_removal sg_next register_blkdev mutex_lock kref_put; do grep -wq $s /res/proc/kallsyms && echo KEXP3-$s=yes || echo KEXP3-$s=no; done
+grep -wq mt85xx_ioctl /res/proc/kallsyms && echo KEXP3-mt85xx_ioctl=yes || echo KEXP3-mt85xx_ioctl=no
+echo KEXP3_DONE
 echo KEXP2_DONE

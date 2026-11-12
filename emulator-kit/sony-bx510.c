@@ -380,19 +380,26 @@ static void bx510_write(void *opaque, hwaddr off, uint64_t val, unsigned size)
         s->sata_cmd = val & 0xff;
         /* IDENTIFY PACKET DEVICE (0xA1): fill the PIO data FIFO with the
          * ATAPI identity; driver reads via the 16-bit data port (+0x000). */
-        if (s->sata_cmd == 0xa1 && s->sata_present) {
-            s->sata_ist |= 0x1u;      /* command done IRQ */
-            s->pending2 |= BX_SATA_IRQ;   /* virq 53 (VERIFIED kernel-iomap.md) */
-            bx510_update_irq(s);
-        } else if (s->sata_cmd) {
-            s->sata_ist |= 0x1u;      /* complete everything for now */
+        /* Any issued command completes immediately and raises virq 53
+         * (BIM group1 bit21, VERIFIED kernel-iomap.md). The libata probe
+         * path after port_start issues device-reset/identify/read commands
+         * — completing only 0xa1 stalled the post-AACS hang (C81/C82). */
+        if (s->sata_cmd) {
+            s->sata_ist |= 0x1u;
             s->pending2 |= BX_SATA_IRQ;
             bx510_update_irq(s);
         }
         break;
-    case 0x324180: /* FE SRAM FIFO write pointer */
+    case 0x324180: /* FE SRAM FIFO pointer. The driver uses it as a random-
+                    * access index (stores i before byte i) and resets it to 0
+                    * before the readback verify (.init.text+0x5bc). Reads of
+                    * 0x324184 auto-increment the same cursor, so the reset must
+                    * move the read cursor too — otherwise the 16,384 dummy
+                    * readbacks at .init.text+0x58c exhaust it and the verify
+                    * reads 0 forever (decode/sram-readback-live.md). */
         qemu_log_mask(LOG_GUEST_ERROR, "bx510: FE-SRAM FIFO wptr=%u\n", (unsigned)val);
         s->sram_wptr = val;
+        s->sram_ridx = val;
         break;
     case 0x324184: /* FE SRAM FIFO data byte */
         if (s->sram_wptr < sizeof(s->sram_fifo)) {

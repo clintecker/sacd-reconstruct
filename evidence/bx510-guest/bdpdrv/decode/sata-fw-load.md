@@ -315,9 +315,11 @@ the two uses.)
 +0x504  if (suspend_to_dram != 0 || .data[0x48] != 3) skip        ; BOOT flag == 3
 +0x534  printk("[IDE]download boot code to SRAM (0x%x, 0x%x)")
 +0x56c  *[0xfd024188] = 69                    ; (0x45)
-+0x574  *[0xfd324180] = 0                     ; FIFO write pointer
-+0x578..0x590  for i in 0..16384: *[0xfd324184] = fw[.data[0x40] + i]
++0x570  *[0xfd324180] = 0                     ; FIFO pointer := 0
++0x574..0x590  for i in 0..16384: *[0xfd324180] = i (index) ; *[0xfd324184] = fw[.data[0x40] + i]
++0x58c                     ... and a READ of *[0xfd324184] every iteration (result discarded)
 +0x5a4  p = __get_free_pages(0x40d0, 2)       ; 16 KiB readback buffer
++0x5bc  *[0xfd324180] = 0                     ; read-cursor reset before the verify
 +0x5cc..0x5d8  for i: p[i] = *[0xfd324184]    ; read back through the same FIFO
 +0x5fc..0x640  compare p[i] vs fw[...] ; per-byte mismatch -> "[IDE]SRAM[%04x] WR(0x%02x) != RD(0x%02x)"
 +0x644..0x670  printk("[IDE]verify boot code -- %s") with %s = "OK" / "NG"
@@ -328,6 +330,11 @@ This is a **write-then-readback verify** of the 16 KiB boot code into the FE's S
 through the FIFO window at `0xfd324180`/`0xfd324184` (phys `0x70324180`/`0x70324184`).
 A readback mismatch prints but does **not** abort — execution falls through to the
 DRAM download anyway.
+
+**Live-debugger follow-up (VERIFIED): `sram-readback-live.md` in this directory.** The
+readback reads `0xfd324184` exactly as decoded, and the model does receive them; the
+`RD(0x00)` of every byte is a model FIFO-semantics bug (pop-on-read exhausts the cursor
+the `+0x5bc` reset fails to move), not an addressing/decode error.
 
 ### (b) `sata_mt85xx_xfer_int_ldr_fw()` (`.init.text+0x688` → `.text+0x1644`)
 
@@ -392,6 +399,11 @@ register file and prints
 > no `phy_fsm=0x%x` line, and both polls land on the same exit, so this needs two
 > MMIO probes (`0x7000a610`, `0x7000a01c`) at `port_start` time rather than a further
 > static read.
+>
+> **Follow-on:** the three `sata_mt85xx_chk_int_ldr` call sites, their retry bounds
+> (none in the caller — every poll is bounded), the FE status-mailbox wire format and
+> the `0x7005c804` log storm are decoded in **`fe-status-handshake.md`** in this
+> directory.
 
 ---
 

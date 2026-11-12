@@ -2,6 +2,7 @@
 """Exercise the Sony system through its UART. Requires the full-system QEMU build."""
 import argparse
 import os
+import signal
 from pathlib import Path
 import selectors
 import subprocess
@@ -63,7 +64,10 @@ def observe(argv, lines, wanted, timeout, log):
                     break
     finally:
         if proc.poll() is None:
-            proc.terminate()
+            # SIGINT, not SIGTERM (C81 lesson): QEMU flushes its -D log on a
+            # clean interrupt exit; SIGTERM kills without flushing and the
+            # whole trace is lost (0-byte mmio artifacts).
+            proc.send_signal(signal.SIGINT)
             try:
                 proc.wait(timeout=4)
             except subprocess.TimeoutExpired:

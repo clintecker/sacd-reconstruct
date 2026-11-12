@@ -1,0 +1,24 @@
+# QEMU guest_errors, boot-code FIFO pass only — run gdb-run2 (-d unimp,guest_errors)
+# (a later AACS-code download reuses the same FIFO: +16385 wptr, +16384 reads)
+# FE-SRAM FIFO wptr writes : 16386
+# FE-SRAM FIFO read  lines : 32768
+#
+# boundary: write-loop dummy reads (idx 0..16383, val = written bytes), then (after the wptr=0 reset) readback-loop reads (idx pinned at 16384, val 00)
+bx510: FE-SRAM FIFO read idx=0 val=cd
+bx510: FE-SRAM FIFO read idx=1 val=df
+bx510: FE-SRAM FIFO read idx=16382 val=8a
+bx510: FE-SRAM FIFO read idx=16383 val=d9
+bx510: FE-SRAM FIFO read idx=16384 val=00
+bx510: FE-SRAM FIFO read idx=16384 val=00
+bx510: FE-SRAM FIFO read idx=16384 val=00
+bx510: FE-SRAM FIFO read idx=16384 val=00
+#
+# wptr writes: initial store, in-loop index stores, and the read-pointer reset before the readback
+bx510: FE-SRAM FIFO wptr=0
+bx510: FE-SRAM FIFO wptr=0
+bx510: FE-SRAM FIFO wptr=1
+bx510: FE-SRAM FIFO wptr=2
+bx510: FE-SRAM FIFO wptr=3
+bx510: FE-SRAM FIFO wptr=16382
+bx510: FE-SRAM FIFO wptr=16383
+bx510: FE-SRAM FIFO wptr=0

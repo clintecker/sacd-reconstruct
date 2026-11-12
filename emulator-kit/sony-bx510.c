@@ -501,7 +501,12 @@ static void bx510_write(void *opaque, hwaddr off, uint64_t val, unsigned size)
                 s->fe_status[1] = 0;
                 s->fe_status[2] = 0;
                 s->fe_status[3] = 0;
-                s->fe_msg = 2;             /* drained */
+                /* post-aacs-state.md fix: leave fe_msg at 1 so message B's
+                 * pending bit (0x5c804 bit16) stays VISIBLE — the C91 trace
+                 * showed chk_int_ldr's message-B poll timing out at exactly
+                 * 200 zero reads because setting fe_msg=2 here hid B before
+                 * the driver ever read it. Only a read consuming B moves
+                 * the state to 2. */
                 s->pending |= BX_FE_IRQ;
                 bx510_update_irq(s);
             }

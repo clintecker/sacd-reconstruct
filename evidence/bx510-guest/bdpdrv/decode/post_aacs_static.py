@@ -26,7 +26,6 @@ Usage (via `make sacd-py SCRIPT=...`):
 import argparse
 import hashlib
 import os
-import re
 import subprocess
 import sys
 
@@ -184,7 +183,6 @@ def sram_owners():
 def fastlogo():
     """vAudInitThread: ldr [BIM+0x118] ; cmp #64 ; retry 11x100 ticks."""
     e, secs = sections(BDPDRV)
-    owners = owner_map(e)
     symtab = e.get_section_by_name(".symtab")
     fn = None
     for s in symtab.iter_symbols():

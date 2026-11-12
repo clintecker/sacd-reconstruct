@@ -8,7 +8,7 @@ parked, and how the UART lines up with the trace.
 
 **House rules.** Every claim is **VERIFIED** (read out of an instruction, the
 trace, the UART, or the model source — and re-derivable by the two scripts
-below) or **INFERRED** (reasoned). §6 lists what did not resolve.
+below) or **INFERRED** (reasoned). §7 lists what did not resolve.
 
 ---
 
@@ -26,12 +26,12 @@ below) or **INFERRED** (reasoned). §6 lists what did not resolve.
    their own field. The trace's three rounds (`0x0`, `0x2`, `0x0`) are three
    *different* subsystem inits — `_CEC_Init`, `_vCommonSRAMInit`, `IRHW_RxInit`
    — not a three-step protocol. Nothing has to "reply" for them to advance.
-   *VERIFIED (instruction-cited, §2).*
+   *VERIFIED (instruction-cited, §3).*
 3. **bdpdrv does a large amount of work after the LOGO write, and finishes.**
    Audio clock + DSP table load, CEC, DDC, HDMI gamma, video NR, the VDP planes,
    HDMI TX info frames, IR, VFD, OSD — then it settles into its two poll
    threads. `BDPDRV_INSMOD=0` (UART line 1532) proves module init returned.
-   *VERIFIED (§3).*
+   *VERIFIED (§4).*
 4. **There is no parked driver thread.** The last 2,045 trace lines contain
    exactly **nine** addresses, all belonging to two healthy poll threads
    (`IRRX_PollMtkIr` and the VFD command pump), and the last event of the run is
@@ -41,7 +41,7 @@ below) or **INFERRED** (reasoned). §6 lists what did not resolve.
    wanted)` with `wanted = [b"STUB_DONE"]` over the raw console stream, and the
    last command typed is `echo STUB_DONE`. The same file already documents the
    defence it does not apply here ("Split the marker so a local terminal echo
-   cannot pass the shell check", `smoke.py:90`). *VERIFIED (§4.1).*
+   cannot pass the shell check", `smoke.py:90`). *VERIFIED (§5.1).*
 5. **The one hardware-facing wait that really did time out in this run is the
    FE handshake's second message**, and the trace pins it exactly: 201 writes to
    `0x7005c804` = one message-A iteration + **200** zero iterations
@@ -49,7 +49,7 @@ below) or **INFERRED** (reasoned). §6 lists what did not resolve.
    `wait status interrupt timeout !`. Root cause is one line in the model: the
    ACK branch sets `fe_msg = 2` ("drained") while posting message B, so the
    pending bit for message B is never visible (`sony-bx510.c:499-505`).
-   *VERIFIED (§4.2).*
+   *VERIFIED (§5.2).*
 
 **The one thing the model must do next:** in `sony-bx510.c`, the `0x5c020`
 ACK branch must leave `fe_msg = 1` (message B pending) instead of jumping to
@@ -84,7 +84,7 @@ python3 decode/post_aacs_static.py --checks   # 13 assertions on the binaries
 `--rmw`, `--tail`, `--thread-map`; `post_aacs_static.py` has `--logo`,
 `--sram`, `--fastlogo`. Both exit non-zero if any check fails.
 
-**Caveat that governs §3.** Only **unimplemented** accesses reach the `-d unimp`
+**Caveat that governs §4.** Only **unimplemented** accesses reach the `-d unimp`
 log. Everything `sony-bx510.c` answers (BIM `0x8000..0x81b4`, `0x8118`,
 `0x5c000/0x5c020/0x5c040/0x5c704/0x5c804`, the ATA window, the DSP ports,
 `0x324180/0x324184`) is **invisible** in the trace. Absence from the log is not
@@ -132,7 +132,7 @@ That is the whole census. There is no reader, so there is no completion
 protocol: **no `0x5c804` bit16, no status word, no poll.** The `0x5c804`
 activity that follows the LOGO write in the trace belongs to the FE interrupt
 top half draining messages that the earlier `chk_int_ldr` call left behind
-(§4.2), not to the LOGO write.
+(§5.3), not to the LOGO write.
 
 Reading `0x5c010` in the block map: the CPU→FE command block is
 `0x5c000/04/08/0c` (four words) plus doorbell `0x5c020`
@@ -264,7 +264,7 @@ a 17-command ioctl chain). Its hardware programming happens through the OSD/GFX
 layer, which is why the OSD phase above (`OSD_BASE_Dump`, `_GfxCmdDrawRect`) is
 the visible part of the same bring-up.
 
-### 4.2 No new MMIO regions
+### 4.2 No address the model has not already seen
 
 `post_aacs_trace.py --new` diffs C91 against the Run C50 trace: 10 addresses new.
 Against the **union of every prior run** in `evidence/bx510-guest/bdpdrv/`
@@ -279,10 +279,25 @@ Against the **union of every prior run** in `evidence/bx510-guest/bdpdrv/`
 | `0x7005c780` | FE clock enable | 50917 | same |
 | `0x70324b00` | loader-done flag | 50901 | sata-fw-load.md §5(a) |
 
+Blocks outside the original Run C50 hot set do appear in this window, but
+**none of their addresses is new**; Run C50 ran bdpdrv's init much further than
+the brief assumed. Distinct addresses per block in C91, and how many of them
+C50 never touched:
+
+| block | C91 addresses | new vs C50 |
+|---|---|---|
+| `0x7000xxxx` clock/PWM | 97 | 0 |
+| `0x70005xxx` audio clock | 46 | 0 |
+| `0x70021xxx` HDMI TX | 75 | 0 |
+| `0x70003xxx` video path (gamma) | 18 | 0 |
+| `0x70042/43xxx` VDP planes | 518 | 0 |
+| `0x70044xxx` video NR | 111 | 0 |
+| `0x70008xxx` BIM | 7 | 0 |
+
 So the post-AACS path asks the model for **nothing it has never been asked
 for**; the whole bring-up walks blocks the model already logs. The gaps it does
 expose are *semantic* (what a register returns), not *addressed* — which is why
-§4.3's answer is about a flag, not a register.
+§5.2's answer is about a flag, not a register.
 
 ### 4.3 The end of the run: nine addresses, two threads, no spin
 
@@ -475,7 +490,7 @@ enough, to the function that printed it.
 | **1532** | `BDPDRV_INSMOD=0` | — | **module init returned; nothing is parked in the driver** |
 | **1868** | `/ # echo STUB_DONE` (echo only) | 119045 (last event: `0x2420c` read) | harness marker matched the echo — §5.1 |
 
-So the last *driver* print (line 1105) is followed by ~26,000 more trace events
+So the last *driver* print (line 1105) is followed by ~28,000 more trace events
 of normal steady-state polling, and the last *module* milestone
 (`BDPDRV_INSMOD=0`) precedes the run's end by the whole harness command list.
 Neither marks a stall location.

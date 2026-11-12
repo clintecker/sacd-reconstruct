@@ -124,6 +124,7 @@ def main():
         "grep -iE 'bdp|sacd' /res/proc/kallsyms | tail -8; echo INVENTORY_KSYM=$?",
         # SATA/CDROM stack loadability check — via staged script file
         "sh /res/shim/kcheck.sh; echo KEXP2_DONE",
+        "ls /res/proc/kallsyms; grep -c sata /res/proc/kallsyms; grep -c . /res/proc/kallsyms; echo KCUR_DONE",
         # CLI runtime channel (Run C45+): ioctl ABI 0xc0014502 -> x_cli_parser
         "/res/shim/clicmd help; echo CLI_EXEC_RC=$?",
         "sleep 2; echo CLI_DRAIN1",

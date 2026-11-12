@@ -43,7 +43,12 @@ grep -wq vFL_SetSinfo4Reg /res/proc/kallsyms && echo KEXP-vFL_SetSinfo4Reg=yes |
 grep -wq cpu_cache /res/proc/kallsyms && echo KEXP-cpu_cache=yes || echo KEXP-cpu_cache=no
 grep -wq mem_map /res/proc/kallsyms && echo KEXP-mem_map=yes || echo KEXP-mem_map=no
 grep -wq print_err_log /res/proc/kallsyms && echo KEXP-print_err_log=yes || echo KEXP-print_err_log=no
-echo KEXP2_DONE
-# CLI framework symbol dump (module bss globals)
-grep -E 'pt_cur|e_access|_cmd_tbl|grp_info' /res/proc/kallsyms; echo CLI_SYM_DONE
+# sata_bltin/kernel-builtin check (Run C52)
+grep -wq sata_int_ldr_fw /res/proc/kallsyms && echo KEXP2-sata_int_ldr_fw=yes || echo KEXP2-sata_int_ldr_fw=no
+grep -wq mt85xx_ioctl /res/proc/kallsyms && echo KEXP2-mt85xx_ioctl=yes || echo KEXP2-mt85xx_ioctl=no
+grep -wq cpu_cache /res/proc/kallsyms && echo KEXP2-cpu_cache=yes || echo KEXP2-cpu_cache=no
+grep -wq mem_map /res/proc/kallsyms && echo KEXP2-mem_map=yes || echo KEXP2-mem_map=no
+grep -wq sata_hw_seg_buf /res/proc/kallsyms && echo KEXP2-sata_hw_seg_buf=yes || echo KEXP2-sata_hw_seg_buf=no
+grep -wq cdrom_log_en /res/proc/kallsyms && echo KEXP2-cdrom_log_en=yes || echo KEXP2-cdrom_log_en=no
+grep -wq ide_log_en /res/proc/kallsyms && echo KEXP2-ide_log_en=yes || echo KEXP2-ide_log_en=no
 echo KEXP2_DONE

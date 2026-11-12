@@ -63,6 +63,13 @@ def main():
     p.add_argument("--extra-file", action="append", default=[],
                    metavar="NAME=PATH",
                    help="stage an additional file into shim/ (repeatable)")
+    p.add_argument("--pre-file", action="append", default=[],
+                   metavar="NAME=PATH",
+                   help="stage an additional file into shim/ insmodded BEFORE "
+                        "the stub/drvcli sequence (repeatable; guest path is "
+                        "/res/shim/NAME) — e.g. the real SATA stack (C51: "
+                        "libata.ko -> sata_mt85xx_mod.ko) so _fg_fe_bootup "
+                        "comes from the real driver")
     p.add_argument("--bdpdrv-host", required=True, type=Path,
                    help="host path to bdpdrv.ko for hashing/pinning")
     p.add_argument("--bdpdrv-guest", required=True, type=str,
@@ -91,6 +98,13 @@ def main():
         if not name or not path:
             raise SystemExit(f"bad --extra-file {spec!r}; want NAME=PATH")
         extra[f"shim/{name}"] = Path(path).read_bytes()
+    pre_files = []
+    for spec in a.pre_file:
+        name, _, path = spec.partition("=")
+        if not name or not path:
+            raise SystemExit(f"bad --pre-file {spec!r}; want NAME=PATH")
+        extra[f"shim/{name}"] = Path(path).read_bytes()
+        pre_files.append(name)
     payload = build_tar(stubko, stuba_ko, extra)
     parts = json.loads((images / "manifest.json").read_text())["partitions"]
     part = next(x for x in parts if x["name"] == "fe_test_data")
@@ -102,11 +116,29 @@ def main():
         "mount -t tmpfs tmpfs /res; /bin/mknod /res/test-bdev b 31 10; /bin/mkdir -p /res/shim /res/proc",
         f"/bin/dd if=/res/test-bdev bs=4096 count={blocks} 2>/res/dd.err | /bin/tar -xf - -C /res",
         "mount -t proc proc /res/proc; echo STUB_PROC=$?",
-        # bdpdrv opens /proc/... at the LITERAL path; shell mode lacks /proc
-        "mkdir -p /proc; mount -t proc proc /proc; echo ROOTPROC=$?",
+        # bdpdrv opens /proc/... at the LITERAL path; shell mode lacks /proc.
+        # ROOTPROC=255 every run (C51 finding): mount says ENOENT on /proc
+        # while /res/proc mounts fine — inspect what /proc actually is.
+        "ls -la / | head -20; echo ROOTLIST=$?",
+        "ls -la /proc 2>&1 | head -5; echo PROCLS=$?",
+        "mkdir -p /proc 2>&1; echo MKDIRPROC=$?",
+        "mount -t proc proc /proc 2>&1; echo ROOTPROC=$?",
+        # /dev: tmpfs over the (now-existing) squashfs /dev dir — the SATA
+        # loader mknods /dev/mtdblockN for its firmware read (C54: mknod
+        # failed on the ro squashfs even with the dir present).
+        "mount -t tmpfs tmpfs /dev 2>&1; echo DEVTMP=$?",
+        "mknod /dev/console c 5 1; mknod /dev/null c 1 3; mknod /dev/ttyMT0 c 204 66; echo DEVNODES=$?",
+        "cat /proc/mtd 2>&1 | head -4; echo MTDPROC=$?",
+        "mount 2>&1 | head -8; echo MOUNTLIST=$?",
         "echo STUB_BEGIN",
         "ls -l /res/shim; echo STUB_LS=$?",
         "md5sum /res/shim/osal_stub.ko; echo STUB_MD5=$?",
+    ]
+    # --pre-file modules load FIRST (rootfs-independent deps of the driver
+    # stack, e.g. the real SATA HAL providing _fg_fe_bootup).
+    for name in pre_files:
+        commands.append(f"insmod /res/shim/{name}; echo PRE_{name}_RC=$?")
+    commands += [
         "insmod /res/shim/osal_stub_a.ko; echo STUBA_INSMOD=$?",
         f"insmod {a.bdpdrv_guest.rsplit('/',1)[0]}/drvcli.ko; echo DRVCLI_INSMOD=$?",
         "insmod /res/shim/osal_stub.ko; echo STUB_INSMOD=$?",

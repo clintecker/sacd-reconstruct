@@ -19,7 +19,12 @@
 # LC_ALL=C: the UART transcript carries non-UTF8 bytes (boot banners, ANSI
 # colour codes); a UTF-8 locale makes sed/awk abort mid-stream.
 LC_ALL=C; export LC_ALL
-U=${1:?usage: read10_verdict.sh <uart.log> [<mmio.log>] [<meta.json>]}
+# C104 lesson (run-c104.md): the guest console lines end CRLF, so every
+# $-anchored BRE silently missed — oracles that MATCHED byte-for-byte read as
+# 0 matches. Normalize once, grep the normalised copy.
+U_RAW=${1:?usage: read10_verdict.sh <uart.log> [<mmio.log>] [<meta.json>]}
+U=$(mktemp)
+tr -d '\r' < "$U_RAW" > "$U"
 M=${2:-}
 J=${3:-}
 STATE=0                      # 0 PASS, 1 FAIL, 2 INCOMPLETE
@@ -43,13 +48,19 @@ want_ge() {
 want 1 '^bx510: SATA ATAPI drive attached: .*firebird\.iso (1064208 sectors)$' "$U" \
      "disc attached (C100-R0)"
 
-# ── B. leg (a): sr0 present. Behavioural, not string-keyed: the block device
-#       reports the fixture's exact capacity, which only happens when sr0
-#       attached AND READ CAPACITY was answered. The field order is the
-#       helper's own (… rc= errno= blkgetsize64= blkssz=), and errno= sits
-#       BETWEEN rc= and blkgetsize64=, so the two are not adjacent.
-want_ge 1 '^SRREAD mode=size .* rc=0 errno=[0-9]* blkgetsize64=2179497984 blkssz=2048$' "$U" \
-     "sr0 capacity + block size (leg a)"
+# ── B. leg (a): sr0 present. Behavioural, not string-keyed. RECALIBRATED
+#       against this rig's FA-mode Sony sr.c (run-c103.md §2 + post-fire trace
+#       resolution): the open path is open(2) -> GESN -> straight to READ(10)
+#       and READ CAPACITY is NEVER issued (C103 full trace: zero 0x25 posts,
+#       zero TURs, one GESN 0x4a). So the guest capacity is get_sectorsize()'s
+#       documented fallback (0x1fffff x 512 = 1073741312, blkssz 512) — that
+#       is the steady state, not a failure signature. The discriminator that
+#       keeps this calibration honest is the want 0 nbytes=8 check below: if a
+#       READ CAPACITY packet ever appears, the guest tree changed and B is
+#       stale (attack-decay rule). NOTE: errno= sits BETWEEN rc= and
+#       blkgetsize64=, so the two are not adjacent.
+want_ge 1 '^SRREAD mode=size .* rc=0 errno=[0-9]* blkgetsize64=1073741312 blkssz=512$' "$U" \
+     "sr0 capacity + block size (leg a, FA-mode fallback)"
 
 # ── C. no fatal libata signature (qc timeout / EH give-up / SRST) ───────────
 want 0 '^ata1\.00: qc timeout'          "$U" "no qc timeout"
@@ -127,6 +138,11 @@ if [ -n "$M" ] && [ -f "$M" ]; then
   want_ge 1 '^bx510: MMIO W 05c004 sz4 = 28$'     "$M" "CDB[0..3] = READ(10)"
   want_ge 1 '^bx510: MMIO W 05c008 sz4 = fe01$'   "$M" "CDB[4..7] = LBA 0x1FE, big-endian"
   want_ge 1 '^bx510: MMIO W 05c00c sz4 = 980002$' "$M" "CDB[8..11] = nsec 2 + vendor 0x98"
+  # B's calibration anchor (see its comment): in this FA-mode tree READ
+  # CAPACITY is never issued. A nbytes=8 packet appearing means the guest
+  # tree changed — B's fallback-capacity expectation is then stale and the
+  # run doc must re-derive it, not silently inherit this gate's PASS.
+  want 0    '^bx510: FE PACKET .*nbytes=8 '        "$M" "no READ CAPACITY packet (FA-mode constant)"
 else
   inc "model-side MMIO checks" "no mmio log supplied (pass it as \$2)"
 fi

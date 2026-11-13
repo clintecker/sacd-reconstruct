@@ -558,6 +558,8 @@ enum fe_pkt_kind {
     FE_PKT_READ_CAPACITY,   /* P2: 8-byte READ CAPACITY(10) reply */
     FE_PKT_MODE_SENSE6,     /* P3: 128-byte MODE SENSE(6) page 0x2a */
     FE_PKT_READ,            /* P6: READ(10)/READ(12)/READ CD — C97 FE-DMA */
+    FE_PKT_GESN,            /* sr.c's media poll: GET EVENT STATUS NOTIFICATION */
+    FE_PKT_REQ_SENSE,       /* REQUEST SENSE after a drive-error completion */
     FE_PKT_UNKNOWN,         /* P7: never stay silent */
 };
 
@@ -568,6 +570,8 @@ static const char *fe_pkt_kind_name(enum fe_pkt_kind k)
     case FE_PKT_READ_CAPACITY: return "read-capacity";
     case FE_PKT_MODE_SENSE6: return "mode-sense-6";
     case FE_PKT_READ:        return "read";
+    case FE_PKT_GESN:        return "gesn";
+    case FE_PKT_REQ_SENSE:   return "req-sense";
     default:                 return "unknown";
     }
 }
@@ -576,8 +580,8 @@ static enum fe_pkt_kind bx510_fe_packet_kind(uint32_t w1)
 {
     /* CDB opcodes hw_chg_st switches on (.text+0x4084..0x40c8), plus the
      * scan's own INQUIRY/READ CAPACITY entries (§1.3). */
-    static const uint8_t cdb_ops[] = { 0x00, 0x12, 0x1a, 0x1b,
-                                       0x25, 0x28, 0x5a, 0xa8, 0xbe };
+    static const uint8_t cdb_ops[] = { 0x00, 0x03, 0x12, 0x1a, 0x1b, 0x25,
+                                       0x28, 0x4a, 0x5a, 0xa8, 0xbe };
     unsigned nbytes = (w1 & 0xffu) | (((w1 >> 8) & 0xffu) << 8);
     unsigned op = w1 & 0xffu;
     unsigned i;
@@ -595,6 +599,8 @@ static enum fe_pkt_kind bx510_fe_packet_kind(uint32_t w1)
         case 0x25: return FE_PKT_READ_CAPACITY;
         case 0x1a: return FE_PKT_MODE_SENSE6;
         case 0x28: case 0xa8: case 0xbe: return FE_PKT_READ;
+        case 0x4a: return FE_PKT_GESN;
+        case 0x03: return FE_PKT_REQ_SENSE;
         default:
             /* 0x00 TUR, 0x1b START STOP UNIT, 0x5a MODE SENSE(10) (recipe P4:
              * not on the 2.6.35 sr path) and 0x12 INQUIRY — the driver
@@ -683,9 +689,28 @@ static void bx510_fe_packet(Bx510State *s)
          * DMA leaves behind (c97-read-path.md §3.3). */
         bx510_fe_read(s);
         return;
+    case FE_PKT_GESN:
+        /* sr.c's open-path media poll (C103 trace: ONE GESN, opcode 0x4a,
+         * polled, issued the instant before the first READ — run-c103.md §2
+         * resolution). It answered bare success there with a poisoned buffer
+         * and the whole read path still worked, so the PROVEN answer is that
+         * bare completion; the semantic reply (medium-present bits in the
+         * event descriptor) is a later decode keyed on sr.c's own
+         * ge_media_status reader, not hand-synthesised bytes. */
+        bx510_fe_post(s, 0, 0, 0, 0);
+        return;
     case FE_PKT_UNKNOWN:
         /* P7: never stay silent — silence is a 30 s libata timeout, not a
          * fast failure. */
+        bx510_fe_post(s, 0, 0, 0, 0);
+        return;
+    case FE_PKT_REQ_SENSE:
+        /* C104: after each drive-error completion the driver posts REQUEST
+         * SENSE (3 of them, one per refusal — past-EOF + two 2064 answers).
+         * A bare success leaves the sense buffer empty and libata synthesises
+         * its own (the guest recorded sense=010000) — the PROVEN behaviour;
+         * real sense bytes are a later row keyed on what the driver's error
+         * recovery actually reads back. */
         bx510_fe_post(s, 0, 0, 0, 0);
         return;
     case FE_PKT_NODATA:

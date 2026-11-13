@@ -70,6 +70,11 @@ def main():
                         "/res/shim/NAME) — e.g. the real SATA stack (C51: "
                         "libata.ko -> sata_mt85xx_mod.ko) so _fg_fe_bootup "
                         "comes from the real driver")
+    p.add_argument("--clidrive-mode", default="", metavar="MODE",
+                   help="module parameter for the clidrive shim: the guest "
+                        "gets 'insmod /res/shim/bx510_clidrive.ko "
+                        "clidrive_args=MODE' (e.g. PROBE_SEQ for the P0-P2 "
+                        "ladder); empty = the default instrument path")
     p.add_argument("--bdpdrv-host", required=True, type=Path,
                    help="host path to bdpdrv.ko for hashing/pinning")
     p.add_argument("--bdpdrv-guest", required=True, type=str,
@@ -105,6 +110,10 @@ def main():
             raise SystemExit(f"bad --pre-file {spec!r}; want NAME=PATH")
         extra[f"shim/{name}"] = Path(path).read_bytes()
         pre_files.append(name)
+    # decode §5: the clidrive shim is inert without its module parameter, and
+    # insmod is the only place the parameter can travel — so the mode is
+    # rendered here, next to the file that is staged, not guessed later.
+    clidrive_opt = f" clidrive_args={a.clidrive_mode}" if a.clidrive_mode else ""
     payload = build_tar(stubko, stuba_ko, extra)
     parts = json.loads((images / "manifest.json").read_text())["partitions"]
     part = next(x for x in parts if x["name"] == "fe_test_data")
@@ -169,7 +178,8 @@ def main():
         "sleep 2; echo CLI_DRAIN1",
         # Run C49: kernel-side driver — x_cli_set_mode(5) + x_cli_parser via
         # module param (cli output is SerPrintStr-polled UART + printk)
-        "insmod /res/shim/bx510_clidrive.ko; echo CLIDRIVE_RC=$?",
+        f"echo CLIDRIVE_MODE={a.clidrive_mode or 'DEFAULT'}",
+        f"insmod /res/shim/bx510_clidrive.ko{clidrive_opt}; echo CLIDRIVE_RC=$?",
         "sleep 3; echo CLI_DRAIN2",
         "echo STUB_DONE",
         # clean guest shutdown (C85 lesson): QEMU flushes its -D log on a
@@ -226,6 +236,7 @@ def main():
             "sha256": sha256(stubko),
             "size": stubko.stat().st_size,
         },
+        "clidrive_mode": a.clidrive_mode or "DEFAULT",
         "fe_test_data": {"offset": part["offset"], "size": part["size"], "payload_size": len(payload)},
         "terminal_marker": marker_ok,
     }

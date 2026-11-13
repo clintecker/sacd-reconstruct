@@ -756,13 +756,22 @@ static void bx510_write(void *opaque, hwaddr off, uint64_t val, unsigned size)
                      the release is what 'polling frontend reset interrupt'
                      waits for. It also arms the bare 0x5c804 bit16 that
                      port_start's state==1 fast path polls BEFORE any command
-                     is posted (.text+0x3244..0x3280) — armed once, so the
-                     pending bit stays message-scoped (no status-block payload
-                     rides it; it only has to survive the driver's W1C). */
+                     is posted (.text+0x3244..0x3280).
+                     C96 LESSON: the arm must key on the FULL release value
+                     (val & 0x601) == 0x601, not merely nonzero — the driver
+                     writes 0xa01 first (0xa01 & 0x601 = 0x201, truthy) and
+                     THEN issues its 'clear default interrupt' W1C
+                     (0x5c804 = 0x10000); an arm that fired at 0xa01 is
+                     consumed by that W1C and the fast-path poll then reads 0
+                     forever ('polling frontend reset interrupt timeout').
+                     0x601 re-fires the arm after the clear, matching the
+                     C95 trace (R 05c804 = 0x10000 at the first poll read). */
         if (val & 0x601) {
             if (!s->fe_booted) {
                 s->fe_booted = true;
-                s->fe_irq |= FE_IRQ_MSG;
+            }
+            if ((val & 0x601) == 0x601) {
+                s->fe_irq |= FE_IRQ_MSG;   /* boot-ready; W1C-consumable */
             }
             s->pending |= BX_FE_IRQ;
             bx510_update_irq(s);

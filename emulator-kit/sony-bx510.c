@@ -125,7 +125,7 @@ struct Bx510State {
     unsigned sata_didx;         /* IDENTIFY read cursor (word index) */
     /* RMW-storage registers the probe path touches (ata-probe-path.md §6
      * additions 1,3,4,5,6,7,8): read back the last written value. */
-    uint32_t sata_a604, sata_a620, sata_a634, sata_a680;
+    uint32_t sata_a604, sata_a620, sata_a634, sata_a680, sata_a208;
     uint32_t sata_a080, sata_a114, sata_a108;
     bool trace_all;             /* BX510_TRACE=1: log EVERY MMIO access
                                  * (instrumentation decay: as cases become
@@ -325,6 +325,9 @@ static void bx510_fe_post(Bx510State *s, uint32_t w0, uint32_t w1,
 #define FE_DMA_MAX   0x12800u
 #define CD_PAYLOAD   2048u       /* the fixture's logical sector */
 #define CD_FRAME     2352u       /* ATAPI raw CD frame (§4.2) */
+#define CD_SACD      2064u       /* SACD framed sector: 12-byte header + payload
+                                  * (sacdread-cpsa.md §4.3; the 5303 channel's
+                                  * own stride, C103 measured 0x5c404 = 4128) */
 
 /* A type-0 reply whose STATUS byte (w0 byte3) is nonzero is the drive-error
  * answer: the bottom half takes it to hw_chg_st(priv, 5) -> check_status 0x51
@@ -446,11 +449,11 @@ static void bx510_fe_read(Bx510State *s)
                       "length\n", cdb[0], lba, nsec, len, len / nsec, flen);
         flen = len / nsec;
     }
-    if (flen != CD_PAYLOAD && flen != CD_FRAME) {
+    if (flen != CD_PAYLOAD && flen != CD_FRAME && flen != CD_SACD) {
         qemu_log_mask(LOG_GUEST_ERROR,
                       "bx510: FE READ %02x lba=%u nsec=%u: %u-byte sector "
-                      "framing is not modelled (2048 plain, 2352 raw CD) — "
-                      "answering drive error, no data\n",
+                      "framing is not modelled (2048 plain, 2352 raw CD, "
+                      "2064 SACD) — answering drive error, no data\n",
                       cdb[0], lba, nsec, flen);
         bx510_fe_post(s, FE_STATUS_ERR, 0, 0, 0);
         return;
@@ -518,6 +521,25 @@ static void bx510_fe_read(Bx510State *s)
         for (i = 0; i < nsec; i++) {
             bx510_cd_frame(buf + (size_t)i * CD_FRAME,
                            payload + (size_t)i * CD_PAYLOAD, lba + i);
+        }
+        g_free(payload);
+    } else if (flen == CD_SACD) {
+        /* The SACD channel (C108): the daemon's 5303 read asks 2064 bytes per
+         * sector — the framed form the decrypt ioctl consumes. Level 0:
+         * 12-byte ZERO header + the fixture's plaintext payload. The header's
+         * real semantics are the open framing question (run-c104.md §7 item
+         * 1); zeros make the payload-at-12 layout testable without inventing
+         * header fields, and the TZ identity transform passes them through
+         * untouched (the driver strips out+12 itself, sacdread-cpsa.md §4.3). */
+        uint32_t i;
+
+        buf = g_malloc(len);
+        for (i = 0; i < nsec; i++) {
+            uint8_t *fr = buf + (size_t)i * CD_SACD;
+
+            memset(fr, 0, 12);
+            memcpy(fr + 12, payload + (size_t)i * CD_PAYLOAD, CD_PAYLOAD);
+            memset(fr + 12 + CD_PAYLOAD, 0, CD_SACD - 12 - CD_PAYLOAD);
         }
         g_free(payload);
     } else {
@@ -941,6 +963,33 @@ static uint64_t bx510_read(void *opaque, hwaddr off, unsigned size)
         return s->sata_present ? 0x370000u : 0x220000u;
     case 0xa648: /* per-ch busy poll: bits[12:8] must clear */
         return 0;
+    /* ---- a-window: SATA host/arbiter idle handshake (bdpdrv
+     * vIdeHalForceArbiterIdle .text+0x9ec30 / vIdeHalForceHostIdle
+     * .text+0x9ea88). Read ONLY by those two error-recovery routines, and
+     * only after the arbiter-idle request bit is written (a+0x108 bit0 /
+     * a+0x208 bits 1..3). EXIT CONDITION (decode/ata-window-a1a0-poll.md §2):
+     *   (a+0x1fc & 0xfff) == 1 && a+0x1a0 == 1 && a+0x1a4 == 1 &&
+     *   a+0x1a8 == 1 && a+0x1ac == 1        <- whole-word equality, not masks
+     * The loop has no timer and no delay, so serving anything else is an
+     * unbounded spin (the C106-probe 28 MB/s -D storm). The controller is
+     * modelled as always-idle: the driver only ever tests the settled
+     * value, never a transition. */
+    case 0xa1a0: case 0xa1a4: case 0xa1a8: case 0xa1ac:
+    case 0xa1fc: /* 12-bit TRP-FIFO fill field, idle = 1 */
+        return 1;
+    case 0xa6b8:
+        /* PHY/link state word (B1): 1 = link idle —
+         * vIdeHalForceSataIdle's completion value (0x9f0e4: while
+         * ([a+0x6b8] != 1), no bound). Multi-state word: 0x40000 =
+         * COMRESET/SYNC-ESC, 0x200000 = FE transfer complete (that consumer
+         * already hangs on the current 0; this row moves the idle path
+         * without touching it — conditional-on-FE-outstanding is the
+         * documented follow-up if the FE transfer leg goes live). */
+        return 1;
+    case 0xa208:
+        /* host-idle request/handshake word (B3): plain RMW readback —
+         * vIdeHalForceHostIdle sets/clears bits 0xe/0x1 (0x9ea9c..0x9ebf0). */
+        return s->sata_a208;
     case 0xa220: /* IRQ status (W1C) */
         return s->sata_ist;
     case 0xa01c: /* status/command word — serve the STATUS model */
@@ -1175,7 +1224,16 @@ static void bx510_write(void *opaque, hwaddr off, uint64_t val, unsigned size)
     case 0xa604: s->sata_a604 = val; break;
     case 0xa620: s->sata_a620 = val; break;
     case 0xa634: s->sata_a634 = val; break;
-    case 0xa680: s->sata_a680 = val; break;
+    case 0xa680:
+        /* PHY_CFG3 / TRP-FIFO reset (B2): bit0 is a SELF-CLEARING
+         * "reset TRP FIFO" trigger — vIdeHalResetSataTrpFifo writes |=1
+         * (0x9ed3c) then polls while (bit0) (0x9edbc); storing the raw
+         * value wedged that loop forever. */
+        s->sata_a680 = val & ~1u;
+        break;
+    case 0xa208: /* host-idle request/handshake word (B3): lossless RMW */
+        s->sata_a208 = val;
+        break;
     case 0xa080: s->sata_a080 = val; break;
     case 0xa114: s->sata_a114 = val; break;
     case 0xa108: /* FE data word: bit15 is the doorbell the driver sets and
@@ -1374,6 +1432,7 @@ static void bx510_reset(void *opaque)
     s->sata_st = 0;
     s->sata_didx = 0;
     s->sata_a604 = s->sata_a620 = s->sata_a634 = s->sata_a680 = 0;
+    s->sata_a208 = 0;
     s->sata_a080 = s->sata_a114 = s->sata_a108 = 0;
     memset(s->tf, 0, sizeof(s->tf));
     mt8560_nfi_reset(&s->nfi);

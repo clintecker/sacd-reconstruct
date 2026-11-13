@@ -1,0 +1,95 @@
+# fb-gfx-rows.patch — model rows R2/R3/R4/R7 for the GFX window
+#
+#   *** APPLY ONLY IF TRACE SHOWS GFX_CmdQueAction / GFX_HwGetIdle EXECUTING ***
+#
+# fb-surface.md §4.2 orders these rows by "what unblocks the next observable"
+# and §7 step 3 gates them on a trace: R2's polarity is INFERRED (name+mask),
+# and R2 is the row that can WEDGE a driver loop (a flush waiting on an idle
+# bit that never sets). Adding it on a guess is how a model converts a missing
+# feature into a hang. Gate it with decode/fb_gates.py: apply only when G3
+# (GFX_CmdQueAction) and G4 (GFX_HwGetIdle) both PASS on a real run —
+# `fb_gates.py RUN.mmio.log -v` (see decode/fb-gfx-trace-gates.md).
+#
+# Baseline: emulator-kit/sony-bx510.c in the working tree at stage time,
+# sha256 02e49dea7f9bfdeb00843c551dcae156203e95728135d6da0d1b557e272d6508.
+# That file belongs to another lane and is edited concurrently (it moved once
+# between this patch being cut and this note), so re-check before applying:
+#
+#     git apply -p1 --check evidence/bx510-guest/bdpdrv/decode/fb-gfx-rows.patch
+#
+# The hunks carry >=3 lines of context and `git apply -3` copes with a moved
+# base; if a hunk ever conflicts, the three edits are visible in §4 of
+# fb-gfx-trace-gates.md and can be re-cut by hand in a minute.
+#
+# Rows: R2 0x4004 read -> bit0 = 1 (idle)
+#       R3 0x4008 write -> stored (ring base; nothing consumes the ring)
+#       R4 0x400c R/W  -> readback-last-written (HwReset's RMW word)
+#       R7 0x4134 R/W  -> readback-last-written
+# Deliberately NOT touched: R1/R5/R6/R10 (already answered), R8 0x4258 and
+# R9 0x40a0/0x40d0-0x40ec (0 is the correct idle answer for those debug
+# readers), R11 engine 1 and R12 the ring consumer (both need their own
+# evidence, and R12 is a project, not a row).
+#
+# Apply:  git apply -p1 evidence/bx510-guest/bdpdrv/decode/fb-gfx-rows.patch
+#         # or: patch -p1 < evidence/.../fb-gfx-rows.patch
+# Then:   make sacd-gate  (or the parent lane's model build) and re-run
+#         fb_gates.py on the new run; G3/G4 must stay PASS, G1 must not regress.
+--- a/emulator-kit/sony-bx510.c
++++ b/emulator-kit/sony-bx510.c
+@@ -90,6 +90,12 @@
+      * wire (read 0 -> write 0xf0000000 -> write 0x0). */
+     bool gfx_kicked, gfx2_kicked;
+     uint32_t gfx_cmd, gfx_cmd2, gfx2_cmd, gfx2_cmd2;
++    /* fb-surface.md §4 rows R3/R4/R7 (evidence/bx510-guest/bdpdrv/decode/
++     * fb-gfx-rows.patch): the ring base GFX_CmdQue{Reset,Restore,Change}
++     * stores, and the two read-modify-write words GFX_HwReset reads before
++     * writing. Stored, never interpreted — the model still has no engine to
++     * feed, and GC'd only if a trace shows the rows are never reached. */
++    uint32_t gfx_qbase, gfx_act, gfx_rst;
+     /* ADSP load-table port (vAudHalSetDspLoadTable): index[0x110] +
+      * data[0x108] with readback verify, mode[0x10c], port[0x100].
+      * Model: last-written-value readback on the seen registers. */
+@@ -412,6 +418,21 @@
+     case BX_BIM + 0x78: return s->control;
+     case 0x4000: /* GFX engine status/command */
+         return s->gfx_kicked ? 0xa0000000u : 0u;
++    case 0x4004: /* R2: GFX_HwGetIdle is the only reader (`ldr` .text
++                  * 0x177074) and returns `val & 1` (`and r3,r3,#1`
++                  * 0x177084), i.e. bit0 = idle. Polarity is INFERRED from
++                  * name+mask (fb-surface.md §4.2 R2) — 0 today reads as
++                  * "always busy", which is the shape that can wedge a
++                  * flush. */
++        return 1u;
++    case 0x400c: /* R4: readback-last-written — GFX_HwReset reads, ORs
++                  * 0x10000000, writes (`ldr` 0x176a14 / `orr` 0x176a20 /
++                  * `str` 0x176a2c). Same pattern as the SATA a604/a620
++                  * RMW bank. */
++        return s->gfx_act;
++    case 0x4134: /* R7: readback-last-written — GFX_HwReset reads before
++                  * writing (0x176a3c) and reparses bit1 of what it got. */
++        return s->gfx_rst;
+     case 0x4800: /* second engine slot (RLE/SE; RLE_HwReset) */
+         return s->gfx2_kicked ? 0xa0000000u : 0u;
+     case 0x8118: /* FastLogo_STATUS: vAudInitThread polls until ==0x40
+@@ -633,9 +654,19 @@
+             s->gfx_kicked = true;
+         }
+         break;
++    case 0x4008: /* R3: ring base (GFX_CmdQueReset .text 0x1756d8,
++                  * CmdQueRestore 0x17607c, CmdQueChange 0x176130). Accept
++                  * and store; nothing consumes the ring. */
++        s->gfx_qbase = val;
++        break;
++    case 0x400c: /* R4 */
++        s->gfx_act = val;
++        break;
+     case 0x4010: s->gfx_cmd2 = val; break;
+-    case 0x4104:
+-    case 0x4134: break;
++    case 0x4104: break;
++    case 0x4134: /* R7 */
++        s->gfx_rst = val;
++        break;
+     case 0x4800:
+         s->gfx2_cmd = val;
+         if (val == 0) {

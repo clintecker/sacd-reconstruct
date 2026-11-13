@@ -342,14 +342,19 @@ static void bx510_fe_dispatch(Bx510State *s)
     }
     if (code == 0xa1) {
         /* ATA IDENTIFY PACKET DEVICE (C95 cmd#3, §3.3): the payload rides the
-         * FE DRAM window, and the type-0x10 message that carries it is also
-         * what advances priv+0x220 (§2.4). Message C is the type-0 success
-         * completion. Order per §5.2/§9: payload first — if a run shows the
-         * IDENTIFY bytes arriving but the command still timing out, the C97
-         * fallback is to swap these two posts. */
+         * FE DRAM window in a type-0x10 message; the type-0 completion is what
+         * advances priv+0x220. C97 LESSON (id-validity-check.md §5): payload
+         * FIRST is dropped — the driver's bounce-buffer arm priv+0x54 is still
+         * 0 when the bottom half drains the type-0x10 message, so the
+         * min(priv+0x54, w2) copy length is 0 and data_xfer later hands libata
+         * stale bytes (the two C97 fail lines are mutually exclusive id[0]
+         * constraints = two different stale buffers). H1: completion FIRST
+         * (priv+0x220 advances → check_status 0x58/DRQ → data_xfer arms
+         * priv+0x54) and the payload message drains into the armed buffer on
+         * the next bottom-half pass. */
         bx510_fe_dram_write(s, FE_IDENT_OFF, s->identify, FE_IDENT_LEN);
-        bx510_fe_post(s, 0x00100000u, FE_IDENT_OFF, FE_IDENT_LEN, 0);
         bx510_fe_post(s, 0, 0, 0, 0);
+        bx510_fe_post(s, 0x00100000u, FE_IDENT_OFF, FE_IDENT_LEN, 0);
         return;
     }
     /* 0xf7 prereset / 0x08 soft reset / anything unknown: a type-0 success
@@ -816,23 +821,35 @@ static void bx510_sata_build_identify(Bx510State *s)
     if (s->sata_blk) {
         sectors = blk_getlength(s->sata_blk) / 2048;
     }
-    w[0] = 0x8c00 | (0x8000);      /* ATAPI packet device, removable */
-    w[1] = 0x3c00 | 0x00c4;        /* bogus cyls; device type CD-ROM (5) */
+    /* id-validity-check.md §3.3/§4: libata's class-3 payload gate is id[0]
+     * bit15 only (libata .text+0x3cb8 ldrsh/bge); bits[1:0] = 0 selects the
+     * 12-byte CDB (configure .text+0x4b0c, table .rodata+0x728); bits[6:5]
+     * stay 00 (no ", CDB intr"); word 2 must not be a spin-up magic. */
     w[0] = 0x8000 | 5 << 8 | 0x80; /* type 5 = CD-ROM, removable, ATAPI */
+    w[2] = 0x0000;                 /* never 0x37c8/0x738c: that asks for SPINUP */
     w[49] = 1 << 9;                /* LBA supported */
-    w[52] = 0x0007;                /* ATA-1..ATA-3 obsolete bits */
+    w[49] |= 1 << 11;              /* LBA48 (ata_do_set_mode verify .text+0x64cc) */
+    w[53] = 0x0007;                /* words 54-58 / 64-70 / 88 valid */
     w[63] = 7;                     /* PIO modes 3/4 supported */
+    w[64] = 0x0003;                /* advanced PIO3/PIO4 (pio = 7 | ((w64&3)<<3)) */
     w[80] = 0x1e;                  /* ATA-4..ATA-6 */
     w[84] = 0x4000; w[85] = 0x4000;
     w[87] = 0x4000;                /* DMA setup */
-    w[88] = 0x0007;                /* UDMA modes */
+    w[88] = 0x0007;                /* UDMA modes (needs w[53]&4) */
+    w[83] = 0x4000;                /* LBA48 count valid; NOT 0x4004 (CFA branch!) */
+    w[60] = (uint16_t)sectors;     /* ata_id_n_sectors reads w[60]|w[61]<<16 */
+    w[61] = (uint16_t)(sectors >> 16);
     w[100] = (uint16_t)sectors;
     w[101] = (uint16_t)(sectors >> 16);
     w[102] = (uint16_t)(sectors >> 32);
     w[103] = (uint16_t)(sectors >> 48);
-    memcpy((uint8_t *)w + 27, "SONY    BDPSACDEMUL  ", 20); /* model, BE */
-    memcpy((uint8_t *)w + 23, "1.00", 8);
-    memcpy((uint8_t *)w + 10, "SACDEMUL0001  ", 20);        /* serial */
+    /* ata_id_string takes the HIGH byte of each word first, so sequential
+     * ASCII at BYTE offset 2*word is the ATA byte order. The old +10/+23/+27
+     * were WORD indices used as byte offsets: the model string landed in words
+     * 13-23 and libata read words 27-46 as NULs (id-validity-check.md §4). */
+    memcpy((uint8_t *)w + 54, "SONY    BDPSACDEMUL  ", 20); /* model, words 27-46 */
+    memcpy((uint8_t *)w + 46, "1.00    ", 8);               /* fw,    words 23-26 */
+    memcpy((uint8_t *)w + 20, "SACDEMUL0001  ", 20);        /* serial, words 10-19 */
 }
 
 static void bx510_reset(void *opaque)

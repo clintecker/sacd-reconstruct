@@ -85,6 +85,10 @@ since C103:
    data path (the IDE-HAL a-window lane is the standing alternative) carried
    them. This is the first real evidence in the framing investigation, and it
    is labelled MEASURED, origin INFERRED-none-yet.
+   **C105 CORRECTION: the origin is stale heap** — the buffer was never
+   filled; its bytes string-match the tar-staged `sacdread_smoke.sh` text
+   (plus one surviving `0xbb` poison block). See run-c105.md: this dump is
+   NOT framing evidence, and the layout stays `unresolved`.
 2. **libata EH is clean around errors.** The three drive-error completions
    each went status→REQUEST SENSE→command retry/fail with zero `qc timeout`,
    zero EH give-up, zero SRST noise (gate C: all PASS). The refusal answer is
@@ -116,7 +120,7 @@ since C103:
 | The FE descriptor DMA delivers fixture-identical bytes to a guest user buffer for plain 2048-byte READ(10) at LBAs 0/16/510/532104/1064207 and a 20480-byte batch | **VERIFIED** (oracle md5s + host-side ISO re-derivation, same session) |
 | Past-EOF is refused (`rc=-1`) with a sense triple and no clamping | **VERIFIED** (transcript + FE refusal line) |
 | A 4128-byte (2064×2) transfer is refused loudly and the driver recovers via REQUEST SENSE without EH fatality | **VERIFIED** |
-| The 5303 ioctl returns success with 4128 bytes of structured non-ISO data | **VERIFIED** (guest-side hashes); **origin of those bytes: OPEN** |
+| The 5303 ioctl returns success with 4128 bytes of structured non-ISO data | **VERIFIED, then CORRECTED by C105**: the ioctl did return success, but the buffer was UNFILLED — the data is stale heap (recycled page cache holding the extracted smoke script). Not a read result. |
 | The 2064-byte SACD framing layout | **NOT MEASURED** — the refused transfers carry no framing; `payload_at_12_stride_2064` stays the design assumption, now with a real dump to test hypotheses against |
 | Whether the daemon's SACD path works end-to-end | **NOT MEASURED** — `SACDREAD cmd=0x40105301 result=-402653184` (CPSA Connect fail) unchanged from C103, in both the smoke stage and the ladder prime |
 

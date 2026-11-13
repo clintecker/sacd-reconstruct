@@ -98,6 +98,26 @@ want 0 '^SRREAD mode=read10 lba=1064208 .* sense=000000'        "$U" "past-EOF c
 # ── G. leg (e): the /dev/sacd_read framing verdict — decided HERE, from the
 # guest's measurements (the guest has no ISO to compare against; the Mac does
 # not need one either, because the oracles are recorded constants).
+#
+# C105 lesson, checked BEFORE the layout ladder: a ret=0 result=0 with an
+# UNFILLED buffer reads as a successful read and would let stale heap pose as
+# a framing measurement. The DUMPHEX channel (srread hex mode) reassembles the
+# exact bytes the guest dumped; if the smoke-script text the tar staged into
+# the guest shows up in them, the buffer is recycled page cache, not a read
+# result — G then FAILS as 'stale-heap', which is a different (and much more
+# actionable) failure than 'unresolved'.
+STALE=$(tr -d '\r' < "$U" | grep '^DUMPHEX name=sacd510 off=' | \
+       python3 -c '
+import sys, re
+hexcat = "".join(m.group(3) for m in
+                 (re.match(r"DUMPHEX name=sacd510 off=(\d+) len=(\d+) ([0-9a-f]+)$", l)
+                  for l in sys.stdin) if m)
+buf = bytes.fromhex(hexcat)
+tells = [b"gate S06 sacd-read-node", b"mknod -m0666", b"elif mknod"]
+print(sum(buf.count(t) for t in tells))' 2>/dev/null)
+if [ "${STALE:-0}" -gt 0 ]; then
+  bad "5303 buffer unfilled (stale-heap signature: staged-file text in the dump)" "$STALE"
+fi
 O510=e56de1add53c90dd30cf9232b29ddc93      # LBA 510, 2048 logical
 O511=68e5b97be9a6db48a3d477d77522d47d      # LBA 511, 2048 logical
 h() { grep -h "^MD5 name=sacd510 off=$1 hash=" "$U" 2>/dev/null \

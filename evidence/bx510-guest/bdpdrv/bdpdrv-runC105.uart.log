@@ -1,0 +1,2278 @@
+bx510: SATA ATAPI drive attached: /home/aftermath/sacd-verify/firebird.iso (1064208 sectors)
+Uncompressing Linux... done, booting the kernel.
+Linux version 2.6.35 (aokino@rvds241) (gcc version 4.5.1 (GCC) ) #1 PREEMPT Thu Sep 20 09:03:01 JST 2018
+CPU: ARMv6-compatible processor [410fb767] revision 7 (ARMv7), cr=00c5387f
+CPU: VIPT aliasing data cache, VIPT aliasing instruction cache
+Machine: mt85xx
+Memory policy: ECC disabled, Data cache writeback
+[kernel zone size]DMA: 110592KB, NORMAL: 381952KB, MOVABLE: 31744KB
+enable log
+enable cli input
+Built 1 zonelists in Zone order, mobility grouping on.  Total pages: 130048
+Kernel command line: console=ttyMT0,115200 mem=512M root=/dev/mtdblock17 rootfstype=squashfs ro init=/bin/sh slub_debug=FZ
+PID hash table entries: 2048 (order: 1, 8192 bytes)
+Dentry cache hash table entries: 65536 (order: 6, 262144 bytes)
+Inode-cache hash table entries: 32768 (order: 5, 131072 bytes)
+Memory: 512MB = 512MB total
+Memory: 512460k/512460k available, 11828k reserved, 0K highmem
+Virtual kernel memory layout:
+    vector  : 0xffff0000 - 0xffff1000   (   4 kB)
+    fixmap  : 0xfff00000 - 0xfffe0000   ( 896 kB)
+    DMA     : 0xffc00000 - 0xffe00000   (   2 MB)
+    vmalloc : 0xe0800000 - 0xf8000000   ( 376 MB)
+    lowmem  : 0xc0000000 - 0xe0000000   ( 512 MB)
+    modules : 0xbf000000 - 0xc0000000   (  16 MB)
+      .init : 0xc0008000 - 0xc0022000   ( 104 kB)
+      .text : 0xc0022000 - 0xc043a000   (4192 kB)
+      .data : 0xc0456000 - 0xc047dce0   ( 160 kB)
+SLUB: Genslabs=11, HWalign=32, Order=0-3, MinObjects=0, CPUs=1, Nodes=1
+Hierarchical RCU implementation.
+	RCU-based detection of stalled CPUs is disabled.
+	Verbose stalled-CPUs detection is disabled.
+NR_IRQS:128
+Console: colour dummy device 80x30
+console [ttyMT0] enabled
+_mt85xx_uart_console_init:register console ok
+Calibrating delay loop... 276.48 BogoMIPS (lpj=138240)
+pid_max: default: 32768 minimum: 301
+Mount-cache hash table entries: 512
+CPU: Testing write buffer coherency: ok
+NET: Registered protocol family 16
+=== mt8560_init === 
+IC Version = A
+Serial: MT85XX driver $Revision: #25 $
+Serial : add uart port 0
+ttyMT0 at MMIO 0x7000c000 (irq = 14) is a MT85XX Serial
+Serial: driver_register 0
+bio: create slab <bio-0> at 0
+SCSI subsystem initialized
+Advanced Linux Sound Architecture Driver Version 1.0.23.
+<Bluetooth> Info: func:bt_init line:419 Core ver 2.15
+NET: Registered protocol family 31
+<Bluetooth> Info: func:bt_init line:431 HCI device and connection manager initialized
+<Bluetooth> Info: func:hci_sock_init line:810 HCI socket layer initialized
+cfg80211: Calling CRDA to update world regulatory domain
+NET: Registered protocol family 2
+IP route cache hash table entries: 4096 (order: 2, 16384 bytes)
+TCP established hash table entries: 16384 (order: 5, 131072 bytes)
+TCP bind hash table entries: 16384 (order: 4, 65536 bytes)
+TCP: Hash tables configured (established 16384 bind 16384)
+TCP reno registered
+UDP hash table entries: 256 (order: 0, 4096 bytes)
+UDP-Lite hash table entries: 256 (order: 0, 4096 bytes)
+NET: Registered protocol family 1
+RPC: Registered udp transport module.
+RPC: Registered tcp transport module.
+RPC: Registered tcp NFSv4.1 backchannel transport module.
+k_gpio module init success
+squashfs: version 4.0 (2009/01/31) Phillip Lougher
+Installing knfsd (copyright (C) 1996 okir@monad.swb.de).
+msgmni has been set to 1000
+alg: No test for stdrng (krng)
+Block layer SCSI generic (bsg) driver version 0.4 loaded (major 254)
+io scheduler noop registered
+io scheduler deadline registered (default)
+loop: module loaded
+svoif_int_ldr_dram = 0xdfc00000, size = 0x200000
+[_get_static_buffer]start...
+[_get_static_buffer]start_addr:0xdd8b8000, alloc_sz:0x28000, buf_sz:0x25000
+[sata_bltin_init_buffer]sata_int_ldr_fw:0xdd900000, sata_hw_seg_buf:0xdd8b8000, sata_mtd_read_buf:0xdd8b8000
+mt85xx_nand_alloc_memo1 address = 0xdda00000
+mt85xx_nand_alloc_memo2 address = 0xdda00020
+NAND device: Manufacturer ID: 0xec, Chip ID: 0xda (Samsung NAND 256MiB 3,3V 8-bit)
+Bad block table not found for chip 0
+Bad block table not found for chip 0
+Scanning device for bad blocks
+kernel adaptive mtd mechanism applied.
+mt85xx_part_tbl_init start.
+mt85xx_part_tbl_init success, v1 pit found !
+Creating 25 MTD partitions on "NAND 256MiB 3,3V 8-bit":
+0x000000000000-0x000000200000 : "boot_1"
+0x000000200000-0x000000400000 : "part_info_1"
+0x000000400000-0x000000600000 : "part_info_2"
+0x000000600000-0x000000700000 : "mac_addr_1"
+0x000000700000-0x000000800000 : "mac_addr_2"
+0x000000800000-0x000000900000 : "key_block_1"
+0x000000900000-0x000000a00000 : "key_block_2"
+0x000000a00000-0x000000c00000 : "fe_bin_1"
+0x000000c00000-0x000000e00000 : "fe_bin_2"
+0x000000e00000-0x000000f00000 : "fe_test_data"
+0x000000f00000-0x000001000000 : "fe_parameters"
+0x000001000000-0x000001100000 : "fe_power_curve"
+0x000001100000-0x000001400000 : "ifcon_fw_backup"
+0x000001400000-0x000001700000 : "kernel_1"
+0x000001700000-0x000001a00000 : "kernel_2"
+0x000001a00000-0x000001f00000 : "initrd_1"
+0x000001f00000-0x000008a00000 : "rootfs_normal_1"
+0x000008a00000-0x000008e00000 : "rootfs_enc_it_1"
+0x000008e00000-0x000009200000 : "initrd_2"
+0x000009200000-0x00000c200000 : "rootfs_normal_2"
+0x00000c200000-0x00000c700000 : "rootfs_enc_it_2"
+0x00000c700000-0x00000c800000 : "upg_status"
+0x00000c800000-0x00000c900000 : "init_wall_paper"
+0x00000c900000-0x00000cb00000 : "fast_init_param"
+0x00000cb00000-0x00000f700000 : "ubi0"
+star: eth_base=0xe0880000
+star: pinmux_base=0xe0884000
+star: pdwnc_base=0xe0888100
+star: eth_pdwnc_base=0xe088cc00
+star: eth_chksum_base=0xe0890000
+star: ipll_base1=0xe0894700
+star: ipll_base2=0xe0898300
+star: bsp_base=0xe089c000
+star: desc addr: 0xffc00000(virtual)/0x1d87e000(physical)
+star: Ethernet disable powerdown!
+PLL VCO auto reset for 8580A 
+star: test page 0x1E=0x4000,count=1
+star: test page 0x1E=0x4000,count=1
+Star Ethernet: Internal Vitesse PHY
+star: PHY addr = 0x0000
+star: Get Mac from mac_addr_1 partID=4!
+[nand part read-1], u4DevId = 4, 		    u8Offset = 0x0, u4MemPtr = 0xc61697e8, u4MemLen = 0x6 
+star: Get Mac from mac_addr is invalid:MAC Address:ff-ff-ff-ff-ff-ff
+star: set the default MAC:00-0C-E7-06-00-00
+star: Get Mac from mac_addr failed! 
+star: Star MAC init done
+mice: PS/2 mouse device common for all mice
+<mmc_bltin_init_buffer> init mmc buffers
+ALSA device list:
+  No soundcards found.
+TCP cubic registered
+NET: Registered protocol family 10
+lo: Disabled Privacy Extensions
+IPv6 over IPv4 tunneling driver
+sit0: Disabled Privacy Extensions
+ip6tnl0: Disabled Privacy Extensions
+NET: Registered protocol family 17
+<Bluetooth> Info: func:l2cap_init line:5015 L2CAP ver 2.15
+<Bluetooth> Info: func:l2cap_init line:5016 L2CAP socket layer initialized
+<Bluetooth> Info: func:sco_init line:1050 SCO (Voice Link) ver 0.6
+<Bluetooth> Info: func:sco_init line:1051 SCO socket layer initialized
+<Bluetooth> Info: func:rfcomm_init_ttys line:1181 RFCOMM TTY layer initialized
+<Bluetooth> Info: func:rfcomm_init_sockets line:1149 RFCOMM socket layer initialized
+<Bluetooth> Info: func:rfcomm_init line:2179 RFCOMM ver 1.11
+<Bluetooth> Info: func:bnep_init line:720 BNEP (Ethernet Emulation) ver 1.3
+<Bluetooth> Info: func:hidp_init line:1025 HIDP (Human Interface Emulation) ver 1.2
+lib80211: common routines for IEEE802.11 drivers
+PM Init
+VFP support v0.3: implementor 41 architecture 1 part 20 variant b rev 5
+_mt85xx_late_console_init:register console ok
+VFS: Mounted root (squashfs filesystem) readonly on device 31:17.
+Freeing init memory: 104K, pages: 26
+/bin/sh: can't access tty; job control turned off
+/ # mount -t tmpfs tmpfs /res; /bin/mknod /res/test-bdev b 31 10; /bin/mkdir -p 
+/res/shim /res/proc
+/ # /bin/dd if=/res/test-bdev bs=4096 count=193 2>/res/dd.err | /bin/tar -xf - -
+C /res
+/ # mount -t proc proc /res/proc; echo STUB_PROC=$?
+STUB_PROC=0
+/ # ls -la / | head -20; echo ROOTLIST=$?
+drwxrwxrwx   11 0        0              140 Nov 12  2026 .
+drwxrwxrwx   11 0        0              140 Nov 12  2026 ..
+drwxrwxr-x    2 0        0              369 Sep 20  2018 bin
+drwxrwxr-x    2 0        0                3 Nov 12  2026 dev
+drwxrwxr-x    5 0        0             2122 Sep 20  2018 lib
+drwxrwxr-x    2 0        0                3 Nov 12  2026 proc
+drwxrwxrwt    4 0        0              120 Jan  1 00:00 res
+drwxrwxr-x    2 0        0              684 Sep 20  2018 sbin
+drwxrwxr-x    2 0        0                3 Nov 12  2026 sys
+drwxrwxr-x    2 0        0                3 Nov 12  2026 tmp
+drwxrwxr-x   10 0        0              157 Sep 20  2018 usr
+ROOTLIST=0
+/ # ls -la /proc 2>&1 | head -5; echo PROCLS=$?
+drwxrwxr-x    2 0        0                3 Nov 12  2026 .
+drwxrwxrwx   11 0        0              140 Nov 12  2026 ..
+PROCLS=0
+/ # mkdir -p /proc 2>&1; echo MKDIRPROC=$?
+MKDIRPROC=0
+/ # mount -t proc proc /proc 2>&1; echo ROOTPROC=$?
+ROOTPROC=0
+/ # mount -t tmpfs tmpfs /dev 2>&1; echo DEVTMP=$?
+DEVTMP=0
+/ # mknod /dev/console c 5 1; mknod /dev/null c 1 3; mknod /dev/ttyMT0 c 204 66;
+ echo DEVNODES=$?
+DEVNODES=0
+/ # cat /proc/mtd 2>&1 | head -4; echo MTDPROC=$?
+dev:    size   erasesize  name
+mtd0: 10000000 00020000 "NAND 256MiB 3,3V 8-bit"
+mtd1: 00200000 00020000 "boot_1"
+mtd2: 00200000 00020000 "part_info_1"
+MTDPROC=0
+/ # mount 2>&1 | head -8; echo MOUNTLIST=$?
+rootfs on / type rootfs (rw)
+/dev/root on / type squashfs (ro,relatime)
+tmpfs on /res type tmpfs (rw,relatime)
+proc on /res/proc type proc (rw,relatime)
+proc on /proc type proc (rw,relatime)
+tmpfs on /dev type tmpfs (rw,relatime)
+MOUNTLIST=0
+/ # echo STUB_BEGIN
+STUB_BEGIN
+/ # ls -l /res/shim; echo STUB_LS=$?
+-rwxr-xr-x    1 0        0            28510 Jan  1 00:00 [1;32mbx510_clidrive.ko[0m
+-rwxr-xr-x    1 0        0             5932 Jan  1 00:00 [1;32mkcheck.sh[0m
+-rwxr-xr-x    1 0        0           193620 Jan  1 00:00 [1;32mlibata.ko[0m
+-rwxr-xr-x    1 0        0           220658 Jan  1 00:00 [1;32mosal_stub.ko[0m
+-rwxr-xr-x    1 0        0            50539 Jan  1 00:00 [1;32mosal_stub_a.ko[0m
+-rwxr-xr-x    1 0        0              936 Jan  1 00:00 [1;32mprocc.sh[0m
+-rwxr-xr-x    1 0        0            97805 Jan  1 00:00 [1;32msacd_read.ko[0m
+-rwxr-xr-x    1 0        0            38710 Jan  1 00:00 [1;32msacdgate[0m
+-rwxr-xr-x    1 0        0            18659 Jan  1 00:00 [1;32msacdread_smoke.sh[0m
+-rwxr-xr-x    1 0        0            69452 Jan  1 00:00 [1;32msata_mt85xx_mod.ko[0m
+-rwxr-xr-x    1 0        0             6698 Jan  1 00:00 [1;32msr_read_ladder.sh[0m
+-rwxr-xr-x    1 0        0            41728 Jan  1 00:00 [1;32msrread[0m
+STUB_LS=0
+/ # md5sum /res/shim/osal_stub.ko; echo STUB_MD5=$?
+1d8a3067ef0e6c46d9a07f0e9fca2a51  /res/shim/osal_stub.ko
+STUB_MD5=0
+/ # insmod /res/shim/libata.ko; echo PRE_libata.ko_RC=$?
+PRE_libata.ko_RC=0
+/ # insmod /res/shim/sata_mt85xx_mod.ko; echo PRE_sata_mt85xx_mod.ko_RC=$?
+[IDE]set ARM1 SATA driver init flag...
+[IDE]wait ARM2 end #0 - done
+[IDE]-------------- SVOIF driver init --------------
+[IDE]----- frontend FW buffer = 0xdd900000, DRAM Addr = 0xdfc00000 -----
+[IDE]<init_int_ldr>parse /proc/mtd table
+[sata_mt85xx_parse_mtd_table]/proc/mtd rd_length = 1047
+fe_bin_1 - /dev/mtd8
+fe_bin_2 - /dev/mtd9
+fe_test_data - /dev/mtd10
+fe_parameters - /dev/mtd11
+fe_power_curve - /dev/mtd12
+[IDE]<init_int_ldr>read internal loader binary
+[IDE] ECC failed: 0, ECC corrected: 0
+[IDE] Number of bad blocks: 0, bbt blocks: 0
+[IDE]======= Calculate FE firmware checksum =======
+[IDE] FE firmware CheckSum OK !!
+[IDE] Tag Version 0x24
+[IDE]download boot code to SRAM (0x0, 0x4000)
+[IDE]verify boot code -- OK 
+[IDE] ECC failed: 0, ECC corrected: 0
+[IDE] Number of bad blocks: 0, bbt blocks: 0
+[IDE]<sata_mt85xx_SocReadPowerCurve>(Error)TAG mismatch:¶zu,
+[IDE]<xfer_int_ldr_fw> read power curve failed !!
+[IDE] ECC failed: 0, ECC corrected: 0
+[IDE] Number of bad blocks: 0, bbt blocks: 0
+[IDE] <sata_mt85xx_MTDAdvRead> TAG mismatched, Latest stored data in start_addr = 0x00000000
+[IDE] <sata_mt85xx_MTDAdvRead> Read from addr : 0x00000000, len : 0x00002020, Align len : 0x00002800
+[IDE]<sata_mt85xx_SocReadFaTable>(Error)TAG mismatch:shim
+[IDE]read FA table from FW offset = 0xfe000
+[IDE]<xfer_int_ldr_fw> Read FA table len: 8192 OK.
+[IDE] ECC failed: 0, ECC corrected: 0
+[IDE] Number of bad blocks: 0, bbt blocks: 0
+[IDE] <sata_mt85xx_MTDAdvRead> TAG mismatched, Latest stored data in start_addr = 0x00000000
+[IDE] <sata_mt85xx_MTDAdvRead> Read from addr : 0x00000000, len : 0x00002000, Align len : 0x00002000
+[IDE]<sata_mt85xx_SocReadParameter>(Error)TAG mismatch:ÿÿÿÿ
+[IDE]<xfer_int_ldr_fw> Read parameter failed !!
+[IDE]set FE RSTI = 1
+[IDE]set FE XTAL
+[IDE]set HBUS on
+[IDE]set IPLL register
+[IDE]reset IPLL
+[IDE]clear FE XTAL
+[IDE]_pbPwrOnParm = TAG0ACNO0000
+[IDE]set DRAM Wrapper, phy_addr = 0x1fc00000, offset = 127
+[IDE]clear default interrupt = 0x0
+[IDE]release frontend reset done !!
+star: star:resume
+[IDE]<init_int_ldr>init end
+[IDE]Init pri[0]->status_lock
+[IDE]pri[0]:0xbf03cf80(hw_st:0xbf03d1a0, curr_irq:0xbf03d1ac), sz:0x320
+[IDE]int_val = 0x10000
+[IDE]Receive frontend boot up status:0x0
+[IDE]download AACS code (0x0, 0x4000) ... start
+[IDE]download AACS code (0x0, 0x4000) ... end
+[IDE]<sata_mt85xx_id_atapi_dev>copy from (0xdfc01000, 0x200) to (0xc6268c60, 0x200)
+[IDE]Internal loader boot code mode
+[IDE]----- Loader is in manufacture mode !! -----
+scsi0 : sata_mt85xx
+ata1: SATA max UDMA/133 irq 18
+[IDE]<sata_mt85xx_prereset>ch:0, deadline:0xfffbc2bb start
+[IDE]<sata_mt85xx_prereset>ch:0 end
+[IDE]<sata_mt85xx_softreset>ch:0 start
+[IDE]<sata_mt85xx_softreset>ch:0 end, class=3
+ata1.00: ATAPI: SONY    BDPSACDEMUL, 1.00, max UDMA/33
+ata1.00: applying bridge limits
+ata1.00: Drive reports diagnostics failure. This may indicate a drive
+ata1.00: fault or invalid emulation. Contact drive vendor for information.
+ata1.00: configured for UDMA/33
+scsi 0:0:0:0: CD-ROM            MTK 85xx - FA Mode 1.00        PQ: 0 ANSI: 5
+PRE_sata_mt85xx_mod.ko_RC=0
+/ # insmod /res/shim/osal_stub_a.ko; echo STUBA_INSMOD=$?
+bx510_osal_stub_a: module license 'Proprietary' taints kernel.
+Disabling lock debugging due to kernel taint
+[OSAL_STUB] part A loaded (provider for drvcli)
+STUBA_INSMOD=0
+/ # insmod /lib/modules/2.6.35/BDP/drvcli.ko; echo DRVCLI_INSMOD=$?
+cli device init success
+DRVCLI_INSMOD=0
+/ # insmod /res/shim/osal_stub.ko; echo STUB_INSMOD=$?
+[OSAL_STUB] loaded (INSTRUMENT)
+STUB_INSMOD=0
+/ # grep osal_stub /res/proc/modules; echo STUB_MOD=$?
+bx510_osal_stub 53112 0 - Live 0xbf075000 (P)
+bx510_osal_stub_a 1220 1 drvcli, Live 0xbf045000 (P)
+STUB_MOD=0
+/ # insmod /lib/modules/2.6.35/BDP/bdpdrv.ko; echo BDPDRV_INSMOD=$?
+[OSAL_STUB] CKGEN_AgtOffClk called
+[OSAL_STUB] SYS_Printf called
+[NOTIFY] send_notification:0xf
+[SYSTEM] init_sys_thread_main !
+[NOTIFY] send_notification:0xf
+[OSAL_STUB] x_mem_alloc called
+[OSAL_STUB] alloc x_mem_alloc -> c6348940 size=32
+[OSAL_STUB] x_sema_create called
+[OSAL_STUB] alloc x_mem_alloc -> c6348980 size=32
+[OSAL_STUB] x_sema_lock called #1
+[OSAL_STUB] vdbg_printf called
+[OSAL_STUB] vdbg_printf: <NULL fmt>
+[OSAL_STUB] vdbg_printf: <NULL fmt>
+[OSAL_STUB] vdbg_printf: <NULL fmt>
+[OSAL_STUB] vdbg_printf: <NULL fmt>
+[nand part read-1], u4DevId = 24, 		    u8Offset = 0x3fc, u4MemPtr = 0xdda43ec7, u4MemLen = 0x1 
+[nand part read-1], u4DevId = 4, 		    u8Offset = 0x0, u4MemPtr = 0xdda43e54, u4MemLen = 0x71 
+[nand part read-1], u4DevId = 5, 		    u8Offset = 0x0, u4MemPtr = 0xdda43de0, u4MemLen = 0x71 
+[OSAL_STUB] x_strncmp called
+[OSAL_STUB] vdbg_printf: <NULL fmt>
+[nand part write-1], u4DevId = 24, 		    u8Offset = 0x3fc, u4MemPtr = 0xdda43ec7, u4MemLen = 0x1 
+[nand part write] Try to writing data to block 0 at offset 0x0
+[nand part write-1], u4DevId = 24, 		    u8Offset = 0x1003fc, u4MemPtr = 0xdda43ec7, u4MemLen = 0x1 
+[nand part write] Try to writing data to block 8 at offset 0x100000
+[OSAL_STUB] vdbg_printf: <NULL fmt>
+[OSAL_STUB] vdbg_printf: <NULL fmt>
+[nand part read-1], u4DevId = 4, 		    u8Offset = 0x11, u4MemPtr = 0xdda43ee8, u4MemLen = 0x10 
+[nand part read-1], u4DevId = 4, 		    u8Offset = 0xc, u4MemPtr = 0xbf65f298, u4MemLen = 0x1 
+[OSAL_STUB] Printf called
+[CUS_MODEL]Current model is 255
+<KernalSpace> 8G-BX, treat as SYS_CUS_MODEL_BDP
+[nand part read-1], u4DevId = 4, 		    u8Offset = 0xd, u4MemPtr = 0xbf65f29c, u4MemLen = 0x4 
+[CUS_MODEL]Current sub model is -1
+<KernalSpace> Other chip: 0x8560
+<KernalSpace> check default model!
+<KernalSpace> 8G-BX, treat as 8G-BX
+[OSAL_STUB] vdbg_printf: <NULL fmt>
+[OSAL_STUB] x_memset called
+[nand part read-1], u4DevId = 4, 		    u8Offset = 0x21, u4MemPtr = 0xdda43ee8, u4MemLen = 0x8 
+[OSAL_STUB] vdbg_printf: <NULL fmt>
+[DRV_INIT_KO] driver_notify:0x2
+[DRV_INIT_KO] notify level:0x1
+setup gpio is 58
+setup gpio is 58
+pdmisc1 sel is 0pdmisc2 sel is 0setup gpio is 6
+setup gpio is 10
+setup gpio is 3
+[OSAL_STUB] x_reg_isr called
+[IOMMU] Init 
+[OSAL_STUB] init_static_memory called
+[OSAL_STUB] init_static_memory(g_pvAdspFifo, flag=0, size=1138944, align=256) -> bf07f42c
+[OSAL_STUB] init_static_memory(g_pvAdspEffsndStrmBuf, flag=0, size=1048576, align=256) -> bf07f464
+[OSAL_STUB] init_static_memory(s_pu1VidPbBuf, flag=1, size=9723904, align=4096) -> bf07f49c
+[OSAL_STUB] crit_start depth=1 n=1
+[i4IdeDrvInit]register suspend to DRAM resume function
+[OSAL_STUB] crit_end depth=0
+[OSAL_STUB] alloc x_mem_alloc -> c6348a80 size=12
+[OSAL_STUB] crit_start depth=1 n=2
+[i4IdeDrvBootup]Start..
+[OSAL_STUB] crit_end depth=0
+[OSAL_STUB] x_thread_create called
+[OSAL_STUB] crit_start depth=1 n=3
+[v4IdeDrvInitThread]Start..
+[OSAL_STUB] crit_end depth=0
+fe_bootup = 1
+[OSAL_STUB] crit_start depth=1 n=4
+[v4IdeDrvInitThread]FE boot up OK !!
+[OSAL_STUB] crit_end depth=0
+[OSAL_STUB] crit_start depth=1 n=5
+[v4IdeDrvInitThread]End..
+[OSAL_STUB] crit_end depth=0
+[OSAL_STUB] thread created: IDE_INIT fct=v4IdeDrvInitThread
+[OSAL_STUB] crit_start depth=1 n=6
+[i4IdeDrvBootup]End..
+[OSAL_STUB] crit_end depth=0
+[OSAL_STUB] x_sema_lock called #2
+[OSAL_STUB] x_mem_aligned_alloc called
+[OSAL_STUB] alloc x_mem_aligned_alloc -> c6354440 size=512
+[OSAL_STUB] alloc x_mem_aligned_alloc -> c635fd80 size=36
+[OSAL_STUB] alloc x_mem_aligned_alloc -> c635fde0 size=56
+[OSAL_STUB] alloc x_mem_aligned_alloc -> c61b6000 size=246
+[OSAL_STUB] alloc x_mem_aligned_alloc -> c61b6120 size=256
+[OSAL_STUB] CKGEN_AgtSelClk called
+[OSAL_STUB] alloc x_mem_aligned_alloc -> c635fe40 size=56
+[OSAL_STUB] TzServiceCall called
+[OSAL_STUB] BIM_ClearIrq called
+[OSAL_STUB] x_mem_aligned_free called
+[OSAL_STUB] alloc x_mem_alloc -> c6348ac0 size=12
+[OSAL_STUB] alloc x_mem_aligned_alloc -> c6348b00 size=28
+[OSAL_STUB] alloc x_mem_aligned_alloc -> c6348b00 size=28
+[OSAL_STUB] alloc x_mem_aligned_alloc -> c6348b00 size=4
+hank:get IC(efuse=28) version(886)!
+[OSAL_STUB] alloc x_mem_aligned_alloc -> c6348b00 size=4
+star: StarSetEcoPrm get  IC verison(28)
+star: StarSetEcoPrm get error IC verison(28)
+star: StarSetEcoPrm get  IC verison(0)
+[OSAL_STUB] alloc x_mem_alloc -> c6348b00 size=16
+[OSAL_STUB] x_sema_lock called #3
+[OSAL_STUB] x_sema_lock called #4
+[OSAL_STUB] alloc x_mem_alloc -> c6348b40 size=20
+[OSAL_STUB] alloc x_mem_alloc -> c6348b80 size=20
+[OSAL_STUB] alloc x_mem_alloc -> c6348bc0 size=20
+[OSAL_STUB] alloc x_mem_alloc -> c6348c00 size=20
+[OSAL_STUB] alloc x_mem_alloc -> c6348c40 size=20
+[OSAL_STUB] alloc x_mem_alloc -> c6348c80 size=20
+[OSAL_STUB] alloc x_mem_alloc -> c6348cc0 size=20
+[OSAL_STUB] alloc x_mem_alloc -> c6348d00 size=20
+[OSAL_STUB] alloc x_mem_alloc -> c6348d40 size=20
+[OSAL_STUB] alloc x_mem_alloc -> c6348d80 size=20
+[OSAL_STUB] alloc x_mem_alloc -> c6348dc0 size=20
+[OSAL_STUB] x_vsnprintf called
+[FBM] Start to Init: MAX_FBG:5.
+[FBM] Will Static DEFINE. 
+[FBM] Init FBMS(34471936,21934080),WorkMS(3721216,2676736), FBMBC(16832,10710), WorkMBC(1817,1307).
+[FBM] Define DATA_CONSISTENCY.
+[OSAL_STUB] alloc x_mem_alloc -> c61ac100 size=1460
+[FBM] _arFBGPool Addr = 0xc61ac100, size (292, 5) Total:1460.
+[OSAL_STUB] x_mem_valloc called
+[OSAL_STUB] alloc x_mem_valloc -> e31e9000 size=162000
+[FBM] _arFBPool Addr = 0xe31e9000, size (648, 5, 50), Total:162000.
+[OSAL_STUB] alloc x_mem_alloc -> c61b7000 size=160
+[FBM] _arInDevPool Addr = 0xc61b7000, size (16, 10), Total:160.
+[OSAL_STUB] alloc x_mem_valloc -> e3213000 size=41120
+[FBM] _arQHandlePool Addr = 0xe3213000, size (2056, 20), Total:41120.
+[OSAL_STUB] alloc x_mem_alloc -> c6354660 size=400
+[FBM] _arBookFBPool Addr = 0xc6354660, size (8, 50), Total:400.
+[OSAL_STUB] alloc x_mem_alloc -> c6354880 size=292
+[OSAL_STUB] alloc x_mem_alloc -> c626a940 size=648
+[OSAL_STUB] alloc x_mem_alloc -> c6354aa0 size=292
+[OSAL_STUB] alloc x_mem_alloc -> c626ad60 size=648
+[OSAL_STUB] alloc x_mem_alloc -> c6354cc0 size=292
+[OSAL_STUB] alloc x_mem_alloc -> c626b180 size=648
+[FBM] Use OVERLAY _rFBMExtStatus (Addr: 0xbf70da3c, Size:12).
+[FBM] Ext _arFBG: size (292 + 648, 3), Total:2820.
+[OSAL_STUB] x_memset dst=bf71f050 n=0x4e20 caller=i4FBM_Init
+[FBM] reset _arExtDSFBInfo(Addr:-1083051952, Size(100,200), Total:20000.
+[OSAL_STUB] init_static_memory(_pbVDecWorkMainMSTemp, flag=1, size=3721216, align=1024) -> bf07f4d4
+[OSAL_STUB] init_static_memory(_pbVDecDSFBMainMSTemp, flag=1, size=3143680, align=2048) -> bf07f50c
+[FBM]Flag (0,1), Main FB(0x       0, 34471936),Work(0xe1d3a000, 3721216).
+[FBM_Init]: FBM sub memory type_orginal, FB: 21934080, WORK:2676736, DSFB: 3123200
+[OSAL_STUB] alloc x_mem_alloc -> e3220000 size=27736099
+[OSAL_STUB] x_mem_fill_caller called
+[OSAL_STUB] alloc x_mem_alloc -> d8a70000 size=13542
+[OSAL_STUB] Assert FIRED: 0 (src/driver/fbm/fbm_main.c:4679)
+[OSAL_STUB] Assert FIRED: i4_ret >= 0 (src/driver/drv_if/drv_init_ko.c:918)
+[ESM] i4ESM_Init
+[OSAL_STUB] alloc x_mem_alloc -> c600c040 size=5120
+[OSAL_STUB] x_memset dst=c600c040 n=0x1400 caller=i4ESM_Init
+[OSAL_STUB] alloc x_mem_alloc -> c618ad20 size=104
+[OSAL_STUB] alloc x_mem_alloc -> c633c000 size=64
+[OSAL_STUB] x_snprintf called
+[OSAL_STUB] x_ev_group_create called
+[OSAL_STUB] alloc x_mem_alloc -> c6348f40 size=32
+[OSAL_STUB] alloc x_mem_valloc -> e4c9f000 size=20136
+[vdec] vdec init alloc _arVDecEsInfo[0] = 0xe4c9f000, size = 20136
+[OSAL_STUB] x_memset dst=e4c9f000 n=0x4ea8 caller=vVDec_AllocMemEsInfo
+[OSAL_STUB] alloc x_mem_valloc -> e4ca6000 size=20136
+[vdec] vdec init alloc _arVDecEsInfo[1] = 0xe4ca6000, size = 20136
+[OSAL_STUB] x_memset dst=e4ca6000 n=0x4ea8 caller=vVDec_AllocMemEsInfo
+[OSAL_STUB] alloc x_mem_valloc -> e4cad000 size=20136
+[vdec] vdec init alloc _arVDecEsInfo[2] = 0xe4cad000, size = 20136
+[OSAL_STUB] x_memset dst=e4cad000 n=0x4ea8 caller=vVDec_AllocMemEsInfo
+[OSAL_STUB] alloc x_mem_valloc -> e4cb4000 size=20136
+[vdec] vdec init alloc _arVDecEsInfo[3] = 0xe4cb4000, size = 20136
+[OSAL_STUB] x_memset dst=e4cb4000 n=0x4ea8 caller=vVDec_AllocMemEsInfo
+[OSAL_STUB] x_timer_create called
+[OSAL_STUB] x_memcpy called
+[OSAL_STUB] x_memset dst=e4c9f000 n=0x4ea8 caller=VDec_ClearEsInfo
+ucMVCEsId = 4,ucEsId = 0
+[OSAL_STUB] x_memset dst=e4ca6000 n=0x4ea8 caller=VDec_ClearEsInfo
+ucMVCEsId = 4,ucEsId = 1
+[OSAL_STUB] x_memset dst=e4cad000 n=0x4ea8 caller=VDec_ClearEsInfo
+ucMVCEsId = 4,ucEsId = 2
+[OSAL_STUB] x_memset dst=e4cb4000 n=0x4ea8 caller=VDec_ClearEsInfo
+ucMVCEsId = 4,ucEsId = 3
+<MPV>CurChip 8560 EsidNum 4,VDPRacing 1, 3DRacing 1, 3DOneHw 1,PIPOneHw 1 PiPNewFLow 1,Rm 1, S263 1
+<MPV>Dram256 1 3D384 1,OptRes 1, LogTime 0, Mvc 1,FastbootMultPh 0,SR 1, DvdAudio 0
+<MPV>MemAlloc 0, FbmAlloc 1,FbmMainCnt 11,FbmSubCnt 7, FbmMainDsfbCnt 5 FbmSubDsfbCnt 5
+<MPV>NR 1 VirAddr 1,3DBiv 1, DramBand 0 DymAlloc 1, MemPh3 1, DrvOnly 0
+<MPV>ForseDispLast 1 FTS 0, DownScale 0, FrcVar 1, FbmEnBimAddr 1, OMX 0,MVCMatch1 0
+[OSAL_STUB] x_msg_q_create called
+[OSAL_STUB] mq_recv #1 h0=c6353320 cnt=1 caller=VDec_RetriveCmd
+[OSAL_STUB] thread created: MPV0 fct=_VDecMainLoop
+[OSAL_STUB] alloc x_mem_alloc -> c633d100 size=32
+[OSAL_STUB] alloc x_mem_alloc -> c633d140 size=32
+[OSAL_STUB] alloc x_mem_alloc -> c633d180 size=32
+[OSAL_STUB] mq_recv #2 h0=c6353438 cnt=1 caller=VDec_RetriveCmd
+[OSAL_STUB] thread created: MPV1 fct=_VDecMainLoop
+[OSAL_STUB] alloc x_mem_alloc -> c633d200 size=32
+[OSAL_STUB] alloc x_mem_alloc -> c633d240 size=32
+[OSAL_STUB] alloc x_mem_alloc -> c633d280 size=32
+[OSAL_STUB] alloc x_mem_alloc -> c633d2c0 size=32
+[OSAL_STUB] alloc x_mem_alloc -> c633d300 size=32
+[OSAL_STUB] alloc x_mem_alloc -> c633d340 size=32
+[OSAL_STUB] alloc x_mem_alloc -> c633d380 size=32
+[OSAL_STUB] alloc x_mem_alloc -> c633d3c0 size=32
+[OSAL_STUB] alloc x_mem_alloc -> c633d400 size=32
+[OSAL_STUB] mq_recv #3 h0=c6353578 cnt=1 caller=RetrieveSRCmd
+[OSAL_STUB] thread created: SR2 fct=_VDecSRLoop
+[OSAL_STUB] mq_recv #4 h0=c6353618 cnt=1 caller=RetrieveSRCmd
+[OSAL_STUB] thread created: SR3 fct=_VDecSRLoop
+[OSAL_STUB] alloc x_mem_alloc -> c633d500 size=12
+setup gpio is 58
+setup gpio is 57
+[OSAL_STUB] alloc x_mem_alloc -> c61ac920 size=2048
+[KM]GetProcMtdInfo
+[KM]/proc/mtd info_length = 1047 !!
+[OSAL_STUB] mq_recv #5 h0=c63537a8 cnt=1 caller=_fgGCPU_RetrieveCMD
+[OSAL_STUB] thread created: GcpuHw0 fct=_vGCPU_MainLoop
+[OSAL_STUB] alloc x_mem_aligned_alloc -> e4cbb000 size=64
+[OSAL_STUB] mq_send #1 h=c63537a8 w0=0x10901 caller=_fgGCPU_SendCMD
+[OSAL_STUB] crit_start depth=1 n=7
+[OSAL_STUB] crit_end depth=0
+[OSAL_STUB] alloc x_mem_aligned_alloc -> c633d600 size=24
+[OSAL_STUB] crit_start depth=1 n=8
+[OSAL_STUB] crit_end depth=0
+[OSAL_STUB] mq_recv #6 h0=c63537a8 cnt=1 caller=_fgGCPU_RetrieveCMD
+[OSAL_STUB] ev_wait #1 h=c6353780 mask=0x1 op=5 cur=0x1 caller=_vGCPU_WaitCmdExecFinish
+i4GCPU_CmdExec CMD FAIL:0 769, 8
+[OSAL_STUB] Assert FIRED: 0 (src/driver/km/km_info_cus/km_code/km_utility.c:2091)
+[OSAL_STUB] mq_send #2 h=c63537a8 w0=0xffffffff caller=_fgGCPU_SendCMD
+[OSAL_STUB] x_thread_exit called
+[OSAL_STUB] x_thread_exit caller=_vGCPU_MainLoop
+[OSAL_STUB] x_thread_get_name called
+[OSAL_STUB] x_ev_group_delete called
+[OSAL_STUB] x_msg_q_delete called
+[OSAL_STUB] alloc x_mem_aligned_alloc -> d8aa0000 size=65536
+[OSAL_STUB] x_memset dst=d8aa0000 n=0x10000 caller=vKmDrvInitGenData
+[KM]ParseMtdTable
+[OSAL_STUB] x_sscanf called
+[OSAL_STUB] alloc x_mem_aligned_alloc -> d8ab0000 size=65536
+[nand part read-1], u4DevId = 6, 		    u8Offset = 0x0, u4MemPtr = 0xd8ab0000, u4MemLen = 0x10000 
+[KM] RAW Read Key Block 6 successfully!!
+[KB]:get Key Block 0 successfully!!
+[OSAL_STUB] alloc x_mem_aligned_alloc -> c6354ee0 size=292
+[OSAL_STUB] alloc x_mem_aligned_alloc -> c6355100 size=384
+[OSAL_STUB] x_mem_free called
+[OSAL_STUB] alloc x_mem_aligned_alloc -> c633d580 size=16
+[OSAL_STUB] mq_recv #7 h0=c63537f8 cnt=1 caller=_fgGCPU_RetrieveCMD
+[OSAL_STUB] thread created: GcpuHw0 fct=_vGCPU_MainLoop
+[OSAL_STUB] alloc x_mem_aligned_alloc -> e4cbe000 size=64
+[OSAL_STUB] x_sema_delete called
+[OSAL_STUB] mq_send #3 h=c63537f8 w0=0xffffffff caller=_fgGCPU_SendCMD
+[OSAL_STUB] x_thread_exit caller=_vGCPU_MainLoop
+[OSAL_STUB] HAL_Delay_us called
+[OSAL_STUB] x_thread_delay #1 arg=10 caller=AUD_HwInit
+[OSAL_STUB] x_thread_delay #2 arg=10 caller=AUD_AoutCfg
+[HDMI_CLK][IEC1_OUTPUT]MCLK and FS is 0x0, 0x5 .
+[OSAL_STUB] x_thread_delay #3 arg=10 caller=AUD_AoutCfg
+[HDMI_CLK][IEC2_OUTPUT]MCLK and FS is 0x0, 0x5 .
+[OSAL_STUB] alloc x_mem_alloc -> c633d5c0 size=12
+setup gpio is 10
+setup gpio is 11
+setup gpio is 12
+setup gpio is 13
+setup gpio is 14
+[OSAL_STUB] BIM_EnableIrq called
+[OSAL_STUB] init_static_memory(_ucAdspWorkingBuffer, flag=1, size=8929280, align=1048576) -> bf07f544
+[OSAL_STUB] alloc x_mem_alloc -> c633c2a0 size=40
+[OSAL_STUB] alloc x_mem_alloc -> c633c300 size=40
+[OSAL_STUB] Assert FIRED: (u4DspStartAddr & 0xFFFFF)==0 (src/driver/aud/hal/aud_hal_8560.c:258)
+[AUD][AUD] Total used audio mem size    = 0x84CC00
+[AUD][AUD] Total alloced audio mem size = 0x884000
+[AUD][AUD][PUTBS]PUTBS BLOCK 1 SA= [0xE247B0].
+[AUD]
+[OSAL_STUB] thread created: ADSPTask Thread fct=vADSPTaskMain
+[AUD][PUTBS]PUTBS BLOCK 1 EA= [0xE24828].
+[AUD]g_pvAdspEffsndStrmBuf = 0xE12F3100
+[AUD]x_get_afifo_start_addr() = 0xE1100000
+[AUD]g_pvAdspEffsndFifo = 0xE1100000
+[AUD]s_u4AFIFOBaseAddr = 0xE1100000
+[OSAL_STUB] x_thread_delay #4 arg=1 caller=_AudDrvThread
+[OSAL_STUB] x_strcasecmp called
+[OSAL_STUB] alloc x_mem_aligned_alloc -> c633d600 size=4
+[OSAL_STUB] alloc x_mem_aligned_alloc -> c633d600 size=4
+[OSAL_STUB] alloc x_mem_aligned_alloc -> c633d600 size=4
+[OSAL_STUB] alloc x_mem_aligned_alloc -> c633d600 size=4
+[OSAL_STUB] alloc x_mem_aligned_alloc -> c633d600 size=4
+[OSAL_STUB] thread created: AudDrv0 fct=_AudDrvThread
+[OSAL_STUB] alloc x_mem_aligned_alloc -> c633d600 size=4
+[OSAL_STUB] alloc x_mem_aligned_alloc -> c633d600 size=4
+[OSAL_STUB] alloc x_mem_aligned_alloc -> c633d600 size=4
+[OSAL_STUB] alloc x_mem_aligned_alloc -> c633d600 size=4
+[OSAL_STUB] alloc x_mem_aligned_alloc -> c633d600 size=4
+[OSAL_STUB] thread created: AudDrv1 fct=_Aud2DrvThread
+[OSAL_STUB] thread created: AudDrv2 fct=_Aud3DrvThread
+[OSAL_STUB] mq_recv #8 h0=c6353fc8 cnt=1 caller=_AudEffThread
+[OSAL_STUB] thread created: AudEff fct=_AudEffThread
+[OSAL_STUB] ev_wait #2 h=c63400a0 mask=0x7 op=5 cur=0x0 caller=vAudEsmThread
+[OSAL_STUB] thread created: AudEsm fct=vAudEsmThread
+[OSAL_STUB] alloc x_mem_alloc -> c633d600 size=32
+[OSAL_STUB] alloc x_mem_alloc -> c633d580 size=32
+[OSAL_STUB] alloc x_mem_alloc -> c633d640 size=32
+[OSAL_STUB] alloc x_mem_alloc -> c633d680 size=32
+[AUD][AUD_IF] Audio Init flow: register pm ops
+[OSAL_STUB] alloc x_mem_alloc -> c633d6c0 size=12
+[OSAL_STUB] Assert FIRED: 0 (src/driver/aud/hal/aud_hal_8560.c:389)
+[OSAL_STUB] Assert FIRED: 0 (src/driver/aud/hal/aud_hal_8560.c:389)
+[AUD][AUD_IF] Audio Init Thread is created. 
+[OSAL_STUB] Assert FIRED: 0 (src/driver/aud/hal/aud_hal_8560.c:389)
+[OSAL_STUB] Assert FIRED: 0 (src/driver/aud/hal/aud_hal_8560.c:389)
+[OSAL_STUB] Assert FIRED: 0 (src/driver/aud/hal/aud_hal_8560.c:389)
+[OSAL_STUB] Assert FIRED: 0 (src/driver/aud/hal/aud_hal_8560.c:389)
+[OSAL_STUB] Assert FIRED: 0 (src/driver/aud/hal/aud_hal_8560.c:389)
+[OSAL_STUB] Assert FIRED: 0 (src/driver/aud/hal/aud_hal_8560.c:389)
+[OSAL_STUB] Assert FIRED: 0 (src/driver/aud/hal/aud_hal_8560.c:389)
+[OSAL_STUB] Assert FIRED: 0 (src/driver/aud/hal/aud_hal_8560.c:389)
+[OSAL_STUB] Assert FIRED: 0 (src/driver/aud/hal/aud_hal_8560.c:389)
+[OSAL_STUB] Assert FIRED: 0 (src/driver/aud/hal/aud_hal_8560.c:389)
+[OSAL_STUB] thread created: AudInit fct=vAudInitThread
+[OSAL_STUB] Assert FIRED: 0 (src/driver/aud/hal/aud_hal_8560.c:389)
+[OSAL_STUB] Assert FIRED: 0 (src/driver/aud/hal/aud_hal_8560.c:389)
+[OSAL_STUB] Assert FIRED: 0 (src/driver/aud/hal/aud_hal_8560.c:389)
+[OSAL_STUB] Assert FIRED: 0 (src/driver/aud/hal/aud_hal_8560.c:389)
+[OSAL_STUB] Assert FIRED: 0 (src/driver/aud/hal/aud_hal_8560.c:389)
+[OSAL_STUB] Assert FIRED: 0 (src/driver/aud/hal/aud_hal_8560.c:389)
+[OSAL_STUB] Assert FIRED: 0 (src/driver/aud/hal/aud_hal_8560.c:389)
+[OSAL_STUB] Assert FIRED: 0 (src/driver/aud/hal/aud_hal_8560.c:389)
+[OSAL_STUB] alloc x_mem_alloc -> c6330000 size=6768
+[OSAL_STUB] x_memset dst=c6330000 n=0x1a70 caller=i4PBBUFComp_Init
+[OSAL_STUB] x_thread_delay #256 arg=1 caller=_AudDrvThread
+[OSAL_STUB] alloc x_mem_alloc -> c633d700 size=32
+[OSAL_STUB] alloc x_mem_alloc -> c6332020 size=6768
+[OSAL_STUB] x_memset dst=c6332020 n=0x1a70 caller=i4PBBUFComp_Init
+[OSAL_STUB] alloc x_mem_alloc -> c633d740 size=32
+[OSAL_STUB] alloc x_mem_alloc -> c6334040 size=6768
+[OSAL_STUB] x_memset dst=c6334040 n=0x1a70 caller=i4PBBUFComp_Init
+[OSAL_STUB] alloc x_mem_alloc -> c633d780 size=32
+[OSAL_STUB] alloc x_mem_alloc -> c6260000 size=6768
+[OSAL_STUB] x_memset dst=c6260000 n=0x1a70 caller=i4PBBUFComp_Init
+[OSAL_STUB] alloc x_mem_alloc -> c633d7c0 size=32
+[OSAL_STUB] alloc x_mem_alloc -> c626b5a0 size=800
+[OSAL_STUB] alloc x_mem_alloc -> d8ac4000 size=8448
+[OSAL_STUB] x_memset dst=d8ac4000 n=0x2100 caller=i4DmxInit
+[OSAL_STUB] alloc x_mem_alloc -> c633c360 size=40
+[OSAL_STUB] mq_recv #9 h0=c6353f78 cnt=1 caller=_AudWaitEvent
+[OSAL_STUB] crit_end depth=0
+[OSAL_STUB] mq_recv #10 h0=c6353f50 cnt=1 caller=_AudWaitEvent
+[OSAL_STUB] crit_end depth=0
+[OSAL_STUB] crit_end depth=0
+[OSAL_STUB] crit_end depth=0
+[OSAL_STUB] crit_end depth=0
+[OSAL_STUB] ev_wait #3 h=c6353c08 mask=0x3 op=5 cur=0x1 caller=vDspWaitEvent
+[OSAL_STUB] crit_end depth=0
+[OSAL_STUB] ev_wait #4 h=c6353c08 mask=0x3 op=5 cur=0x0 caller=vDspWaitEvent
+[OSAL_STUB] alloc x_mem_alloc -> c6355320 size=512
+[OSAL_STUB] alloc x_mem_aligned_alloc -> e4cc1000 size=1280
+[OSAL_STUB] alloc x_mem_aligned_alloc -> e4cc4000 size=576
+[OSAL_STUB] alloc x_mem_aligned_alloc -> c626b9c0 size=800
+[OSAL_STUB] alloc x_mem_alloc -> c61ac920 size=2048
+[OSAL_STUB] alloc x_mem_alloc -> c6262020 size=8192
+[OSAL_STUB] alloc x_mem_alloc -> c633d900 size=32
+[OSAL_STUB] alloc x_mem_alloc -> c633d940 size=32
+[OSAL_STUB] alloc x_mem_alloc -> c633d980 size=32
+[OSAL_STUB] thread created: DMX0_TH fct=DmxThread
+[AUD]g_pvAdspEffsndStrmBuf = 0xE12F3100
+[AUD]x_get_afifo_start_addr() = 0xE1100000
+[AUD]g_pvAdspEffsndFifo = 0xE1100000
+[AUD]s_u4AFIFOBaseAddr = 0xE1100000
+[AUD][AUD_IF] Audio Init Thread is destroyed automatically. 
+[OSAL_STUB] x_thread_exit caller=osal_thread_fn
+[OSAL_STUB] thread created: DMX1_TH fct=DmxThread
+[OSAL_STUB] thread created: DMX2_TH fct=DmxThread
+[OSAL_STUB] thread created: DMX3_TH fct=DmxThread
+[OSAL_STUB] thread created: DMX_QUEUE_TH fct=_DMX_QueueHandleThread
+[OSAL_STUB] mq_recv #11 h0=c6340398 cnt=1 caller=vCECTaskMain
+[OSAL_STUB] thread created: CECTask Thread fct=vCECTaskMain
+[OSAL_STUB] crit_end depth=0
+[OSAL_STUB] crit_end depth=0
+[OSAL_STUB] crit_end depth=0
+[OSAL_STUB] crit_end depth=0
+[OSAL_STUB] crit_end depth=0
+[OSAL_STUB] crit_end depth=0
+[OSAL_STUB] crit_end depth=0
+[OSAL_STUB] crit_end depth=0
+[OSAL_STUB] crit_end depth=0
+[OSAL_STUB] crit_end depth=0
+[OSAL_STUB] crit_end depth=0
+[OSAL_STUB] crit_end depth=0
+[OSAL_STUB] crit_end depth=0
+[OSAL_STUB] crit_end depth=0
+[OSAL_STUB] crit_end depth=0
+[OSAL_STUB] crit_end depth=0
+[OSAL_STUB] crit_end depth=0
+[OSAL_STUB] crit_end depth=0
+[CEC] Driver Disalbe 
+[OSAL_STUB] alloc x_mem_alloc -> c6264040 size=5120
+TESTPMX: Get pard ID:24.
+[nand part read-1], u4DevId = 24, 		    u8Offset = 0x7, u4MemPtr = 0xdda43ee7, u4MemLen = 0x1 
+[HDMI_CTRL][QUICKSTARTMODE] u1QuickStart: 255
+[OSAL_STUB] BIM_DisableIrq called
+[OSAL_STUB] alloc x_mem_alloc -> c633d9c0 size=12
+[OSAL_STUB] x_timer_start called
+[OSAL_STUB] thread created: HDMITask Thread fct=vHDMITaskMain
+TESTPMX: Get pard ID:24.
+[nand part read-1], u4DevId = 24, 		    u8Offset = 0x7, u4MemPtr = 0xd8ad5f9f, u4MemLen = 0x1 
+[AV_D_TASK][QUICKSTARTMODE] u1QuickStart: 255
+[AVD]Power On Hot-plug IN
+[OSAL_STUB] mq_recv #12 h0=c6340460 cnt=1 caller=vAVDTaskMain
+[OSAL_STUB] thread created: AVDTask Thread fct=vAVDTaskMain
+[OSAL_STUB] alloc x_mem_alloc -> c633da00 size=12
+[OSAL_STUB] alloc x_mem_aligned_alloc -> c633da40 size=32
+[OSAL_STUB] alloc x_mem_aligned_alloc -> c633da80 size=32
+[OSAL_STUB] alloc x_mem_valloc -> e4cc7000 size=8
+[OSAL_STUB] alloc x_mem_valloc -> e4cca000 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c633dbc0 size=12
+[OSAL_STUB] alloc x_mem_valloc -> e4ccd000 size=4096
+[FBM] Start to Init: MAX_FBG:5.
+[FBM] Will Static DEFINE. 
+[FBM] Init FBMS(34471936,21934080),WorkMS(3721216,2676736), FBMBC(16832,10710), WorkMBC(1817,1307).
+[FBM] Define DATA_CONSISTENCY.
+[OSAL_STUB] alloc x_mem_alloc -> c61ad140 size=1460
+[FBM] _arFBGPool Addr = 0xc61ad140, size (292, 5) Total:1460.
+[OSAL_STUB] alloc x_mem_valloc -> e4cd0000 size=162000
+[FBM] _arFBPool Addr = 0xe4cd0000, size (648, 5, 50), Total:162000.
+[OSAL_STUB] alloc x_mem_alloc -> c61b71c0 size=160
+[FBM] _arInDevPool Addr = 0xc61b71c0, size (16, 10), Total:160.
+[OSAL_STUB] alloc x_mem_valloc -> e4cfa000 size=41120
+[FBM] _arQHandlePool Addr = 0xe4cfa000, size (2056, 20), Total:41120.
+[OSAL_STUB] alloc x_mem_alloc -> c6355540 size=400
+[FBM] _arBookFBPool Addr = 0xc6355540, size (8, 50), Total:400.
+[OSAL_STUB] alloc x_mem_alloc -> c6355760 size=292
+[OSAL_STUB] alloc x_mem_alloc -> c6324000 size=648
+[OSAL_STUB] alloc x_mem_alloc -> c6355980 size=292
+[OSAL_STUB] alloc x_mem_alloc -> c6324420 size=648
+[OSAL_STUB] alloc x_mem_alloc -> c6355ba0 size=292
+[OSAL_STUB] alloc x_mem_alloc -> c6324840 size=648
+[FBM] Use OVERLAY _rFBMExtStatus (Addr: 0xbf70da3c, Size:12).
+[FBM] Ext _arFBG: size (292 + 648, 3), Total:2820.
+[OSAL_STUB] x_memset dst=bf71f050 n=0x4e20 caller=i4FBM_Init
+[FBM] reset _arExtDSFBInfo(Addr:-1083051952, Size(100,200), Total:20000.
+[FBM]Flag (0,1), Main FB(0x       0, 34471936),Work(0xe1d3a000, 3721216).
+[FBM_Init]: FBM sub memory type_orginal, FB: 21934080, WORK:2676736, DSFB: 3123200
+[OSAL_STUB] alloc x_mem_alloc -> e4d07000 size=27736099
+[OSAL_STUB] alloc x_mem_alloc -> d757c000 size=13542
+[OSAL_STUB] thread created: VdpRz0_Inst fct=vVDP_Resz_Thread
+[OSAL_STUB] thread created: VdpRz1_Inst fct=vVDP_Resz_Thread
+[OSAL_STUB] thread created: VdpRz2_Inst fct=vVDP_Resz_Thread
+[OSAL_STUB] thread created: VdpBufResz fct=vVDP_Resz_Buf_Resz_Thread
+[OSAL_STUB] thread created: NR_Inst fct=vNR_Thread
+NR _vNRSetClk off
+[OSAL_STUB] HalCriticalStart called
+[OSAL_STUB] HalCriticalEnd called
+[OSAL_STUB] alloc x_mem_alloc -> c633ddc0 size=12
+[OSAL_STUB] alloc x_mem_valloc -> e6786000 size=5112
+[OSAL_STUB] x_memset dst=e6786000 n=0x13f8 caller=VDP_Init
+[OSAL_STUB] alloc x_mem_alloc -> c633de80 size=32
+[OSAL_STUB] alloc x_mem_alloc -> c633dec0 size=32
+[OSAL_STUB] alloc x_mem_alloc -> c633df00 size=32
+[OSAL_STUB] alloc x_mem_valloc -> e678a000 size=536
+[OSAL_STUB] alloc x_mem_valloc -> e678d000 size=536
+[OSAL_STUB] alloc x_mem_valloc -> e6790000 size=536
+[OSAL_STUB] alloc x_mem_valloc -> e6793000 size=536
+[OSAL_STUB] alloc x_mem_valloc -> e6796000 size=536
+[OSAL_STUB] alloc x_mem_valloc -> e6799000 size=536
+[OSAL_STUB] alloc x_mem_valloc -> e679c000 size=536
+[OSAL_STUB] alloc x_mem_valloc -> e679f000 size=536
+[OSAL_STUB] alloc x_mem_valloc -> e67a2000 size=536
+[OSAL_STUB] alloc x_mem_valloc -> e67a5000 size=536
+[OSAL_STUB] alloc x_mem_valloc -> e67a8000 size=536
+[OSAL_STUB] alloc x_mem_valloc -> e67ab000 size=536
+VDPTest: Setting Gain: 0,0,4; last:0.
+[OSAL_STUB] alloc x_mem_aligned_alloc -> d75a8000 size=26688
+[OSAL_STUB] x_memset dst=d75a8000 n=0x6840 caller=VPQ_Init
+[OSAL_STUB] alloc x_mem_aligned_alloc -> e67ae000 size=145407
+[OSAL_STUB] alloc x_mem_alloc -> c6322580 size=12
+TESTPMX: Get pard ID:24.
+[nand part read-1], u4DevId = 24, 		    u8Offset = 0x3, u4MemPtr = 0xdda43eac, u4MemLen = 0x4 
+TESTPMX: Get Test Data :255, 0xffffffff.
+[HDMI]Dual TX re-open mainTX ACR packet when not in Separation mode
+[VDP] PMX_Reset PMXId = 0 SetTvFormat (2_1)
+[VDP] VDP_SetTvFormat Fmt = 10, resetHw = 1
+[OSAL_STUB] alloc x_mem_alloc -> c63225c0 size=32
+TESTPMX: Get pard ID:24.
+[nand part read-1], u4DevId = 24, 		    u8Offset = 0x3, u4MemPtr = 0xdda43eac, u4MemLen = 0x4 
+TESTPMX: Get Test Data :255, 0xffffffff.
+[HDMI]Dual TX re-open mainTX ACR packet when not in Separation mode
+[VDP] PMX_Reset PMXId = 0 SetTvFormat (2_1)
+[VDP] VDP_SetTvFormat Fmt = 10, resetHw = 1
+[OSAL_STUB] alloc x_mem_alloc -> c6322600 size=32
+[PMX][PMX] create a timer 
+[OSAL_STUB] thread created: VSYNC fct=_PmxRoutine
+[PMX] i4FLStatus = 64
+[OSAL_STUB] alloc x_mem_alloc -> c6322640 size=12
+[OSAL_STUB] crit_end depth=0
+[OSAL_STUB] crit_end depth=0
+[OSAL_STUB] crit_end depth=0
+[OSAL_STUB] thread created: PostTask Thread fct=vPostMainTask
+[OSAL_STUB] u4HalGetTTB1 called
+[OSAL_STUB] alloc x_mem_aligned_alloc -> d75e0000 size=131072
+[OSAL_STUB] alloc x_mem_valloc -> e67d4000 size=262144
+[OSAL_STUB] x_kmem_block_aligned_alloc called #1
+[OSAL_STUB] alloc x_kmem_block_aligned_alloc -> e6816000 size=315392
+[OSAL_STUB] x_kmem_kernel_address called #1
+[OSAL_STUB] thread created: GfxThrea00 fct=vGfx_Drv_Main
+[OSAL_STUB] thread created: ImgdmaInst0 fct=vImgdmaMain
+[OSAL_STUB] thread created: ImgdmaInst1 fct=vImgdmaMain
+[OSAL_STUB] thread created: ImgdmaInst2 fct=vImgdmaMain
+[OSAL_STUB] thread created: ImgdmaInst3 fct=vImgdmaMain
+[OSAL_STUB] CKGEN_AgtGetClk called
+[OSAL_STUB] x_memset dst=bf757c3c n=0x2b48 caller=vImgResz_Inst_Init
+[OSAL_STUB] alloc x_mem_valloc -> e6865000 size=64
+[OSAL_STUB] alloc x_mem_valloc -> e6868000 size=40
+[OSAL_STUB] alloc x_mem_valloc -> e686b000 size=44
+[OSAL_STUB] alloc x_mem_valloc -> e686e000 size=12
+[OSAL_STUB] alloc x_mem_valloc -> e6871000 size=28
+[OSAL_STUB] alloc x_mem_valloc -> e6874000 size=2
+[OSAL_STUB] alloc x_mem_valloc -> e6877000 size=64
+[OSAL_STUB] alloc x_mem_valloc -> e687a000 size=40
+[OSAL_STUB] alloc x_mem_valloc -> e687d000 size=44
+[OSAL_STUB] alloc x_mem_valloc -> e6880000 size=12
+[OSAL_STUB] alloc x_mem_valloc -> e6883000 size=28
+[OSAL_STUB] alloc x_mem_valloc -> e6886000 size=2
+[OSAL_STUB] alloc x_mem_valloc -> e6889000 size=64
+[OSAL_STUB] alloc x_mem_valloc -> e688c000 size=40
+[OSAL_STUB] alloc x_mem_valloc -> e688f000 size=44
+[OSAL_STUB] alloc x_mem_valloc -> e6892000 size=12
+[OSAL_STUB] alloc x_mem_valloc -> e6895000 size=28
+[OSAL_STUB] alloc x_mem_valloc -> e6898000 size=2
+[OSAL_STUB] alloc x_mem_valloc -> e689b000 size=64
+[OSAL_STUB] alloc x_mem_valloc -> e689e000 size=40
+[OSAL_STUB] alloc x_mem_valloc -> e68a1000 size=44
+[OSAL_STUB] alloc x_mem_valloc -> e68a4000 size=12
+[OSAL_STUB] alloc x_mem_valloc -> e68a7000 size=28
+[OSAL_STUB] alloc x_mem_valloc -> e68aa000 size=2
+[OSAL_STUB] alloc x_mem_valloc -> e68ad000 size=64
+[OSAL_STUB] alloc x_mem_valloc -> e68b0000 size=40
+[OSAL_STUB] alloc x_mem_valloc -> e68b3000 size=44
+[OSAL_STUB] alloc x_mem_valloc -> e68b6000 size=12
+[OSAL_STUB] alloc x_mem_valloc -> e68b9000 size=28
+[OSAL_STUB] alloc x_mem_valloc -> e68bc000 size=2
+[OSAL_STUB] alloc x_mem_valloc -> e68bf000 size=64
+[OSAL_STUB] alloc x_mem_valloc -> e68c2000 size=40
+[OSAL_STUB] alloc x_mem_valloc -> e68c5000 size=44
+[OSAL_STUB] alloc x_mem_valloc -> e68c8000 size=12
+[OSAL_STUB] alloc x_mem_valloc -> e68cb000 size=28
+[OSAL_STUB] alloc x_mem_valloc -> e68ce000 size=2
+[OSAL_STUB] alloc x_mem_valloc -> e68d1000 size=64
+[OSAL_STUB] alloc x_mem_valloc -> e68d4000 size=40
+[OSAL_STUB] alloc x_mem_valloc -> e68d7000 size=44
+[OSAL_STUB] alloc x_mem_valloc -> e68da000 size=12
+[OSAL_STUB] alloc x_mem_valloc -> e68dd000 size=28
+[OSAL_STUB] alloc x_mem_valloc -> e68e0000 size=2
+[OSAL_STUB] alloc x_mem_valloc -> e68e3000 size=64
+[OSAL_STUB] alloc x_mem_valloc -> e68e6000 size=40
+[OSAL_STUB] alloc x_mem_valloc -> e68e9000 size=44
+[OSAL_STUB] alloc x_mem_valloc -> e68ec000 size=12
+[OSAL_STUB] alloc x_mem_valloc -> e68ef000 size=28
+[OSAL_STUB] alloc x_mem_valloc -> e68f2000 size=2
+[OSAL_STUB] alloc x_mem_valloc -> e68f5000 size=64
+[OSAL_STUB] alloc x_mem_valloc -> e68f8000 size=40
+[OSAL_STUB] alloc x_mem_valloc -> e68fb000 size=44
+[OSAL_STUB] alloc x_mem_valloc -> e68fe000 size=12
+[OSAL_STUB] alloc x_mem_valloc -> e6901000 size=28
+[OSAL_STUB] alloc x_mem_valloc -> e6904000 size=2
+[OSAL_STUB] alloc x_mem_valloc -> e6907000 size=64
+[OSAL_STUB] alloc x_mem_valloc -> e690a000 size=40
+[OSAL_STUB] alloc x_mem_valloc -> e690d000 size=44
+[OSAL_STUB] alloc x_mem_valloc -> e6910000 size=12
+[OSAL_STUB] alloc x_mem_valloc -> e6913000 size=28
+[OSAL_STUB] alloc x_mem_valloc -> e6916000 size=2
+[OSAL_STUB] thread created: ImgResz0_thread fct=vImgReszHwInstMain
+[OSAL_STUB] thread created: ImgResz1_thread fct=vImgReszHwInstMain
+[OSAL_STUB] alloc x_mem_alloc -> c632f500 size=12
+[OSAL_STUB] x_memset dst=bf6a2500 n=0x17d8 caller=i4JdecInit
+[OSAL_STUB] thread created: JdecInst0 fct=vJdecMain
+[OSAL_STUB] thread created: JdecInst1 fct=vJdecMain
+[OSAL_STUB] alloc x_mem_alloc -> c632f540 size=12
+[OSAL_STUB] alloc x_mem_aligned_alloc -> e6919000 size=65536
+[OSAL_STUB] alloc x_mem_valloc -> e692b000 size=768
+[OSAL_STUB] alloc x_mem_valloc -> e692e000 size=768
+[OSAL_STUB] x_kmem_sync_table called
+[OSAL_STUB] alloc x_mem_valloc -> e6931000 size=768
+[OSAL_STUB] alloc x_mem_valloc -> e6934000 size=768
+[OSAL_STUB] alloc x_mem_valloc -> e6937000 size=768
+[OSAL_STUB] alloc x_mem_valloc -> e693a000 size=768
+[OSAL_STUB] alloc x_mem_valloc -> e693d000 size=768
+[OSAL_STUB] alloc x_mem_valloc -> e6940000 size=768
+[OSAL_STUB] alloc x_mem_valloc -> e6943000 size=768
+[OSAL_STUB] alloc x_mem_valloc -> e6946000 size=768
+[OSAL_STUB] alloc x_mem_valloc -> e6949000 size=768
+[OSAL_STUB] alloc x_mem_valloc -> e694c000 size=768
+[OSAL_STUB] alloc x_mem_valloc -> e694f000 size=768
+[OSAL_STUB] alloc x_mem_valloc -> e6952000 size=768
+[OSAL_STUB] alloc x_mem_valloc -> e6955000 size=768
+[OSAL_STUB] alloc x_mem_valloc -> e6958000 size=768
+[OSAL_STUB] alloc x_mem_valloc -> e695b000 size=768
+[OSAL_STUB] alloc x_mem_valloc -> e695e000 size=768
+[OSAL_STUB] alloc x_mem_valloc -> e6961000 size=768
+[OSAL_STUB] alloc x_mem_valloc -> e6964000 size=768
+[OSAL_STUB] alloc x_mem_valloc -> e6967000 size=768
+[OSAL_STUB] alloc x_mem_valloc -> e696a000 size=768
+[OSAL_STUB] thread created: GifInst0 fct=vGifMain
+[OSAL_STUB] alloc x_mem_alloc -> c62710c0 size=12
+[OSAL_STUB] alloc x_mem_alloc -> c61ad960 size=1840
+[OSAL_STUB] alloc x_mem_alloc -> c6271100 size=32
+[OSAL_STUB] alloc x_mem_alloc -> c6271140 size=32
+[OSAL_STUB] alloc x_mem_alloc -> c61ae180 size=1840
+[OSAL_STUB] alloc x_mem_alloc -> c6271180 size=32
+[OSAL_STUB] alloc x_mem_alloc -> c62711c0 size=32
+[OSAL_STUB] alloc x_mem_alloc -> c61ae9a0 size=1840
+[OSAL_STUB] alloc x_mem_alloc -> c6271200 size=32
+[OSAL_STUB] alloc x_mem_alloc -> c6271240 size=32
+[OSAL_STUB] alloc x_mem_alloc -> c61af1c0 size=1840
+[OSAL_STUB] alloc x_mem_alloc -> c6271280 size=32
+[OSAL_STUB] alloc x_mem_alloc -> c62712c0 size=32
+[OSAL_STUB] alloc x_mem_alloc -> c6300000 size=1840
+[OSAL_STUB] alloc x_mem_alloc -> c6271300 size=32
+[OSAL_STUB] alloc x_mem_alloc -> c6271340 size=32
+[OSAL_STUB] thread created: EseInst0 fct=vEseMain
+[OSAL_STUB] thread created: EseInst1 fct=vEseMain
+[OSAL_STUB] thread created: EseInst2 fct=vEseMain
+[OSAL_STUB] thread created: EseInst3 fct=vEseMain
+[OSAL_STUB] thread created: EseInst4 fct=vEseMain
+[OSAL_STUB] alloc x_mem_alloc -> c6271380 size=32
+[OSAL_STUB] alloc x_mem_alloc -> c62713c0 size=32
+[OSAL_STUB] thread created: EsnInst0 fct=vEsnMain
+[OSAL_STUB] alloc x_mem_aligned_alloc -> e696d000 size=32768
+[OSAL_STUB] alloc x_mem_valloc -> e6977000 size=768
+[OSAL_STUB] alloc x_mem_valloc -> e697a000 size=256
+[OSAL_STUB] thread created: PngInst0 fct=vPngMain
+[OSAL_STUB] alloc x_mem_alloc -> c6271580 size=12
+[OSAL_STUB] alloc x_mem_valloc -> e697d000 size=16384
+[OSAL_STUB] x_kmem_block_aligned_alloc called #2
+[OSAL_STUB] alloc x_kmem_block_aligned_alloc -> e6983000 size=32768
+[OSAL_STUB] x_kmem_kernel_address called #2
+[OSAL_STUB] alloc x_mem_aligned_alloc -> e698d000 size=32768
+[OSAL_STUB] alloc x_mem_aligned_alloc -> e6997000 size=16384
+[IR][IR]: IRRX_InitMtkIr
+[OSAL_STUB] x_reg_isr_ex called
+[OSAL_STUB] alloc x_mem_alloc -> c62717c0 size=12
+[OSAL_STUB] x_sema_lock_timeout called
+[IR][IRRX] Not a BDP8.5G model, let FE try it.
+[IR][IRRX]HW_FastejectKeyNotify arm2 eject
+[OSAL_STUB] Assert x4096 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x8192 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] thread created: IRRX Thread fct=IRRX_DataProcessingThread
+[OSAL_STUB] alloc x_mem_alloc -> d7730000 size=9571
+[OSAL_STUB] Assert x12288 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x16384 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x20480 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[nand part read-1], u4DevId = 24, 		    u8Offset = 0x1, u4MemPtr = 0xdda43ebf, u4MemLen = 0x1 
+[OSAL_STUB] Assert x24576 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x28672 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x32768 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x36864 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] vdbg_printf: <NULL fmt>
+[OSAL_STUB] Assert x40960 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x45056 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x49152 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x53248 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x57344 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] x_timer_stop called
+[OSAL_STUB] Assert x61440 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x65536 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x69632 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x73728 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x77824 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] alloc x_mem_alloc -> c6271800 size=12
+[OSAL_STUB] Assert x81920 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x86016 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x90112 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x94208 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x98304 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x102400 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x106496 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x110592 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x114688 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] alloc x_mem_aligned_alloc -> d7750000 size=32768
+[OSAL_STUB] Assert x118784 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x122880 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x126976 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x131072 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x135168 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x139264 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x143360 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x147456 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x151552 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x155648 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x159744 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x163840 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x167936 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] thread created: RleThrea00 fct=vRle_Drv_Main
+[OSAL_STUB] Assert x172032 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x176128 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x180224 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x184320 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x188416 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x192512 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x196608 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x200704 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x204800 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] alloc x_mem_alloc -> c6271d00 size=20
+[OSAL_STUB] Assert x208896 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x212992 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x217088 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x221184 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x225280 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[_MT8530_Gfx_CmdBuf_GetInst] ===========================
+[OSAL_STUB] Assert x229376 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x233472 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x237568 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[_MT8530_Gfx_CmdBuf_GetInst] gptGfxCmdBuf = 0xE6816020
+[OSAL_STUB] Assert x241664 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[_MT8530_Gfx_CmdBuf_GetInst] gu4GfxCmdBufLen = 0x6000
+[OSAL_STUB] Assert x245760 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[_MT8530_Gfx_CmdBuf_GetInst] ===========================
+[OSAL_STUB] Assert x249856 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] x_memset dst=c6259020 n=0x1000 caller=mt8530fb_init
+[OSAL_STUB] Assert x253952 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x258048 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x262144 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x266240 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[IPOD] MW_IPOD_USB_Init
+[OSAL_STUB] Assert x270336 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x274432 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] alloc x_mem_alloc -> c6271d40 size=11
+[OSAL_STUB] Assert x278528 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x282624 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x286720 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x290816 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[IR]
+[OSAL_STUB] Assert x294912 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x299008 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+ir_lirc_init success
+[OSAL_STUB] Assert x303104 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x307200 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] crit_end depth=0
+[OSAL_STUB] Assert x311296 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x315392 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x319488 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] thread created: IRRC Thread fct=IRRC_DataProcessingThread
+[OSAL_STUB] Assert x323584 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] x_rm_reg_smp_cb called
+[OSAL_STUB] Assert x327680 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x331776 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] alloc x_mem_alloc -> c6271dc0 size=12
+[OSAL_STUB] Assert x335872 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x339968 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x344064 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x348160 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x352256 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x356352 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x360448 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x364544 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x368640 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] crit_end depth=0
+[OSAL_STUB] Assert x372736 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x376832 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x380928 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSD]
+[OSAL_STUB] Assert x385024 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x389120 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[osd_scaler_if]fastlogo didn't run first.
+[OSAL_STUB] Assert x393216 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x397312 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x401408 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x405504 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x409600 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x413696 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x417792 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x421888 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x425984 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x430080 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] crit_end depth=0
+[OSAL_STUB] Assert x434176 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] crit_end depth=0
+[OSAL_STUB] Assert x438272 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x442368 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x446464 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] alloc x_mem_aligned_alloc -> c625a040 size=3840
+[OSAL_STUB] Assert x450560 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x454656 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x458752 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] alloc x_mem_aligned_alloc -> c625b060 size=3840
+[OSAL_STUB] Assert x462848 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x466944 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x471040 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x475136 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x479232 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x483328 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x487424 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x491520 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x495616 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x499712 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x503808 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x507904 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x512000 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x516096 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x520192 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] thread created: OsdThread0 fct=vOsd_Drv_Main
+[OSAL_STUB] alloc x_mem_aligned_alloc -> c6308000 size=280
+[OSAL_STUB] Assert x524288 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x528384 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x532480 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x536576 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x540672 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x544768 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[nand part read-1], u4DevId = 24, 		    u8Offset = 0x1, u4MemPtr = 0xd775ff8f, u4MemLen = 0x1 
+[OSAL_STUB] Assert x548864 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] vdbg_printf: <NULL fmt>
+[nand part read-1], u4DevId = 24, 		    u8Offset = 0x1, u4MemPtr = 0xd775ffa7, u4MemLen = 0x1 
+[OSAL_STUB] vdbg_printf: <NULL fmt>
+[OSAL_STUB] vdbg_printf: <NULL fmt>
+[OSAL_STUB] thread created: VFD Thread fct=VFD_CmdProcThread
+[OSAL_STUB] Assert x552960 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[nand part read-1], u4DevId = 24, 		    u8Offset = 0x149, u4MemPtr = 0xbf78eb0e, u4MemLen = 0x1 
+[OSAL_STUB] Assert x557056 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[OSAL_STUB] Assert x561152 total (last: custom/sony/src/driver/ir/irrx_if.c:1637)
+[nand part read-1], u4DevId = 24, 		    u8Offset = 0x3fd, u4MemPtr = 0xdda43ed7, u4MemLen = 0x1 
+[IR]IRRX_DataProcessingThread, exit
+[OSAL_STUB] x_thread_exit caller=osal_thread_fn
+[OSAL_STUB] vdbg_printf: <NULL fmt>
+[OSAL_STUB] vdbg_printf: <NULL fmt>
+[nand part read-1], u4DevId = 24, 		    u8Offset = 0x13d, u4MemPtr = 0xdda43ed9, u4MemLen = 0x1 
+[OSAL_STUB] vdbg_printf: <NULL fmt>
+[nand part read-1], u4DevId = 24, 		    u8Offset = 0x0, u4MemPtr = 0xbf7cee38, u4MemLen = 0x420 
+[OSAL_STUB] x_strcmp called
+[nand part write-1], u4DevId = 24, 		    u8Offset = 0x0, u4MemPtr = 0xbf7cee38, u4MemLen = 0x420 
+[nand part write] Try to writing data to block 0 at offset 0x0
+[nand part read-1], u4DevId = 24, 		    u8Offset = 0x417, u4MemPtr = 0xdda43ed6, u4MemLen = 0x1 
+[OSAL_STUB] alloc x_mem_alloc -> c6300820 size=1056
+[nand part read-1], u4DevId = 24, 		    u8Offset = 0x0, u4MemPtr = 0xc6300820, u4MemLen = 0x420 
+[OSAL_STUB] x_memcmp called
+[nand part write-1], u4DevId = 24, 		    u8Offset = 0x0, u4MemPtr = 0xbf7cee38, u4MemLen = 0x420 
+[nand part write] Try to writing data to block 0 at offset 0x0
+[nand part write-1], u4DevId = 24, 		    u8Offset = 0x100000, u4MemPtr = 0xbf7cee38, u4MemLen = 0x420 
+[nand part write] Try to writing data to block 8 at offset 0x100000
+[nand part read-1], u4DevId = 24, 		    u8Offset = 0x7, u4MemPtr = 0xbf7cee34, u4MemLen = 0x1 
+[nand part read-1], u4DevId = 24, 		    u8Offset = 0x3e4, u4MemPtr = 0xdda43edf, u4MemLen = 0x1 
+[OSAL_STUB] vdbg_printf: <NULL fmt>
+[OSAL_STUB] vdbg_printf: <NULL fmt>
+[OSAL_STUB] alloc x_mem_alloc -> c6300820 size=1056
+[nand part read-1], u4DevId = 24, 		    u8Offset = 0x0, u4MemPtr = 0xc6300820, u4MemLen = 0x420 
+[nand part write-1], u4DevId = 24, 		    u8Offset = 0x0, u4MemPtr = 0xbf7cee38, u4MemLen = 0x420 
+[nand part write] Try to writing data to block 0 at offset 0x0
+[nand part write-1], u4DevId = 24, 		    u8Offset = 0x100000, u4MemPtr = 0xbf7cee38, u4MemLen = 0x420 
+[nand part write] Try to writing data to block 8 at offset 0x100000
+[nand part read-1], u4DevId = 24, 		    u8Offset = 0x3e6, u4MemPtr = 0xdda43edb, u4MemLen = 0x1 
+[nand part read-1], u4DevId = 24, 		    u8Offset = 0x2f1, u4MemPtr = 0xdda43ede, u4MemLen = 0x1 
+[OSAL_STUB] vdbg_printf: <NULL fmt>
+[nand part read-1], u4DevId = 24, 		    u8Offset = 0x6, u4MemPtr = 0xdda43eda, u4MemLen = 0x1 
+[OSAL_STUB] vdbg_printf: <NULL fmt>
+[nand part read-1], u4DevId = 24, 		    u8Offset = 0x0, u4MemPtr = 0xbf7cf3ee, u4MemLen = 0x1 
+[OSAL_STUB] vdbg_printf: <NULL fmt>
+[OSAL_STUB] vdbg_printf: <NULL fmt>
+[CEC] UI ON 
+[nand part read-1], u4DevId = 24, 		    u8Offset = 0x3e7, u4MemPtr = 0xbf68934c, u4MemLen = 0x2 
+[nand part read-1], u4DevId = 24, 		    u8Offset = 0x3e9, u4MemPtr = 0xbf68934e, u4MemLen = 0x1 
+[OSAL_STUB] crit_end depth=0
+[OSAL_STUB] crit_end depth=0
+[OSAL_STUB] crit_end depth=0
+[CEC] MW Set LA & PA 
+[CEC] LA num = 0x1 , LA = 0xff 0xf 0xf
+[CEC] PA = ffff 
+[nand part read-1], u4DevId = 24, 		    u8Offset = 0x67, u4MemPtr = 0xdda43edd, u4MemLen = 0x1 
+[OSAL_STUB] vdbg_printf: <NULL fmt>
+[OSAL_STUB] vdbg_printf: <NULL fmt>
+[nand part read-1], u4DevId = 24, 		    u8Offset = 0x6, u4MemPtr = 0xdda43ed0, u4MemLen = 0x1 
+[OSAL_STUB] vdbg_printf: <NULL fmt>
+[OSAL_STUB] vdbg_printf: <NULL fmt>
+setup gpio is 7
+[nand part read-1], u4DevId = 24, 		    u8Offset = 0x3eb, u4MemPtr = 0xdda43ed8, u4MemLen = 0x1 
+[OSAL_STUB] vdbg_printf: <NULL fmt>
+[OSAL_STUB] vdbg_printf: <NULL fmt>
+[OSAL_STUB] thread created: SircsKey fct=_sircs_key_proc_thread
+[nand part read-1], u4DevId = 4, 		    u8Offset = 0x29, u4MemPtr = 0xdda43e78, u4MemLen = 0x10 
+[nand part read-1], u4DevId = 4, 		    u8Offset = 0x39, u4MemPtr = 0xdda43e78, u4MemLen = 0x10 
+[OSAL_STUB] vdbg_printf: <NULL fmt>
+[OSAL_STUB] vdbg_printf: <NULL fmt>
+[OSAL_STUB] alloc x_mem_alloc -> c6300820 size=1056
+[nand part read-1], u4DevId = 24, 		    u8Offset = 0x0, u4MemPtr = 0xc6300820, u4MemLen = 0x420 
+[nand part write-1], u4DevId = 24, 		    u8Offset = 0x0, u4MemPtr = 0xbf7cee38, u4MemLen = 0x420 
+[nand part write] Try to writing data to block 0 at offset 0x0
+[nand part write-1], u4DevId = 24, 		    u8Offset = 0x100000, u4MemPtr = 0xbf7cee38, u4MemLen = 0x420 
+[nand part write] Try to writing data to block 8 at offset 0x100000
+[OSAL_STUB] alloc x_mem_alloc -> c633f140 size=128
+[OSAL_STUB] alloc x_mem_alloc -> c633f1e0 size=128
+[nand part read-1], u4DevId = 24, 		    u8Offset = 0x1, u4MemPtr = 0xdda43ed5, u4MemLen = 0x1 
+[nand part read-1], u4DevId = 24, 		    u8Offset = 0x148, u4MemPtr = 0xdda43ed4, u4MemLen = 0x1 
+[OSAL_STUB] vdbg_printf: <NULL fmt>
+[nand part read-1], u4DevId = 24, 		    u8Offset = 0x6, u4MemPtr = 0xdda43ed3, u4MemLen = 0x1 
+[nand part read-1], u4DevId = 24, 		    u8Offset = 0x2f1, u4MemPtr = 0xdda43ed2, u4MemLen = 0x1 
+[OSAL_STUB] vdbg_printf: <NULL fmt>
+[nand part read-1], u4DevId = 24, 		    u8Offset = 0x7, u4MemPtr = 0xdda43e7e, u4MemLen = 0x1 
+[OSAL_STUB] alloc x_mem_alloc -> c6300820 size=1056
+[nand part read-1], u4DevId = 24, 		    u8Offset = 0x0, u4MemPtr = 0xc6300820, u4MemLen = 0x420 
+[nand part write-1], u4DevId = 24, 		    u8Offset = 0x0, u4MemPtr = 0xbf7cee38, u4MemLen = 0x420 
+[nand part write] Try to writing data to block 0 at offset 0x0
+[OSAL_STUB] x_thread_delay #512 arg=100 caller=VFD_CmdProcThread
+[nand part write-1], u4DevId = 24, 		    u8Offset = 0x100000, u4MemPtr = 0xbf7cee38, u4MemLen = 0x420 
+[nand part write] Try to writing data to block 8 at offset 0x100000
+[OSAL_STUB] x_memset dst=bf78ed34 n=0x20000 caller=ifcon_rw_registry
+[OSAL_STUB] x_memset dst=bf7aed34 n=0x20000 caller=ifcon_rw_registry
+[nand part read-1], u4DevId = 24, 		    u8Offset = 0x69, u4MemPtr = 0xbf7cf42e, u4MemLen = 0x1 
+[nand part read-1], u4DevId = 24, 		    u8Offset = 0x0, u4MemPtr = 0xbf7cf42f, u4MemLen = 0x1 
+[nand part read-1], u4DevId = 24, 		    u8Offset = 0x145, u4MemPtr = 0xdda43e7c, u4MemLen = 0x2 
+[nand part read-1], u4DevId = 24, 		    u8Offset = 0x147, u4MemPtr = 0xdda43e7f, u4MemLen = 0x1 
+[OSAL_STUB] x_strncpy called
+[OSAL_STUB] vdbg_printf: <NULL fmt>
+[OSAL_STUB] thread created: IFcon fct=_ifcon_data_proc_thread
+[OSAL_STUB] vdbg_printf: <NULL fmt>
+[OSAL_STUB] x_rm_reg_conn_list called
+[DRV_INIT_KO] driver_notify:0x1
+[OSAL_STUB] alloc x_mem_alloc -> c6271e00 size=24
+[OSAL_STUB] alloc x_mem_alloc -> c6271e40 size=24
+[OSAL_STUB] alloc x_mem_alloc -> c6271e80 size=24
+[OSAL_STUB] alloc x_mem_alloc -> c6271ec0 size=24
+[OSAL_STUB] alloc x_mem_alloc -> c6271f00 size=24
+[OSAL_STUB] alloc x_mem_alloc -> c6271f40 size=24
+[OSAL_STUB] alloc x_mem_alloc -> c6271f80 size=24
+[OSAL_STUB] alloc x_mem_alloc -> c6271fc0 size=24
+[OSAL_STUB] alloc x_mem_alloc -> c627d000 size=24
+[OSAL_STUB] alloc x_mem_alloc -> c627d040 size=24
+[OSAL_STUB] alloc x_mem_alloc -> c627d080 size=24
+[OSAL_STUB] alloc x_mem_alloc -> c627d0c0 size=24
+[OSAL_STUB] alloc x_mem_alloc -> c627d100 size=16
+[OSAL_STUB] alloc x_mem_alloc -> c61b66c0 size=240
+[OSAL_STUB] x_strlen called
+[OSAL_STUB] x_rm_reg_comp called
+[OSAL_STUB] crit_end depth=0
+[OSAL_STUB] alloc x_mem_alloc -> c627d140 size=16
+[OSAL_STUB] alloc x_mem_alloc -> c627d180 size=24
+[OSAL_STUB] alloc x_mem_alloc -> c627d1c0 size=8
+[OSAL_STUB] crit_end depth=0
+[OSAL_STUB] alloc x_mem_alloc -> c627d200 size=16
+[OSAL_STUB] alloc x_mem_alloc -> c627d240 size=24
+[OSAL_STUB] alloc x_mem_alloc -> c627d280 size=8
+[OSAL_STUB] crit_end depth=0
+[OSAL_STUB] alloc x_mem_alloc -> c627d2c0 size=16
+[OSAL_STUB] alloc x_mem_alloc -> c6308220 size=360
+[OSAL_STUB] alloc x_mem_alloc -> c627d300 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c627d340 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c627d380 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c627d3c0 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c627d400 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c627d440 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c627d480 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c627d4c0 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c627d500 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c627d540 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c627d580 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c627d5c0 size=8
+[OSAL_STUB] crit_end depth=0
+[OSAL_STUB] alloc x_mem_alloc -> c627d600 size=16
+[OSAL_STUB] alloc x_mem_alloc -> c627d640 size=24
+[OSAL_STUB] crit_end depth=0
+[OSAL_STUB] alloc x_mem_alloc -> c627d680 size=16
+[OSAL_STUB] alloc x_mem_alloc -> c627d6c0 size=24
+[OSAL_STUB] crit_end depth=0
+[OSAL_STUB] alloc x_mem_alloc -> c627d700 size=16
+[OSAL_STUB] alloc x_mem_alloc -> c627d740 size=24
+[OSAL_STUB] crit_end depth=0
+[OSAL_STUB] alloc x_mem_alloc -> c627d780 size=16
+[OSAL_STUB] alloc x_mem_alloc -> c635e380 size=96
+[OSAL_STUB] alloc x_mem_alloc -> c627d7c0 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c627d800 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c627d840 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c627d880 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c627d8c0 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c627d900 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c627d940 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c627d980 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c627d9c0 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c627da00 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c627da40 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c627da80 size=8
+[OSAL_STUB] crit_end depth=0
+[OSAL_STUB] alloc x_mem_alloc -> c627dac0 size=16
+[OSAL_STUB] alloc x_mem_alloc -> c627db00 size=24
+[OSAL_STUB] crit_end depth=0
+[OSAL_STUB] alloc x_mem_alloc -> c627db40 size=16
+[OSAL_STUB] alloc x_mem_alloc -> c635e400 size=96
+[OSAL_STUB] alloc x_mem_alloc -> c627db80 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c627dbc0 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c627dc00 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c627dc40 size=8
+[OSAL_STUB] crit_end depth=0
+[OSAL_STUB] alloc x_mem_alloc -> c627dc80 size=16
+[OSAL_STUB] alloc x_mem_alloc -> c6308440 size=288
+[OSAL_STUB] alloc x_mem_alloc -> c627dcc0 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c627dd00 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c627dd40 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c627dd80 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c627ddc0 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c627de00 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c627de40 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c627de80 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c627dec0 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c627df00 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c627df40 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c627df80 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c627dfc0 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630a000 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630a040 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630a080 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630a0c0 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630a100 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630a140 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630a180 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630a1c0 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630a200 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630a240 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630a280 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630a2c0 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630a300 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630a340 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630a380 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630a3c0 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630a400 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630a440 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630a480 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630a4c0 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630a500 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630a540 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630a580 size=8
+[OSAL_STUB] crit_end depth=0
+[OSAL_STUB] alloc x_mem_alloc -> c630a5c0 size=16
+[OSAL_STUB] alloc x_mem_alloc -> c633f280 size=120
+[OSAL_STUB] alloc x_mem_alloc -> c630a600 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630a640 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630a680 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630a6c0 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630a700 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630a740 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630a780 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630a7c0 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630a800 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630a840 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630a880 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630a8c0 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630a900 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630a940 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630a980 size=8
+[OSAL_STUB] crit_end depth=0
+[OSAL_STUB] alloc x_mem_alloc -> c630a9c0 size=16
+[OSAL_STUB] alloc x_mem_alloc -> c635e480 size=72
+[OSAL_STUB] crit_end depth=0
+[OSAL_STUB] alloc x_mem_alloc -> c630aa00 size=16
+[OSAL_STUB] alloc x_mem_alloc -> c630aa40 size=24
+[OSAL_STUB] crit_end depth=0
+[OSAL_STUB] alloc x_mem_alloc -> c630aa80 size=16
+[OSAL_STUB] alloc x_mem_alloc -> c630aac0 size=24
+[OSAL_STUB] crit_end depth=0
+[OSAL_STUB] alloc x_mem_alloc -> c630ab00 size=16
+[OSAL_STUB] alloc x_mem_alloc -> c630ab40 size=24
+[OSAL_STUB] crit_end depth=0
+[OSAL_STUB] alloc x_mem_alloc -> c630ab80 size=16
+[OSAL_STUB] alloc x_mem_alloc -> c630abc0 size=24
+[OSAL_STUB] crit_end depth=0
+[OSAL_STUB] alloc x_mem_alloc -> c630ac00 size=16
+[OSAL_STUB] alloc x_mem_alloc -> c630ac40 size=24
+[OSAL_STUB] crit_end depth=0
+[OSAL_STUB] alloc x_mem_alloc -> c630ac80 size=16
+[OSAL_STUB] alloc x_mem_alloc -> c627c0c0 size=48
+[OSAL_STUB] crit_end depth=0
+[OSAL_STUB] alloc x_mem_alloc -> c630acc0 size=16
+[OSAL_STUB] alloc x_mem_alloc -> c61b7380 size=144
+[OSAL_STUB] crit_end depth=0
+[OSAL_STUB] alloc x_mem_alloc -> c630ad00 size=16
+[OSAL_STUB] alloc x_mem_alloc -> c633f320 size=120
+[OSAL_STUB] crit_end depth=0
+[OSAL_STUB] alloc x_mem_alloc -> c630ad40 size=16
+[OSAL_STUB] alloc x_mem_alloc -> c635e500 size=96
+[OSAL_STUB] alloc x_mem_alloc -> c630ad80 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630adc0 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630ae00 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630ae40 size=8
+[OSAL_STUB] crit_end depth=0
+[OSAL_STUB] alloc x_mem_alloc -> c630ae80 size=16
+[OSAL_STUB] alloc x_mem_alloc -> c627c120 size=48
+[OSAL_STUB] alloc x_mem_alloc -> c630aec0 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630af00 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630af40 size=8
+[OSAL_STUB] crit_end depth=0
+[OSAL_STUB] alloc x_mem_alloc -> c630af80 size=16
+[OSAL_STUB] alloc x_mem_alloc -> c630afc0 size=24
+[OSAL_STUB] crit_end depth=0
+[OSAL_STUB] alloc x_mem_alloc -> c630b000 size=16
+[OSAL_STUB] alloc x_mem_alloc -> c630b040 size=24
+[OSAL_STUB] crit_end depth=0
+[OSAL_STUB] alloc x_mem_alloc -> c630b080 size=16
+[OSAL_STUB] alloc x_mem_alloc -> c630b0c0 size=24
+[OSAL_STUB] crit_end depth=0
+[OSAL_STUB] alloc x_mem_alloc -> c630b100 size=16
+[OSAL_STUB] alloc x_mem_alloc -> c6308660 size=384
+[OSAL_STUB] alloc x_mem_alloc -> c630b140 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630b180 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630b1c0 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630b200 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630b240 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630b280 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630b2c0 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630b300 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630b340 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630b380 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630b3c0 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630b400 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630b440 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630b480 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630b4c0 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630b500 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630b540 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630b580 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630b5c0 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630b600 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630b640 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630b680 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630b6c0 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630b700 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630b740 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630b780 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630b7c0 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630b800 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630b840 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630b880 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630b8c0 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630b900 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630b940 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630b980 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630b9c0 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630ba00 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630ba40 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630ba80 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630bac0 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630bb00 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630bb40 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630bb80 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630bbc0 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630bc00 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630bc40 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630bc80 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630bcc0 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630bd00 size=8
+[OSAL_STUB] crit_end depth=0
+[OSAL_STUB] alloc x_mem_alloc -> c630bd40 size=16
+[OSAL_STUB] alloc x_mem_alloc -> c6300820 size=1536
+[OSAL_STUB] alloc x_mem_alloc -> c630bd80 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630bdc0 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630be00 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630be40 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630be80 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630bec0 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630bf00 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630bf40 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630bf80 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c630bfc0 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c6318000 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c6318040 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c6318080 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c63180c0 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c6318100 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c6318140 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c6318180 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c63181c0 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c6318200 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c6318240 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c6318280 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c63182c0 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c6318300 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c6318340 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c6318380 size=8
+[OSAL_STUB] alloc x_mem_alloc -> c63183c0 size=8
+[OSAL_STUB] crit_end depth=0
+[OSAL_STUB] crit_end depth=0
+[OSAL_STUB] crit_end depth=0
+[OSAL_STUB] crit_end depth=0
+[OSAL_STUB] crit_end depth=0
+[OSAL_STUB] crit_end depth=0
+[OSAL_STUB] crit_end depth=0
+[OSAL_STUB] crit_end depth=0
+[OSAL_STUB] crit_end depth=0
+[OSAL_STUB] crit_end depth=0
+[OSAL_STUB] x_rm_reg_conn_excl_list called
+[OSAL_STUB] x_rm_reg_group_name called
+[OSAL_STUB] x_rm_reg_group_type called
+[OSAL_STUB] GetCbkCmdTbl called
+[OSAL_STUB] GetOsCmdTbl called
+[OSAL_STUB] GetRmkCmdTbl called
+BDPDRV_INSMOD=0
+/ # grep bdpdrv /res/proc/modules; echo BDPDRV_MOD=$?
+bdpdrv 8155556 0 - Live 0xbf08b000 (P)
+bx510_osal_stub 53112 1 bdpdrv, Live 0xbf075000 (P)
+drvcli 144692 1 bdpdrv, Live 0xbf04b000 (P)
+bx510_osal_stub_a 1220 2 bdpdrv,drvcli, Live 0xbf045000 (P)
+BDPDRV_MOD=0
+/ # grep 244 /res/proc/devices; echo CLI_MAJOR=$?
+244 drvcli
+CLI_MAJOR=0
+/ # mknod /res/clidev c 244 0; echo CLI_MKNOD=$?
+CLI_MKNOD=0
+/ # ls -l /res/clidev; echo CLI_NODE=$?
+crw-r--r--    1 0        0         244,   0 Jan  1 00:00 [1;35m/res/clidev[0m
+CLI_NODE=0
+/ # mknod /res/null c 1 3; echo CLI_NULLNODE=$?
+CLI_NULLNODE=0
+/ # echo help > /res/clidev; echo CLI_HELP_SENT=$?
+cli driver open success
+cli module close sucess!
+CLI_HELP_SENT=1
+/ # cat /res/clidev > /res/cliout & sleep 3; echo CMD > /res/clidev 2>/dev/null;
+ echo ver > /res/clidev; echo CLI_SENT=$?; sleep 2; head -c 3000 /res/cliout; ec
+ho CLI_READ_DONE
+cli driver open success
+cat: read error: Invalid argument
+cli module close sucess!
+[OSAL_STUB] x_thread_delay #768 arg=10 caller=IRRC_DataProcessingThread
+[OSAL_STUB] x_thread_delay #1024 arg=150 caller=_sircs_key_proc_thread
+cli driver open success
+cli module close sucess!
+cli driver open success
+cli module close sucess!
+CLI_SENT=1
+[OSAL_STUB] Assert x565248 total (last: custom/sony/src/driver/ir/irrx_if.c:2093)
+[OSAL_STUB] x_thread_delay #1280 arg=10 caller=IRRC_DataProcessingThread
+CLI_READ_DONE
+/ # cat /res/proc/devices; echo INVENTORY_DEVICES=$?
+Character devices:
+  1 mem
+  2 pty
+  3 ttyp
+  4 /dev/vc/0
+  4 tty
+  5 /dev/tty
+  5 /dev/console
+  5 /dev/ptmx
+  7 vcs
+ 10 misc
+ 13 input
+ 29 fb
+ 90 mtd
+116 alsa
+128 ptm
+136 pts
+450 gpio
+204 ttyMT
+216 rfcomm
+244 drvcli
+254 bsg
+
+Block devices:
+259 blkext
+  7 loop
+  8 sd
+ 31 mtdblock
+ 65 sd
+ 66 sd
+ 67 sd
+ 68 sd
+ 69 sd
+ 70 sd
+ 71 sd
+128 sd
+129 sd
+130 sd
+131 sd
+132 sd
+133 sd
+134 sd
+135 sd
+INVENTORY_DEVICES=0
+/ # cat /res/proc/misc; echo INVENTORY_MISC=$?
+ 60 network_throughput
+ 61 network_latency
+ 62 cpu_dma_latency
+223 uinput
+  1 psaux
+ 63 ubi_ctrl
+INVENTORY_MISC=0
+/ # ls -1 /dev 2>&1 | head -40; echo INVENTORY_DEV=$?
+console
+mtd10
+mtd11
+mtd12
+mtd8
+null
+ttyMT0
+INVENTORY_DEV=0
+/ # cat /res/proc/partitions; echo INVENTORY_PART=$?
+major minor  #blocks  name
+
+  31        0     262144 mtdblock0
+  31        1       2048 mtdblock1
+  31        2       2048 mtdblock2
+  31        3       2048 mtdblock3
+  31        4       1024 mtdblock4
+  31        5       1024 mtdblock5
+  31        6       1024 mtdblock6
+  31        7       1024 mtdblock7
+  31        8       2048 mtdblock8
+  31        9       2048 mtdblock9
+  31       10       1024 mtdblock10
+  31       11       1024 mtdblock11
+  31       12       1024 mtdblock12
+  31       13       3072 mtdblock13
+  31       14       3072 mtdblock14
+  31       15       3072 mtdblock15
+  31       16       5120 mtdblock16
+  31       17     109568 mtdblock17
+  31       18       4096 mtdblock18
+  31       19       4096 mtdblock19
+  31       20      49152 mtdblock20
+  31       21       5120 mtdblock21
+  31       22       1024 mtdblock22
+  31       23       1024 mtdblock23
+  31       24       2048 mtdblock24
+  31       25      45056 mtdblock25
+INVENTORY_PART=0
+/ # grep -iE 'bdp|sacd' /res/proc/kallsyms | tail -8; echo INVENTORY_KSYM=$?
+/bin/sh: tail: not found
+[OSAL_STUB] x_thread_delay #1536 arg=10 caller=IRRC_DataProcessingThread
+INVENTORY_KSYM=127
+/ # sh /res/shim/kcheck.sh; echo KEXP2_DONE
+KEXP-__kmalloc=yes
+KEXP-__get_free_pages=yes
+KEXP-__copy_from_user=yes
+[OSAL_STUB] x_sema_lock called #256
+KEXP-__copy_to_user=yes
+KEXP-__create_workqueue_key=yes
+[OSAL_STUB] x_thread_delay #1792 arg=10 caller=IRRC_DataProcessingThread
+KEXP-__aeabi_idiv=yes
+KEXP-___ratelimit=yes
+KEXP-__bug=yes
+KEXP-blk_execute_rq=yes
+KEXP-blk_get_request=yes
+[OSAL_STUB] x_thread_delay #2048 arg=150 caller=_sircs_key_proc_thread
+KEXP-blk_put_request=yes
+KEXP-blk_rq_map_user=yes
+KEXP-add_disk=yes
+KEXP-alloc_disk=yes
+[OSAL_STUB] x_thread_delay #2304 arg=10 caller=IRRC_DataProcessingThread
+KEXP-scsi_execute_req=yes
+KEXP-scsi_add_device=yes
+KEXP-scsi_host_alloc=yes
+KEXP-scsi_register=yes
+KEXP-BSP_CleanDCacheRange=yes
+KEXP-BSP_FlushDCacheRange=yes
+KEXP-BSP_InvDCacheRange=yes
+[OSAL_STUB] x_thread_delay #2560 arg=10 caller=IRRC_DataProcessingThread
+KEXP-Ethernet_resume=yes
+[OSAL_STUB] x_thread_delay #2816 arg=10 caller=IRRC_DataProcessingThread
+[OSAL_STUB] x_thread_delay #3072 arg=10 caller=IRRC_DataProcessingThread
+KEXP-_fg_fe_bootup=no
+[OSAL_STUB] x_thread_delay #3328 arg=10 caller=IRRC_DataProcessingThread
+[OSAL_STUB] x_thread_delay #3584 arg=10 caller=IRRC_DataProcessingThread
+[OSAL_STUB] x_thread_delay #3840 arg=10 caller=IRRC_DataProcessingThread
+KEXP-sata_int_ldr_fw=no
+[OSAL_STUB] x_thread_delay #4096 arg=10 caller=IRRC_DataProcessingThread
+[OSAL_STUB] x_thread_delay #4352 arg=10 caller=IRRC_DataProcessingThread
+KEXP-sata_hw_seg_buf=no
+[OSAL_STUB] x_thread_delay #4608 arg=10 caller=IRRC_DataProcessingThread
+[OSAL_STUB] x_thread_delay #4864 arg=10 caller=IRRC_DataProcessingThread
+[OSAL_STUB] x_sema_lock called #512
+KEXP-mt85xx_fefwmem_base=no
+[OSAL_STUB] x_thread_delay #5120 arg=10 caller=IRRC_DataProcessingThread
+[OSAL_STUB] x_thread_delay #5376 arg=150 caller=_sircs_key_proc_thread
+[OSAL_STUB] x_thread_delay #5632 arg=10 caller=IRRC_DataProcessingThread
+KEXP-mt85xx_svoif_reserve_base=no
+[OSAL_STUB] x_thread_delay #5888 arg=10 caller=IRRC_DataProcessingThread
+[OSAL_STUB] x_thread_delay #6144 arg=5 caller=i4VFDIndirectSIFCmdRegMode
+KEXP-ide_log_en=no
+KEXP-SR_LOG_Level=yes
+[OSAL_STUB] x_thread_delay #6400 arg=5 caller=i4VFDIndirectSIFCmdRegMode
+[OSAL_STUB] Assert x569344 total (last: custom/sony/src/driver/ir/irrx_if.c:2093)
+[OSAL_STUB] x_thread_delay #6656 arg=10 caller=IRRC_DataProcessingThread
+[OSAL_STUB] x_thread_delay #6912 arg=5 caller=i4VFDIndirectSIFCmdRegMode
+KEXP-cdrom_log_en=no
+KEXP-sys_open=yes
+KEXP-sys_ioctl=yes
+KEXP-sys_mknod=yes
+[OSAL_STUB] x_thread_delay #7168 arg=5 caller=i4VFDIndirectSIFCmdRegMode
+[OSAL_STUB] x_thread_delay #7424 arg=5 caller=i4VFDIndirectSIFCmdRegMode
+[OSAL_STUB] x_thread_delay #7680 arg=10 caller=IRRC_DataProcessingThread
+KEXP-sata_mtd_read_buf=no
+[OSAL_STUB] x_thread_delay #7936 arg=5 caller=i4VFDIndirectSIFCmdRegMode
+[OSAL_STUB] x_thread_delay #8192 arg=5 caller=i4VFDIndirectSIFCmdRegMode
+[OSAL_STUB] x_sema_lock called #768
+KEXP-svoif_int_ldr_dram_sz=no
+[OSAL_STUB] x_thread_delay #8448 arg=10 caller=IRRC_DataProcessingThread
+[OSAL_STUB] x_thread_delay #8704 arg=100 caller=VFD_CmdProcThread
+KEXP-mt85xx_svoif_reserve_base_remap=no
+[OSAL_STUB] x_thread_delay #8960 arg=10 caller=IRRC_DataProcessingThread
+[OSAL_STUB] x_thread_delay #9216 arg=100 caller=VFD_CmdProcThread
+[OSAL_STUB] x_thread_delay #9472 arg=100 caller=VFD_CmdProcThread
+KEXP-_sata_tray_status=no
+KEXP-fgFL_ChkSinfo4Reg=yes
+KEXP-vFL_SetSinfo4Reg=yes
+[OSAL_STUB] x_thread_delay #9728 arg=100 caller=VFD_CmdProcThread
+[OSAL_STUB] x_thread_delay #9984 arg=10 caller=IRRC_DataProcessingThread
+[OSAL_STUB] x_thread_delay #10240 arg=100 caller=VFD_CmdProcThread
+KEXP-cpu_cache=no
+[OSAL_STUB] x_thread_delay #10496 arg=10 caller=IRRC_DataProcessingThread
+[OSAL_STUB] x_thread_delay #10752 arg=10 caller=IRRC_DataProcessingThread
+KEXP-mem_map=no
+KEXP-print_err_log=yes
+[OSAL_STUB] x_thread_delay #11008 arg=10 caller=IRRC_DataProcessingThread
+[OSAL_STUB] x_thread_delay #11264 arg=150 caller=_sircs_key_proc_thread
+[OSAL_STUB] x_thread_delay #11520 arg=10 caller=IRRC_DataProcessingThread
+KEXP2-sata_int_ldr_fw=no
+[OSAL_STUB] x_sema_lock called #1024
+KEXP2-mt85xx_ioctl=yes
+[OSAL_STUB] x_thread_delay #11776 arg=10 caller=IRRC_DataProcessingThread
+[OSAL_STUB] Assert x573440 total (last: custom/sony/src/driver/ir/irrx_if.c:2093)
+[OSAL_STUB] x_thread_delay #12032 arg=10 caller=IRRC_DataProcessingThread
+KEXP2-cpu_cache=no
+[OSAL_STUB] x_thread_delay #12288 arg=150 caller=_sircs_key_proc_thread
+[OSAL_STUB] x_thread_delay #12544 arg=10 caller=IRRC_DataProcessingThread
+[OSAL_STUB] x_thread_delay #12800 arg=10 caller=IRRC_DataProcessingThread
+KEXP2-mem_map=no
+[OSAL_STUB] x_thread_delay #13056 arg=10 caller=IRRC_DataProcessingThread
+[OSAL_STUB] x_thread_delay #13312 arg=10 caller=IRRC_DataProcessingThread
+KEXP2-sata_hw_seg_buf=no
+[OSAL_STUB] x_thread_delay #13568 arg=10 caller=IRRC_DataProcessingThread
+[OSAL_STUB] x_thread_delay #13824 arg=10 caller=IRRC_DataProcessingThread
+[OSAL_STUB] x_thread_delay #14080 arg=10 caller=IRRC_DataProcessingThread
+KEXP2-cdrom_log_en=no
+[OSAL_STUB] x_thread_delay #14336 arg=10 caller=IRRC_DataProcessingThread
+[OSAL_STUB] x_thread_delay #14592 arg=10 caller=IRRC_DataProcessingThread
+KEXP2-ide_log_en=no
+KEXP3-__aeabi_uidivmod=yes
+[OSAL_STUB] x_sema_lock called #1280
+[OSAL_STUB] x_thread_delay #14848 arg=10 caller=IRRC_DataProcessingThread
+KEXP3-__memzero=yes
+KEXP3-__scsi_print_command=yes
+KEXP3-_clear_bit_le=yes
+KEXP3-_find_first_zero_bit_le=yes
+[OSAL_STUB] x_thread_delay #15104 arg=10 caller=IRRC_DataProcessingThread
+KEXP3-bcd2bin=yes
+KEXP3-blk_queue_logical_block_size=yes
+KEXP3-del_gendisk=yes
+KEXP3-scsi_execute=yes
+KEXP3-scsi_ioctl=yes
+[OSAL_STUB] x_thread_delay #15360 arg=5 caller=i4VFDIndirectSIFCmdRegMode
+KEXP3-scsi_mode_sense=yes
+KEXP3-scsi_register_driver=yes
+KEXP3-scsi_set_medium_removal=yes
+KEXP3-sg_next=yes
+[OSAL_STUB] x_thread_delay #15616 arg=150 caller=_sircs_key_proc_thread
+KEXP3-register_blkdev=yes
+KEXP3-mutex_lock=yes
+KEXP3-kref_put=yes
+[OSAL_STUB] x_thread_delay #15872 arg=10 caller=IRRC_DataProcessingThread
+KEXP3-mt85xx_ioctl=yes
+KEXP3_DONE
+KEXP2_DONE
+KEXP2_DONE
+/ # sh /res/shim/procc.sh; echo PROCCHECK_DONE
+mkdir: can't create directory '/proc': File exists
+MKDIR_RC=1
+[1;34m/proc[0m
+LS_RC=0
+MKDEV_RC=0
+FIXPROBE_DONE
+1
+106
+108
+110
+117
+126
+137
+145
+2
+232
+234
+244
+3
+385
+390
+395
+4
+400
+405
+410
+LS_PROC_DONE
+1CAT_FB=0
+proc on /res/proc type proc (rw,relatime)
+proc on /proc type proc (rw,relatime)
+MOUNT_DONE
+PROCCHECK-/proc/driver/sata/fe_bootup=EXISTS
+/res/shim/procc.sh: line 17: tr: not found
+
+PROCCHECK-/proc/driver/sata=EXISTS
+/res/shim/procc.sh: line 23: tr: not found
+
+PROCCHECK-/proc/driver=EXISTS
+/res/shim/procc.sh: line 29: tr: not found
+
+PROCCHECK_DONE
+PROCCHECK_DONE
+/ # ls /res/proc/kallsyms; grep -c sata /res/proc/kallsyms; grep -c . /res/proc/
+kallsyms; echo KCUR_DONE
+[0;0m/res/proc/kallsyms[0m
+[OSAL_STUB] x_thread_delay #16128 arg=5 caller=i4VFDIndirectSIFCmdRegMode
+[OSAL_STUB] x_thread_delay #16384 arg=10 caller=IRRC_DataProcessingThread
+208
+[OSAL_STUB] x_thread_delay #16640 arg=100 caller=VFD_CmdProcThread
+[OSAL_STUB] x_thread_delay #16896 arg=10 caller=IRRC_DataProcessingThread
+[OSAL_STUB] x_thread_delay #17152 arg=100 caller=VFD_CmdProcThread
+60691
+KCUR_DONE
+/ # /res/shim/clicmd help; echo CLI_EXEC_RC=$?
+/bin/sh: /res/shim/clicmd: not found
+CLI_EXEC_RC=127
+/ # sleep 2; echo CLI_DRAIN1
+[OSAL_STUB] Assert x577536 total (last: custom/sony/src/driver/ir/irrx_if.c:2093)
+[OSAL_STUB] x_thread_delay #17408 arg=100 caller=VFD_CmdProcThread
+CLI_DRAIN1
+/ # echo CLIDRIVE_MODE=PROBE_SEQ
+CLIDRIVE_MODE=PROBE_SEQ
+/ # insmod /res/shim/bx510_clidrive.ko clidrive_args=PROBE_SEQ; echo CLIDRIVE_RC
+=$?
+[CLIDRIVE] up (INSTRUMENT)
+[CLIDRIVE] sym x_cli_parser         = bf04b77c
+[CLIDRIVE] sym x_cli_set_mode       = bf04b9a0
+[CLIDRIVE] sym x_cli_get_current_root = bf04b3a8
+[CLIDRIVE] sym cli_parser           = bf04d150
+[CLIDRIVE] sym CLI_GetDefaultCmdTbl = bf04db48
+[CLIDRIVE] sym CLI_GetCusDrvCmdTbl  = bf0e43c4
+[CLIDRIVE] root table = 0x0
+[CLIDRIVE] mode = PROBE_SEQ (4 probes, dotted ladder)
+Read addr = 0x00001000, length = 0
+[CLIDRIVE] parser('P0 drv.read 0x1000 0') = 0
+[CLIDRIVE] P0: handler ran; cur = 0x0; expect rc=0 + 'Read addr = 0x00001000, length = 0' and NO payload row (length 0 => no deref)
+[Help]
+
+hdmitx(hdmitx):         Hdmi Tx command
+
+[CLIDRIVE] parser('P1 driver') = 1
+[CLIDRIVE] P1: directory matched, help dumped; cur = 0x0; expect [Help] + hdmitx(hdmitx):         Hdmi Tx command (rc=1)
+[Help]
+
+km:                     KM command
+
+
+aud:                    Aud command
+
+
+multiline:              Audio In multiple Line In command
+
+
+audin:                  Audio In command
+
+
+pwmdac:                 PwmDac command
+
+
+connect(conn):          Connection command
+
+
+dmx:                    DMX command
+
+
+esm(esm):               ESM command
+
+
+esn:                    ESN command
+
+
+fbm(fbm):               FBM command
+
+
+gcpu:                   GCPU command
+
+
+cpsa(cpsa):             CPSA command
+
+
+gfx:                    Gfx Command
+
+
+gpio:                   GPIO command
+
+
+hdmi:                   Hdmi command
+
+
+net:                    Net command
+
+
+ir(ir):                 Ir command
+
+
+mpv:                    MPEG Video Decoder command
+
+
+osd:                    Osd driver
+
+
+pbbuf:                  Playback buffer command
+
+
+ipod:                   ipod usb command
+
+
+pmx:                    Plane mixer command
+
+
+sif:                    Sif command
+
+
+syncctrl:               Sync Ctrl command
+
+
+tve:                    Tve command
+
+
+uart:                   Uart command
+
+
+uart2:                  Uart2 command
+
+
+vdp:                    Video plane command
+
+
+vpq:                    Video quality control
+
+
+vfd(vfd):               VFD command
+
+
+jdec:                   Jdec Command
+
+
+imgresz:                Image resizer command
+
+
+png:                    Png Command
+
+
+gif:                    Gif Command
+
+
+dramc:                  DRAMc command
+
+
+system:                 System command
+
+
+post:                   PostProc command
+
+
+ccir:                   CCIR command
+
+
+rai:                    Register access command
+
+
+framebuffer(fb):        Frame buffer command
+
+
+auto_test:              Auto Test command
+
+
+musb:                   MUSB command
+
+
+sacd:                   SACD command
+
+
+ide:                    Ide command
+
+
+bonding:                Bonding command
+
+
+read(r):                Memory read(word)
+
+
+read hdmi clock(rhc):   Memory read hdmi clock
+
+
+write(w):               Memory write(word)
+
+
+basic_(b):              basic command
+
+
+mtktool(0):             mtktool command
+
+
+Uart2Init(u2i):         register uart2 in Resource manager
+
+
+//(;):                  Line comment
+
+
+MTKSys(sys):            MTK Sys Type
+
+
+test1(t1):              cli test command 1
+
+
+test2(t2):              cli test command 1
+
+
+enable_log_droped(eld): Enable kernel log droped or not
+
+
+enable_log_out(el):     Enable  log or not
+
+
+[CLIDRIVE] parser('P2 drv') = 1
+[CLIDRIVE] P2: directory matched, help dumped; cur = 0x0; expect [Help] + 57 lines incl 'read(r):                Memory read(word)' (rc=1)
+[i4IdeHalTestInit]Signature:0x140101
+[OSAL_STUB] crit_end depth=0
+[OSAL_STUB] x_ev_group_get_info called
+[i4IdeHalSAtaReg(1072)]ERR:-4
+[OSAL_STUB] crit_end depth=0
+[i4IdeHalTestInit]CH:0, SataDev:1, UseQueue:0 Done!
+[OSAL_STUB] crit_end depth=0
+[CLIDRIVE] parser('P3 drv.ide.pri_ver.initial 0 s 0') = 0
+[CLIDRIVE] P3: handler ran; cur = 0x0; expect rc=0 + '[i4IdeHalTestInit]Signature:0x......' + 'CH:0, SataDev:1, UseQueue:0 Done!'; today also 'CmdWaitEvtRet'/'TIMEOUT !!' (model rows a+00c / a+220), or 'ModelName:' if the wait completed
+[CLIDRIVE] after PROBE_SEQ: cur = 0x0
+CLIDRIVE_RC=0
+/ # sleep 3; echo CLI_DRAIN2
+[OSAL_STUB] x_thread_delay #17664 arg=10 caller=IRRC_DataProcessingThread
+CLI_DRAIN2
+/ # echo ODD_TAIL_BEGIN
+ODD_TAIL_BEGIN
+/ # insmod /lib/modules/2.6.35/BDP/cdrom.ko; echo CDROM_INSMOD=$?
+CDROM_INSMOD=0
+/ # insmod[OSAL_STUB] x_thread_delay #17920 arg=100 caller=VFD_CmdProcThread
+ /lib/modules/2.6.35/BDP/sr_mod.ko; echo SRMOD_INSMOD=$?
+sr0: scsi-1 drive
+Uniform CD-ROM driver Revision: 3.20
+SRMOD_INSMOD=0
+/ # mknod /dev/sr0 b 11 0; echo SR0_MKNOD=$?
+SR0_MKNOD=0
+/ # ls -l /dev/sr0; echo SR0_LS=$?
+brw-r--r--    1 0        0          11,   0 Jan  1 00:02 [1;35m/dev/sr0[0m
+SR0_LS=0
+/ # echo ODD_TAIL_DONE
+ODD_TAIL_DONE
+/ # echo SACDREAD_STAGE_BEGIN
+SACDREAD_STAGE_BEGIN
+/ # echo SACDREAD_INIT_EXPECT=1744830464
+SACDREAD_INIT_EXPECT=1744830464
+/ # ls -l /res/shim/sacd_read.ko; echo SACDREAD_LS=$?
+-rwxr-xr-x    1 0        0            97805 Jan  1 00:00 [1;32m/res/shim/sacd_read.ko[0m
+SACDREAD_LS=0
+/ # AUTH=0 sh /res/shim/sacdread_smoke.sh > /res/sacdread.smoke 2>&1; echo SACDR
+EAD_SMOKE_RC=$?
+[OSAL_STUB] x_sema_lock called #1536
+[OSAL_STUB] x_thread_delay #18176 arg=10 caller=IRRC_DataProcessingThread
+[OSAL_STUB] x_thread_delay #18432 arg=100 caller=VFD_CmdProcThread
+[OSAL_STUB] x_thread_delay #18688 arg=100 caller=VFD_CmdProcThread
+[OSAL_STUB] x_thread_delay #18944 arg=100 caller=VFD_CmdProcThread
+[OSAL_STUB] x_thread_delay #19200 arg=10 caller=IRRC_DataProcessingThread
+SACDREAD_SMOKE_RC=1
+/ # cat /res/sacdread.smoke; echo SACDREAD_SMOKE_OUT=$?
+== sacdread_smoke: sacd_read.ko insmod + ioctl smoke (no daemon) ==
+PROC=/proc DEV=/dev/sacd_read SR0=/dev/sr0 KO=/res/shim/sacd_read.ko HELPER=/res/shim/sacdgate MINOR=201
+COMPID=<module-default> AUTH=0 UNLOAD=1
+
+SMOKE_STEP=S01
+SMOKE S01 PASS proc-mount -- /proc/modules and /proc/misc readable
+SMOKE_STEP=S02
+/res/shim/sacdread_smoke.sh: line 176: cut: not found
+SMOKE S02 PASS bdpdrv-resident -- 
+SMOKE_STEP=S03
+SMOKE S03 PASS module-imports -- 2/2 resolvable (x_memset + the GCPU thread's x_thread_create)
+SMOKE_STEP=S04
+SMOKE S04 FAIL module-image -- no module at /res/shim/sacd_read.ko â€” stage it with --extra-file sacd_read.ko=â€¦
+SMOKE_STEP=S05
+SMOKE S05 FAIL module-load -- no module image at /res/shim/sacd_read.ko (S04)
+SMOKE_STEP=S06
+SMOKE S06 FAIL sacd-read-node -- created /dev/sacd_read c 10 201, will not open
+SMOKE_STEP=S07
+SMOKE S07 SKIP sacd-init -- helper missing: build decode/sacd_gate_ioctl.c on the VM (arm-none-linux-gnueabi-gcc -O2 -Wall -std=gnu99)
+SMOKE_STEP=S08
+SMOKE S08 SKIP sacd-auth -- skipped by AUTH=0
+SMOKE_STEP=S09
+SMOKE S09 SKIP sacd-uninit -- not run: INIT (S07) did not pass â€” Disable dereferences the instance handle too
+SMOKE_STEP=S10
+SMOKE S10 SKIP sacd-reinit -- not run: nothing to re-init (S07/S09)
+SMOKE_STEP=S11
+SMOKE_DMESG_BEGIN
+/res/shim/sacdread_smoke.sh: line 383: tail: not found
+SMOKE_DMESG_END
+SMOKE S11 PASS dmesg -- last 40 kernel lines captured between the markers
+SMOKE_STEP=S12
+SMOKE S12 PASS module-unload -- rmmod rc=1, /proc/misc no longer lists sacd_read
+
+SMOKE_N=5/12
+SMOKE_FAIL=3
+SMOKE_SKIP=4
+SMOKE_VERDICT=FAIL
+SACDREAD_SMOKE_OUT=0
+/ # V=$(sed -n '/^SMOKE S07 /s/.*result=\(-*[0-9][0-9]*\).*/\1/p' /res/sacdread.
+smoke); echo SACDREAD_INIT=${V:-NONE}
+SACDREAD_INIT=NONE
+/ # echo SACDREAD_STAGE_END
+SACDREAD_STAGE_END
+/ # echo SR_LADDER_BEGIN
+SR_LADDER_BEGIN
+/ # chmod 0555 /res/shim/srread; echo SRREAD_CHMOD=$?
+SRREAD_CHMOD=0
+/ # PHASE=pre HELPER=/res/shim/srread OUT=/res/c103 SR0=/dev/sr0 SACD=/dev/sacd_
+read SACD_DIFF=0 sh /res/shim/sr_read_ladder.sh; echo SR_LADDER_PRE_RC=$?
+SRREAD mode=size dev=/dev/sr0 rc=0 errno=0 blkgetsize64=1073741312 blkssz=512
+LADDER a PASS size probed
+LADDER a2 FAIL dd reason=dd: can't open '/dev/sr0': No medium found
+SRREAD mode=read10 lba=16 nsec=1 len=2048 rc=0 errno=0 sense=000000 host=0000 driver=0000 file=/res/c103/lba16.bin
+MD5 name=lba16 off=0 hash=c117ce4cef54ab625e33583156605721
+MD5 name=lba16 head16=3aa701bcf0141518e2c4c960117f1d6c
+[OSAL_STUB] x_thread_delay #19456 arg=10 caller=IRRC_DataProcessingThread
+LADDER lba16 PASS lba=16 nsec=1
+SRREAD mode=read10 lba=510 nsec=1 len=2048 rc=0 errno=0 sense=000000 host=0000 driver=0000 file=/res/c103/lba510.bin
+MD5 name=lba510 off=0 hash=e56de1add53c90dd30cf9232b29ddc93
+MD5 name=lba510 head16=5614af2a06bf2865f5aac1958b94908d
+LADDER lba510 PASS lba=510 nsec=1
+SRREAD mode=read10 lba=532104 nsec=1 len=2048 rc=0 errno=0 sense=000000 host=0000 driver=0000 file=/res/c103/lba532104.bin
+MD5 name=lba532104 off=0 hash=9ed18b47f67232ea972515df65cb6ac5
+MD5 name=lba532104 head16=46372f94db62ae7d99c2250a82b7e48f
+LADDER lba532104 PASS lba=532104 nsec=1
+SRREAD mode=read10 lba=0 nsec=1 len=2048 rc=0 errno=0 sense=000000 host=0000 driver=0000 file=/res/c103/lba0.bin
+MD5 name=lba0 off=0 hash=c99a74c555371a433d121f551d6c6398
+MD5 name=lba0 head16=4ae71336e44bf9bf79d2752e234818a5
+LADDER lba0 PASS lba=0 nsec=1
+SRREAD mode=read10 lba=510 nsec=10 len=20480 rc=0 errno=0 sense=000000 host=0000 driver=0000 file=/res/c103/lba510x10.bin
+[OSAL_STUB] x_thread_delay #19712 arg=10 caller=IRRC_DataProcessingThread
+[OSAL_STUB] x_thread_delay #19968 arg=10 caller=IRRC_DataProcessingThread
+MD5 name=lba510x10 off=0 hash=45ccd7dfbf433a79d28e877d7441677c
+LADDER lba510x10 PASS lba=510 nsec=10
+SRREAD mode=read10 lba=1064207 nsec=1 len=2048 rc=0 errno=0 sense=000000 host=0000 driver=0000 file=/res/c103/lba1064207.bin
+MD5 name=lba1064207 off=0 hash=d1c54ec6c395d7092ce06f04705d33ae
+MD5 name=lba1064207 head16=0b7b7857945c08087a1f55ba01923761
+LADDER lba1064207 PASS lba=1064207 nsec=1
+SRREAD mode=read10 lba=1064208 nsec=1 len=2048 rc=-1 errno=0 sense=010000 host=0000 driver=0000 file=/res/c103/past_eof.bin
+LADDER past_eof PASS rejected
+LADDER done 8/8
+SR_LADDER_PRE_RC=0
+/ # insmod /res/shim/sacd_read.ko minor=201; echo SR_SACDREAD_INSMOD=$?
+[SACDREAD] ========================================
+[SACDREAD] minor = 201
+[SACDREAD] compid = 0
+[SACDREAD] ========================================
+[SACDREAD]Symbol "i4CPSA_Inst_CPSMode_Ctrl" address is 0xbf0dfb78
+[SACDREAD]Symbol "_IDECLI_OddRead" address is 0xbf1353d8
+[SACDREAD]Symbol "_i4CPSA_Inst_Decrypt" address is 0xbf0df2b4
+[SACDREAD]Symbol "i4CPSA_Inst_SetSACDControl" address is 0xbf0e0900
+[SACDREAD]Symbol "u4CPSA_Inst_GetInstHandleFromCompId" address is 0xbf0e0a8c
+[SACDREAD]Symbol "i4CPSA_Inst_Connect" address is 0xbf0e09d8
+[SACDREAD]Symbol "i4CPSA_Inst_Disconnect" address is 0xbf0e0a38
+[SACDREAD]Symbol "vSacdDecryptEnable" address is 0xbf151e30
+[SACDREAD]Symbol "_SACDCLI_TestPhy" address is 0xbf15219c
+[SACDREAD]Symbol "eSacdGetVersion" address is 0xbf151d38
+[SACDREAD]Symbol "_SACDCLI_FindTag" address is 0xbf1525f4
+[SACDREAD]Symbol "_IDECLI_OddTestUnitReadyLoop" address is 0xbf134760
+[SACDREAD]Symbol "_IDECLI_OddGetProfile" address is 0xbf134a54
+[SACDREAD]Symbol "__ksymtab_disable_print" address is 0xc0420818
+SR_SACDREAD_INSMOD=0
+/ # rm -f /dev/sacd_read; mknod /dev/sacd_read c 10 201; echo SR_SACDREAD_MKNOD=
+$?
+SR_SACDREAD_MKNOD=0
+/ # O=$(/res/shim/srread sacdread init /dev/sacd_read); echo "$O"; R=${O##*resul
+t=}; echo SR_SACDREAD_PRIME=$R; case "$R" in ''|-*) echo SR_SACDREAD_UNINIT=skip
+ped-prime-failed ;; *) /res/shim/sacdgate 0x40105305 /dev/sacd_read; echo SR_SAC
+DREAD_UNINIT=$? ;; esac
+[OSAL_STUB] mq_recv #13 h0=c6278f28 cnt=1 caller=_fgGCPU_RetrieveCMD
+[OSAL_STUB] x_thread_delay #20224 arg=10 caller=IRRC_DataProcessingThread
+[OSAL_STUB] thread created: GcpuHw0 fct=_vGCPU_MainLoop
+[SACDREAD]i4CPSA_Inst_Connect Fail:-402653184
+SACDREAD cmd=0x40105301 ret=0 errno=0 result=-402653184
+SR_SACDREAD_PRIME=-402653184
+SR_SACDREAD_UNINIT=skipped-prime-failed
+/ # PHASE=post HELPER=/res/shim/srread OUT=/res/c103 SR0=/dev/sr0 SACD=/dev/sacd
+_read SACD_DIFF=1 sh /res/shim/sr_read_ladder.sh; echo SR_LADDER_POST_RC=$?
+[OSAL_STUB] mq_recv #14 h0=c6361000 cnt=1 caller=_fgGCPU_RetrieveCMD
+[OSAL_STUB] thread created: GcpuHw1 fct=_vGCPU_MainLoop
+[SACDREAD]i4CPSA_Inst_Connect Fail:-402653184
+SACDREAD cmd=0x40105301 ret=0 errno=0 result=-402653184
+SACDREAD cmd=0x40105303 lba=510 nsec=2 len=4128 ret=0 errno=0 result=0 file=/res/c103/sacd510.bin
+MD5 name=sacd510 off=0 hash=33ab29b827a7194ec4c5bdc3e0fb9e2f
+MD5 name=sacd510 off=4 hash=93611001b7024258e528ef92ece41b9b
+MD5 name=sacd510 off=8 hash=dfdaa798bb5a95e77e463c9b47b2ae2d
+[OSAL_STUB] x_thread_delay #20480 arg=10 caller=IRRC_DataProcessingThread
+MD5 name=sacd510 off=12 hash=6bd281d61d41cd9360a353818ff19467
+MD5 name=sacd510 off=16 hash=3906ea6433fa6d98c348cfc1a62ca65b
+MD5 name=sacd510 off=24 hash=56fa72876c590c6a21e8fa5412e06ad1
+MD5 name=sacd510 off=2048 hash=0dd11cf36af247032b767b89a36746d7
+MD5 name=sacd510 off=2064 hash=964866f52c80b27f26d2466bbe041ff2
+[OSAL_STUB] x_thread_delay #20736 arg=150 caller=_sircs_key_proc_thread
+MD5 name=sacd510 off=2072 hash=ae2453721c813b26913514d537fe2225
+MD5 name=sacd510 off=2076 hash=f1dc2be22cbd7a8bbb242ec5c0c9adc1
+MD5 name=sacd510 off=2080 hash=69dc2a9c13f57f69d9d7cc14b253125e
+MD5 name=sacd510 off=2088 hash=37c4eef2b677e10210f2c528f63f544e
+LADDER e MEASURED lba=510 nsec=2 len=4128 via ioctl 5303
+DUMPHEX name=sacd510 off=0 len=64 bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb696e6f72207673202450524f432f6d697363206d757374206167726565202853303529220a2020202066690a656c6966
+DUMPHEX name=sacd510 off=64 len=64 206d6b6e6f64202d6d303636362022244445562220632031302022244d494e4f522220323e2f6465762f6e756c6c202626205b202d6320222444455622205d3b
+DUMPHEX name=sacd510 off=128 len=64 207468656e0a20202020673036643d22637265617465642024444556206320313020244d494e4f52220a2020202069662064642069663d222444455622206f66
+DUMPHEX name=sacd510 off=192 len=64 3d2f6465762f6e756c6c2062733d313620636f756e743d3020323e2f6465762f6e756c6c3b207468656e0a20202020202020206730363d504153530a20202020
+DUMPHEX name=sacd510 off=256 len=64 20202020673036643d2224673036642c206f70656e73204f5f52444f4e4c59220a20202020656c73650a2020202020202020673036643d2224673036642c2077
+DUMPHEX name=sacd510 off=320 len=64 696c6c206e6f74206f70656e220a2020202066690a656c73650a20202020673036643d2263616e6e6f74206372656174652024444556206320313020244d494e
+DUMPHEX name=sacd510 off=384 len=64 4f5220287772697461626c65202f6465763f207365652043353429220a66690a676174652053303620736163642d726561642d6e6f6465202224673036222022
+DUMPHEX name=sacd510 off=448 len=64 2467303664220a0a2320e29480e294802053303720e2809420696f63746c203078343031303533303120494e49543a207468652062647064727620686f6f6b20
+DUMPHEX name=sacd510 off=512 len=64 70726f6f6620e29480e29480e29480e29480e29480e29480e29480e29480e29480e29480e29480e29480e29480e29480e29480e29480e29480e29480e29480e2
+DUMPHEX name=sacd510 off=576 len=64 94800a2320435053415f53414344436d64456e61626c6528636f6d706964293a20436f6e6e6563742830783136622c636f6d7069642c3336302c636f6d706964
+DUMPHEX name=sacd510 off=640 len=64 29202d3e0a23206934435053415f496e73745f4372656174652028696e7374616e6365206d6167696320307831323034333030302c204743505520776f726b65
+DUMPHEX name=sacd510 off=704 len=64 72207468726561642c206576656e740a232067726f75707329207468656e204350534d6f64655f4374726c2868616e646c652c307834302c5452554529202d3e
+DUMPHEX name=sacd510 off=768 len=64 206934435053415f534143445f4372656174652028637478206d616769630a23203078313230343330303729202b2053657443616c6c6261636b2e2053756363
+DUMPHEX name=sacd510 off=832 len=64 6573732076616c7565206973203078363830303030303020283d2025642031373434383330343634292c0a2320776869636820697320504f53495449564520e2
+DUMPHEX name=sacd510 off=896 len=64 80942074657374207369676e6564203e3d20302c206e65766572203d3d20302e0a73746570205330370a6730373d534b49500a673037643d2268656c70657220
+DUMPHEX name=sacd510 off=960 len=64 6d697373696e673a206275696c64206465636f64652f736163645f676174655f696f63746c2e63206f6e2074686520564d202861726d2d6e6f6e652d6c696e75
+DUMPHEX name=sacd510 off=1024 len=64 782d676e75656162692d676363202d4f32202d57616c6c202d7374643d676e75393929220a6966205b20222467303622203d20225041535322205d2026262069
+DUMPHEX name=sacd510 off=1088 len=64 6f63746c5f72756e20307834303130353330313b207468656e0a202020206966205b202224494f5f52455422202d67652030205d202626205b202224494f5f52
+DUMPHEX name=sacd510 off=1152 len=64 455322202d67652030205d3b207468656e0a20202020202020206730373d504153530a2020202020202020673037643d227265743d24494f5f52455420726573
+DUMPHEX name=sacd510 off=1216 len=64 756c743d24494f5f524553207261773d5b24494f5f5241575d220a20202020202020206966205b202224494f5f52455322202d6e65202224435053415f4f4b22
+DUMPHEX name=sacd510 off=1280 len=64 205d3b207468656e0a202020202020202020202020673037643d22246730376420286e6f7420307836383030303030303d24435053415f4f4b20e2809420686f
+DUMPHEX name=sacd510 off=1344 len=64 6f6b2072657475726e6564206120646966666572656e7420706f73697469766520636f646529220a202020202020202066690a20202020656c73650a20202020
+DUMPHEX name=sacd510 off=1408 len=64 202020206730373d4641494c0a2020202020202020673037643d227265743d24494f5f524554206572726e6f3d24494f5f45525220726573756c743d24494f5f
+DUMPHEX name=sacd510 off=1472 len=64 524553207261773d5b24494f5f5241575d2428637073615f68696e74202224494f5f5245532229220a2020202066690a66690a67617465205330372073616364
+DUMPHEX name=sacd510 off=1536 len=64 2d696e69742022246730372220222467303764220a0a2320e29480e294802053303820e2809420696f63746c203078343031303533303220415554483a205365
+DUMPHEX name=sacd510 off=1600 len=64 7453414344436f6e74726f6c202b2057484f4c45206272696e672d75702073656c662d7465737420e294800a23204f6e2053657453414344436f6e74726f6c20
+DUMPHEX name=sacd510 off=1664 len=64 7375636365737320746865206d6f64756c652072756e73205f53414344434c495f54657374506879282920616e642c20696620746861740a232072657475726e
+DUMPHEX name=sacd510 off=1728 len=64 7320302c20655361636447657456657273696f6e28292028726561647320307846443033393030382920616e6420765361636444656372797074456e61626c65
+DUMPHEX name=sacd510 off=1792 len=64 2854525545290a232028777269746573203078464430333930303020616e64207468652042494d20646f6f7262656c6c20307846443030383135432f30784644
+DUMPHEX name=sacd510 off=1856 len=64 303038313534292e2042756467657420757020746f0a23207e33352073206f662067756573742074696d65207768656e202f6465762f73723020657869737473
+DUMPHEX name=sacd510 off=1920 len=64 2062757420616e7377657273206e6f7468696e673a2074686520545552206c6f6f700a2320706f6c6c732031303078323030206d73202874696d656f75742032
+DUMPHEX name=sacd510 off=1984 len=64 303030302920616e642065536163645761697450737050646d526573756c742077616974732035303030206d732e0a23204741544544204f4e205330373a2077
+DUMPHEX name=sacd510 off=2048 len=64 6974686f75742061206c69766520696e7374616e6365207468652068616e646c65206973203078464646464646464620616e640a23206934435053415f496e73
+DUMPHEX name=sacd510 off=2112 len=64 745f53657453414344436f6e74726f6c2064657265666572656e636573206974202862647064727620307835353930382920e280942061206775657374206f6f
+DUMPHEX name=sacd510 off=2176 len=64 70732e0a73746570205330380a6730383d534b49500a673038643d22736b697070656420627920415554483d30220a6966205b202224415554482220213d2022
+DUMPHEX name=sacd510 off=2240 len=64 3022205d3b207468656e0a202020206966205b2022246730372220213d20225041535322205d3b207468656e0a2020202020202020673038643d226e6f742072
+DUMPHEX name=sacd510 off=2304 len=64 756e3a20494e495420285330372920646964206e6f74207061737320e28094204155544820776f756c642064657265666572656e636520612030784646464646
+DUMPHEX name=sacd510 off=2368 len=64 46464620696e7374616e63652068616e646c65220a20202020656c696620696f63746c5f72756e20307834303130353330323b207468656e0a20202020202020
+DUMPHEX name=sacd510 off=2432 len=64 207372305f6e6f74653d226e6f20245352302028546573745068792773202f6465762f737230206f70656e206661696c732c206578706563746564207072652d
+DUMPHEX name=sacd510 off=2496 len=64 4331303229220a20202020202020205b202d6220222453523022205d202626207372305f6e6f74653d22245352302070726573656e74220a2020202020202020
+DUMPHEX name=sacd510 off=2560 len=64 6966205b202224494f5f52455422202d67652030205d202626205b202224494f5f52455322202d67652030205d3b207468656e0a202020202020202020202020
+DUMPHEX name=sacd510 off=2624 len=64 6730383d504153530a202020202020202020202020673038643d227265743d24494f5f52455420726573756c743d24494f5f524553207261773d5b24494f5f52
+DUMPHEX name=sacd510 off=2688 len=64 41575d3b20546573745068792072657475726e6564203020736f207468652076657273696f6e202b20646563727970742d656e61626c65206c65672072616e3b
+DUMPHEX name=sacd510 off=2752 len=64 20247372305f6e6f7465220a2020202020202020656c73650a2020202020202020202020206730383d4641494c0a202020202020202020202020673038643d22
+DUMPHEX name=sacd510 off=2816 len=64 7265743d24494f5f524554206572726e6f3d24494f5f45525220726573756c743d24494f5f524553207261773d5b24494f5f5241575d2428637073615f68696e
+DUMPHEX name=sacd510 off=2880 len=64 74202224494f5f52455322293b20247372305f6e6f7465220a202020202020202066690a2020202066690a66690a676174652053303820736163642d61757468
+DUMPHEX name=sacd510 off=2944 len=64 2022246730382220222467303864220a0a2320e29480e294802053303920e2809420696f63746c203078343031303533303520554e494e49543a207468652064
+DUMPHEX name=sacd510 off=3008 len=64 697361626c652f646973636f6e6e65637420686f6f6b20e29480e29480e29480e29480e29480e29480e29480e29480e29480e29480e29480e294800a23204350
+DUMPHEX name=sacd510 off=3072 len=64 53415f53414344436d6444697361626c653a20765361636444656372797074456e61626c652846414c534529202d3e204350534d6f64655f4374726c2868616e
+DUMPHEX name=sacd510 off=3136 len=64 646c652c307834302c0a232046414c534529202d3e2076435053415f534143445f44657374726f79202d3e20446973636f6e6e6563742830783136622c636f6d
+DUMPHEX name=sacd510 off=3200 len=64 7069642c3336302c636f6d706964292e2053616d650a232068616e646c652d64657265662072756c65206173205330382c20736f207468652073616d65205330
+DUMPHEX name=sacd510 off=3264 len=64 372067617465206170706c6965732e20546865206461656d6f6e2069676e6f7265730a23207468697320726573756c742028756e696e69745f73616364207265
+DUMPHEX name=sacd510 off=3328 len=64 616473206e6f7468696e67206261636b292c20736f2050415353206973202274686520696f63746c207761730a23206163636570746564222c20616e64207265
+DUMPHEX name=sacd510 off=3392 len=64 73756c74206973207265636f7264656420666f7220746865207472616e7363726970742e0a73746570205330390a6730393d534b49500a673039643d226e6f74
+DUMPHEX name=sacd510 off=3456 len=64 2072756e3a20494e495420285330372920646964206e6f74207061737320e280942044697361626c652064657265666572656e6365732074686520696e737461
+DUMPHEX name=sacd510 off=3520 len=64 6e63652068616e646c6520746f6f220a6966205b20222467303722203d20225041535322205d20262620696f63746c5f72756e20307834303130353330353b20
+DUMPHEX name=sacd510 off=3584 len=64 7468656e0a202020206966205b202224494f5f52455422202d67652030205d3b207468656e0a20202020202020206730393d504153530a202020202020202067
+DUMPHEX name=sacd510 off=3648 len=64 3039643d227265743d24494f5f52455420726573756c743d24494f5f524553207261773d5b24494f5f5241575d2028746865206461656d6f6e2069676e6f7265
+DUMPHEX name=sacd510 off=3712 len=64 7320746869732076616c75653b205331302069732074686520646563697369766520636865636b29220a20202020656c73650a20202020202020206730393d46
+DUMPHEX name=sacd510 off=3776 len=64 41494c0a2020202020202020673039643d227265743d24494f5f524554206572726e6f3d24494f5f45525220726573756c743d24494f5f524553207261773d5b
+DUMPHEX name=sacd510 off=3840 len=64 24494f5f5241575d2428637073615f68696e74202224494f5f5245532229220a2020202066690a66690a676174652053303920736163642d756e696e69742022
+DUMPHEX name=sacd510 off=3904 len=64 246730392220222467303964220a0a2320e29480e294802053313020e2809420494e495420616761696e3a20554e494e4954207265616c6c792072656c656173
+DUMPHEX name=sacd510 off=3968 len=64 65642074686520636f6d70696420736c6f7420e29480e29480e29480e29480e29480e29480e29480e29480e29480e29480e29480e29480e29480e294800a2320
+DUMPHEX name=sacd510 off=4032 len=64 6934435053415f496e73745f436f6e6e656374207265667573657320776974682030784538303030303036207768696c65205f61753443707361496e73745b63
+DUMPHEX name=sacd510 off=4096 len=32 6f6d7069645d20213d202d312c0a2320616e64206f6e6c79206934435053415f
+DUMPHEX name=sacd510 total=4128
+SRREAD mode=read10 lba=510 nsec=2 len=4128 rc=-1 errno=0 sense=010000 host=0000 driver=0000 file=/res/c103/sacd_sg.bin
+LADDER sacd_sg FAIL lba=510 nsec=2
+LADDER done 1/1
+SR_LADDER_POST_RC=0
+/ # echo SR_LADDER_DONE
+SR_LADDER_DONE
+/ # echo STUB_DONE

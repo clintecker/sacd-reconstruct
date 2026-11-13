@@ -127,6 +127,11 @@ if [ "$PHASE" = post ]; then
     done
     total=$((total + 1)); ok=$((ok + 1))
     echo "LADDER e MEASURED lba=510 nsec=2 len=4128 via ioctl 5303"
+    # C105: the framing specimen rides the UART — the tmpfs dies with the
+    # guest and /res/c103/sacd510.bin was unrecoverable after C104 (the
+    # hashes were measured, the bytes were not). 64 B/line, off-keyed, so the
+    # Mac-side decode can reassemble and detect loss.
+    $HELPER hex "$OUT/sacd510.bin" sacd510
   else
     echo "LADDER e FAIL ioctl 5303"
   fi

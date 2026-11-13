@@ -76,9 +76,42 @@ static int usage(const char *p)
             "usage: %s size <dev>\n"
             "       %s read10 <dev> <lba> <nsec> <outfile> [--sacd]\n"
             "       %s sacdread init <dev>\n"
-            "       %s sacdread read <dev> <lba> <nsec> <outfile>\n",
-            p, p, p, p);
+            "       %s sacdread read <dev> <lba> <nsec> <outfile>\n"
+            "       %s hex <file> <label>\n",
+            p, p, p, p, p);
     return 2;
+}
+
+/* mode_hex — the C105 evidence channel: the guest has no host-visible filesystem
+ * (/res is tmpfs that dies with the guest, C104's sacd510.bin was lost that
+ * way), no od/tr/cut, and a 4128-byte dump is far past md5-only comparison, so
+ * the bytes themselves must ride the UART. 64 B/line keeps every line under the
+ * console's line-length truncation; the Mac-side decode reassembles from the
+ * off= field, so lost/reordered lines are detectable (off runs 0,64,128...). */
+static int mode_hex(const char *path, const char *label)
+{
+    static const size_t ROW = 64;
+    unsigned char buf[64];
+    FILE *f = fopen(path, "rb");
+    size_t off = 0, n;
+
+    if (!f) {
+        fprintf(stderr, "open %s: errno=%d\n", path, errno);
+        return 1;
+    }
+    while ((n = fread(buf, 1, ROW, f)) > 0) {
+        size_t i;
+        printf("DUMPHEX name=%s off=%lu len=%lu ", label,
+               (unsigned long)off, (unsigned long)n);
+        for (i = 0; i < n; i++) {
+            printf("%02x", buf[i]);
+        }
+        printf("\n");
+        off += n;
+    }
+    fclose(f);
+    printf("DUMPHEX name=%s total=%lu\n", label, (unsigned long)off);
+    return 0;
 }
 
 static int dump(const char *path, const unsigned char *buf, size_t len)
@@ -276,6 +309,9 @@ int main(int argc, char **argv)
     if (argc >= 7 && strcmp(argv[1], "sacdread") == 0 && strcmp(argv[2], "read") == 0) {
         return mode_sacdread("read", argv[3], (unsigned)strtoul(argv[4], NULL, 0),
                              (unsigned)strtoul(argv[5], NULL, 0), argv[6]);
+    }
+    if (argc >= 4 && strcmp(argv[1], "hex") == 0) {
+        return mode_hex(argv[2], argv[3]);
     }
     return usage(argv[0]);
 }

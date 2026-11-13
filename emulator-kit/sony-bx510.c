@@ -64,6 +64,11 @@ OBJECT_DECLARE_SIMPLE_TYPE(Bx510State, BX510_MACHINE)
  * the table block above. */
 #define FE_IDENT_OFF  0x2000u
 #define FE_IDENT_LEN  0x0200u        /* == sizeof(Bx510State.identify) */
+/* ATAPI PACKET reply payload offset in the same window: the CDB rows below
+ * answer through the IDENTIFY route (type-0x10 offer), never the 0x5c400 DMA
+ * descriptor (scsi-scan-codes.md §4.2). 0x2400 clears both blocks above. */
+#define FE_PKT_OFF    0x2400u
+#define FE_PKT_MAX    0x0080u        /* MODE SENSE(6) page 0x2a = 128 B */
 
 struct Bx510State {
     MachineState parent_obj;
@@ -311,6 +316,165 @@ static void bx510_fe_post(Bx510State *s, uint32_t w0, uint32_t w1,
     bx510_update_irq(s);
 }
 
+/* ATAPI PACKET (code 0xa0) classification — scsi-scan-codes.md §4.2.
+ *
+ * The post carries w1..w3 two ways and the recipe's rows coincide
+ * row-for-row, so one table serves both readings:
+ *  - ATAPI taskfile (the OBSERVED encoding — C101 posted w1 = 0): w1's low
+ *    16 bits are {feature, nsect} = the transfer byte count;
+ *  - CDB image: the driver's 12-byte *(priv+0x24) block puts CDB[0] in
+ *    w1 byte 0 (data_xfer .text+0x577c/0x5780).
+ * Byte-count key first: those are the two lengths the recipe names, and the
+ * taskfile is the encoding actually observed. The CDB key only resolves
+ * packets whose length is neither, which is what makes a zero image P1
+ * (TEST UNIT READY) under either reading. */
+enum fe_pkt_kind {
+    FE_PKT_NODATA = 0,      /* P1/P5: no payload, bare success completion */
+    FE_PKT_READ_CAPACITY,   /* P2: 8-byte READ CAPACITY(10) reply */
+    FE_PKT_MODE_SENSE6,     /* P3: 128-byte MODE SENSE(6) page 0x2a */
+    FE_PKT_READ,            /* P6: READ(10)/READ(12)/READ CD — C97 FE-DMA */
+    FE_PKT_UNKNOWN,         /* P7: never stay silent */
+};
+
+static const char *fe_pkt_kind_name(enum fe_pkt_kind k)
+{
+    switch (k) {
+    case FE_PKT_NODATA:      return "no-data";
+    case FE_PKT_READ_CAPACITY: return "read-capacity";
+    case FE_PKT_MODE_SENSE6: return "mode-sense-6";
+    case FE_PKT_READ:        return "read";
+    default:                 return "unknown";
+    }
+}
+
+static enum fe_pkt_kind bx510_fe_packet_kind(uint32_t w1)
+{
+    /* CDB opcodes hw_chg_st switches on (.text+0x4084..0x40c8), plus the
+     * scan's own INQUIRY/READ CAPACITY entries (§1.3). */
+    static const uint8_t cdb_ops[] = { 0x00, 0x12, 0x1a, 0x1b,
+                                       0x25, 0x28, 0x5a, 0xa8, 0xbe };
+    unsigned nbytes = (w1 & 0xffu) | (((w1 >> 8) & 0xffu) << 8);
+    unsigned op = w1 & 0xffu;
+    unsigned i;
+
+    switch (nbytes) {
+    case 0:   return FE_PKT_NODATA;         /* P1 TUR / P5 START STOP UNIT */
+    case 8:   return FE_PKT_READ_CAPACITY;  /* P2 */
+    case 128: return FE_PKT_MODE_SENSE6;    /* P3 */
+    }
+    for (i = 0; i < ARRAY_SIZE(cdb_ops); i++) {
+        if (op != cdb_ops[i]) {
+            continue;
+        }
+        switch (op) {
+        case 0x25: return FE_PKT_READ_CAPACITY;
+        case 0x1a: return FE_PKT_MODE_SENSE6;
+        case 0x28: case 0xa8: case 0xbe: return FE_PKT_READ;
+        default:
+            /* 0x00 TUR, 0x1b START STOP UNIT, 0x5a MODE SENSE(10) (recipe P4:
+             * not on the 2.6.35 sr path) and 0x12 INQUIRY — the driver
+             * synthesises INQUIRY locally and it never reaches the FE (§4.2
+             * P8), so an 0x12 packet wants a bare completion, not a payload. */
+            return FE_PKT_NODATA;
+        }
+    }
+    return FE_PKT_UNKNOWN;
+}
+
+/* READ CAPACITY(10) data: last LBA + block length, both big-endian (§4.2 P2).
+ * Derived from the attached image, so for C101/C102's 1 064 208-sector ISO it
+ * reproduces the recipe's literal bytes 00 10 3C 8F 00 00 08 00 exactly. */
+static void bx510_fe_read_capacity(Bx510State *s, uint8_t *buf)
+{
+    uint64_t sectors = s->sata_blk ? blk_getlength(s->sata_blk) / 2048 : 0;
+    uint32_t last_lba = sectors ? (uint32_t)(sectors - 1) : 0;
+
+    buf[0] = last_lba >> 24;
+    buf[1] = last_lba >> 16;
+    buf[2] = last_lba >> 8;
+    buf[3] = last_lba;
+    buf[4] = 0x00;                  /* block length 2048, big-endian */
+    buf[5] = 0x00;
+    buf[6] = 0x08;
+    buf[7] = 0x00;
+}
+
+/* MODE SENSE(6) page 0x2a (CD-ROM capabilities), 128-byte response — the
+ * offsets sr.c's get_capabilities() reads with n = header_length +
+ * block_descriptor_length = 4 (§4.3). Only reached when FA mode is 0; with
+ * FA mode 1 (this rig's C101 state) sr.c short-circuits to 'scsi-1 drive'
+ * and never issues MODE SENSE. */
+static void bx510_fe_mode_sense6(Bx510State *s, uint8_t *buf)
+{
+    (void)s;
+    memset(buf, 0, FE_PKT_MAX);
+    buf[0]  = 0x1d;             /* mode data length: 30-byte response - 1 */
+    buf[4]  = 0x2a;             /* page code: CD-ROM capabilities */
+    buf[5]  = 0x18;             /* parameter length */
+    buf[6]  = 0x02;             /* bit1 -> 'cd/rw' (bit3 would mask in DVD) */
+    buf[7]  = 0x00;             /* bit0 writer, bit5 dvd-ram: both clear */
+    buf[8]  = 0x20;             /* bit5 -> 'xa/form2' */
+    buf[9]  = 0x01;             /* bit0 -> 'cdda' */
+    buf[10] = 0x20;             /* >>5 == 1 -> loadmech 'tray' */
+    buf[12] = 0x21;             /* max read speed 8448 KB/s -> 48x (/176) */
+    buf[13] = 0x00;
+    buf[18] = 0x21;             /* max write speed, same scale */
+    buf[19] = 0x00;
+}
+
+/* ATAPI PACKET reply (§4.2). One message per packet — a type-0x10 payload
+ * offer IS the completion for that qc (the C98 lesson already encoded above:
+ * the bottom half reads the status block exactly once). */
+static void bx510_fe_packet(Bx510State *s)
+{
+    uint32_t w1 = s->fe_cmd[1], w2 = s->fe_cmd[2], w3 = s->fe_cmd[3];
+    enum fe_pkt_kind kind = bx510_fe_packet_kind(w1);
+    uint8_t payload[FE_PKT_MAX];
+    unsigned len = 0;
+
+    /* The C102 settling experiment (scsi-scan-codes.md §6): log the quartet so
+     * the trace itself answers which opcode rode each packet. */
+    qemu_log_mask(LOG_GUEST_ERROR,
+                  "bx510: FE PACKET w1=%08" PRIx32 " w2=%08" PRIx32
+                  " w3=%08" PRIx32 " nbytes=%u -> %s\n",
+                  w1, w2, w3,
+                  (unsigned)((w1 & 0xffu) | (((w1 >> 8) & 0xffu) << 8)),
+                  fe_pkt_kind_name(kind));
+
+    switch (kind) {
+    case FE_PKT_READ_CAPACITY:
+        bx510_fe_read_capacity(s, payload);
+        len = 8;
+        break;
+    case FE_PKT_MODE_SENSE6:
+        bx510_fe_mode_sense6(s, payload);
+        len = FE_PKT_MAX;
+        break;
+    case FE_PKT_READ:
+        /* The C97 FE-DMA path (descriptor 0x5c400/404/408/40c armed, data
+         * lands in guest RAM, c97-read-path.md §1.3) is NOT modelled yet —
+         * C103 owns it. Answer the completion so the packet cannot hang into a
+         * 30 s libata timeout, and say plainly that the buffer got no data. */
+        qemu_log_mask(LOG_UNIMP,
+                      "bx510: FE READ packet — no FE-DMA implementation, "
+                      "completion carries no data\n");
+        bx510_fe_post(s, 0, 0, 0, 0);
+        return;
+    case FE_PKT_UNKNOWN:
+        /* P7: never stay silent — silence is a 30 s libata timeout, not a
+         * fast failure. */
+        bx510_fe_post(s, 0, 0, 0, 0);
+        return;
+    case FE_PKT_NODATA:
+    default:
+        /* P1/P5: the only packet sr_probe needs before add_disk(). */
+        bx510_fe_post(s, 0, 0, 0, 0);
+        return;
+    }
+    bx510_fe_dram_write(s, FE_PKT_OFF, payload, len);
+    bx510_fe_post(s, 0x00100000u, FE_PKT_OFF, len, 0);
+}
+
 /* Content-keyed reply dispatch on the 0x5c020 doorbell (§5.2). Keying is on
  * w0/w1..w3 content, never on byte3 alone: `.text+0xa1` is BOTH the
  * chk_int_ldr entry code and the ATA IDENTIFY PACKET command byte, and only
@@ -359,9 +523,20 @@ static void bx510_fe_dispatch(Bx510State *s)
         bx510_fe_post(s, 0x00100000u, FE_IDENT_OFF, FE_IDENT_LEN, 0);
         return;
     }
-    /* 0xf7 prereset / 0x08 soft reset / anything unknown: a type-0 success
-     * completion. Never stay silent — silence is a 30 s libata timeout, not a
-     * fast failure (§5.2 last row). */
+    if (code == 0xa0) {
+        /* ATA PACKET — the ATAPI command gate (scsi-scan-codes.md §1.2/§4.2).
+         * w0 byte3 is priv+0x29c, an ATA command byte, so 0xa0 here is PACKET
+         * and not a vendor code. The rows live in bx510_fe_packet(). */
+        bx510_fe_packet(s);
+        return;
+    }
+    /* 0xf7 prereset / 0x08 soft reset / 0xef SET FEATURES / anything
+     * unknown: a type-0 success completion. 0xef is libata's
+     * ata_dev_set_xfermode() (w1 = 0x00004203 = set-transfer-mode, UDMA mode
+     * 2) and the bare completion is exactly right — C101's own 'configured for
+     * UDMA/33' proves it was accepted (§2.2, recipe row R6). Never stay
+     * silent — silence is a 30 s libata timeout, not a fast failure (§5.2 last
+     * row). */
     bx510_fe_post(s, 0, 0, 0, 0);
 }
 

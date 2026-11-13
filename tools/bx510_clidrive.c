@@ -17,9 +17,9 @@
  * Return codes (decode §0.2): 0 = handler ran, 1 = matched a directory and
  * dumped its help, -10 = no match, -1 = drvcli not initialised.
  *
- * Probe-sequence mode (decode §5 ladder): insmod this module with
+ * Probe-sequence mode (ladder below): insmod this module with
  * clidrive_args=PROBE_SEQ (the same argument goes in the AutoScript line on
- * the player) to run P0 -> P1 -> P2 as SEPARATE x_cli_parser() calls. Each
+ * the player) to run P0 -> P3 as SEPARATE x_cli_parser() calls. Each
  * call is separate on purpose: the parser carries directory state
  * (cd-like semantics), so batching the strings would not be equivalent.
  * Without the flag the module keeps the C50/C93/C95-known instrument
@@ -60,25 +60,55 @@ struct cli_probe {
   const char *expect;
 };
 
-/* decode §5 "Post-C96 acceptance probes": P0 rig control, P1 known-good
- * reference (byte-identical to the C50/C93/C95 help dump), P2 the one
- * discovery step (group 5 = `drv`, 48 bdpdrv lanes — never asked for yet).
- * P3+ need the disc and newer nesting, so they stay out of this shim.
+/* The acceptance ladder, re-derived in C100 from two decodes:
+ *
+ *   P0 — p0-scan-decode.md §0.1/§3.1/§5. `read` is a LEAF inside group 5, not
+ *        a root command: the root array carries only the mandatory table plus
+ *        the group DIRECTORY entries (§1.2), so the old spelling
+ *        `read 0x1000 16` could only ever return -10 from `_parse_cmd` 0x1678.
+ *        The corrected spelling is the dot-joined path: `_search_tbl` matches
+ *        argv[0] only up to the first '.' and `_parse_cmd` recurses into the
+ *        matched sub-table when that byte IS a '.', so ONE call descends
+ *        (p0-scan-decode.md §4.3, ide-cli-lane.md §2.2). Length 0 is
+ *        deliberate: `_CmdMemRead` ORs the address with 0xF0000000 and derefs
+ *        with no probe (§3.2), and 0xF0001000 sits in the guest's vmalloc
+ *        window, unmapped — with length 0 the handler returns at 0x2aec
+ *        BEFORE the first load, so P0 stays a zero-risk rig control (§3.3).
+ *   P1 — kept byte-identical to the C50/C93/C95 reference help dump.
+ *   P2 — group 5 directory. Its dump is 57 lines: 45 bdpdrv lanes + drvcli's
+ *        8-command default table + 4 test entries (p0-scan-decode.md §1.4).
+ *        `read(r):                Memory read(word)` inside that dump is the
+ *        standing proof that P0's fix targets a live entry — grep it.
+ *   P3 — the IDE-HAL transport leg (ide-cli-lane.md §0/§4, its P5-d row): the
+ *        full dot path reaches `_IDECLI_Init` with argc=4 in ONE call, no `cd`
+ *        sequencing. It programs the 0x7000a000 window, reads the ATA
+ *        signature, posts IDENTIFY 0xA1 and takes the BOUNDED wait — flags
+ *        0x31 means flags&3==1, so it never reaches the untimed PIO-in spin
+ *        (ide-cli-lane.md §7.1). It is LAST in the ladder because
+ *        `_fgSataDev`/`_fgSataHwInit`/`_fgUseQueMode[]` are sticky globals
+ *        (§7.3) and this module is the last one loaded in the fire. If P3
+ *        returns -10 the lane was never attached; the diagnostic for that is
+ *        the directory spelling `drv.ide.pri_ver` (rc=1, 33 help lines).
  */
 static const struct cli_probe cli_probes[] = {
-  { "P0", "read 0x1000 16",
-    "Read addr = 0x00001000, length = 16 + one memory line" },
+  { "P0", "drv.read 0x1000 0",
+    "rc=0 + 'Read addr = 0x00001000, length = 0' and NO payload row "
+    "(length 0 => no deref)" },
   { "P1", "driver",
     "[Help] + hdmitx(hdmitx):         Hdmi Tx command (rc=1)" },
   { "P2", "drv",
-    "[Help] + 48 lane lines km(...)..bonding(...); rc=-10 => use 'ls' first" },
+    "[Help] + 57 lines incl 'read(r):                Memory read(word)' (rc=1)" },
+  { "P3", "drv.ide.pri_ver.initial 0 s 0",
+    "rc=0 + '[i4IdeHalTestInit]Signature:0x......' + 'CH:0, SataDev:1, "
+    "UseQueue:0 Done!'; today also 'CmdWaitEvtRet'/'TIMEOUT !!' (model rows "
+    "a+00c / a+220), or 'ModelName:' if the wait completed" },
 };
 
 static char *clidrive_args = "";
 module_param(clidrive_args, charp, 0444);
 MODULE_PARM_DESC(clidrive_args,
-                 "\"PROBE_SEQ\" runs the P0->P1->P2 acceptance ladder "
-                 "(decode drvcli-surface.md section 5)");
+                 "\"PROBE_SEQ\" runs the P0->P3 acceptance ladder "
+                 "(decode p0-scan-decode.md section 5, ide-cli-lane.md section 6)");
 
 /* decode §0.2 return-code table, as text, so the UART line is self-describing */
 static const char *cli_rc_meaning(int rc)
@@ -171,7 +201,7 @@ static int __init clidrive_init(void)
   if (t0) dump_tbl("root", (const struct cli_ent *)t0, 0);
 
   if (strstr(clidrive_args, "PROBE_SEQ")) {
-    printk(KERN_INFO "[CLIDRIVE] mode = PROBE_SEQ (%d probes, decode §5)\n",
+    printk(KERN_INFO "[CLIDRIVE] mode = PROBE_SEQ (%d probes, dotted ladder)\n",
            (int)ARRAY_SIZE(cli_probes));
     for (i = 0; i < (int)ARRAY_SIZE(cli_probes); i++)
       run_probe(x_cli_parser, x_cli_get_current_root, &cli_probes[i]);

@@ -258,7 +258,117 @@ unsigned long BIM_RegResetIrKey(unsigned long a0, ...) { STUB_ONCE(); return 0; 
 EXPORT_SYMBOL(BIM_RegResetIrKey);
 unsigned long BIM_GetResetIrKey(unsigned long a0, ...) { STUB_ONCE(); return 0; }
 EXPORT_SYMBOL(BIM_GetResetIrKey);
-unsigned long TzServiceCall(unsigned long a0, ...) { STUB_ONCE(); return 0; }
+/* ==== TZ SERVICE DISPATCHER (C106) =====================================
+ *
+ * TzServiceCall is the guest's one entry into the secure world — as an
+ * EXPORTED KERNEL SYMBOL, not an SMC instruction: bdpdrv contains zero SMC
+ * encodings and 54 R_ARM_CALL relocations to this symbol
+ * (gcpu-connect-path.md §3.1), so the whole substitution lives here.
+ *
+ * ABI (§3.2, VERIFIED): (handle, service_id, params|0x40000000, 0x40).
+ * The result is NOT read from the return value — the caller pre-seeds
+ * params+0x34 = 0x67000000 and reads it back after the call (§3.4), so a
+ * do-nothing stub already yields a positive HAL result. What the stub must
+ * actually DO is only the data leg of service 0x1e: fill dst from src per
+ * 2064-byte block (Level-0 identity — the fixture carries plaintext frames).
+ */
+#define TZ_LOG(fmt, ...) printk(KERN_INFO "[OSAL_STUB] tz: " fmt, ##__VA_ARGS__)
+
+/* Service ids from the decoded 40-entry table (§3.2) — the ones the CPSA
+ * path can reach. 0x16b/0x806 are NOT TZ ids (component type / GCPU opcode). */
+#define TZ_SVC_HAL_INIT    0x03
+#define TZ_SVC_REG_WRITE   0x34
+#define TZ_SVC_REG_READ    0x35
+#define TZ_SVC_SET_MISC    0x1e   /* the SACD decrypt carrier */
+#define TZ_SVC_GET_MISC    0x1f
+#define TZ_NS_TAG          0x40000000UL
+
+/* strip | 0x40000000 from an NS-tagged pointer so kernel code can deref it */
+static void *tz_ns(unsigned long p)
+{
+	return (void *)(p & ~TZ_NS_TAG);
+}
+
+/* Service 0x1e (§3.3, VERIFIED block layout):
+ *   params+0x18 = request block | NS
+ *   blk+0x04 = 0x80 (opcode), +0x08 src|NS, +0x0c dst|NS,
+ *   +0x10 = block count (len/2064), +0x14 = len (bytes)
+ * Handler: per 2064-byte block copy dst<-src (Level-0 identity), then leave
+ * a non-negative code at params+0x34. */
+static void tz_set_misc(void *params)
+{
+	unsigned long *blk = tz_ns(*(unsigned long *)((char *)params + 0x18));
+	unsigned long src, dst, count, len, i;
+
+	if (!blk) {
+		TZ_LOG("svc 0x1e: no request block — leaving pre-seeded result\n");
+		return;
+	}
+	src   = blk[2] & ~TZ_NS_TAG;
+	dst   = blk[3] & ~TZ_NS_TAG;
+	count = blk[4];
+	len   = blk[5];
+	TZ_LOG("svc 0x1e: opcode=%#lx src=%#lx dst=%#lx count=%lu len=%lu\n",
+	       blk[1], src, dst, count, len);
+	if (len && src && dst && count && count * 2064ul == len) {
+		unsigned long j;
+		for (i = 0; i < count; i++) {
+			unsigned char *s = (unsigned char *)(src + i * 2064);
+			unsigned char *d = (unsigned char *)(dst + i * 2064);
+			for (j = 0; j < 2064; j++) {
+				d[j] = s[j];
+			}
+		}
+		TZ_LOG("svc 0x1e: identity transform done (%lu bytes)\n", len);
+	} else {
+		TZ_LOG("svc 0x1e: NOT transforming (src/dst/count/len shape)\n");
+	}
+	*(unsigned long *)((char *)params + 0x34) = 0x67000000UL;
+}
+
+unsigned long TzServiceCall(unsigned long a0, ...)
+{
+	unsigned long id, params_raw;
+	void *params;
+	va_list ap;
+
+	/* ABI: a0 = handle (always the platform channel, observed 1), a1 = id,
+	 * a2 = params|NS, a3 = 0x40. The C106-probe misfire dispatched on a0 —
+	 * that printed "svc 0x1" 19 times and named nothing (gcpu-connect-path.md
+	 * §3.2 correction). */
+	va_start(ap, a0);
+	id         = va_arg(ap, unsigned long);
+	params_raw = va_arg(ap, unsigned long);
+	va_end(ap);
+	params = tz_ns(params_raw);
+
+	switch (id) {
+	case TZ_SVC_SET_MISC:
+		tz_set_misc(params);
+		break;
+	case TZ_SVC_GET_MISC:
+		/* B3: same carrier; the pre-seeded +0x34 IS the answer. */
+		break;
+	case TZ_SVC_REG_WRITE:
+	case TZ_SVC_REG_READ:
+		/* B4: +0x28 register index, +0x04 value, +0x30 readback. The driver
+		 * reads back what it wrote only through +0x30; leave 0. */
+		STUB_ONCE();
+		break;
+	case TZ_SVC_HAL_INIT:
+		/* B5: result ignored by the driver. */
+		break;
+	default:
+		/* STUB_ONCE cadence, not per-call: C106-probe showed per-call printk
+		 * for the high-frequency poll shifts the IDE-HAL init timing into a
+		 * different i4IdeHalSAtaReg branch (-6 ST:0x58, stall) where the old
+		 * silent stub took the -4->Done! path. */
+		STUB_ONCE();
+		break;
+	}
+	/* §3.4: the return value is never read; 0 is the old stub's answer. */
+	return 0;
+}
 EXPORT_SYMBOL(TzServiceCall);
 static int osal_stub_vprintk(const char *tag, const char *fmt, va_list ap)
 {

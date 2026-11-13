@@ -37,7 +37,16 @@ cp /tmp/bx510_clidrive.c bx510_clidrive.c
 printf 'obj-m := bx510_clidrive.o\n' > Makefile
 make -C "$KDIR" ARCH=arm M="$PWD" modules EXTRA_CFLAGS="$FLAGS" >/tmp/buildC.log 2>&1
 
+# cpsa peer (Route A: registers the (0x168, wildcard, 0) Im entry —
+# gcpu-connect-path.md §4.1; loaded AFTER bdpdrv by sacdread_smoke.sh S06b)
+rm -rf /tmp/osal_d && mkdir -p /tmp/osal_d
+cd /tmp/osal_d
+cp /tmp/bx510_cpsa_peer.c bx510_cpsa_peer.c
+printf 'obj-m := bx510_cpsa_peer.o\n' > Makefile
+make -C "$KDIR" ARCH=arm M="$PWD" modules EXTRA_CFLAGS="$FLAGS" >/tmp/buildD.log 2>&1
+
 python3 /tmp/bx510_vermagic_patch.py /tmp/osal_a/bx510_osal_stub_a.ko
 python3 /tmp/bx510_vermagic_patch.py /tmp/osal_b/bx510_osal_stub.ko
 python3 /tmp/bx510_vermagic_patch.py /tmp/osal_c/bx510_clidrive.ko
-ls -l /tmp/osal_a/bx510_osal_stub_a.ko /tmp/osal_b/bx510_osal_stub.ko /tmp/osal_c/bx510_clidrive.ko
+python3 /tmp/bx510_vermagic_patch.py /tmp/osal_d/bx510_cpsa_peer.ko
+ls -l /tmp/osal_a/bx510_osal_stub_a.ko /tmp/osal_b/bx510_osal_stub.ko /tmp/osal_c/bx510_clidrive.ko /tmp/osal_d/bx510_cpsa_peer.ko

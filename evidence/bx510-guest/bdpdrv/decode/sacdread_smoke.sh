@@ -278,6 +278,18 @@ else
 fi
 gate S06 sacd-read-node "$g06" "$g06d"
 
+# ── S06b — the CPSA peer entry (gcpu-connect-path.md Route A) ────────────
+# The driver's Connect query (0x168, compid, 0) has no counterparty in
+# bdpdrv (all 19 i4ImRegisterInterface2 call sites resolved, none 0x168),
+# so INIT fails 0xE8000000 forever without this. Registered BEFORE the first
+# INIT; the wildcard compid matches the query. Idempotent-ish: a second
+# insmod fails benignly (the record persists for the bdpdrv load's lifetime).
+if insmod /res/shim/bx510_cpsa_peer.ko 2>/dev/null; then
+    gate S06b cpsa-peer PASS "peer entry registered (0x168 wildcard)"
+else
+    gate S06b cpsa-peer SKIP "insmod failed (already registered, or module absent)"
+fi
+
 # ── S07 — ioctl 0x40105301 INIT: the bdpdrv hook proof ────────────────────
 # CPSA_SACDCmdEnable(compid): Connect(0x16b,compid,360,compid) ->
 # i4CPSA_Inst_Create (instance magic 0x12043000, GCPU worker thread, event

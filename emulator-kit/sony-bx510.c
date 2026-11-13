@@ -90,6 +90,22 @@ struct Bx510State {
     /* taskfile storage: [0]=feature [1]=nsect [2]=lbal [3]=lbam
        [4]=lbah [5]=device; command register separate */
     uint8_t tf[6], sata_cmd;
+    /* status byte served at the status/command word (+0x1c). A status
+     * MODEL, not a command echo: in C92 the echo returned 0xa1 after the
+     * IDENTIFY issue — as a status byte that is BSY|ERR, so libata sat in
+     * qc-timeout and the whole EH SRST loop failed on it
+     * (ata-probe-path.md §5b). 0x50 = DRDY ready, 0x58 = DRDY|DRQ data
+     * ready, 0x00 = busy/reset. */
+    uint8_t sata_st;
+    unsigned sata_didx;         /* IDENTIFY read cursor (word index) */
+    /* RMW-storage registers the probe path touches (ata-probe-path.md §6
+     * additions 1,3,4,5,6,7,8): read back the last written value. */
+    uint32_t sata_a604, sata_a620, sata_a634, sata_a680;
+    uint32_t sata_a080, sata_a114, sata_a108;
+    bool trace_all;             /* BX510_TRACE=1: log EVERY MMIO access
+                                 * (instrumentation decay: as cases become
+                                 * implemented they vanish from the UNIMP
+                                 * log — C92 lost the whole a-window). */
     /* IDENTIFY PACKET data (512 bytes, word-swapped words) */
     uint8_t identify[512];
     uint32_t sata_ist, sata_im; /* IRQ status (W1C) + mask */
@@ -226,6 +242,15 @@ static void bx510_mac_write(Bx510State *s, hwaddr reg, uint32_t val)
 static uint64_t bx510_read(void *opaque, hwaddr off, unsigned size)
 {
     Bx510State *s = opaque;
+    if (s->trace_all) {
+        qemu_log_mask(LOG_GUEST_ERROR, "bx510: MMIO R %06x sz%u\n",
+                      (unsigned)off, size);
+    } else if (off >= 0xa000 && off < 0xb000) {
+        /* a-window trace (C92 blind spot: the -D log only carried UNIMP
+         * lines, so every a-window access was invisible). */
+        qemu_log_mask(LOG_GUEST_ERROR, "bx510: SATA RD a+%03x sz%u\n",
+                      (unsigned)off, size);
+    }
     uint64_t ns;
     if (off >= 0x33000 && off < 0x33100) {
         return bx510_mac_read(s, off - 0x33000);
@@ -309,12 +334,50 @@ static uint64_t bx510_read(void *opaque, hwaddr off, unsigned size)
         return 0;
     case 0xa220: /* IRQ status (W1C) */
         return s->sata_ist;
-    case 0xa01c: /* command/status register */
-        return s->sata_cmd;
+    case 0xa01c: /* status/command word — serve the STATUS model */
+        return s->sata_st;
     case 0xa004: case 0xa008: case 0xa00c:
     case 0xa010: case 0xa014: case 0xa018: {
         unsigned i = (off - 0xa004) / 4;
+        /* Signature trio (ata-probe-path.md §6 add.10): port_start reads
+         * lbal/lbam/lbah (i=3..5) and recomposes 0x00eb1401 — the ATAPI
+         * signature that decides whether an ATAPI device is present.
+         * Serve it while the stored tf byte is still zero (nothing
+         * loaded); after tf_load writes a real command the stored byte
+         * wins, so real commands see their own taskfile. */
+        if (i >= 3 && s->tf[i] == 0) {
+            static const uint8_t sig[3] = { 0x01, 0x14, 0xeb };
+            return sig[i - 3];
+        }
         return s->tf[i];
+    }
+    case 0xa604: return s->sata_a604;   /* PHY_CFG0 reset-pulse RMW */
+    case 0xa620: return s->sata_a620;   /* PHY_CFG1 */
+    case 0xa634: return s->sata_a634;   /* PHY_CFG2 speed/width field */
+    case 0xa680: return s->sata_a680;   /* PHY_CFG3 */
+    case 0xa080: return s->sata_a080;   /* CH_IRQ_EN (bit8 RMW'd) */
+    case 0xa114: return s->sata_a114;   /* PHY_CH_EN per-channel bytes */
+    case 0xa108: return s->sata_a108;   /* FE data word (bit15 doorbell) */
+    case 0xa000: case 0xa25c: {
+        /* PIO data port (+0x000; +0x25c is data_xfer's burst-store port,
+         * aliased here so the FE-path stores are absorbed too). Serve the
+         * IDENTIFY payload as 16-bit LE words in issue order. */
+        uint32_t v = 0;
+        if (s->sata_didx < 256) {
+            unsigned wi = s->sata_didx;
+            v = s->identify[wi * 2] | (s->identify[wi * 2 + 1] << 8);
+            s->sata_didx = wi + 1;
+            if (size == 4 && s->sata_didx < 256) {
+                wi = s->sata_didx;
+                v |= (uint32_t)(s->identify[wi * 2] |
+                                (s->identify[wi * 2 + 1] << 8)) << 16;
+                s->sata_didx = wi + 1;
+            }
+            if (s->sata_didx == 256) {
+                s->sata_st = 0x50;  /* payload fully drained */
+            }
+        }
+        return v;
     }
     case 0xa400: case 0xa480: /* per-channel regs (ch0/ch1 base) */
         return 0;
@@ -339,6 +402,13 @@ static void bx510_write(void *opaque, hwaddr off, uint64_t val, unsigned size)
 {
     Bx510State *s = opaque;
     uint8_t ch = val;
+    if (s->trace_all) {
+        qemu_log_mask(LOG_GUEST_ERROR, "bx510: MMIO W %06x sz%u = %llx\n",
+                      (unsigned)off, size, (unsigned long long)val);
+    } else if (off >= 0xa000 && off < 0xb000) {
+        qemu_log_mask(LOG_GUEST_ERROR, "bx510: SATA WR a+%03x sz%u = %llx\n",
+                      (unsigned)off, size, (unsigned long long)val);
+    }
     if (off >= 0x33000 && off < 0x33100) {
         bx510_mac_write(s, off - 0x33000, val);
         return;
@@ -417,19 +487,31 @@ static void bx510_write(void *opaque, hwaddr off, uint64_t val, unsigned size)
     case 0xa010: case 0xa014: case 0xa018:
         s->tf[(off - 0xa004) / 4] = val & 0xff;
         break;
-    case 0xa01c: /* command issued */
-        s->sata_cmd = val & 0xff;
-        /* IDENTIFY PACKET DEVICE (0xA1): fill the PIO data FIFO with the
-         * ATAPI identity; driver reads via the 16-bit data port (+0x000). */
-        /* Any issued command completes immediately and raises virq 53
-         * (BIM group1 bit21, VERIFIED kernel-iomap.md). The libata probe
-         * path after port_start issues device-reset/identify/read commands
-         * — completing only 0xa1 stalled the post-AACS hang (C81/C82). */
-        if (s->sata_cmd) {
-            s->sata_ist |= 0x1u;
-            s->pending2 |= BX_SATA_IRQ;
-            bx510_update_irq(s);
+    case 0xa01c: /* command/control word issued */
+        /* Two kinds of write land on this word: ATA commands (>= 0x10:
+         * 0xa1 IDENTIFY PACKET, 0xec, ...) and Device-Control writes
+         * (0x00/0x02 nIEN, 0x04/0x06/0x0e SRST). Classify by bit2: an
+         * SRST write is a device reset — complete it instantly (status
+         * back to 0x50, taskfile cleared so the signature trio serves
+         * again) instead of pretending it was a command. */
+        if ((val & 0xff) < 0x10) {
+            if (val & 0x04) {
+                memset(s->tf, 0, sizeof(s->tf));
+                s->sata_st = 0x50;   /* reset already complete */
+                s->sata_didx = 0;
+            }
+            break;                   /* nIEN/ctl write: no command */
         }
+        s->sata_cmd = val & 0xff;
+        /* Any real command completes immediately and raises virq 53
+         * (BIM group1 bit21, VERIFIED kernel-iomap.md). Status goes to
+         * DRQ (data ready on the PIO port); libata drains 256 words and
+         * the port then reads 0x50 again. */
+        s->sata_ist |= 0x1u;
+        s->sata_st = 0x58;
+        s->sata_didx = 0;
+        s->pending2 |= BX_SATA_IRQ;
+        bx510_update_irq(s);
         break;
     case 0x324180: /* FE SRAM FIFO pointer. The driver uses it as a random-
                     * access index (stores i before byte i) and resets it to 0
@@ -447,7 +529,19 @@ static void bx510_write(void *opaque, hwaddr off, uint64_t val, unsigned size)
             s->sram_fifo[s->sram_wptr++] = (uint8_t)val;
         }
         break;
-    case 0xa000: /* PIO data port write (16-bit) — record, no-op */
+    case 0xa000: /* PIO data port write — record, no-op */
+        break;
+    case 0xa25c: /* PIO burst store port (data_xfer, 7x32-bit) — record */
+        break;
+    case 0xa604: s->sata_a604 = val; break;
+    case 0xa620: s->sata_a620 = val; break;
+    case 0xa634: s->sata_a634 = val; break;
+    case 0xa680: s->sata_a680 = val; break;
+    case 0xa080: s->sata_a080 = val; break;
+    case 0xa114: s->sata_a114 = val; break;
+    case 0xa108: /* FE data word: bit15 is the doorbell the driver sets and
+                  * polls back — the FE consumes the command, so clear it. */
+        s->sata_a108 = val & ~0x8000u;
         break;
     case 0xa220: /* IRQ status W1C */
         s->sata_ist &= ~val;
@@ -608,6 +702,10 @@ static void bx510_reset(void *opaque)
     s->sram_ridx = 0;
     memset(s->sram_fifo, 0, sizeof(s->sram_fifo));
     s->sata_cmd = 0;
+    s->sata_st = 0;
+    s->sata_didx = 0;
+    s->sata_a604 = s->sata_a620 = s->sata_a634 = s->sata_a680 = 0;
+    s->sata_a080 = s->sata_a114 = s->sata_a108 = 0;
     memset(s->tf, 0, sizeof(s->tf));
     mt8560_nfi_reset(&s->nfi);
     bx510_update_irq(s);
@@ -617,6 +715,7 @@ static void bx510_init(MachineState *machine)
 {
     Bx510State *s = BX510_MACHINE(machine);
     DeviceState *l2;
+    s->trace_all = getenv("BX510_TRACE") != NULL;
     Object *cpu = object_new(machine->cpu_type);
     qdev_realize(DEVICE(cpu), NULL, &error_fatal);
     s->irq = qdev_get_gpio_in(DEVICE(cpu), ARM_CPU_IRQ);

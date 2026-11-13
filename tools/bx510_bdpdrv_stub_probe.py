@@ -180,7 +180,9 @@ def main():
         f"insmod {a.bdpdrv_guest.rsplit('/',1)[0]}/drvcli.ko; echo DRVCLI_INSMOD=$?",
         "insmod /res/shim/osal_stub.ko; echo STUB_INSMOD=$?",
         "grep osal_stub /res/proc/modules; echo STUB_MOD=$?",
-        "insmod /res/shim/bx510_feboot.ko; echo FEB_INSMOD=$?",
+        # feboot option A (feboot-marshal.md §4): the module forged
+        # _fg_fe_bootup=1 and shadowed /proc/driver; dropped so bdpdrv reads
+        # the REAL flag (its absence from a run is now true evidence).
         f"insmod {a.bdpdrv_guest}; echo BDPDRV_INSMOD=$?",
         "grep bdpdrv /res/proc/modules; echo BDPDRV_MOD=$?",
         # CLI runtime channel (Run C35+): drvcli registers char major 244;

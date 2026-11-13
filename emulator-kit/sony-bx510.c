@@ -65,8 +65,10 @@ OBJECT_DECLARE_SIMPLE_TYPE(Bx510State, BX510_MACHINE)
 #define FE_IDENT_OFF  0x2000u
 #define FE_IDENT_LEN  0x0200u        /* == sizeof(Bx510State.identify) */
 /* ATAPI PACKET reply payload offset in the same window: the CDB rows below
- * answer through the IDENTIFY route (type-0x10 offer), never the 0x5c400 DMA
- * descriptor (scsi-scan-codes.md §4.2). 0x2400 clears both blocks above. */
+ * answer through the IDENTIFY route (type-0x10 offer) — 0x2400 clears both
+ * blocks above. The READ family is the exception: it DMA's through the 0x5c400
+ * descriptor and never touches this window (scsi-scan-codes.md §4.2,
+ * c97-read-path.md §1.3). */
 #define FE_PKT_OFF    0x2400u
 #define FE_PKT_MAX    0x0080u        /* MODE SENSE(6) page 0x2a = 128 B */
 
@@ -316,6 +318,229 @@ static void bx510_fe_post(Bx510State *s, uint32_t w0, uint32_t w1,
     bx510_update_irq(s);
 }
 
+/* ==== C97 — the 0x5c400 descriptor DMA: a READ's data path ==== */
+
+/* The driver's own transfer cap (qc_issu_task .text+0x6e00 / 0x74e0: 75776 =
+ * 32 x 2352 + 512). A larger 0x5c404 is a decode bug, not a read. */
+#define FE_DMA_MAX   0x12800u
+#define CD_PAYLOAD   2048u       /* the fixture's logical sector */
+#define CD_FRAME     2352u       /* ATAPI raw CD frame (§4.2) */
+
+/* A type-0 reply whose STATUS byte (w0 byte3) is nonzero is the drive-error
+ * answer: the bottom half takes it to hw_chg_st(priv, 5) -> check_status 0x51
+ * (RDY|DSC|ERR) and libata runs EH — instead of the silent success that would
+ * hand the guest 0xbb poison (c97-read-path.md §3.2/§3.3). */
+#define FE_STATUS_ERR 0x01000000u
+
+/* The 12-byte CDB image the driver put in w1..w3 (data_xfer .text+0x5770..5780:
+ * memcpy(sp+0x6c, priv+0x24, 12)), so cdb[0] is w1 byte 0 and each word is
+ * little-endian (c97-read-path.md §4.1). */
+static void bx510_fe_cdb(Bx510State *s, uint8_t cdb[12])
+{
+    unsigned i;
+
+    for (i = 0; i < 12; i++) {
+        cdb[i] = (s->fe_cmd[1 + i / 4] >> (8 * (i % 4))) & 0xffu;
+    }
+}
+
+/* The three opcodes with a data-in phase — and therefore the only posts that
+ * arm the descriptor (data_xfer .text+0x570c..0x5724). */
+static bool bx510_fe_cdb_is_read(const uint8_t cdb[12])
+{
+    return cdb[0] == 0x28 || cdb[0] == 0xa8 || cdb[0] == 0xbe;
+}
+
+static bool bx510_fe_post_is_read(Bx510State *s)
+{
+    uint8_t cdb[12];
+
+    bx510_fe_cdb(s, cdb);
+    return bx510_fe_cdb_is_read(cdb);
+}
+
+/* Sector count out of the CDB (§4.1): READ(10) cdb[7..8], READ(12) cdb[6..9],
+ * READ CD cdb[6..8] (its cdb[9] is the sector-type mask, not a length byte). */
+static uint32_t bx510_fe_cdb_nsec(const uint8_t cdb[12])
+{
+    switch (cdb[0]) {
+    case 0xa8:
+        return ((uint32_t)cdb[6] << 24) | ((uint32_t)cdb[7] << 16) |
+               ((uint32_t)cdb[8] << 8) | cdb[9];
+    case 0xbe:
+        return ((uint32_t)cdb[6] << 16) | ((uint32_t)cdb[7] << 8) | cdb[8];
+    default:
+        return ((uint32_t)cdb[7] << 8) | cdb[8];
+    }
+}
+
+/* One CD-ROM mode-1 raw frame wrapped around a 2048-byte logical sector
+ * (firebird-fixture.md §3.3, proven byte-exact through the driver's own strip
+ * loop). The driver reads exactly one header byte — frame[15] = mode
+ * (data_xfer .text+0x54cc..0x54e4) — and takes the payload at +16 for mode 1
+ * (at +24 for mode 2). Sync and MSF are cosmetic, but the minute digit must
+ * stay two BCD digits or a read past LBA 449849 writes out of byte 14. */
+static void bx510_cd_frame(uint8_t frame[CD_FRAME], const uint8_t *payload,
+                           uint32_t lba)
+{
+    unsigned msf = lba + 150;            /* CD lead-in offset */
+    unsigned mm = (msf / 4500) % 100, ss = (msf / 75) % 60, ff = msf % 75;
+
+    memset(frame, 0, CD_FRAME);
+    memset(frame + 1, 0xff, 10);         /* sync is 00 FF x10 00 */
+    frame[12] = (mm / 10) << 4 | mm % 10;
+    frame[13] = (ss / 10) << 4 | ss % 10;
+    frame[14] = (ff / 10) << 4 | ff % 10;
+    frame[15] = 1;                       /* mode 1: payload at +16 */
+    memcpy(frame + 16, payload, CD_PAYLOAD);
+}
+
+/* c97-read-path.md §5.2 row 21 — serve one READ-family packet: read the
+ * sectors out of the fixture, DMA them straight into guest RAM at the physical
+ * address in 0x5c400, and complete with ONE bare type-0 message.
+ *
+ * No type-0x10 window offer for a READ: the bottom half only cache-invalidates
+ * on a type-0 with direction 1 (.text+0x48ec), while a type-0x10 would memcpy
+ * the window OVER the sectors just DMA'd (§1.3) and the read would still look
+ * successful. Row 23 lives here too: a read past EOF answers byte3 != 0 rather
+ * than clamping to a short transfer, because the driver sized its buffer from
+ * nsec and not from a prefix (firebird-fixture.md §4).
+ *
+ * Reached from the doorbell dispatch when the descriptor is armed, and from the
+ * packet ladder when a READ packet never armed one — there the honest answer is
+ * a drive error, not a state advance with no DMA behind it. */
+static void bx510_fe_read(Bx510State *s)
+{
+    uint8_t cdb[12];
+    uint32_t phys = s->fe_dma[0], len = s->fe_dma[1];
+    uint32_t lba, nsec, flen, sectors;
+    uint64_t ram = memory_region_size(s->parent_obj.ram);
+    uint8_t *payload, *buf;
+
+    bx510_fe_cdb(s, cdb);
+    if (!bx510_fe_cdb_is_read(cdb) || !(s->fe_dma[3] & 1u)) {
+        qemu_log_mask(LOG_GUEST_ERROR,
+                      "bx510: FE READ packet CDB %02x with no armed 0x5c400 "
+                      "descriptor (0x5c40c=%08" PRIx32 ") — answering drive "
+                      "error, no data\n", cdb[0], s->fe_dma[3]);
+        bx510_fe_post(s, FE_STATUS_ERR, 0, 0, 0);
+        return;
+    }
+    flen = (cdb[0] == 0xbe) ? CD_FRAME : CD_PAYLOAD;
+    lba = ((uint32_t)cdb[2] << 24) | ((uint32_t)cdb[3] << 16) |
+          ((uint32_t)cdb[4] << 8) | cdb[5];
+    nsec = bx510_fe_cdb_nsec(cdb);
+
+    /* Framing. The CDB opcode names it and 0x5c404 confirms it: the driver
+     * allocates nsec x frame, so the length is the authority when it disagrees
+     * (§4.1). 2048 = the plain logical sector; 2352 = a raw CD frame, which the
+     * driver strips itself out of mode byte 15 (§4.2/§4.4). A wider frame — the
+     * daemon's 2064-byte SACD channel reaches exactly here, C103 measured
+     * 0x5c404 = 4128 for nsec = 2 — is a framing this model does not synthesise
+     * yet (firebird-fixture.md §3.4): refuse it loudly instead of DMAing a
+     * ragged or mis-framed transfer. */
+    if (len && nsec && len % nsec == 0 && len / nsec != flen) {
+        qemu_log_mask(LOG_GUEST_ERROR,
+                      "bx510: FE READ %02x lba=%u nsec=%u: 0x5c404=%u means %u "
+                      "bytes per sector, not %u — taking the descriptor "
+                      "length\n", cdb[0], lba, nsec, len, len / nsec, flen);
+        flen = len / nsec;
+    }
+    if (flen != CD_PAYLOAD && flen != CD_FRAME) {
+        qemu_log_mask(LOG_GUEST_ERROR,
+                      "bx510: FE READ %02x lba=%u nsec=%u: %u-byte sector "
+                      "framing is not modelled (2048 plain, 2352 raw CD) — "
+                      "answering drive error, no data\n",
+                      cdb[0], lba, nsec, flen);
+        bx510_fe_post(s, FE_STATUS_ERR, 0, 0, 0);
+        return;
+    }
+    /* Sector count: 0x5c404 / frame when the descriptor length is whole
+     * frames, else the CDB's own count. */
+    if (len && len % flen == 0) {
+        if (nsec != len / flen) {
+            qemu_log_mask(LOG_GUEST_ERROR,
+                          "bx510: FE READ %02x: CDB says %u sectors (%u B) but "
+                          "0x5c404=%u — using the descriptor length\n",
+                          cdb[0], nsec, nsec * flen, len);
+        }
+        nsec = len / flen;
+    } else {
+        qemu_log_mask(LOG_GUEST_ERROR,
+                      "bx510: FE READ %02x: 0x5c404=%u is not whole %u-byte "
+                      "frames — using the CDB sector count\n",
+                      cdb[0], len, flen);
+    }
+    if (!nsec || (uint64_t)nsec * flen > FE_DMA_MAX) {
+        qemu_log_mask(LOG_GUEST_ERROR,
+                      "bx510: FE READ %02x: unusable transfer (nsec=%u, %u-byte "
+                      "frames, cap %u) — answering drive error\n",
+                      cdb[0], nsec, flen, FE_DMA_MAX);
+        bx510_fe_post(s, FE_STATUS_ERR, 0, 0, 0);
+        return;
+    }
+    len = nsec * flen;
+    sectors = s->sata_blk ? (uint32_t)(blk_getlength(s->sata_blk) / CD_PAYLOAD)
+                          : 0;
+    if (lba >= sectors || nsec > sectors - lba) {
+        qemu_log_mask(LOG_GUEST_ERROR,
+                      "bx510: FE READ %02x past EOF: lba=%u nsec=%u, disc has "
+                      "%u sectors (last LBA %u) — answering drive error\n",
+                      cdb[0], lba, nsec, sectors, sectors ? sectors - 1 : 0);
+        bx510_fe_post(s, FE_STATUS_ERR, 0, 0, 0);
+        return;
+    }
+    if ((uint64_t)phys + len > ram) {
+        qemu_log_mask(LOG_GUEST_ERROR,
+                      "bx510: FE READ %02x: DMA target %08" PRIx32 "+%u runs "
+                      "past RAM (%" PRIu64 " B) — answering drive error\n",
+                      cdb[0], phys, len, ram);
+        bx510_fe_post(s, FE_STATUS_ERR, 0, 0, 0);
+        return;
+    }
+    payload = g_malloc((size_t)nsec * CD_PAYLOAD);
+    if (blk_pread(s->sata_blk, (int64_t)lba * CD_PAYLOAD,
+                  (int64_t)nsec * CD_PAYLOAD, payload, 0) < 0) {
+        qemu_log_mask(LOG_GUEST_ERROR,
+                      "bx510: FE READ %02x: disc read failed at lba=%u "
+                      "nsec=%u\n", cdb[0], lba, nsec);
+        g_free(payload);
+        bx510_fe_post(s, FE_STATUS_ERR, 0, 0, 0);
+        return;
+    }
+    if (flen == CD_FRAME) {
+        /* READ CD: the driver strips the raw framing itself, so the model has
+         * to synthesise whole frames around the plain sectors (§4.2/§4.4,
+         * firebird-fixture.md §3.3) — the image holds no framing bytes. */
+        uint32_t i;
+
+        buf = g_malloc(len);
+        for (i = 0; i < nsec; i++) {
+            bx510_cd_frame(buf + (size_t)i * CD_FRAME,
+                           payload + (size_t)i * CD_PAYLOAD, lba + i);
+        }
+        g_free(payload);
+    } else {
+        buf = payload;                   /* len == nsec x 2048 */
+    }
+    if (address_space_write(&address_space_memory, phys, MEMTXATTRS_UNSPECIFIED,
+                            buf, len) != MEMTX_OK) {
+        qemu_log_mask(LOG_GUEST_ERROR,
+                      "bx510: FE READ %02x: DMA write to %08" PRIx32
+                      " failed\n", cdb[0], phys);
+        g_free(buf);
+        bx510_fe_post(s, FE_STATUS_ERR, 0, 0, 0);
+        return;
+    }
+    g_free(buf);
+    s->sata_reads += nsec;
+    qemu_log_mask(LOG_GUEST_ERROR,
+                  "bx510: FE READ %02x lba=%u nsec=%u len=%u frame=%u -> phys "
+                  "%08" PRIx32 " (descriptor DMA)\n",
+                  cdb[0], lba, nsec, len, flen, phys);
+    bx510_fe_post(s, 0, 0, 0, 0);
+}
+
 /* ATAPI PACKET (code 0xa0) classification — scsi-scan-codes.md §4.2.
  *
  * The post carries w1..w3 two ways and the recipe's rows coincide
@@ -451,14 +676,12 @@ static void bx510_fe_packet(Bx510State *s)
         len = FE_PKT_MAX;
         break;
     case FE_PKT_READ:
-        /* The C97 FE-DMA path (descriptor 0x5c400/404/408/40c armed, data
-         * lands in guest RAM, c97-read-path.md §1.3) is NOT modelled yet —
-         * C103 owns it. Answer the completion so the packet cannot hang into a
-         * 30 s libata timeout, and say plainly that the buffer got no data. */
-        qemu_log_mask(LOG_UNIMP,
-                      "bx510: FE READ packet — no FE-DMA implementation, "
-                      "completion carries no data\n");
-        bx510_fe_post(s, 0, 0, 0, 0);
+        /* A READ-family CDB that never armed the 0x5c400 descriptor. data_xfer
+         * arms it on every such post (0x570c..0x5874), so this is an anomaly
+         * the trace has to name — answer byte3 != 0 so the guest gets a fast
+         * drive error instead of the 0xbb poison that a state advance with no
+         * DMA leaves behind (c97-read-path.md §3.3). */
+        bx510_fe_read(s);
         return;
     case FE_PKT_UNKNOWN:
         /* P7: never stay silent — silence is a 30 s libata timeout, not a
@@ -486,6 +709,21 @@ static void bx510_fe_dispatch(Bx510State *s)
     unsigned type = (w0 >> 16) & 0xff;
     uint32_t arg = s->fe_cmd[1] | s->fe_cmd[2] | s->fe_cmd[3];
 
+    /* c97-read-path.md §5.2 rows 21-24, evaluated BEFORE the content ladder.
+     * The discriminator is the armed 0x5c400 descriptor, not the code byte: a
+     * READ rides a packet post whose w0 byte3 is the driver's sticky
+     * priv+0x29c, the same byte an IDENTIFY/loader post carries (§0.7). Only
+     * the READ family arms the descriptor (data_xfer 0x570c..0x5874), so the
+     * CDB decides the DMA and a stale arm can never pull one in — after a READ
+     * completion the driver leaves 0x5c40c armed (§1.1/§1.4), which is why the
+     * arm alone is not enough. A non-READ post with the arm still set falls
+     * through to the ladder below rather than getting row 22's bare
+     * completion: it does not DMA either way, and data-in verbs such as READ
+     * CAPACITY/MODE SENSE/READ TOC need their type-0x10 offer. */
+    if ((s->fe_dma[3] & 1u) != 0 && bx510_fe_post_is_read(s)) {
+        bx510_fe_read(s);
+        return;
+    }
     if (type == 0x10) {
         /* _svoif_mt85xx_send_table_data_ack_cmd (.text+0x3c50): the driver
          * ACKed message A, so post message B — a bare type-0 completion. Keyed
@@ -505,6 +743,14 @@ static void bx510_fe_dispatch(Bx510State *s)
         return;
     }
     if (code == 0xa1) {
+        if (bx510_fe_post_is_read(s)) {
+            /* A READ CDB riding an 0xa1 post (§4.1 predicts w0 = 0xa1000000
+             * for a READ): with no armed descriptor there is no data path, and
+             * the IDENTIFY branch below would post a type-0x10 offer whose
+             * direction-1 copy overwrites the buffer (§1.3). */
+            bx510_fe_read(s);
+            return;
+        }
         /* ATA IDENTIFY PACKET DEVICE (C95 cmd#3, §3.3): the payload rides the
          * FE DRAM window in a type-0x10 message. C98 LESSON (hsm-buffer-seq.md
          * §0.2/§3.2): the bottom-half work item reads the status block EXACTLY
@@ -649,10 +895,10 @@ static uint64_t bx510_read(void *opaque, hwaddr off, unsigned size)
     case 0x5c020:
         return s->fe_doorbell;   /* stored value: the RMW must be lossless */
     case 0x5c400: case 0x5c404: case 0x5c408: case 0x5c40c:
-        /* data_xfer's READ-CDB descriptor (.text+0x5814..0x5874): host
-         * address, byte count, and two flag words the driver only ever ORs
-         * bits into, so returning what was written keeps the RMW lossless
-         * (§5.1 rows 11-12). */
+        /* data_xfer's READ descriptor (§5.1 rows 17-20): guest physical
+         * address, byte count, arm bits. Readback must be lossless — the
+         * driver's `ldr/orr/str` on 0x5c408/0x5c40c would otherwise fold the
+         * model's value into its own. `& 1` of 0x5c40c is the arm flag. */
         return s->fe_dma[(off - 0x5c400) / 4];
     /* ---- SATA/ATAPI (bus 0x7000a000, off 0xa000) ---- */
     case 0x324180: /* FE SRAM FIFO write pointer readback */
@@ -948,9 +1194,13 @@ static void bx510_write(void *opaque, hwaddr off, uint64_t val, unsigned size)
         s->fe_irq &= ~(uint32_t)val;
         break;
     case 0x5c400: case 0x5c404: case 0x5c408: case 0x5c40c:
-        /* data_xfer descriptor writes: host addr, length, arm/direction
-         * flags. On the executed path they are only written, never
-         * consumed — the reply still arrives as a mailbox message (§1.2). */
+        /* data_xfer's READ descriptor (c97-read-path.md §5.1 rows 17-20, §2.2):
+         * guest PHYSICAL address, byte count, then two flag words the driver
+         * only ever ORs bits into — so a plain store keeps the RMW lossless.
+         * They are consumed on the 0x5c020 doorbell, never here: 0x5c40c = 1
+         * lands BEFORE the address and length (§1.2), so acting on this write
+         * would DMA a stale buffer. Never auto-clear bit0 either; the driver's
+         * own disarm (hw_chg_st 0x4428) is the only writer that does. */
         s->fe_dma[(off - 0x5c400) / 4] = val;
         break;
     case 0x5c500: /* FE DRAM window page (xfer_int_ldr_fw .text+0x1940) */

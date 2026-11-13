@@ -2,7 +2,9 @@
 """BX510 bdpdrv insmod trace with OSAL stub preloaded (STUB/INSTRUMENT).
 
 Runs full-system QEMU in shell mode (init=/bin/sh), stages a tar payload
-into the unused fe_test_data NAND partition, then in-guest:
+into the unused fe_test_data NAND partition (page 0 onward — which is ALSO
+where the driver reads the FATB record, so --fatb-fixture restages that record
+from inside the tar after extraction), then in-guest:
   - mounts proc to /res/proc
   - insmods the staged osal_stub.ko
   - insmods the rootfs bdpdrv.ko
@@ -75,6 +77,14 @@ def main():
                         "gets 'insmod /res/shim/bx510_clidrive.ko "
                         "clidrive_args=MODE' (e.g. PROBE_SEQ for the P0-P2 "
                         "ladder); empty = the default instrument path")
+    p.add_argument("--fatb-fixture", type=Path, default=None,
+                   help="FATB page-0 record (build_fe_tag_fixtures.py's "
+                        "fe_test_data.bin): staged inside the tar as "
+                        "shim/fatb.bin and written back to offset 0 of the "
+                        "staging partition AFTER extraction — the driver reads "
+                        "FATB from fe_test_data page 0 only, so a fixture "
+                        "applied to the image beforehand is clobbered by the "
+                        "tar stream (decode/nfi-logging.md)")
     p.add_argument("--bdpdrv-host", required=True, type=Path,
                    help="host path to bdpdrv.ko for hashing/pinning")
     p.add_argument("--bdpdrv-guest", required=True, type=str,
@@ -110,6 +120,13 @@ def main():
             raise SystemExit(f"bad --pre-file {spec!r}; want NAME=PATH")
         extra[f"shim/{name}"] = Path(path).read_bytes()
         pre_files.append(name)
+    fatb_blob = b""
+    if a.fatb_fixture is not None:
+        fatb_blob = a.fatb_fixture.resolve(strict=True).read_bytes()
+        # mtdblock writes whole pages, so pad the record with erased (0xFF)
+        # filler to a NAND page multiple; the record itself is untouched.
+        fatb_blob += b"\xff" * (-len(fatb_blob) % 2048)
+        extra["shim/fatb.bin"] = fatb_blob
     # decode §5: the clidrive shim is inert without its module parameter, and
     # insmod is the only place the parameter can travel — so the mode is
     # rendered here, next to the file that is staged, not guessed later.
@@ -124,6 +141,17 @@ def main():
     commands = [
         "mount -t tmpfs tmpfs /res; /bin/mknod /res/test-bdev b 31 10; /bin/mkdir -p /res/shim /res/proc",
         f"/bin/dd if=/res/test-bdev bs=4096 count={blocks} 2>/res/dd.err | /bin/tar -xf - -C /res",
+    ]
+    if fatb_blob:
+        # The restage MUST follow the extraction: the tar stream starts at the
+        # partition head, which is the only offset the driver's FATB reader
+        # accepts, so the record rides inside the tar and is written back to
+        # page 0 once the modules are safely in tmpfs.
+        commands.append(
+            f"/bin/dd if=/res/shim/fatb.bin of=/res/test-bdev bs=2048 "
+            f"count={len(fatb_blob) // 2048} 2>/res/fatb.dd.err; "
+            f"echo FATB_RESTAGE=$?")
+    commands += [
         "mount -t proc proc /res/proc; echo STUB_PROC=$?",
         # bdpdrv opens /proc/... at the LITERAL path; shell mode lacks /proc.
         # ROOTPROC=255 every run (C51 finding): mount says ENOENT on /proc
@@ -238,6 +266,11 @@ def main():
         },
         "clidrive_mode": a.clidrive_mode or "DEFAULT",
         "fe_test_data": {"offset": part["offset"], "size": part["size"], "payload_size": len(payload)},
+        "fatb_fixture": ({"host_path": str(a.fatb_fixture.resolve()),
+                          "sha256": sha256(a.fatb_fixture.resolve()),
+                          "size": len(fatb_blob),
+                          "restage_pages": len(fatb_blob) // 2048}
+                         if fatb_blob else None),
         "terminal_marker": marker_ok,
     }
     a.meta.write_text(json.dumps(meta, indent=2, sort_keys=True) + "\n")

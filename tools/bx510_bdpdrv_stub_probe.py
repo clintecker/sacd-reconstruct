@@ -10,11 +10,13 @@ from inside the tar after extraction), then in-guest:
   - insmods the rootfs bdpdrv.ko
 Captures UART and QEMU -d unimp logs.
 
-Three optional stages extend the command list after the C95-C101 spine. Each is
+Four optional stages extend the command list after the C95-C101 spine. Each is
 its own flag and OFF by default, so an unflagged fire renders the C100/C101
 command list byte-for-byte (comparability is the point, not a nicety):
   --odd-tail   cdrom.ko + sr_mod.ko + mknod /dev/sr0 (decode/daemon-wiring.md §2)
   --sacdread   the sacd_read.ko smoke stage (decode/sacdread-stage-plan.md §5)
+  --sr-ladder  the C103 READ(10) ladder, both phases
+               (decode/read10-orchestration.md §2, decode/sr_read_ladder.sh)
   --daemon     sacd_extract_160 as the last stage (decode/daemon-wiring.md §2)
 
 This is a deliberate instrumentation run, not reconstruction.
@@ -106,6 +108,68 @@ def sacdread_commands(auth: str) -> list[str]:
         "V=$(sed -n '/^SMOKE S07 /s/.*result=\\(-*[0-9][0-9]*\\).*/\\1/p' "
         "/res/sacdread.smoke); echo SACDREAD_INIT=${V:-NONE}",
         "echo SACDREAD_STAGE_END",
+    ]
+
+
+def sr_ladder_commands() -> list[str]:
+    """The C103 READ(10) ladder stage (decode/read10-orchestration.md §2/§6.2).
+
+    Two helper invocations of the same script, one per phase, because the legs
+    answer different questions: PHASE=pre measures capacity + the 2048-byte
+    oracles through SG_IO/dd, PHASE=post measures the daemon's own ioctl
+    0x40105303 path (2064-byte frames). The dumps land in /res/c103 — /res is
+    the tmpfs the first command of this list mounts, whereas /tmp exists only
+    when the daemon stage mounts it, and the rootfs is squashfs-ro.
+
+    Ordering deviation from §6.2, labelled in decode/sr_read_ladder.sh and in
+    the run doc: stages are appended after the whole stack, so PHASE=pre runs
+    with bdpdrv resident. The probes are read-only and bdpdrv does not own
+    /dev/sr0, so the measurement stands; the *attribution* ("these bytes came
+    from libata/sr/FE alone") does not, and run-c103.md must say so.
+
+    The sacd_read trio before PHASE=post: --sacdread's smoke script leaves the
+    module rmmod'ed at S12, and bdpdrv's _au4CpsaInst slot survives an rmmod
+    (daemon-wiring.md §5.1), so leg (e) insmods it itself and releases the slot
+    with 0x40105305 before its own INIT — the smoke script's S07→S09→S10 shape
+    (prime, gated release, post INIT), not the daemon stage's GATE_UNINIT,
+    which runs after daemon_gate.sh's own INIT.
+    """
+    return [
+        "echo SR_LADDER_BEGIN",
+        "chmod 0555 /res/shim/srread; echo SRREAD_CHMOD=$?",
+        "PHASE=pre HELPER=/res/shim/srread OUT=/res/c103 SR0=/dev/sr0 "
+        "SACD=/dev/sacd_read SACD_DIFF=0 sh /res/shim/sr_read_ladder.sh; "
+        "echo SR_LADDER_PRE_RC=$?",
+        "insmod /res/shim/sacd_read.ko minor=201; echo SR_SACDREAD_INSMOD=$?",
+        # rm -f first: --sacdread's smoke stage already mknod'ed this path and
+        # left the node behind (S12 rmmods the module but not the node), so a
+        # bare mknod returns EEXIST and the ladder would report a failure that
+        # is really a leftover.
+        "rm -f /dev/sacd_read; mknod /dev/sacd_read c 10 201; "
+        "echo SR_SACDREAD_MKNOD=$?",
+        # prime -> release -> the phase's own INIT. The UNINIT (0x40105305) is
+        # gated on a SUCCESSFUL prime, the same rule sacdread_smoke.sh applies
+        # to AUTH/UNINIT: on a freshly insmod'ed module (or after a failed
+        # Connect) the instance handle is 0xFFFFFFFF and bdpdrv's
+        # i4CPSA_Inst_CPSMode_Ctrl dereferences it — C103 attempt 1 oopsed
+        # there (i4CPSA_Inst_CPSMode_Ctrl+0xc, LR CPSA_SACDCmdDisable+0x34,
+        # r0=0xffffffff, sacdgate exit 139). Shell-only extraction: this rootfs
+        # has no cut, and sed's presence is not something to bet a marker on.
+        "O=$(/res/shim/srread sacdread init /dev/sacd_read); echo \"$O\"; "
+        "R=${O##*result=}; echo SR_SACDREAD_PRIME=$R; "
+        # ''|-* covers the two states C103's clean negative did not exercise:
+        # a failed ioctl leaves srread's memset(0) buffer printed as result=0
+        # (harmless but ambiguous) only when ret=0 too — an exec/loader failure
+        # prints NOTHING, R='' — and either must NOT reach the release
+        # (reviewer fix: the gate was weaker than the smoke-script rule it
+        # cites; both states fire the release into the 0xFFFFFFFF deref).
+        "case \"$R\" in ''|-*) echo SR_SACDREAD_UNINIT=skipped-prime-failed ;; "
+        "*) /res/shim/sacdgate 0x40105305 /dev/sacd_read; "
+        "echo SR_SACDREAD_UNINIT=$? ;; esac",
+        "PHASE=post HELPER=/res/shim/srread OUT=/res/c103 SR0=/dev/sr0 "
+        "SACD=/dev/sacd_read SACD_DIFF=1 sh /res/shim/sr_read_ladder.sh; "
+        "echo SR_LADDER_POST_RC=$?",
+        "echo SR_LADDER_DONE",
     ]
 
 
@@ -218,6 +282,17 @@ def main():
                    help="--sacdread: '0' skips S08 AUTH, which runs bdpdrv's "
                         "whole SACD bring-up self-test and costs up to ~35 s "
                         "when /dev/sr0 exists but answers nothing; default 1")
+    p.add_argument("--sr-ladder", type=Path, default=None, metavar="SH",
+                   help="host path to decode/sr_read_ladder.sh, staged as "
+                        "shim/sr_read_ladder.sh: renders the C103 READ(10) "
+                        "ladder stage (PHASE=pre then PHASE=post). Requires "
+                        "--odd-tail (legs a-a2 need /dev/sr0), --sacdread (leg "
+                        "e needs the daemon's module) and --sacdgate (the "
+                        "0x40105305 slot release)")
+    p.add_argument("--srread", type=Path, default=None, metavar="ELF",
+                   help="host path to the ARM srread helper (decode/sr_read10.c "
+                        "built on the VM with the era toolchain), staged as "
+                        "shim/srread — required by --sr-ladder")
     p.add_argument("--daemon", type=Path, default=None, metavar="TGZ",
                    help="host path to the prebuilt daemon payload tgz "
                         "(sacd_extract_160 + sacd_read.ko + sacdgate + "
@@ -283,6 +358,22 @@ def main():
         extra["shim/sacd_read.ko"] = a.sacdread.resolve(strict=True).read_bytes()
         extra["shim/sacdread_smoke.sh"] = \
             a.sacdread_smoke.resolve(strict=True).read_bytes()
+    if a.sr_ladder is not None:
+        missing = [flag for flag, value in (("--srread", a.srread),
+                                            ("--odd-tail", a.odd_tail),
+                                            ("--sacdread", a.sacdread),
+                                            ("--sacdgate", a.sacdgate))
+                   if not value]
+        if missing:
+            raise SystemExit(
+                f"--sr-ladder needs {', '.join(missing)}: the ladder's legs "
+                "a-a2 open /dev/sr0 (--odd-tail), leg e opens "
+                "/dev/sacd_read (--sacdread stages the module) and releases "
+                "bdpdrv's cpsa slot with 0x40105305 (--sacdgate); --srread is "
+                "the helper every leg runs (decode/read10-orchestration.md §2)")
+        extra["shim/sr_read_ladder.sh"] = \
+            a.sr_ladder.resolve(strict=True).read_bytes()
+        extra["shim/srread"] = a.srread.resolve(strict=True).read_bytes()
     if a.daemon is not None:
         extra["shim/daemon_payload.tgz"] = a.daemon.resolve(strict=True).read_bytes()
     fatb_blob = b""
@@ -391,6 +482,8 @@ def main():
         commands += odd_tail_commands()
     if a.sacdread is not None:
         commands += sacdread_commands(a.sacd_auth)
+    if a.sr_ladder is not None:
+        commands += sr_ladder_commands()
     if a.daemon is not None:
         commands += daemon_commands()
     commands += [
@@ -412,6 +505,8 @@ def main():
         print("stages:", f"odd_tail={a.odd_tail}",
               f"sacdread={'-' if a.sacdread is None else a.sacdread.name}",
               f"sacd_auth={a.sacd_auth}",
+              f"sr_ladder={'-' if a.sr_ladder is None else a.sr_ladder.name}",
+              f"srread={'-' if a.srread is None else a.srread.name}",
               f"daemon={'-' if a.daemon is None else a.daemon.name}")
         print(f"payload: {len(payload)} B of {part['size']} B "
               f"({part['size'] - len(payload)} B free), "
@@ -481,6 +576,16 @@ def main():
                 "smoke_sha256": sha256(a.sacdread_smoke.resolve()),
                 "auth": a.sacd_auth,
                 "init_ok_value": int(SACDREAD_INIT_OK),
+            },
+            "sr_ladder": None if a.sr_ladder is None else {
+                "host_path": str(a.sr_ladder.resolve()),
+                "sha256": sha256(a.sr_ladder.resolve()),
+                "size": a.sr_ladder.stat().st_size,
+                "helper_host_path": str(a.srread.resolve()),
+                "helper_sha256": sha256(a.srread.resolve()),
+                "helper_size": a.srread.stat().st_size,
+                "out_dir": "/res/c103",
+                "phase_order": "post-load",
             },
             "daemon": None if a.daemon is None else {
                 "host_path": str(a.daemon.resolve()),

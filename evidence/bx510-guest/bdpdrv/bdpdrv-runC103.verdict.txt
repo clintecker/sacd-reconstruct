@@ -1,0 +1,35 @@
+PASS  disc attached (C100-R0)  (1)
+FAIL  sr0 capacity + block size (leg a)  (want >=1, got 0)
+PASS  no qc timeout  (0)
+PASS  no EH give-up  (0)
+PASS  no SRST failure  (0)
+PASS  no failed IDENTIFY  (0)
+FAIL  three distinct payloads (no canned block)  (want 3, got 1)
+FAIL  oracle LBA 16 (PVD)  (want 1, got 0)
+FAIL  oracle LBA 510 (SACDMTOC)  (want 1, got 0)
+FAIL  oracle LBA 532104 (mid-disc)  (want 1, got 0)
+FAIL  oracle LBA 510 x10 (batch)  (want 1, got 0)
+FAIL  oracle final sector (EOF boundary)  (want 1, got 0)
+FAIL  LBA 0 served as real zeros  (want 1, got 0)
+FAIL  0xbb poison in no head bytes  (want 0, got 5)
+FAIL  past-EOF rejected  (want 1, got 0)
+FAIL  past-EOF did not 'succeed'  (want 0, got 1)
+FAIL  past-EOF carried a sense triple  (want 0, got 1)
+PASS  ioctl 5303 read succeeded  (1)
+PASS  5303 dump + hashes emitted  (1)
+PASS  ladder ran to completion  (2)
+FRAMING layout=unresolved (b0:0=d41d8cd98f00b204e9800998ecf8427e 4=d41d8cd98f00b204e9800998ecf8427e 8=d41d8cd98f00b204e9800998ecf8427e 12=d41d8cd98f00b204e9800998ecf8427e 16=d41d8cd98f00b204e9800998ecf8427e 24=d41d8cd98f00b204e9800998ecf8427e b1:2048=d41d8cd98f00b204e9800998ecf8427e 2064=d41d8cd98f00b204e9800998ecf8427e 2072=d41d8cd98f00b204e9800998ecf8427e 2076=d41d8cd98f00b204e9800998ecf8427e)
+FAIL  framing verdict  (unresolved (accept is payload_at_12_stride_2064))
+PASS  descriptor armed (0x5c40c = 1)  (9)
+PASS  plain read length 2048  (6)
+PASS  batch read length 20480  (1)
+FAIL  SACD ioctl length 2064x2 = 4128  (want 1, got 2)
+PASS  CDB[0..3] = READ(10)  (6)
+PASS  CDB[4..7] = LBA 0x1FE, big-endian  (4)
+FAIL  CDB[8..11] = nsec 2 + vendor 0x98  (want 1, got 2)
+INFO  terminal_marker = True
+INFO  payload_size    = 788480
+INFO  attach: 2047:sr0: scsi-1 drive
+INFO  attach: 2050:/ # mknod /dev/sr0 b 11 0; echo SR0_MKNOD=$?
+INFO  attach: 2052:/ # ls -l /dev/sr0; echo SR0_LS=$?
+READ10_VERDICT=FAIL

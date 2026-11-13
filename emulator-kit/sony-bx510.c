@@ -342,18 +342,20 @@ static void bx510_fe_dispatch(Bx510State *s)
     }
     if (code == 0xa1) {
         /* ATA IDENTIFY PACKET DEVICE (C95 cmd#3, §3.3): the payload rides the
-         * FE DRAM window in a type-0x10 message; the type-0 completion is what
-         * advances priv+0x220. C97 LESSON (id-validity-check.md §5): payload
-         * FIRST is dropped — the driver's bounce-buffer arm priv+0x54 is still
-         * 0 when the bottom half drains the type-0x10 message, so the
-         * min(priv+0x54, w2) copy length is 0 and data_xfer later hands libata
-         * stale bytes (the two C97 fail lines are mutually exclusive id[0]
-         * constraints = two different stale buffers). H1: completion FIRST
-         * (priv+0x220 advances → check_status 0x58/DRQ → data_xfer arms
-         * priv+0x54) and the payload message drains into the armed buffer on
-         * the next bottom-half pass. */
+         * FE DRAM window in a type-0x10 message. C98 LESSON (hsm-buffer-seq.md
+         * §0.2/§3.2): the bottom-half work item reads the status block EXACTLY
+         * ONCE per invocation (priv+0x2dc is never cleared, so its loop-back
+         * tail is dead), and two posts collapse into one latch bit whose block
+         * content is the LAST message written. Any two-message scheme therefore
+         * fails: payload-then-completion overwrites the payload (C97:
+         * 'device reports invalid type'), completion-then-payload consumes the
+         * completion and orphans the payload (C98: 'unsupported CDB len').
+         * Variant A (hsm-buffer-seq.md §3.3-A): post ONLY the type-0x10 payload
+         * — it is the single block read the driver will ever do for this qc;
+         * the predicted C99 observable is 'ST_FIRST: !(DRQ|ERR|DF)' +
+         * err_mask=0x2 (the DRQ-less poll), which converts the state question
+         * into a measurement. */
         bx510_fe_dram_write(s, FE_IDENT_OFF, s->identify, FE_IDENT_LEN);
-        bx510_fe_post(s, 0, 0, 0, 0);
         bx510_fe_post(s, 0x00100000u, FE_IDENT_OFF, FE_IDENT_LEN, 0);
         return;
     }

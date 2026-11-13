@@ -28,18 +28,21 @@
 typedef unsigned long (*im_reg_fn)(unsigned long type, unsigned long compid,
                                    unsigned long op, void *fnslot, void *ctx);
 
-static unsigned long peer_fnslot;
+static unsigned long peer_fnslot[4];
 
-/* The generator call: Create invokes the peer once with (ctx, 0x16b, compid)
- * and ignores the return (gcpu-connect-path.md A2). Logging it once is the
- * rig's proof the entry was consumed. */
-static int cpsa_peer_call(void *ctx, unsigned long type, unsigned long compid)
+/* The Im fnslot is a FUNCTION TABLE, not a single pointer (C106 oops decode:
+ * i4ImQueryInterface hands out &slot and the consumers index it — Create's
+ * generator call reads slot[0], i4CPSA_Inst_Destroy+0x12c reads slot[1] and
+ * calls it UNCHECKED — a 1-word slot let slot[1] fall into zeroed .bss and
+ * PC=0'd the guest). Every entry is a logged no-op returning 0; the calls'
+ * return values are ignored per the decode (0x548c0..0x548d4, 0x54a54). */
+static int peer_op(void *ctx, unsigned long type, unsigned long compid)
 {
 	static int once;
 
 	if (!once) {
 		once = 1;
-		printk(KERN_INFO "[CPSA_PEER] generator call: ctx=%p type=%#lx compid=%lu\n",
+		printk(KERN_INFO "[CPSA_PEER] op call: ctx=%p type=%#lx compid=%lu\n",
 		       ctx, type, compid);
 	}
 	return 0;
@@ -55,8 +58,11 @@ static int __init cpsa_peer_init(void)
 		printk(KERN_ERR "[CPSA_PEER] i4ImRegisterInterface2 not found — is bdpdrv loaded?\n");
 		return -ENOENT;
 	}
-	peer_fnslot = (unsigned long)cpsa_peer_call;
-	rc = (int)reg(0x168, 0xFFFFFFFF, 0, &peer_fnslot, NULL);
+	peer_fnslot[0] = (unsigned long)peer_op;   /* generator (Create) */
+	peer_fnslot[1] = (unsigned long)peer_op;   /* release (Destroy+0x12c) */
+	peer_fnslot[2] = (unsigned long)peer_op;   /* further ops: guarded no-op */
+	peer_fnslot[3] = (unsigned long)peer_op;
+	rc = (int)reg(0x168, 0xFFFFFFFF, 0, peer_fnslot, NULL);
 	/* The function's return is ignored by the recipe (A1): the record's
 	 * existence is what matters, and a duplicate registration after a
 	 * bdpdrv reload would also land here. Log it either way. */

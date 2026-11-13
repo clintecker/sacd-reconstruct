@@ -47,6 +47,24 @@ OBJECT_DECLARE_SIMPLE_TYPE(Bx510State, BX510_MACHINE)
 #define BX_UART_RX_READY (1u << 7)
 #define BX_UART_IRQ      (1u << 14)
 
+/* ==== FE mailbox reply constants (evidence/bx510-guest/bdpdrv/decode/
+ * fe-ata-cmd.md §5) ==== */
+/* 0x5c804 bit16 = "an FE message is pending" (§2.2). */
+#define FE_IRQ_MSG    0x00010000u
+/* Staged replies. The driver never has more than two outstanding — the
+ * IDENTIFY payload and its type-0 completion (§5.2) — so four slots is
+ * slack, not a ring-buffer design. */
+#define FE_MSG_SLOTS  4
+/* Loader-table block offset inside the FE DRAM window (fe-status-handshake.md
+ * §9.1). */
+#define FE_REPLY_OFF  0x1000u
+#define FE_REPLY_LEN  0x0200u
+/* IDENTIFY PACKET payload offset in the same window: the block rides the FE
+ * DRAM window, never a mailbox word (§2.3, §5.3), and 0x2000 stays clear of
+ * the table block above. */
+#define FE_IDENT_OFF  0x2000u
+#define FE_IDENT_LEN  0x0200u        /* == sizeof(Bx510State.identify) */
+
 struct Bx510State {
     MachineState parent_obj;
     struct arm_boot_info boot;
@@ -117,17 +135,28 @@ struct Bx510State {
      * address 0xfd324184). FIFO storage + both counters. */
     uint8_t sram_fifo[0x4000];
     bool fe_booted;          /* set on 0x5c704 |= 0x601 (FE reset release) */
-    /* FE internal-loader status mailbox (VERIFIED fe-status-handshake.md:
-     * 0x5c000..c00c = 16-byte command block (byte3=code, byte2=type),
-     * 0x5c020 bit0 = doorbell, 0x5c040..c04c = status block,
-     * 0x5c804 bit16 = message pending (READ-AND-CLEAR — the FE IRQ top
-     * half drains it in a loop that ends only on a zero read; a sticky
-     * read was the 4.4 GB storm). fe_msg stages the two-message reply:
-     * A = type 16 table-data offer, B = type 0 final. */
+    /* FE mailbox (VERIFIED fe-status-handshake.md, recipe fe-ata-cmd.md §5):
+     * 0x5c000..c00c = 16-byte command block (byte3 = code, byte2 = type),
+     * 0x5c020 bit0 = doorbell, 0x5c040..c04c = 4-word status block,
+     * 0x5c800 = interrupt mask, 0x5c804 bit16 = message pending (a LATCH,
+     * write-1-to-clear — the FE IRQ top half drains it in a loop that ends
+     * only on a zero read, so it must never be sticky).
+     * C96 replaced the byte3-keyed fe_msg counter with a staged-message
+     * queue: the reply is keyed on the command CONTENT (an `0xa1` post with
+     * nonzero args is ATA IDENTIFY PACKET, not a chk_int_ldr call), and the
+     * IDENTIFY case stages two messages (payload, then completion). */
     uint32_t fe_cmd[4];      /* 0x5c000..c00c */
     uint32_t fe_doorbell;    /* 0x5c020 */
-    uint32_t fe_status[4];   /* 0x5c040..c04c */
-    unsigned fe_msg;         /* 0..2; >=2 = drained */
+    uint32_t fe_msg[FE_MSG_SLOTS][4]; /* staged replies [slot][word] */
+    unsigned fe_msg_head;    /* slot the 0x5c040..c04c block serves */
+    unsigned fe_msg_count;   /* staged replies not yet retired */
+    uint32_t fe_irq;         /* 0x5c804 pending latch (W1C) */
+    uint32_t fe_mask;        /* 0x5c800 interrupt mask */
+    uint32_t fe_dma[4];      /* 0x5c400 addr, 0x5c404 len, 0x5c408/40c arm */
+    /* 0x24200..0x2421f RMW bank (§5.1 rows 15-16; model-spec.md §3.1
+     * identifies the block as the IR-RX conf/status words — the recipe's
+     * echoed value leaves the poll bit 18 clear, i.e. "no remote packet"). */
+    uint32_t fe_csr[8];
     uint32_t fe_dram_page;   /* value of 0x5c500 (window page) */
     unsigned unimp_logs;     /* storm cap for the default-arm -d log */
     uint32_t sram_wptr;      /* value of 0xfd324180 */
@@ -202,8 +231,6 @@ static void bx510_tick(void *opaque)
  * (four SEPARATE byte compares in sata_mt85xx_chk_int_ldr .text+0x29a4..0x2a14
  * — the literal ASCII order 'BOOT' fails, mutant-proven) and the length
  * marker 0xeeee at 0x100 (LE16, .text+0x29b0, sets *out=1). */
-#define FE_REPLY_OFF  0x1000u
-#define FE_REPLY_LEN  0x0200u
 static const uint8_t fe_reply_block[FE_REPLY_LEN] = {
     [0x2e] = 0x4f, [0x2f] = 0x42, [0x30] = 0x54, [0x31] = 0x4f,
     [0x100] = 0xee, [0x101] = 0xee,
@@ -239,6 +266,98 @@ static void bx510_mac_write(Bx510State *s, hwaddr reg, uint32_t val)
     }
 }
 
+/* ==== C96 FE reply state machine (fe-ata-cmd.md §5.2) ==== */
+
+/* Write a block into the FE DRAM window the driver programmed at 0x5c500
+ * (page << 22, fe-ata-cmd.md §2.3). Skip when the driver never programmed a
+ * page — don't scribble low RAM. */
+static void bx510_fe_dram_write(Bx510State *s, uint32_t off,
+                                const uint8_t *buf, unsigned len)
+{
+    hwaddr win;
+    unsigned i;
+    if (!s->fe_dram_page) {
+        return;
+    }
+    win = ((hwaddr)(s->fe_dram_page & 0xff)) << 22;
+    for (i = 0; i < len; i++) {
+        stb_phys(&address_space_memory, win + off + i, buf[i]);
+    }
+}
+
+/* Stage one 4-word reply message and raise the message-pending bit. The
+ * caller must have published the payload first: the bottom half reads
+ * 0x5c040..c04c only after the latch (§5.2 hard rule 2), and the bit is
+ * raised here, never inside the same write that staged the words. */
+static void bx510_fe_post(Bx510State *s, uint32_t w0, uint32_t w1,
+                          uint32_t w2, uint32_t w3)
+{
+    unsigned slot = (s->fe_msg_head + s->fe_msg_count) % FE_MSG_SLOTS;
+
+    if (s->fe_msg_count >= FE_MSG_SLOTS) {
+        /* the driver retires a message before posting the next one */
+        qemu_log_mask(LOG_GUEST_ERROR,
+                      "bx510: FE reply queue full, overwriting newest\n");
+        slot = (s->fe_msg_head + FE_MSG_SLOTS - 1) % FE_MSG_SLOTS;
+        s->fe_msg_count = FE_MSG_SLOTS - 1;
+    }
+    s->fe_msg[slot][0] = w0;
+    s->fe_msg[slot][1] = w1;
+    s->fe_msg[slot][2] = w2;
+    s->fe_msg[slot][3] = w3;
+    s->fe_msg_count++;
+    s->fe_irq |= FE_IRQ_MSG;   /* 0x5c804 bit16 */
+    s->pending |= BX_FE_IRQ;   /* BIM group0 bit18 */
+    bx510_update_irq(s);
+}
+
+/* Content-keyed reply dispatch on the 0x5c020 doorbell (§5.2). Keying is on
+ * w0/w1..w3 content, never on byte3 alone: `.text+0xa1` is BOTH the
+ * chk_int_ldr entry code and the ATA IDENTIFY PACKET command byte, and only
+ * the argument words tell them apart (§3.3). */
+static void bx510_fe_dispatch(Bx510State *s)
+{
+    uint32_t w0 = s->fe_cmd[0];
+    unsigned code = (w0 >> 24) & 0xff;
+    unsigned type = (w0 >> 16) & 0xff;
+    uint32_t arg = s->fe_cmd[1] | s->fe_cmd[2] | s->fe_cmd[3];
+
+    if (type == 0x10) {
+        /* _svoif_mt85xx_send_table_data_ack_cmd (.text+0x3c50): the driver
+         * ACKed message A, so post message B — a bare type-0 completion. Keyed
+         * on the type byte alone, which is the pre-C96 behaviour and is
+         * equivalent here: the ACK is the driver's only type-0x10 post and it
+         * always carries w1 = w2 = w3 = 0 (§3). */
+        bx510_fe_post(s, 0, 0, 0, 0);
+        return;
+    }
+    if (code == 0xa1 && arg == 0) {
+        /* chk_int_ldr entry (.text+0x2850): it zeroes the six taskfile words
+         * immediately before posting (.text+0x285c..0x2870), so an `0xa1`
+         * post with arg == 0 is the table-data request. Message A = a
+         * type-0x10 offer of the loader block at (w1, w2) (§5.1 rows 4-7). */
+        bx510_fe_dram_write(s, FE_REPLY_OFF, fe_reply_block, FE_REPLY_LEN);
+        bx510_fe_post(s, 0x00100000u, FE_REPLY_OFF, FE_REPLY_LEN, 0);
+        return;
+    }
+    if (code == 0xa1) {
+        /* ATA IDENTIFY PACKET DEVICE (C95 cmd#3, §3.3): the payload rides the
+         * FE DRAM window, and the type-0x10 message that carries it is also
+         * what advances priv+0x220 (§2.4). Message C is the type-0 success
+         * completion. Order per §5.2/§9: payload first — if a run shows the
+         * IDENTIFY bytes arriving but the command still timing out, the C97
+         * fallback is to swap these two posts. */
+        bx510_fe_dram_write(s, FE_IDENT_OFF, s->identify, FE_IDENT_LEN);
+        bx510_fe_post(s, 0x00100000u, FE_IDENT_OFF, FE_IDENT_LEN, 0);
+        bx510_fe_post(s, 0, 0, 0, 0);
+        return;
+    }
+    /* 0xf7 prereset / 0x08 soft reset / anything unknown: a type-0 success
+     * completion. Never stay silent — silence is a 30 s libata timeout, not a
+     * fast failure (§5.2 last row). */
+    bx510_fe_post(s, 0, 0, 0, 0);
+}
+
 static uint64_t bx510_read(void *opaque, hwaddr off, unsigned size)
 {
     Bx510State *s = opaque;
@@ -254,6 +373,11 @@ static uint64_t bx510_read(void *opaque, hwaddr off, unsigned size)
     uint64_t ns;
     if (off >= 0x33000 && off < 0x33100) {
         return bx510_mac_read(s, off - 0x33000);
+    }
+    if (off >= 0x24200 && off < 0x24220) {
+        /* 0x24200..0x2421f RMW bank: echo what was written (fe-ata-cmd.md
+         * §5.1 rows 15-16, "first try the stored 0x111"). */
+        return s->fe_csr[(off - 0x24200) / 4];
     }
     switch (off) {
     case 0x1effc: return 0; /* DMA writes have drained */
@@ -294,28 +418,60 @@ static uint64_t bx510_read(void *opaque, hwaddr off, unsigned size)
                   * (logo playback finished / idle). We boot straight to
                   * idle. VERIFIED Run C23-28: poll-only, never written. */
         return 0x40u;
-    case 0x5c804: /* FE control/status (VERIFIED port_start decode: the
-                   * state==1 fast path polls [0xfd05cfff-0x7fb] up to
-                   * 150x10ms testing bit 16 = FE reset/boot done; the RMW
-                   * here is the 'clear default interrupt' the loader does).
-                   * fe-status-handshake.md CORRECTION: 0x5c804 is the FE
-                   * interrupt STATUS register, READ-AND-CLEAR (bit16 = FE
-                   * message pending). The FE IRQ top half drains it in a
-                   * loop that ends only on a zero read (.text+0x34b4..34c8)
-                   * — a sticky read storms (the 4.4 GB -D log, C73-C77).
-                   * Reads below serve chk_int_ldr's two-message handshake. */
-        if (s->fe_booted && s->fe_msg < 2) {
-            s->fe_msg++;           /* read-and-clear: the drain consumes it */
-            return 0x00010000u;
+    case 0x5c804: /* FE interrupt STATUS; bit16 = an FE message is pending
+                   * (fe-ata-cmd.md §2.2). A LATCH cleared by write-1-to-clear,
+                   * not a read-and-clear: every reader writes back what it
+                   * read (chk_int_ldr .text+0x28b0, port_start .text+0x327c,
+                   * and the IRQ top half's drain loop .text+0x34b4..34c8,
+                   * which exits only on a ZERO read — so returning 0 once the
+                   * queue is consumed is mandatory, and a sticky bit is the
+                   * pre-C95 4.4 GB storm). */
+        return s->fe_irq & FE_IRQ_MSG;
+    case 0x5c808: /* secondary status word folded into the wake payload
+                   * ((extra) | (bit16 << 8), .text+0x34f8..0x350c); 0 is safe
+                   * — the value only lands in priv+0x234[n] (§5.1 row 10). */
+        return 0;
+    case 0x5c800: /* FE interrupt MASK (.text+0x34b0). port_start programs
+                   * 0xfffffff0 here (.text+0x32d0) after chk_int_ldr call #1;
+                   * the reset default keeps bit16 set (see bx510_reset) so the
+                   * top half's (pending & mask) still latches a message before
+                   * that write — a 0 mask silently discards every FE message
+                   * (fe-ata-cmd.md §0 defect #2). */
+        return s->fe_mask;
+    case 0x5c040: case 0x5c044: case 0x5c048: case 0x5c04c: {
+        /* The four-word FE->CPU reply: w0 byte2 = type, byte3 = status,
+         * w1 = DRAM-window offset, w2 = length, w3 unused (§2.1). Always the
+         * head message; the words stay readable after the queue drains (the
+         * block is a register set, not a FIFO read port). Retire on the LAST
+         * word: both consumers read w0..w3 in order (chk_int_ldr
+         * .text+0x28b8..28d8, the IRQ bottom half .text+0x4640..4660), so w3
+         * ends the message. */
+        unsigned i = (off - 0x5c040) / 4;
+        uint32_t v = s->fe_msg[s->fe_msg_head][i];
+        if (i == 3 && s->fe_msg_count) {
+            s->fe_msg_count--;
+            if (s->fe_msg_count) {
+                /* the next staged message becomes the block content; re-arm
+                 * the pending bit so the driver polls it out (the IDENTIFY
+                 * completion, §5.2 step (3)). */
+                s->fe_msg_head = (s->fe_msg_head + 1) % FE_MSG_SLOTS;
+                s->fe_irq |= FE_IRQ_MSG;
+                s->pending |= BX_FE_IRQ;
+                bx510_update_irq(s);
+            }
         }
-        return 0u;
-    case 0x5c040: case 0x5c044: case 0x5c048: case 0x5c04c:
-        /* the four status words of the pending message (A or B) */
-        return s->fe_status[(off - 0x5c040) / 4];
+        return v;
+    }
     case 0x5c000: case 0x5c004: case 0x5c008: case 0x5c00c:
         return s->fe_cmd[(off - 0x5c000) / 4];
     case 0x5c020:
-        return s->fe_doorbell;
+        return s->fe_doorbell;   /* stored value: the RMW must be lossless */
+    case 0x5c400: case 0x5c404: case 0x5c408: case 0x5c40c:
+        /* data_xfer's READ-CDB descriptor (.text+0x5814..0x5874): host
+         * address, byte count, and two flag words the driver only ever ORs
+         * bits into, so returning what was written keeps the RMW lossless
+         * (§5.1 rows 11-12). */
+        return s->fe_dma[(off - 0x5c400) / 4];
     /* ---- SATA/ATAPI (bus 0x7000a000, off 0xa000) ---- */
     case 0x324180: /* FE SRAM FIFO write pointer readback */
         return s->sram_wptr;
@@ -411,6 +567,13 @@ static void bx510_write(void *opaque, hwaddr off, uint64_t val, unsigned size)
     }
     if (off >= 0x33000 && off < 0x33100) {
         bx510_mac_write(s, off - 0x33000, val);
+        return;
+    }
+    if (off >= 0x24200 && off < 0x24220) {
+        /* 0x24200..0x2421f RMW bank: store; reads echo it back (§5.1 rows
+         * 15-16). C95 wrote 0x2420c=0x111, 0x24210=0xe1, 0x24214=0x200,
+         * 0x24218=1 (FE/HAL descriptor + start bit, §4.2). */
+        s->fe_csr[(off - 0x24200) / 4] = val;
         return;
     }
     switch (off) {
@@ -554,57 +717,36 @@ static void bx510_write(void *opaque, hwaddr off, uint64_t val, unsigned size)
     case 0x5c000: case 0x5c004: case 0x5c008: case 0x5c00c:
         s->fe_cmd[(off - 0x5c000) / 4] = val;
         break;
-    case 0x5c020: /* doorbell (fe-status-handshake.md: bit0). byte3 of the
-                   * command word0 drives the reply sequence: 0xa1 = chk
-                   * entry (post message A: type-16 table-data offer), 0x10
-                   * = table-data ack (post message B: type 0 final). */
+    case 0x5c020: /* doorbell: bit0 = "a command block was posted"
+                   * (data_xfer .text+0x57e0, send_ata_cmd .text+0x3b60, ack
+                   * .text+0x3cb4 — all read-modify-write `|= 1`, so bit0 is
+                   * never cleared by the driver and an edge trigger would
+                   * swallow every post after the first: dispatch on EVERY
+                   * write with bit0 set). Bits 1..31 stay latched so the RMW
+                   * is lossless (fe-ata-cmd.md §5.1 row 3). */
         s->fe_doorbell = val;
-        {
-            unsigned code = (s->fe_cmd[0] >> 24) & 0xff;
-            unsigned type = (s->fe_cmd[0] >> 16) & 0xff;
-            if (code == 0xa1) {
-                s->fe_msg = 0;
-            } else if (type == 0x10) {
-                s->fe_msg = 1;
-            }
-            /* message A: status words = {type16 | DRAM off 0x1000, len 0x200}
-             * (VERIFIED: word0 byte2=16 consumed at .text+0x2914 cmp r2,#16;
-             * word1 = DRAM offset .text+0x291c..38; word2 = length clamp
-             * .text+0x2924). Message B: word0 = 0 -> the block-inspect path
-             * (.text+0x299c). */
-            if (s->fe_msg == 0) {
-                s->fe_status[0] = 0x00100000u;
-                s->fe_status[1] = FE_REPLY_OFF;
-                s->fe_status[2] = FE_REPLY_LEN;
-                s->fe_status[3] = 0;
-                /* 'DMA' the status block into the DRAM window the driver
-                 * programmed at 0x5c500 (page << 22). Skip when never
-                 * programmed — don't scribble low RAM. */
-                if (s->fe_dram_page) {
-                    hwaddr win = ((hwaddr)(s->fe_dram_page & 0xff)) << 22;
-                    int i;
-                    for (i = 0; i < FE_REPLY_LEN; i++) {
-                        stb_phys(&address_space_memory, win + FE_REPLY_OFF + i,
-                                 fe_reply_block[i]);
-                    }
-                }
-                s->pending |= BX_FE_IRQ;   /* message pending -> FE IRQ */
-                bx510_update_irq(s);
-            } else if (s->fe_msg == 1) {
-                s->fe_status[0] = 0;
-                s->fe_status[1] = 0;
-                s->fe_status[2] = 0;
-                s->fe_status[3] = 0;
-                /* post-aacs-state.md fix: leave fe_msg at 1 so message B's
-                 * pending bit (0x5c804 bit16) stays VISIBLE — the C91 trace
-                 * showed chk_int_ldr's message-B poll timing out at exactly
-                 * 200 zero reads because setting fe_msg=2 here hid B before
-                 * the driver ever read it. Only a read consuming B moves
-                 * the state to 2. */
-                s->pending |= BX_FE_IRQ;
-                bx510_update_irq(s);
-            }
+        if (val & 1) {
+            bx510_fe_dispatch(s);
         }
+        break;
+    case 0x5c800: /* FE interrupt mask (port_start writes 0xfffffff0).
+                   * bit16 is OR'd in on every write (fe-ata-cmd.md §5.1 row 8
+                   * "at minimum 0x10000"): a mask write of 0 would otherwise
+                   * silently discard every FE message — the exact defect-#2
+                   * mechanism. No decoded writer ever writes 0 here, so this
+                   * only guards the latent case. */
+        s->fe_mask = val | FE_IRQ_MSG;
+        break;
+    case 0x5c804: /* FE interrupt status: write-1-to-clear exactly the bits
+                   * written — all three readers write back the value they
+                   * read (fe-ata-cmd.md §2.2). */
+        s->fe_irq &= ~(uint32_t)val;
+        break;
+    case 0x5c400: case 0x5c404: case 0x5c408: case 0x5c40c:
+        /* data_xfer descriptor writes: host addr, length, arm/direction
+         * flags. On the executed path they are only written, never
+         * consumed — the reply still arrives as a mailbox message (§1.2). */
+        s->fe_dma[(off - 0x5c400) / 4] = val;
         break;
     case 0x5c500: /* FE DRAM window page (xfer_int_ldr_fw .text+0x1940) */
         s->fe_dram_page = val;
@@ -612,9 +754,16 @@ static void bx510_write(void *opaque, hwaddr off, uint64_t val, unsigned size)
     case 0x5c704: /* FE reset release (i4IdeDrvBootup: |= 0x601 arms the FE).
                      virq 18 = BIM group0 bit18 (VERIFIED kernel-iomap.md):
                      the release is what 'polling frontend reset interrupt'
-                     waits for. */
+                     waits for. It also arms the bare 0x5c804 bit16 that
+                     port_start's state==1 fast path polls BEFORE any command
+                     is posted (.text+0x3244..0x3280) — armed once, so the
+                     pending bit stays message-scoped (no status-block payload
+                     rides it; it only has to survive the driver's W1C). */
         if (val & 0x601) {
-            s->fe_booted = true;
+            if (!s->fe_booted) {
+                s->fe_booted = true;
+                s->fe_irq |= FE_IRQ_MSG;
+            }
             s->pending |= BX_FE_IRQ;
             bx510_update_irq(s);
         }
@@ -693,10 +842,17 @@ static void bx510_reset(void *opaque)
     s->sata_ist = s->sata_im = 0;
     s->fe_booted = false;
     memset(s->fe_cmd, 0, sizeof(s->fe_cmd));
-    memset(s->fe_status, 0, sizeof(s->fe_status));
+    memset(s->fe_msg, 0, sizeof(s->fe_msg));
+    s->fe_msg_head = s->fe_msg_count = 0;
+    s->fe_irq = 0;
+    /* Default mask: bit16 set. The polled chk_int_ldr path never looks at the
+     * mask, but the FE IRQ top half latches (0x5c804 & 0x5c800), so a zero
+     * default discards every message it drains (fe-ata-cmd.md §0 defect #2).
+     * port_start replaces this with 0xfffffff0 — which also keeps bit16. */
+    s->fe_mask = FE_IRQ_MSG;
     s->fe_doorbell = 0;
-    s->fe_msg = 0;          /* message A pending once fe_booted (C89: the
-                             * pre-AACS inline poll reads 0x5c804 FIRST) */
+    memset(s->fe_dma, 0, sizeof(s->fe_dma));
+    memset(s->fe_csr, 0, sizeof(s->fe_csr));
     s->fe_dram_page = 0;
     s->sram_wptr = 0;
     s->sram_ridx = 0;

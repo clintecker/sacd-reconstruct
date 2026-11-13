@@ -21,21 +21,37 @@ resolution of `.data`/`.text` literal pools against the symtab (scripts listed i
    value **0 means "at root"** (`cli_parser` itself loads `pt_cur_cmd_tbl` and, on
    0, parses against the root array `apt_cli_array[0]` — see §2.4). The instrument
    was reading a legitimate 0 and skipping its table walk for nothing.
-2. **`parser('driver') = 1` means NOT FOUND, not accepted.** `cli_parser()` returns
-   `0` when a command matched and its handler ran; it returns `1` when the token
-   was **unresolved** (`_parse_cmd` → `-EAGAIN`) *and* `pt_cur_cmd_tbl == 0` (so no
-   help was printed); it returns `-EAGAIN` when unresolved inside a directory after
-   showing help. Also: bdpdrv registers into the group named **`drv`** ("Driver"),
-   not `driver` ("cus driver", empty in stock drvcli) — see §2.3/§3.3.
+2. **`parser('driver') = 1` already IS a successful CLI dump — and the C9x logs
+   contain one line of it that the earlier read missed.** `_parse_cmd` returns the
+   handler's own return value on a match, `-10` (`-EAGAIN`) when nothing matched,
+   and **`argc` (=1) when it matched a directory and dumped that directory's help**
+   (0x154c path: `_show_help()` then `mov r0, r4`). The C50/C93/C95 UART therefore
+   reads:
+   ```
+   [CLIDRIVE] root table = 0x0
+   [Help]
+
+   hdmitx(hdmitx):         Hdmi Tx command
+
+   [CLIDRIVE] parser('driver') = 1
+   ```
+   — i.e. bdpdrv's custom-driver lane was **live** and its help printed. That lane
+   is `CLI_GetCusDrvCmdTbl()` attached to group **12 = `driver`** by `x_cli_start()`
+   (§3.3); the *other*, bigger lane (48 module dirs, incl. `sacd` and `ide`) goes to
+   group **5 = `drv`** via `i4Drv_Cli_Cmd_Tbl_Reg` — that one has never been asked
+   for yet. Return-code table: `0` handler ran · `1` dir help dumped · `-10` no
+   match · `-1` drvcli not initialised.
 3. **drvcli has no `read`/`write` file ops at all** — only
    `unlocked_ioctl`, `open`, `release`. So the C9x userland probes
    (`echo help > /res/clidev`, `cat /res/clidev`) could never have reached the
    parser: `write()` → `-EINVAL`, `read()` → `-EINVAL`. The observed log
-   (`cli driver open success` / `cli module close sucess!` with *no* parser output,
-   `CLI_HELP_SENT=1`, `cat: read error: Invalid argument`, C95:1558-1576) is fully
-   explained and is an **honest negative about the probe path, not about drvcli**.
-   The only two live routes into `x_cli_parser()` are `ioctl(0x00045102)` (§1) or
-   the kernel-side shim calling the exported `x_cli_parser()` directly.
+   (`cli driver open success` / `cli module close sucess!` printed, **no** parser
+   output from the write, `CLI_HELP_SENT=1`, `cat: read error: Invalid argument`,
+   C95:1558-1576) is fully explained and is an **honest negative about the probe
+   path, not about drvcli**. The only two live routes into `x_cli_parser()` are
+   `ioctl(0x00045102)` (§1) or the kernel-side shim calling the exported
+   `x_cli_parser()` directly — the latter is the only route that has ever produced
+   output in this rig (item 2).
 
 Net: the CLI is a *usable* verification instrument **today** (it loads, registers
 major 244, and bdpdrv attaches to it — C95:335, 1545-1549), and drvcli's own
@@ -126,7 +142,8 @@ user pointer, so it is not a "get current root" call despite the shape.
 
 Evidence: `_parse_cmd` reads `[entry+0x08]` (fn) and `[entry+0x0c]` (sub) and
 `[entry+0x14]` (access) — 0x15b8/0x15dc/0x153c in the disassembly; every table
-below parses cleanly at a 24-byte stride with the last entry all-zero.
+below parses cleanly at a 24-byte stride with the last entry all-zero. (The
+`root table = 0x0` line in the shim is the *root sentinel*, not a failure — §2.4.)
 **Note the trap for `tools/bx510_clidrive.c`:** its `struct cli_ent` puts
 `fn_or_sub` at +0x0c, i.e. it reads *only* `sub`. For leaf commands it therefore
 always reported `<NULL fn>` — and group entries with `sub==0` printed `<NULL fn>`
@@ -180,28 +197,33 @@ mode), `st` (stop transparent).
 | grp | group dir table (a 24 B "directory" entry) | dir name | array slot | count |
 |---|---|---|---|---|
 | 0 | — (root array, no dir entry) | — | `apt_cli_array+0x0000` | `aui4_cli_tbl_cnt[0]` |
-| 1 | `at_basic_cmd_tbl` (0x194) | `basic`/`b` | +0x0400 | [1] |
-| 2 | `at_app_cmd_tbl` (0x1c4) | `app` | +0x0800 | [2] |
-| 3 | `at_mw_cmd_tbl` (0x1f4) | `mw` | +0x0C00 | [3] |
-| 4 | `at_mmw_cmd_tbl` (0x224) | `mmw` | +0x1000 | [4] |
-| **5** | **`at_drv_cmd_tbl` (0x254)** | **`drv` ("Driver")** | +0x1400 | [5] |
-| 6 | `at_test_cmd_tbl` (0x284) | `test`/`t` | +0x1800 | [6] |
-| 7 | `at_mtk_tool_cmd_tbl` (0x2b4) | `mtktool`/`0` | +0x1C00 | [7] |
-| 8 | `at_factory_cmd_tbl` (0x2e4) | `factory` | +0x2000 | [8] |
-| 9 | `at_diag_cmd_tbl` (0x344) | `diag` | +0x2400 | [9] |
-| 10 | `at_boot_cmd_tbl` (0x374) | `boot` | +0x2800 | [10] |
-| 12 | `at_cus_driver_cmd_tbl` (0x314) | **`driver` ("cus driver")** | +0x3000 | [12] |
+| 1 | `at_basic_cmd_tbl` (0x194) | `basic`/`b` | +0x0200 | [1] |
+| 2 | `at_app_cmd_tbl` (0x1c4) | `app` | +0x0400 | [2] |
+| 3 | `at_mw_cmd_tbl` (0x1f4) | `mw` | +0x0600 | [3] |
+| 4 | `at_mmw_cmd_tbl` (0x224) | `mmw` | +0x0800 | [4] |
+| **5** | **`at_drv_cmd_tbl` (0x254)** | **`drv` ("Driver")** | +0x0A00 | [5] |
+| 6 | `at_test_cmd_tbl` (0x284) | `test`/`t` | +0x0C00 | [6] |
+| 7 | `at_mtk_tool_cmd_tbl` (0x2b4) | `mtktool`/`0` | +0x0E00 | [7] |
+| 8 | `at_factory_cmd_tbl` (0x2e4) | `factory` | +0x1000 | [8] |
+| 9 | `at_diag_cmd_tbl` (0x344) | `diag` | +0x1200 | [9] |
+| 10 | `at_boot_cmd_tbl` (0x374) | `boot` | +0x1400 | [10] |
+| 12 | `at_cus_driver_cmd_tbl` (0x314) | **`driver` ("cus driver")** | +0x1800 | [12] |
 
-`apt_cli_array` = .bss 0xc68, 0x1A00 B = 13 groups × 256 pointers; the wiring is
-`sub` of the group dir entry ← the attached table, and the extra `a`/`b` args are
-recorded in the group's record. `cli_parser` at root uses
-`*(u32*)(e_access_right+0x38)` = `apt_cli_array[0]`, and falls back to
-`pt_cur_cmd_tbl` when inside a directory; `_parse_cmd` walks either a single table
-or a *table array* (`_is_cmd_tbl_array` / `_get_cmd_tbl_array`), which is how a
-group accumulates N attached tables.
+`apt_cli_array` = .bss 0xc68, 0x1A00 B = 13 groups × **128** pointer slots
+(0x200 B each — confirmed by the per-case literals: grp1 → `0xC30+0x238` = 0xC68,
+grp5 → 0x1668, grp12 → 0x2468); per-group counters are `aui4_cli_tbl_cnt`
+(.bss 0xc34, 13 × u32), per-group info records `at_cli_mod_grp_info`
+(.bss 0x698, 0x6800 = 13 × 0x800). Wiring: the group dir entry's `sub` ← the
+attached table (`str r7,[r6,#0xc]`), the two extra `a`/`b` args recorded in the
+group record. `cli_parser` at root uses `*(u32*)(e_access_right+0x38)` =
+`apt_cli_array[0]`, and falls back to `pt_cur_cmd_tbl` when inside a directory;
+`_parse_cmd` walks either a single table or a *table array* (`_is_cmd_tbl_array` /
+`_get_cmd_tbl_array`), which is how a group accumulates N attached tables.
 
-**Every group dir entry in stock drvcli has `fn==0` and `sub==0`** — the groups are
-empty hooks until a driver attaches; that is exactly why `driver` looked dead.
+**Every group dir entry in stock drvcli has `fn==0` and `sub==0`** — they are empty
+hooks until a driver attaches. In the C9x guest, group 12 (`driver`) is already
+wired (bdpdrv's `hdmitx`, §3.3, visible in the logs) and group 5 (`drv`) should
+carry the 48-lane block — that last one is the open question P2 in §5 settles.
 
 ### 2.5 what drvcli's own commands actually do (functional vs stub)
 
@@ -291,8 +313,21 @@ x_cli_set_mode, StrToInt, StrToDec, StrToHex`
    surface is attached to **group 5 = `drv`**, with extra words `8, 0`.
 3. `CLI_GetFactoryCmdTbl()` → `x_cli_attach_cmd_tbl(tbl, grp=8, 0, 0)` — group 8 =
    `factory`.
-4. `x_cli_start` / `x_cli_stop` (bdpdrv 0x5e058 / 0x5e038) are the attach/detach
-   wrappers for later use; `cleanup_module` detaches the same blocks.
+4. **`x_cli_start()` (0x5e03c):** `cli_init(0)` → `CLI_GetCusDrvCmdTbl()` →
+   **`x_cli_attach_cmd_tbl(tbl, grp=12, 0, 0)`** → `x_memset(0x116c0, 0, 0x78)`
+   (clears the 10-slot registry). Group 12 = `driver` ("cus driver").
+   `x_cli_stop()` (0x5e020) detaches the same table from grp 12;
+   `cleanup_module` (0x8ae98) detaches grp 8 and the registry blocks.
+
+   **This is the lane the C9x runs already exercised.** `bdp_exports.syms` shows
+   `CLI_GetCusDrvCmdTbl` is a bdpdrv symbol, and the decoded table it returns is
+   `at_mtk_cus_drv_cmd_tbl` (.data 0xa7a0, 48 B, 1 entry) =
+   `{'hdmitx', alias 'hdmitx', sub=_arHdmiTxCustCmdTbl (15 entries: hdmilog,
+   infofm, phtvhd, getedid, chksrm, …), help "Hdmi Tx command", acc=6}` —
+   byte-for-byte the `hdmitx(hdmitx):         Hdmi Tx command` line in the C50/C93/C95
+   logs. So group 12 is wired, the framework prints, and `x_cli_start()` ran.
+   (A sibling lane, `x_hdmi_cust_cli_init` @ 0x2e8ef0, attaches
+   `_rCustHdmiCmdTbl`={hdmi} to grp 1 = `basic` — a separate customisation.)
 
 `_paBDPDrvCliGetFuncTbl` = 48 getters (.data 0x13530, `.rel.data` verified). Each
 returns a single-entry `_r*CmdTbl` directory whose `sub` is the real `_ar*CmdTbl`.
@@ -404,33 +439,36 @@ for s in UTIL_Printf g_u4disable_log g_u4enable_log_droped; do ...
 
 **Route:** the kernel-side shim calling the *exported* `x_cli_parser()` (route 2 in
 §0.3) — no ioctl helper needed, no userspace tooling, output lands on the console
-UART through `UTIL_Printf`. Return value is the assertion (`0` = matched+executed,
-`1` = unresolved at root, `-EAGAIN` = unresolved in a dir). Use `ls`/`cd` to read
-the live tree instead of walking pointers (data symbols are not in kallsyms —
-see §6).
+UART through `UTIL_Printf`. The return value *is* the assertion:
+**`0` = handler ran · `1` = directory matched, help dumped · `-10` = no match ·
+`-1` = drvcli not initialised.** Use `ls`/`cd` to read the live tree instead of
+walking pointers (module *data* symbols are not in the guest kallsyms — see §6).
 
-Three shim rules that follow from the decode:
+Four shim rules that follow from the decode:
 * entry struct: `fn` at **+0x08**, `sub` at **+0x0c** (fix `bx510_clidrive.c`);
 * `pt_cur_cmd_tbl == 0` is the *root* sentinel, not a failure;
+* `1` from the parser is a **help dump, not an error** — assert on `0` for a
+  handler and on the help text for a directory;
 * prefer `kallsyms_lookup_name` only for **functions** (`cli_parser`,
-  `CLI_GetDefaultCmdTbl`); `pt_cur_cmd_tbl`, `apt_cli_array`, `e_access_right`,
-  `at_cli_mod_grp_info`, `_arDefaultCmdTbl` are data and absent from the guest
-  kallsyms capture (CONFIG_KALLSYMS_ALL off — only functions appear).
+  `CLI_GetDefaultCmdTbl`, `CLI_GetCusDrvCmdTbl`); `pt_cur_cmd_tbl`,
+  `apt_cli_array`, `e_access_right`, `at_cli_mod_grp_info`, `_arDefaultCmdTbl` are
+  data and absent from the guest kallsyms capture (CONFIG_KALLSYMS_ALL off — only
+  functions appear).
 
 | # | probe (shim → `x_cli_parser(...)`) | expects (exact UART signature) | proves |
 |---|---|---|---|
-| P0 | `"read 0x1000 16"` | `Read addr = 0x00001000, length = 16` then one `0x00001000 \| XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX` line | rig control: parser, MMIO/RAM peek, and the `0xF0000000` direct-map assumption all live. **Run first, every session**; a data abort here is a rig bug, not a target bug. |
-| P1 | `"ls"` | the framework's command list (`[Help]` / `Command >` / `%s(%s):` formats at .rodata 0x354-0x375) | CLI framework end-to-end. Works **today**, no disc needed — this is the baseline that makes P2..P5 meaningful. |
-| P2 | `"cd drv"` then `"ls"` | the 48 bdpdrv lanes with help text: `km`, `aud`, … `sacd`, `ide`, `bonding` | bdpdrv's `i4Drv_Cli_Cmd_Tbl_Reg` attach phoned home into group 5 ⇒ **bdpdrv initialised far enough to register CLI**. INFERRED spelling: group dir is `drv` (verified by decode); if `cd drv` returns 1, try `drv` as a leaf and `cd basic` as a sanity check. |
-| P3 | `"cd sacd"` then `"ls"` then `"testphy 0"` | `ls` → the 6 SACD names; `testphy 0` → `[_SACDCLI_TestPhy]Loader is in FA mode !!` / `[%s]Get profile error (%d) !!` / `[%s]Disc profile = 0x%x !!` / `[%s]Incorrect disc type (0x%x) !!` | **the decisive "disc appeared" probe**: ODD fa-mode check, TEST UNIT READY loop and GET CONFIGURATION profile. Failure signatures are named, not silent. |
-| P4 | `"cd sacd"` then `"findtag"` | `[_SACDCLI_FindTag]LBA:0x%x, TAG:%c%c%c%c%c%c%c%c` (per LBA) then `[_SACDCLI_FindTag]EKB length:%d, Tag count:%d, dwKAOfset:%d`, or `[_SACDCLI_FindTag]LBA:0x%x Read Fail:%d` on the failing read | the SACD TOC/key-area read: exercises `_IDECLI_OddRead` + EKB parse. The `TAG:` line is the "sector payload actually arrived" witness. |
-| P5 | `"cd ide"` then `"pri_ver"` `"initial 0 s 0"` | `ide.initial [Channel] [s(sata)/p(pata)] [0-REG/1-QUE]` on bad args; on success the IDE init path reaches the FE mailbox (compare with the C95 post-handshake MMIO tail) | the transport leg independently of SACD. INFERRED nesting (`ide`→`pri_ver`→`initial`); `cd ide` + `ls` first to confirm before firing. |
-| — | `"cd ide"`, `"tray_open_close"` | **no output** (handler is `mov r0,#0; bx lr`) | **negative control** — a silent success here confirms the probe is reaching a stub, i.e. the string path is wired but this build has the command compiled out. |
+| P0 | `"read 0x1000 16"` | `Read addr = 0x00001000, length = 16` then one `0x00001000 \| XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX` line | rig control: parser, memory peek and the `0xF0000000` direct-map assumption all live. **Run first, every session**; a data abort here is a rig bug, not a target bug. |
+| P1 | `"driver"` | `[Help]` + `hdmitx(hdmitx):         Hdmi Tx command` | **known-good reference** — this is byte-identical to what C50/C93/C95 already logged, so it calibrates the shim and the UART drain before anything new is asserted. |
+| P2 | `"drv"` | if the 48-lane group resolves: `[Help]` + 48 lines `km(…): …` … `sacd(…): SACD command`, `ide(…): Ide command` … `bonding(…)`. If instead `-10`, the lanes are not reachable *by group name* at root — then use `"ls"` (root listing) to read the actual reachable names first, and try the lane names directly (`"sacd"`, `"ide"`). | **INFERRED-but-strongly-supported**: group 5 = `drv` per the decoded switch; nobody has asked for it yet. This is the one probe that needs a one-shot discovery before it can be scripted. |
+| P3 | `"sacd"` (or `"cd drv"` then `"cd sacd"`), then `"ls"`, then `"testphy 0"` | `ls` → the 6 SACD names (`trayctrl tray`, `testphy phy`, `findtag find`, `dectrack dec`, `outmonitor om`, `inmonitor im`); `testphy 0` → `[_SACDCLI_TestPhy]Loader is in FA mode !!` / `_IDECLI_OddCheckFaMode`, then `[%s]Get profile error (%d) !!` or `[%s]Disc profile = 0x%x !!`; `_IDECLI_OddTestUnitReadyLoop` before it | **the decisive "disc appeared" probe**: fa-mode check, TEST UNIT READY loop and GET CONFIGURATION profile. Every outcome is a named line, none silent. |
+| P4 | `"findtag"` (inside `sacd`) | `[_SACDCLI_FindTag]LBA:0x%x, TAG:%c%c%c%c%c%c%c%c` per LBA, then `[_SACDCLI_FindTag]EKB length:%d, Tag count:%d, dwKAOfset:%d`; failure = `[_SACDCLI_FindTag]LBA:0x%x Read Fail:%d` | the SACD TOC/key-area read: `_IDECLI_OddRead` + `bEkbParseTagKey`. The `TAG:` line is the "sector payload actually arrived" witness — the strongest acceptance signal available without a rip. |
+| P5 | `"ide"` → `"pri_ver"` → `"initial 0 s 0"` | usage string `ide.initial [Channel] [s(sata)/p(pata)] [0-REG/1-QUE]` on bad args; on success the IDE init path reaches the FE mailbox (compare the post-handshake MMIO tail in `decode/bdpdrv-runC95.posthandshake.mmio.gz`) | the transport leg, independent of SACD. INFERRED nesting — `"ide"` + `ls` first to confirm before firing. |
+| — | `"ide"` → `"tray_open_close"` | **no output** (handler is `mov r0,#0; bx lr`) | **negative control**: silence here confirms the probe reached a *stub* rather than a broken path, so a silent P3/P4 cannot be excused the same way. |
 
-Ordering: **P0 → P1 → P2** are disc-free and should pass before C96's disc work;
-**P3 → P4 → P5** require the C96 disc. Every row's expected string was read out of
-the handler's own literal pool (§7), so a mismatch is a real behavioural
-difference, not a spelling artefact.
+Ordering: **P0 → P1** are disc-free rig calibration; **P2** is the one discovery
+step; **P3 → P4 → P5** need the C96 disc. Every expected string was read out of the
+handler's own literal pool (§7), so a mismatch is a real behavioural difference,
+not a spelling artefact.
 
 ---
 

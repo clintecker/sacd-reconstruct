@@ -1,0 +1,37 @@
+PASS  disc attached (C100-R0)  (1)
+PASS  sr0 capacity + block size (leg a, FA-mode fallback)  (1)
+PASS  no qc timeout  (0)
+PASS  no EH give-up  (0)
+PASS  no SRST failure  (0)
+PASS  no failed IDENTIFY  (0)
+PASS  three distinct payloads (no canned block)  (3)
+PASS  oracle LBA 16 (PVD)  (1)
+PASS  oracle LBA 510 (SACDMTOC)  (1)
+PASS  oracle LBA 532104 (mid-disc)  (1)
+PASS  oracle LBA 510 x10 (batch)  (1)
+PASS  oracle final sector (EOF boundary)  (1)
+PASS  LBA 0 served as real zeros  (1)
+PASS  0xbb poison in no head bytes  (0)
+PASS  past-EOF rejected  (1)
+PASS  past-EOF did not 'succeed'  (0)
+PASS  past-EOF carried a sense triple  (0)
+PASS  ioctl 5303 read succeeded  (1)
+PASS  5303 dump + hashes emitted  (1)
+PASS  ladder ran to completion  (2)
+FRAMING layout=payload_at_12_stride_2064 (b0:0=869c9ee448ca31cf09a90b6d2f57435d 4=fc8cea0f4c8fdf2f2b36024358d6b706 8=4e7a37448108956b30a88a9b301fdf4e 12=e56de1add53c90dd30cf9232b29ddc93 16=d4fb436740e77b9096bfebca045c90b7 24=a653d504b636c6b8b2761e81bbd8d3fe b1:2048=c5710406ee27848544216e53856c1e77 2064=d57c26f31dc76f7b49a739bceb4ce722 2072=ec82ce33898ecb7fd8e732f8475ee230 2076=68e5b97be9a6db48a3d477d77522d47d)
+PASS  framing verdict  (payload_at_12_stride_2064)
+PASS  oracle decrypt output (LBA 510+511 via 5304)  (1)
+PASS  descriptor armed (0x5c40c = 1)  (9)
+PASS  plain read length 2048  (6)
+PASS  batch read length 20480  (1)
+PASS  SACD ioctl length 2064x2 = 4128  (2)
+PASS  CDB[0..3] = READ(10)  (6)
+PASS  CDB[4..7] = LBA 0x1FE, big-endian  (4)
+PASS  CDB[8..11] = nsec 2 + vendor 0x98  (2)
+PASS  no READ CAPACITY packet (FA-mode constant)  (0)
+INFO  terminal_marker = True
+INFO  payload_size    = 819200
+INFO  attach: 2043:sr0: scsi-1 drive
+INFO  attach: 2046:/ # mknod /dev/sr0 b 11 0; echo SR0_MKNOD=$?
+INFO  attach: 2048:/ # ls -l /dev/sr0; echo SR0_LS=$?
+READ10_VERDICT=PASS

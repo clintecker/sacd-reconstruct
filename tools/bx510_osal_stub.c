@@ -25,7 +25,9 @@
 #include <linux/mmzone.h>
 #include <linux/mm.h>
 #include <linux/mm_types.h>
+#include <linux/kallsyms.h>
 #include <asm/outercache.h>
+#include <asm/io.h>
 #include <stdarg.h>
 
 
@@ -283,10 +285,19 @@ EXPORT_SYMBOL(BIM_GetResetIrKey);
 #define TZ_SVC_GET_MISC    0x1f
 #define TZ_NS_TAG          0x40000000UL
 
-/* strip | 0x40000000 from an NS-tagged pointer so kernel code can deref it */
+/* strip | 0x40000000 from an NS-tagged pointer AND map it into kernel VA.
+ * C109b oops decode: GCPUMemoryAlloc returns PHYSICAL addresses (its caller
+ * pre-seeds q+0x34 then passes q|0x40000000; the oops register file showed
+ * params=0x06321000 while every kernel heap handle this boot is 0xc6xxxxxx —
+ * PAGE_OFFSET 0xc0000000, so 0x06321000 IS a valid lowmem phys). The secure
+ * world works on phys; the stub works on VA. */
 static void *tz_ns(unsigned long p)
 {
-	return (void *)(p & ~TZ_NS_TAG);
+	p &= ~TZ_NS_TAG;
+	if (p < PAGE_OFFSET) {
+		p = (unsigned long)phys_to_virt(p);
+	}
+	return (void *)p;
 }
 
 /* Service 0x1e (§3.3, VERIFIED block layout):
@@ -298,18 +309,21 @@ static void *tz_ns(unsigned long p)
 static void tz_set_misc(void *params)
 {
 	unsigned long *blk = tz_ns(*(unsigned long *)((char *)params + 0x18));
-	unsigned long src, dst, count, len, i;
+	unsigned long src_raw, dst_raw, count, len, i;
+	unsigned char *src, *dst;
 
 	if (!blk) {
 		TZ_LOG("svc 0x1e: no request block — leaving pre-seeded result\n");
 		return;
 	}
-	src   = blk[2] & ~TZ_NS_TAG;
-	dst   = blk[3] & ~TZ_NS_TAG;
-	count = blk[4];
-	len   = blk[5];
+	src_raw = blk[2];
+	dst_raw = blk[3];
+	count   = blk[4];
+	len     = blk[5];
+	src = tz_ns(src_raw);
+	dst = tz_ns(dst_raw);
 	TZ_LOG("svc 0x1e: opcode=%#lx src=%#lx dst=%#lx count=%lu len=%lu\n",
-	       blk[1], src, dst, count, len);
+	       blk[1], src_raw, dst_raw, count, len);
 	if (len && src && dst && count && count * 2064ul == len) {
 		unsigned long j;
 		for (i = 0; i < count; i++) {
@@ -324,6 +338,46 @@ static void tz_set_misc(void *params)
 		TZ_LOG("svc 0x1e: NOT transforming (src/dst/count/len shape)\n");
 	}
 	*(unsigned long *)((char *)params + 0x34) = 0x67000000UL;
+}
+
+/* The GCPU completion event the rig never raises (decode/decrypt-hang.md).
+ *
+ * Every GCPU command handler that does real work ends in
+ * _vGCPU_WaitCmdExec (.text+0x173e7c) -> x_ev_group_wait_event(inst+0x0c,
+ * mask 1, op 5). The ONLY writer of inst+0x0c in all of bdpdrv is
+ * _i4GCPU_Hal_CB (.text+0x1736b4) — the per-slot callback that
+ * _u1GCPU_HWRes_Obtain registers via i4GCPU_HAL_SetCBFunc — and it runs only
+ * from _GCPU_IrqHandle (.text+0x173080), the GCPU interrupt-32 handler that
+ * _GCPU_InitIsr hands to x_reg_isr. There is no GCPU hardware in the rig:
+ * TzServiceCall IS the hardware, so the interrupt that completes a command
+ * never arrives and the worker parks in that wait forever (its ioctl then
+ * blocks in _vGCPU_WaitCmdExecFinish, i4GCPU_CmdExec+0x17c).
+ *
+ * _GCPU_IrqHandle cannot be used as the entry point: it returns early when
+ * *prScallCmd is NULL (.text+0x1730f4) and bdpdrv never writes that pointer.
+ * So run the ISR's own tail (.text+0x173150..0x17315c) instead: the hardware
+ * record for slot 0 (_prGcpu_Hw_GetGCPUStruct, .text+0x172ee4) holds the
+ * callback at +0x1c and its GCPU instance at +0x20; call cb(NULL, inst).
+ * The event group latches (op 5 consumes it on wait), so raising it before
+ * the handler reaches its wait is correct — TzServiceCall is synchronous, the
+ * command has in fact already completed.
+ */
+static void gcpu_cmd_complete(void)
+{
+	static unsigned long (*get_hw)(unsigned long);
+	unsigned long *hw;
+	void (*cb)(void *, void *);
+
+	if (!get_hw)
+		get_hw = (unsigned long (*)(unsigned long))
+			kallsyms_lookup_name("_prGcpu_Hw_GetGCPUStruct");
+	if (!get_hw)
+		return;
+	hw = (unsigned long *)get_hw(0);
+	if (!hw || !hw[0x1c / 4] || !hw[0x20 / 4])
+		return;
+	cb = (void (*)(void *, void *))hw[0x1c / 4];
+	cb(NULL, (void *)hw[0x20 / 4]);
 }
 
 unsigned long TzServiceCall(unsigned long a0, ...)
@@ -345,6 +399,11 @@ unsigned long TzServiceCall(unsigned long a0, ...)
 	switch (id) {
 	case TZ_SVC_SET_MISC:
 		tz_set_misc(params);
+		/* the MISC carrier is a GCPU command: complete it, as the GCPU
+		 * interrupt would. The other Set*_Cmd ids (0x0b, 0x0d, 0x10, …
+		 * 0x1c, 0x23) carry commands through the same wait and need this
+		 * call the first time they are exercised. */
+		gcpu_cmd_complete();
 		break;
 	case TZ_SVC_GET_MISC:
 		/* B3: same carrier; the pre-seeded +0x34 IS the answer. */

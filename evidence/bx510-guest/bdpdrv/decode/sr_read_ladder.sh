@@ -139,6 +139,19 @@ if [ "$PHASE" = post ]; then
   if [ "$SACD_DIFF" = 1 ]; then
     read_one sacd_sg 510 2 --sacd
   fi
+  # ── (f) the decrypt leg: 5304 consumes the framed 5303 output ──────────
+  # Level-0 acceptance: the TZ identity transform + the driver's own out+12
+  # strip must reproduce the PLAIN ISO bytes for LBA 510+511 (4096 B).
+  if [ -f "$OUT/sacd510.bin" ]; then
+    if $HELPER sacdread decrypt "$SACD" 510 2 "$OUT/sacd510.bin" "$OUT/sacd510.dec"; then
+      md5_of sacd510dec "$OUT/sacd510.dec" 0 4096
+      total=$((total + 1)); ok=$((ok + 1))
+      echo "LADDER f MEASURED lba=510 nsec=2 decrypt via ioctl 5304"
+      $HELPER hex "$OUT/sacd510.dec" sacd510dec
+    else
+      echo "LADDER f FAIL ioctl 5304"
+    fi
+  fi
 fi
 
 echo "LADDER done $ok/$total"

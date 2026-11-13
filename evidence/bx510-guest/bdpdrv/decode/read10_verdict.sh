@@ -119,6 +119,11 @@ if [ "${STALE:-0}" -gt 0 ]; then
   bad "5303 buffer unfilled (stale-heap signature: staged-file text in the dump)" "$STALE"
 fi
 O510=e56de1add53c90dd30cf9232b29ddc93      # LBA 510, 2048 logical
+O510_511=a9e63d2dda7ef0cc5face5682f0a913e  # LBA 510+511, 4096 B — the decrypt
+                                           # leg's oracle: the TZ identity
+                                           # transform + the driver's own
+                                           # out+12 strip must reproduce the
+                                           # plain ISO bytes
 O511=68e5b97be9a6db48a3d477d77522d47d      # LBA 511, 2048 logical
 h() { grep -h "^MD5 name=sacd510 off=$1 hash=" "$U" 2>/dev/null \
       | sed 's/.*hash=//' | head -1; }
@@ -147,6 +152,14 @@ if [ "$LAYOUT" = payload_at_12_stride_2064 ]; then
   pass "framing verdict" "$LAYOUT"
 else
   bad "framing verdict" "$LAYOUT (accept is payload_at_12_stride_2064)"
+fi
+
+# ── H2. the decrypt leg (C109): the TZ identity + out+12 strip round-trip ──
+if grep -q '^LADDER f MEASURED' "$U" 2>/dev/null; then
+  want 1 "^MD5 name=sacd510dec off=0 hash=$O510_511$" "$U" \
+       "oracle decrypt output (LBA 510+511 via 5304)"
+else
+  inc "oracle decrypt output (LBA 510+511 via 5304)" "leg f absent"
 fi
 
 # ── H. model side: the armed descriptor carried THIS transfer ──────────────

@@ -1,0 +1,51 @@
+{
+  "bdpdrv": {
+    "guest_path": "/lib/modules/2.6.35/BDP/bdpdrv.ko",
+    "host_path": "/tmp/rootfs/lib/modules/2.6.35/BDP/bdpdrv.ko",
+    "sha256": "6604f6cd6c204c3399ac047f389f47162b06a3f6576159f21b4e8aaf3a72cf54",
+    "size": 8122068
+  },
+  "clidrive_mode": "PROBE_SEQ",
+  "fatb_fixture": null,
+  "fe_test_data": {
+    "offset": 14680064,
+    "payload_size": 808960,
+    "size": 1048576
+  },
+  "images": "/tmp/images-fe",
+  "osal_stub": {
+    "host_path": "/tmp/osal_b/bx510_osal_stub.ko",
+    "sha256": "4b7ad928b6a86962fbb74dfd37a28371d66f3bdd78c8c4607443ecef89f4c477",
+    "size": 220774
+  },
+  "osal_stub_a": {
+    "host_path": "/tmp/osal_a/bx510_osal_stub_a.ko",
+    "sha256": "63cdd078030db45325d8ea133a370e8d2278ee4c65944c06c44df16c73100fc3",
+    "size": 50539
+  },
+  "qemu": "/home/aftermath/bx510-emu/emulator/work/build/qemu-system-arm",
+  "stages": {
+    "daemon": null,
+    "odd_tail": true,
+    "sacdread": {
+      "auth": "0",
+      "host_path": "/home/aftermath/sacd-verify/original/sacd_read.ko",
+      "init_ok_value": 1744830464,
+      "sha256": "b3d7a383e45d3bbe1a987a4a2e15ab7a68dd55e88d0319f7a0fd2e9cf0246dfa",
+      "size": 97805,
+      "smoke_sha256": "8c3c3bc0b7b60d340785ea200185fe7d0e23e1ace1ae4fde9a139e6f3aa1aa8e"
+    },
+    "sr_ladder": {
+      "helper_host_path": "/tmp/srread",
+      "helper_sha256": "9322749827a3d346e2d7f3034130fa7c9ef0d86916dce62c0680adb326c771ea",
+      "helper_size": 42176,
+      "host_path": "/tmp/sr_read_ladder.sh",
+      "out_dir": "/res/c103",
+      "phase_order": "post-load",
+      "sha256": "56fae835ccd5decee6beebd4f2b716368aae6bacae219f675c143d87ff55fe18",
+      "size": 7341
+    }
+  },
+  "terminal_marker": false,
+  "ts_utc": "2026-11-13T18:44:09.578664Z"
+}

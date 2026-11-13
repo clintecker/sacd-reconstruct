@@ -67,6 +67,7 @@
 
 #define SACD_IOC_INIT 0x40105301u
 #define SACD_IOC_READ 0x40105303u
+#define SACD_IOC_DECRYPT 0x40105304u
 #define SG_DXFER_FROM_DEV_ (-3)
 #define TIMEOUT_MS 10000           /* _IDECLI_SendOddCmd asks for the same */
 
@@ -232,26 +233,51 @@ static int mode_read10(const char *dev, unsigned lba, unsigned nsec,
 }
 
 static int mode_sacdread(const char *sub, const char *dev, unsigned lba,
-                         unsigned nsec, const char *out)
+                         unsigned nsec, const char *out, const char *in)
 {
     unsigned int a[4];
     unsigned char *buf = NULL;
     unsigned long len = 0;
+    unsigned long outlen = 0;
     unsigned cmd;
     int fd, rc, saved, result;
 
-    if (strcmp(sub, "init") != 0 && strcmp(sub, "read") != 0) {
+    if (strcmp(sub, "init") != 0 && strcmp(sub, "read") != 0 &&
+        strcmp(sub, "decrypt") != 0) {
         return usage("sr_read10");
     }
-    cmd = (strcmp(sub, "init") == 0) ? SACD_IOC_INIT : SACD_IOC_READ;
+    cmd = (strcmp(sub, "init") == 0) ? SACD_IOC_INIT :
+          (strcmp(sub, "read") == 0) ? SACD_IOC_READ : SACD_IOC_DECRYPT;
 
-    if (cmd == SACD_IOC_READ) {
+    if (cmd != SACD_IOC_INIT) {
         len = (unsigned long)nsec * 2064UL;   /* sacd_read.ko's own budget */
         buf = calloc(1, len);
         if (!buf) {
             fprintf(stderr, "calloc %lu: errno=%d\n", len, errno);
             return 1;
         }
+    }
+    if (cmd == SACD_IOC_DECRYPT) {
+        /* 5304 consumes the FRAMED bytes: copy_from_user(2064*n) from the
+         * buffer we pass in, per-block TZ decrypt, repack to 2048*n, copy
+         * back to the SAME buffer (sacdread-cpsa.md §2.1 decrypt_sacd row).
+         * The input must already be there: feed it the 5303 read's output. */
+        FILE *f = fopen(in, "rb");
+        size_t got;
+
+        if (!f) {
+            fprintf(stderr, "open %s: errno=%d\n", in, errno);
+            free(buf);
+            return 1;
+        }
+        got = fread(buf, 1, len, f);
+        fclose(f);
+        if (got != len) {
+            fprintf(stderr, "short input %s: %zu of %lu\n", in, got, len);
+            free(buf);
+            return 1;
+        }
+        outlen = (unsigned long)nsec * 2048UL;   /* the out+12 repack */
     }
 
     errno = 0;
@@ -268,7 +294,7 @@ static int mode_sacdread(const char *sub, const char *dev, unsigned lba,
         return 1;
     }
     memset(a, 0, sizeof(a));
-    if (cmd == SACD_IOC_READ) {
+    if (cmd != SACD_IOC_INIT) {
         a[1] = lba;
         a[2] = nsec;
         a[3] = (unsigned int)(unsigned long)buf;
@@ -283,9 +309,10 @@ static int mode_sacdread(const char *sub, const char *dev, unsigned lba,
         printf("SACDREAD cmd=0x%08x ret=%d errno=%d result=%d\n",
                cmd, rc, saved, result);
     } else {
-        dump(out, buf, len);
+        dump(out, buf, (cmd == SACD_IOC_DECRYPT) ? outlen : len);
         printf("SACDREAD cmd=0x%08x lba=%u nsec=%u len=%lu ret=%d errno=%d "
-               "result=%d file=%s\n", cmd, lba, nsec, len, rc, saved, result, out);
+               "result=%d file=%s\n", cmd, lba, nsec,
+               (cmd == SACD_IOC_DECRYPT) ? outlen : len, rc, saved, result, out);
     }
     free(buf);
     /* INIT's success value is CPSA-positive (0x68000000), never 0
@@ -304,11 +331,15 @@ int main(int argc, char **argv)
                            (unsigned)strtoul(argv[4], NULL, 0), argv[5], sacd);
     }
     if (argc >= 4 && strcmp(argv[1], "sacdread") == 0 && strcmp(argv[2], "init") == 0) {
-        return mode_sacdread("init", argv[3], 0, 0, NULL);
+        return mode_sacdread("init", argv[3], 0, 0, NULL, NULL);
     }
     if (argc >= 7 && strcmp(argv[1], "sacdread") == 0 && strcmp(argv[2], "read") == 0) {
         return mode_sacdread("read", argv[3], (unsigned)strtoul(argv[4], NULL, 0),
-                             (unsigned)strtoul(argv[5], NULL, 0), argv[6]);
+                             (unsigned)strtoul(argv[5], NULL, 0), argv[6], NULL);
+    }
+    if (argc >= 8 && strcmp(argv[1], "sacdread") == 0 && strcmp(argv[2], "decrypt") == 0) {
+        return mode_sacdread("decrypt", argv[3], (unsigned)strtoul(argv[4], NULL, 0),
+                             (unsigned)strtoul(argv[5], NULL, 0), argv[7], argv[6]);
     }
     if (argc >= 4 && strcmp(argv[1], "hex") == 0) {
         return mode_hex(argv[2], argv[3]);

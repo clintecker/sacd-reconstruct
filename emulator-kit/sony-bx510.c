@@ -502,15 +502,27 @@ static uint64_t bx510_read(void *opaque, hwaddr off, unsigned size)
     case 0xa004: case 0xa008: case 0xa00c:
     case 0xa010: case 0xa014: case 0xa018: {
         unsigned i = (off - 0xa004) / 4;
-        /* Signature trio (ata-probe-path.md §6 add.10): port_start reads
-         * lbal/lbam/lbah (i=3..5) and recomposes 0x00eb1401 — the ATAPI
-         * signature that decides whether an ATAPI device is present.
-         * Serve it while the stored tf byte is still zero (nothing
+        /* The post-reset ATAPI signature: ONE block, the SATA D2H
+         * signature word 0xeb140101, nsect/lbal/lbam/lbah = 01/01/14/eb at
+         * i=2..5 (+0x00c..+0x018). Two drivers read DISJOINT slices of it,
+         * one word apart, and each one's own arithmetic then lands on its
+         * expected constant (decode/ide-hal-rows.md):
+         *  - libata: port_start recomposes lbah<<16 | lbam<<8 | lbal from
+         *    i=3..5 -> 0x00eb1401, and ata_dev_classify compares
+         *    (lbam | lbah<<8) == 0xeb14 (ata-probe-path.md §6 add.10; run
+         *    C101's "class=3" is the guest proof of this placement).
+         *  - IDE HAL: i4IdeHalGetSignature (0x9a384) loads the hard literals
+         *    0xfd00a014 / 0xfd00a010 / 0xfd00a00c and composes
+         *    +014<<16 | +010<<8 | +00c = lbam<<16 | lbal<<8 | nsect ->
+         *    0x140101, which is what a real player prints (it only branches
+         *    on sig == 1, i.e. ATAPI 0xa1 for anything else).
+         * The old table started at i=3 and so left +0x00c reading 0. Serve
+         * the block while the stored tf byte is still zero (nothing
          * loaded); after tf_load writes a real command the stored byte
          * wins, so real commands see their own taskfile. */
-        if (i >= 3 && s->tf[i] == 0) {
-            static const uint8_t sig[3] = { 0x01, 0x14, 0xeb };
-            return sig[i - 3];
+        if (i >= 2 && s->tf[i] == 0) {
+            static const uint8_t sig[4] = { 0x01, 0x01, 0x14, 0xeb };
+            return sig[i - 2];
         }
         return s->tf[i];
     }
@@ -676,8 +688,19 @@ static void bx510_write(void *opaque, hwaddr off, uint64_t val, unsigned size)
         /* Any real command completes immediately and raises virq 53
          * (BIM group1 bit21, VERIFIED kernel-iomap.md). Status goes to
          * DRQ (data ready on the PIO port); libata drains 256 words and
-         * the port then reads 0x50 again. */
-        s->sata_ist |= 0x1u;
+         * the port then reads 0x50 again.
+         * Completion also latches bit5: the IDE HAL finishes a command on
+         * (status & 0x20) when flags&3 == 1 (i4IdeHalWaitEvt 0x9e300,
+         * `tst r3,#32`), while the libata/FE consumers test bit0
+         * (trig_fe_boot 0x25d4: bits 0|4) or bit4 (xfer_fe_data 0x2240).
+         * Nothing anywhere tests bit5 for a different meaning (the
+         * sata_mt85xx `tst #32` hits are all the ide_log_en flag), and
+         * every a+220 reader accumulates the whole word and writes it back
+         * (_u4IdeHalHwIntStatus 0x9dc3c..0x9dc40, trig_fe_boot 0x25dc,
+         * xfer_fe_data 0x2244) — so both bits ack write-1-to-clear and the
+         * extra bit5 is invisible to the bit0/bit4 tests
+         * (decode/ide-hal-rows.md, completion row). */
+        s->sata_ist |= 0x1u | 0x20u;
         s->sata_st = 0x58;
         s->sata_didx = 0;
         s->pending2 |= BX_SATA_IRQ;
@@ -845,13 +868,25 @@ static void bx510_sata_build_identify(Bx510State *s)
     w[101] = (uint16_t)(sectors >> 16);
     w[102] = (uint16_t)(sectors >> 32);
     w[103] = (uint16_t)(sectors >> 48);
-    /* ata_id_string takes the HIGH byte of each word first, so sequential
-     * ASCII at BYTE offset 2*word is the ATA byte order. The old +10/+23/+27
-     * were WORD indices used as byte offsets: the model string landed in words
-     * 13-23 and libata read words 27-46 as NULs (id-validity-check.md §4). */
-    memcpy((uint8_t *)w + 54, "SONY    BDPSACDEMUL  ", 20); /* model, words 27-46 */
-    memcpy((uint8_t *)w + 46, "1.00    ", 8);               /* fw,    words 23-26 */
-    memcpy((uint8_t *)w + 20, "SACDEMUL0001  ", 20);        /* serial, words 10-19 */
+    /* ata_id_string takes the HIGH byte of each word first, so ASCII must be
+     * stored WORD-SWAPPED (ata_id_string reads pairs as [hi,lo] and prints in
+     * sequence — C100 proved unswapped ASCII prints as 'OSYN DBSPCAEDUM').
+     * Byte offset 2*word is the word index; each 2-char pair is reversed. */
+    {   /* helper: store a string with each 2-char pair swapped */
+        const char *src; unsigned char *dst; unsigned i, n;
+        src = "SONY    BDPSACDEMUL  "; dst = (unsigned char *)w + 54;
+        for (i = 0; i < 20; i += 2) { dst[i] = src[i + 1]; dst[i + 1] = src[i]; }
+        src = "1.00    "; dst = (unsigned char *)w + 46;
+        for (i = 0; i < 8; i += 2) { dst[i] = src[i + 1]; dst[i + 1] = src[i]; }
+        src = "SACDEMUL0001  "; dst = (unsigned char *)w + 20;
+        for (i = 0; i < 20; i += 2) { dst[i] = src[i + 1]; dst[i + 1] = src[i]; }
+        (void)n;
+    }
+    /* 'Drive reports diagnostics failure' (C100): the diag message comes from
+     * the smart/diag bits libata reads — clear the offline SMART capability
+     * bits so no diagnostics are advertised (id-validity-check.md §3.2 notes
+     * w[84/85/87] are pass-through; the diag print reads w[82]/w[83]-adjacent
+     * SMART bits — keep them zero). */
 }
 
 static void bx510_reset(void *opaque)

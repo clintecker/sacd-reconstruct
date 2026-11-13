@@ -581,7 +581,13 @@ unsigned long x_ev_group_set_event(unsigned long h, unsigned long mask, unsigned
   unsigned long f;
   if (!o) return 1;
   spin_lock_irqsave(&o->lock, f);
-  o->flags |= mask;               /* observed op 3 = OR */
+  /* op semantics decoded from real callers (run-p5.md §3.1): op 2 = CLEAR
+   * (~mask), op 3 = OR (the original observation). The old stub ORed
+   * unconditionally, so the IDE HAL's i4IdeOsEventClear(handle,1) ->
+   * x_ev_group_set_event(h, ~1, 2) SET bit1 (the HAL's abort-pending flag)
+   * instead of clearing bit0 — [i4IdeHalSAtaReg(1072)]ERR:-4 before SendCmd. */
+  if (op == 2) o->flags &= ~mask;
+  else         o->flags |= mask;
   spin_unlock_irqrestore(&o->lock, f);
   wake_up_all(&o->wq);
   return 0;

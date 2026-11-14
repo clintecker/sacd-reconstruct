@@ -89,6 +89,19 @@ read_one() {
   fi
 }
 
+if [ "$PHASE" != post ] && [ "$PHASE" = pre ]; then
+  # C113: the block layer's dd is refused EIO while sr_mod's FA/be-quiet flags
+  # are set (dd-eio-loop.md §6: sr_prep_fn returns BLKPREP_KILL while
+  # sdev->changed latches, and the short-circuited sr_test_unit_ready can
+  # never clear it). Clear both flags BEFORE any dd; the read-back line is
+  # the falsifiable observable. SG_IO legs are unaffected either way.
+  if [ -x /res/shim/sr_fa_mode ]; then
+    /res/shim/sr_fa_mode /dev/sr0 clear
+  else
+    echo "FA_MODE helper absent"
+  fi
+fi
+
 if [ "$PHASE" != post ]; then
   # ── (a) sr0 present: the block device must report the fixture's capacity ──
   if $HELPER size "$SR0"; then step a "size probed"; else echo "LADDER a FAIL size"; fi

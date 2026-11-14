@@ -77,6 +77,10 @@ def odd_tail_commands() -> list[str]:
         "echo ODD_TAIL_BEGIN",
         "insmod /lib/modules/2.6.35/BDP/cdrom.ko; echo CDROM_INSMOD=$?",
         "insmod /lib/modules/2.6.35/BDP/sr_mod.ko; echo SRMOD_INSMOD=$?",
+        # /dev/zero for daemon_gate gate 02 (its dd probe is silent on a
+        # missing node and /tmp looked unwritable all along — C111 lesson:
+        # the guest /dev is kernel-populated mknods only, no /dev/zero).
+        "test -c /dev/zero || mknod /dev/zero c 1 5; echo ZERO_NODE=$?",
         "mknod /dev/sr0 b 11 0; echo SR0_MKNOD=$?",
         "ls -l /dev/sr0; echo SR0_LS=$?",
         "echo ODD_TAIL_DONE",
@@ -169,6 +173,11 @@ def sr_ladder_commands() -> list[str]:
         "PHASE=post HELPER=/res/shim/srread OUT=/res/c103 SR0=/dev/sr0 "
         "SACD=/dev/sacd_read SACD_DIFF=1 sh /res/shim/sr_read_ladder.sh; "
         "echo SR_LADDER_POST_RC=$?",
+        # C110 lesson: leg (e)'s INIT owns _au4CpsaInst[compid] and the CPSA
+        # slot table is TWO deep (_arCPSAConnTbl's two records) — the daemon
+        # gate's own INIT then gets 0xE8000006 busy. Release here so the
+        # daemon stage starts with a free slot.
+        "/res/shim/sacdgate 0x40105305 /dev/sacd_read; echo SR_LADDER_RELEASE=$?",
         "echo SR_LADDER_DONE",
     ]
 

@@ -395,6 +395,27 @@ if ioctl_run 0x40105301; then
 fi
 gate 12 sacd-init "$g12" "$g12d"
 
+# ── gate 12b — the FA/be-quiet latch: block-layer reads are REFUSED until it ─
+# is cleared. `sr_prep_fn` returns BLKPREP_KILL while `sdev->changed` is set,
+# and `changed` is cleared only when `sr_test_unit_ready()` succeeds — which
+# Sony's fork short-circuits from `isFaMode | isBeQuiet` WITHOUT issuing a CDB
+# (dd-eio-loop.md §2/§6, VERIFIED from the shipped sr_mod.ko). Gate 13 is a
+# plain block-layer dd, so without this clear it can only ever report 0 B —
+# that is exactly the C112b measurement, and the c122f daemon fires that died
+# with "Not a ScarletBook disc!" (daemon-read-despatch.md §2). No FE reply can
+# change it: the flags are plain dwords in the sata_mt85xx channel struct that
+# only the 0x8532/0x8534 ioctls write, i.e. userspace owns them.
+# The second invocation is both the read-back and the open whose
+# check_disk_change() -> sr_media_change() clears the latch (same helper and
+# same order as sr_read_ladder.sh:98-99).
+FA_MODE=${FA_MODE-/res/shim/sr_fa_mode}
+if [ -x "$FA_MODE" ]; then
+    "$FA_MODE" "$SR0" clear
+    "$FA_MODE" "$SR0"
+else
+    echo "FA_MODE helper missing at $FA_MODE — gate 13 will report 0 B (dd-eio-loop.md §6)"
+fi
+
 # ── gate 13 — the disc: "SACDMTOC" at LBA 0x1FE x10 (plain read) ───────────
 # The daemon's first disc contact is NOT an ioctl: scarletbook_read_master_toc
 # lseek64's to LBA 0x1FE (510), reads 10x2048 B and checks the first 8 bytes

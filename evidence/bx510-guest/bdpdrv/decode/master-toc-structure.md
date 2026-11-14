@@ -404,6 +404,15 @@ Options (a product/model decision, not taken here):
 **Decisive one-line check for the next fire:**
 `grep -a 'FE READ 28 lba=544\|unusable transfer\|Can.t read Area TOC' <qemu log> <uart log>`
 
+**ANSWERED (c122g) — option 3 wins: the guest splits, no bound change.** With the
+FA/be-quiet latch cleared (`sr_fa_mode /dev/sr0 clear`, `daemon-read-despatch.md`
+§3) the daemon's TOC leg ran and the FE served `lba=544 nsec=32 len=65536` +
+`lba=576 nsec=8 len=16384` (and `lba=353804 nsec=32` + `lba=353836 nsec=8`) —
+the 40-sector read arrives as 32+8, so `FE_DMA_MAX` is never approached and
+`unusable transfer` never appears. Client md5 `45ccd7df…` = the §7 step-1 oracle,
+`DISC_OPEN ok`, `DISC_SIZE ok sectors=1064208`. *VERIFIED —
+`daemon-read-despatch.md` §4.2.*
+
 ### 5.2 Already-answered by the model (no change needed for this leg)
 
 `READ(10)`/`READ(12)`/`READ CD` with 2048 or 2352 framing; `TEST UNIT READY`,

@@ -199,7 +199,10 @@ def daemon_commands() -> list[str]:
         # /tmp is absent from the rootfs squashfs and / is squashfs-ro; the
         # daemon writes its embedded sacd_read.ko (97,805 B) to /tmp/XXXXXX
         # (decode/daemon-ioctl-side.md §3.1).
-        "mount -t tmpfs tmpfs /tmp; echo TMPTMP=$?",
+        # /tmp is NOT in the squashfs top level (bin lib res sbin usr only) —
+        # the mount needs the directory to exist first (daemon-wiring.md §2
+        # prescribes mkdir first; the C110-C114 gate-02 FAIL was this).
+        "mkdir -p /tmp; mount -t tmpfs tmpfs /tmp; echo TMPTMP=$?",
         # daemon_gate.sh runs under set -u and reads $HOME; init=/bin/sh has
         # no /etc/profile.
         "HOME=/; export HOME",
@@ -321,6 +324,12 @@ def main():
     p.add_argument("--unimp", required=True, type=Path)
     p.add_argument("--meta", required=True, type=Path)
     p.add_argument("--timeout", type=float, default=120.0)
+    p.add_argument("--guest-cmd", default=None, metavar="CMD",
+                   help="FAST-FIRE mode: replace every optional stage with "
+                        "ONE guest command injected after the odd-tail "
+                        "(which is force-on); a single-stage probe boots, "
+                        "runs the command, and stops — a ~90 s loop for "
+                        "one-measurement fires instead of the full ladder")
     p.add_argument("--qemu-extra", default="",
                    help="extra QEMU argv appended verbatim (e.g. '-s' for a "
                         "gdbserver on :1234 for post-mortem attach)")
@@ -487,14 +496,19 @@ def main():
     # transcript diff against C100/C101 is exactly the stage's own lines.
     # ODD tail before the smoke stage before the daemon: sr0 must exist before
     # anything opens it, and daemon_gate.sh's gate 06 keys on it.
-    if a.odd_tail:
+    if a.guest_cmd is not None:
+        # FAST-FIRE: spine + odd-tail + the one command. No other stages.
         commands += odd_tail_commands()
-    if a.sacdread is not None:
-        commands += sacdread_commands(a.sacd_auth)
-    if a.sr_ladder is not None:
-        commands += sr_ladder_commands()
-    if a.daemon is not None:
-        commands += daemon_commands()
+        commands += [a.guest_cmd]
+    else:
+        if a.odd_tail:
+            commands += odd_tail_commands()
+        if a.sacdread is not None:
+            commands += sacdread_commands(a.sacd_auth)
+        if a.sr_ladder is not None:
+            commands += sr_ladder_commands()
+        if a.daemon is not None:
+            commands += daemon_commands()
     commands += [
         "echo STUB_DONE",
         # clean guest shutdown (C85 lesson): QEMU flushes its -D log on a

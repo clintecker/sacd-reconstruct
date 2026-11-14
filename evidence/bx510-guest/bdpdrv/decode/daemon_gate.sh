@@ -36,6 +36,9 @@
 #   MINOR   misc minor the daemon mknods        (default 201)
 #   COMPID  insmod compid parameter             (default: empty = module default 0)
 #   AUTH    "0" to skip the DISC_OPEN auth gate (default 1: run it)
+#   MTOC_MD5  expected md5 of the whole 20480-byte LBA-510 x10 range
+#            (default 45ccd7df… = the Firebird ISO fixture; set it EMPTY to
+#            accept any disc — gate 13 still needs the SACDMTOC magic + 20480 B)
 #
 # Output contract (one line per gate, greppable):
 #   GATE <id> <PASS|FAIL|SKIP> <name> -- <detail>
@@ -140,15 +143,43 @@ fi
 # "Can not install modules" and nothing else happens.
 tmp_bytes=0
 g02=FAIL
-if dd if=/dev/zero of=/tmp/sacdgate.tmp bs=1024 count=96 2>/dev/null; then
-    tmp_bytes=$(wc -c < /tmp/sacdgate.tmp 2>/dev/null)
-    [ -n "$tmp_bytes" ] || tmp_bytes=0
-    if [ "$tmp_bytes" -ge 97805 ]; then
+# C118/c119 root cause — dd's report is NOT one line on this busybox.
+# BusyBox v1.17.2 (2011-03-09, the guest's own multicall binary) prints three, seen
+# verbatim in the C117 transcript where dd's stderr still reached the console:
+#   96+0 records in
+#   96+0 records out
+#   98304 bytes (96.0KB) copied, 0.008000 seconds, 11.7MB/s
+# C118 wrapped that same dd in $(... 2>&1 >/dev/null) and lifted ${dd_err%% *},
+# which strips the LONGEST space-started suffix and therefore yields "96+0" —
+# never a byte count — so the digit-only case test reported 0 B while dd had
+# written every byte ("GATE 02 ... held 0 B", and gate 13 the same: its md5
+# matched while its count was 0). C119 then died outright on the unset variable.
+# No gate below parses dd's report again. Size comes from ls -l's field 5 and the
+# verdict comes from the md5 of the file dd produced: 98304 zero bytes is one
+# known digest (re-derive host-side: head -c 98304 /dev/zero | md5sum), which
+# proves the length AND that nothing was short-written — ENOSPC truncates and
+# therefore changes the digest.
+TMP_ZERO_MD5=0a9156c4e3c48ef827980639c4d1e263
+g02=FAIL
+tmp_bytes=0
+tmp_md5=""
+tmp_dd_rc=-1
+rm -f /tmp/sacdgate.tmp
+dd if=/dev/zero of=/tmp/sacdgate.tmp bs=1024 count=96 2>/dev/null
+tmp_dd_rc=$?
+if [ -f /tmp/sacdgate.tmp ]; then
+    # `set -- $(ls -l …)` splits on purpose: the size is field 5. The subshell
+    # keeps the script's own positional parameters untouched.
+    tmp_bytes=$({ set -- $(ls -l /tmp/sacdgate.tmp); echo "$5"; })
+    case "$tmp_bytes" in ''|*[!0-9]*) tmp_bytes=0 ;; esac
+    tmp_md5=$(md5sum /tmp/sacdgate.tmp 2>/dev/null)
+    tmp_md5=${tmp_md5%% *}
+    if [ "$tmp_md5" = "$TMP_ZERO_MD5" ]; then
         g02=PASS
     fi
 fi
 rm -f /tmp/sacdgate.tmp
-gate 02 tmp-writable "$g02" "/tmp held $tmp_bytes B (need >= 97805 for the embedded sacd_read.ko)"
+gate 02 tmp-writable "$g02" "/tmp held $tmp_bytes B, md5 [$tmp_md5] dd_rc=$tmp_dd_rc (want $TMP_ZERO_MD5 = 98304 zero bytes, need >= 97805 for the embedded sacd_read.ko)"
 
 # ── gate 03 — the shell the daemon shells out to ─────────────────────────────
 # install_modules/remove_modules run system("mknod ..."), system("insmod %s
@@ -176,7 +207,8 @@ gate 03 daemon-shell-deps "$g03" "mknod/insmod/rmmod in PATH, /dev writable:${g0
 # bdpdrv must already be loaded (decode §2.4 of sacdread-cpsa.md) — the daemon
 # never loads it.
 if [ -r "$PROC/modules" ] && grep -q '^bdpdrv' "$PROC/modules" 2>/dev/null; then
-    gate 04 bdpdrv-resident PASS "$(grep '^bdpdrv' "$PROC/modules" | cut -d' ' -f1-3)"
+    _bdpdrv_line=$(grep '^bdpdrv' "$PROC/modules" 2>/dev/null | head -1)
+gate 04 bdpdrv-resident PASS "${_bdpdrv_line%%:*}"
 else
     gate 04 bdpdrv-resident FAIL "bdpdrv not in $PROC/modules — insmod of sacd_read.ko cannot resolve its API"
 fi
@@ -369,22 +401,60 @@ gate 12 sacd-init "$g12" "$g12d"
 # (decode §2.4). Failure strings: "Can't read Master TOC." / "Not a
 # ScarletBook disc!". This gate is where "the disc appears" is actually
 # observable — and it needs no 0x8530 support at all.
-mtoc_magic=""
+# Sizes and hashes, never dd's report (gate 02 carries the full root cause).
+# mtoc_md5/mtoc_whole start EMPTY on purpose: `set -u` turned c119's gate 13 into
+# "daemon_gate.sh: line 397: mtoc_md5: parameter not set" and killed the script
+# (DAEMON_GATE_RC=2) before gate 14 or the summary could print a single line.
+MTOC_MD5=${MTOC_MD5-45ccd7dfbf433a79d28e877d7441677c}
+MTOC_MAGIC_MD5=161c7c362e094aeadf596b84ea29cde5
 mtoc_bytes=0
-mtoc_hex=""
+mtoc_md5=""
+mtoc_whole=""
+mtoc_dd_rc=-1
+mtoc_why=""
 g13=FAIL
 g13d="no $SR0"
 if [ -b "$SR0" ]; then
-    if dd if="$SR0" of=/tmp/sacdgate.mtoc bs=2048 skip=510 count=10 2>/dev/null; then
-        mtoc_bytes=$(wc -c < /tmp/sacdgate.mtoc 2>/dev/null)
-        [ -n "$mtoc_bytes" ] || mtoc_bytes=0
-        mtoc_magic=$(dd if=/tmp/sacdgate.mtoc bs=1 count=8 2>/dev/null)
-        mtoc_hex=$(od -An -tx1 -N8 /tmp/sacdgate.mtoc 2>/dev/null | tr -s ' ' | sed 's/^ //')
-        if [ "$mtoc_magic" = "SACDMTOC" ] && [ "$mtoc_bytes" -eq 20480 ]; then
+    rm -f /tmp/sacdgate.mtoc
+    dd if="$SR0" of=/tmp/sacdgate.mtoc bs=2048 skip=510 count=10 2>/dev/null
+    mtoc_dd_rc=$?
+    if [ -f /tmp/sacdgate.mtoc ]; then
+        # `set -- $(ls -l …)` splits on purpose: the size is field 5.
+        mtoc_bytes=$({ set -- $(ls -l /tmp/sacdgate.mtoc); echo "$5"; })
+        case "$mtoc_bytes" in ''|*[!0-9]*) mtoc_bytes=0 ;; esac
+        mtoc_whole=$(md5sum /tmp/sacdgate.mtoc 2>/dev/null)
+        mtoc_whole=${mtoc_whole%% *}
+        if [ "$mtoc_bytes" -eq 0 ]; then
+            mtoc_why="dd copied 0 bytes from $SR0 (dd_rc=$mtoc_dd_rc) — no TOC at LBA 510, or the read failed"
+        fi
+        if [ "$mtoc_bytes" -ge 8 ]; then
+            # no od/tr in this rootfs: the magic check is an md5 of the first 8.
+            # md5("SACDMTOC") = 161c7c362e094aeadf596b84ea29cde5 (host-side:
+            # printf SACDMTOC | md5sum).
+            mtoc_md5=$(dd if=/tmp/sacdgate.mtoc bs=1 count=8 2>/dev/null | md5sum)
+            mtoc_md5=${mtoc_md5%% *}
+        fi
+        if [ "$mtoc_md5" = "$MTOC_MAGIC_MD5" ] && [ "$mtoc_bytes" -eq 20480 ]; then
             g13=PASS
         fi
+        # The whole range is what the multi-sector read actually produced: the
+        # magic can match while sectors 2-10 are short or desynced (the
+        # read10-orchestration.md §5 R2 class). MTOC_MD5 names the fixture it is
+        # calibrated against (AGENTS.md expectation-freshness rule 5b); empty =
+        # accept any disc on the magic + length check alone.
+        if [ -n "$MTOC_MD5" ] && [ "$mtoc_whole" != "$MTOC_MD5" ]; then
+            g13=FAIL
+            if [ -z "$mtoc_why" ]; then
+                mtoc_why="whole-range md5 is not the fixture oracle (short/misaligned read, or a different disc; MTOC_MD5= relaxes)"
+            fi
+        fi
+    else
+        mtoc_why="dd wrote no /tmp/sacdgate.mtoc (dd_rc=$mtoc_dd_rc)"
     fi
-    g13d="LBA 510 x10 = $mtoc_bytes B, first 8 bytes [$mtoc_hex] (want 53 41 43 44 4d 54 4f 43)"
+    g13d="LBA 510 x10 = $mtoc_bytes B, first-8 md5 [$mtoc_md5] (want $MTOC_MAGIC_MD5 = SACDMTOC), whole-range md5 [$mtoc_whole] (want ${MTOC_MD5:-<any>}), dd_rc=$mtoc_dd_rc"
+    if [ -n "$mtoc_why" ]; then
+        g13d="$g13d -- $mtoc_why"
+    fi
 fi
 rm -f /tmp/sacdgate.mtoc
 gate 13 master-toc "$g13" "$g13d"

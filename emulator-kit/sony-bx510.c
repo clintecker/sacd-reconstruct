@@ -320,9 +320,16 @@ static void bx510_fe_post(Bx510State *s, uint32_t w0, uint32_t w1,
 
 /* ==== C97 — the 0x5c400 descriptor DMA: a READ's data path ==== */
 
-/* The driver's own transfer cap (qc_issu_task .text+0x6e00 / 0x74e0: 75776 =
- * 32 x 2352 + 512). A larger 0x5c404 is a decode bug, not a read. */
-#define FE_DMA_MAX   0x12800u
+/* The CD-audio lane's own transfer cap (qc_issu_task .text+0x6e00/0x74e0:
+ * 75776 = 32 x 2352 + 512) — but that is the DRIVER's audio path budget, not
+ * the FE's DMA limit: the daemon's own TOC reads are 40-sector plain blocks
+ * (81 920 B, master-toc-structure.md §5.1) and the guest block layer allows
+ * 1024 sectors (BLK_DEF_MAX_SECTORS, verified in the guest tree), so a real
+ * BX510 plainly serviced larger requests. The guards that actually keep a
+ * decode bug from scribbling RAM are the whole-frame check, the EOF bound and
+ * the phys+len ≤ RAM check — all independent of this constant. 0x20000 =
+ * 128 KiB covers 40-sector blocks with headroom. */
+#define FE_DMA_MAX   0x20000u
 #define CD_PAYLOAD   2048u       /* the fixture's logical sector */
 #define CD_FRAME     2352u       /* ATAPI raw CD frame (§4.2) */
 #define CD_SACD      2064u       /* SACD framed sector: 12-byte header + payload
@@ -581,6 +588,10 @@ enum fe_pkt_kind {
     FE_PKT_MODE_SENSE6,     /* P3: 128-byte MODE SENSE(6) page 0x2a */
     FE_PKT_READ,            /* P6: READ(10)/READ(12)/READ CD — C97 FE-DMA */
     FE_PKT_GESN,            /* sr.c's media poll: GET EVENT STATUS NOTIFICATION */
+    FE_PKT_GET_CONFIG,      /* bdpdrv GetProfile / cdrom_mmc3_profile: 0x46 */
+    FE_PKT_READ_TOC,        /* cdrom_count_tracks on the blocking open: 0x43 */
+    FE_PKT_DISC_INFO,       /* sr.c capacity: 0x51 READ DISC INFORMATION */
+    FE_PKT_TRACK_INFO,      /* sr.c capacity: 0x52 READ TRACK/RZONE INFO */
     FE_PKT_REQ_SENSE,       /* REQUEST SENSE after a drive-error completion */
     FE_PKT_UNKNOWN,         /* P7: never stay silent */
 };
@@ -593,6 +604,10 @@ static const char *fe_pkt_kind_name(enum fe_pkt_kind k)
     case FE_PKT_MODE_SENSE6: return "mode-sense-6";
     case FE_PKT_READ:        return "read";
     case FE_PKT_GESN:        return "gesn";
+    case FE_PKT_GET_CONFIG:  return "get-config";
+    case FE_PKT_READ_TOC:    return "read-toc";
+    case FE_PKT_DISC_INFO:   return "disc-info";
+    case FE_PKT_TRACK_INFO:  return "track-info";
     case FE_PKT_REQ_SENSE:   return "req-sense";
     default:                 return "unknown";
     }
@@ -603,7 +618,8 @@ static enum fe_pkt_kind bx510_fe_packet_kind(uint32_t w1)
     /* CDB opcodes hw_chg_st switches on (.text+0x4084..0x40c8), plus the
      * scan's own INQUIRY/READ CAPACITY entries (§1.3). */
     static const uint8_t cdb_ops[] = { 0x00, 0x03, 0x12, 0x1a, 0x1b, 0x25,
-                                       0x28, 0x4a, 0x5a, 0xa8, 0xbe };
+                                       0x28, 0x43, 0x46, 0x4a, 0x51, 0x52,
+                                       0x5a, 0xa8, 0xbe };
     unsigned nbytes = (w1 & 0xffu) | (((w1 >> 8) & 0xffu) << 8);
     unsigned op = w1 & 0xffu;
     unsigned i;
@@ -622,6 +638,10 @@ static enum fe_pkt_kind bx510_fe_packet_kind(uint32_t w1)
         case 0x1a: return FE_PKT_MODE_SENSE6;
         case 0x28: case 0xa8: case 0xbe: return FE_PKT_READ;
         case 0x4a: return FE_PKT_GESN;
+        case 0x46: return FE_PKT_GET_CONFIG;
+        case 0x43: return FE_PKT_READ_TOC;
+        case 0x51: return FE_PKT_DISC_INFO;
+        case 0x52: return FE_PKT_TRACK_INFO;
         case 0x03: return FE_PKT_REQ_SENSE;
         default:
             /* 0x00 TUR, 0x1b START STOP UNIT, 0x5a MODE SENSE(10) (recipe P4:
@@ -675,6 +695,129 @@ static void bx510_fe_mode_sense6(Bx510State *s, uint8_t *buf)
     buf[19] = 0x00;
 }
 
+/* GET EVENT STATUS NOTIFICATION (0x4a, media class) — the media-present answer
+ * and the ONLY thing that decides "disc in drive" on this rig's blocking open
+ * (daemon-gate-c111.md §2). Sony's sr_test_unit_ready short-circuits to a
+ * NOT-READY result with NO SCSI command while the driver's FA-mode/be-quiet
+ * flag is set (sr_mod.ko .text+0x1554 `mov r10,#0x08000002`) — and it is
+ * (C110: "sr0: scsi-1 drive") — so sr_drive_status drops to
+ * cdrom_get_media_event (.text+0x2cfc) and this 8-byte reply IS the media
+ * check. Its predicates (cdrom.ko .text+0x3048..0x3068): be16(buf[0..1]) > 3,
+ * (buf[2] & 0x87) == 0x04 — notification class 4, NEA clear — then
+ * med = buf[4..7] with media_present = buf[5] bit1, door_open = buf[5] bit0
+ * (sr_mod.ko .text+0x2d08/.text+0x2d54). buf[3], buf[4], buf[6], buf[7] are
+ * copied or skipped and never read; no DOE/CDE bit exists on this path. */
+static void bx510_fe_gesn(uint8_t *buf)
+{
+    memset(buf, 0, 8);
+    buf[1] = 0x06;              /* Event Data Length 6 (predicate: > 3) */
+    buf[2] = 0x04;              /* notification class 4; NEA (bit7) clear */
+    buf[5] = 0x02;              /* bit1 media present = 1, bit0 door open = 0 */
+}
+
+/* GET CONFIGURATION (0x46) — the current MMC profile, big-endian at bytes 6..7.
+ * Two independent readers of this one reply: bdpdrv _IDECLI_OddGetProfile
+ * (.text+0xa9ab0: ldrb r2,[r4,#6]; ldrb r3,[r4,#7]; add r3,r3,r2,lsl #8) — the
+ * daemon gate's profile test, CDB literal .rodata+0x129b80 =
+ * 46 01 00 00 00 00 00 00 14 00 00 00 (RT=1, alloc 20) — and cdrom.c
+ * cdrom_mmc3_profile, the same (buffer[6]<<8)|buffer[7] read on the block-open
+ * path. 0x10 (DVD-ROM) is the profile the gate wants: sacd_read.ko
+ * .text+0x5cc `cmp r3,#16` keeps u4Result 0 only for 0x10, else -1
+ * (.text+0x5d4). Bytes 8..13 are a Profile List descriptor (feature 0x0000,
+ * current, one entry = the same 0x0010) so the Data Length field does not
+ * lie; no reader on this path parses them (MMC-6 §5.3.6 layout, INFERRED). */
+#define FE_GETCONFIG_LEN  14u
+static void bx510_fe_get_configuration(uint8_t *buf)
+{
+    memset(buf, 0, FE_GETCONFIG_LEN);
+    buf[3]  = 0x06;             /* Data Length = 6: one 6-byte descriptor */
+    buf[7]  = 0x10;             /* current profile 0x0010 */
+    buf[10] = 0x08;             /* Profile List: bit3 current */
+    buf[11] = 0x02;             /* additional length 2 = one profile entry */
+    buf[13] = 0x10;             /* the entry: 0x0010 */
+}
+
+/* READ TOC/PMA/ATIP (0x43) format 0, one data track. Not a gate-06 blocker —
+ * cdrom_count_tracks only fails the open on an -ENOMEDIUM return — but without
+ * it cdth_trk0/trk1 come from uninitialised kmalloc(32) heap, so the track
+ * count (and up to 255 TOC-entry reads) is nobody's decision. Both readers:
+ * sr_read_tochdr wants buffer[2]/[3], sr_read_tocentry wants buffer[5]&0xf
+ * (CDROM_DATA_TRACK = 0x04) and buffer[9..11] (MSF). */
+static void bx510_fe_read_toc(uint8_t *buf)
+{
+    static const uint8_t toc[12] = {
+        0x00, 0x0a,                 /* TOC data length 10 */
+        0x01, 0x01,                 /* first track 1, last track 1 */
+        0x00, 0x14, 0x01, 0x00,     /* ADR 1, CONTROL 4 (data), track 1 */
+        0x00, 0x00, 0x02, 0x00      /* address MSF 00:02:00 = LBA 0 */
+    };
+    memcpy(buf, toc, sizeof(toc));
+}
+
+/* READ DISC INFORMATION (0x51) and READ TRACK/RZONE INFO (0x52) — the two
+ * data-in rows behind sr.c's capacity, and the C113 geometry bug
+ * (rc-stale-window.md). get_sectorsize keeps max_t(cd->capacity, last_written)
+ * (sr.c:931) and gets last_written from cdrom_get_last_written's generic-packet
+ * branch: 0x51 -> cdrom_get_disc_info (cdrom.c:3807) -> last_track =
+ * be16(di[11],di[6]) (cdrom.c:3870) -> 0x52 -> cdrom_get_track_info
+ * (cdrom.c:3764) -> *last_written = be32(ti[28..31]) (cdrom.c:3890). Both
+ * readers return buflen, not an error (cdrom.c:3846/3803), so a BARE success
+ * hands the driver its own uninitialised stack: `di` keeps the 0xbb head poison
+ * (qc_issu_task 0x7468), last_track became 0xbbbb (C113 trace w2=0000bbbb) and
+ * ti[28..31] kept stale stack 0x30300020, which max_t() then preferred over the
+ * CORRECT READ CAPACITY answer — blkgetsize64 1655709958144 instead of
+ * 2179497984. Answer them with the standard layouts (MMC-6 §5.3.3 / §6.24,
+ * track_information fields the MediaTek parser reads at hw_chg_st 0x427c:
+ * buf[7]&2 = lra_v, BE32 at 8/24/28 — write10-model.md:228). Data Length =
+ * payload-2, so the driver's requeue lands on 36/32 without the sizeof clamp. */
+#define FE_DISC_INFO_LEN  36u   /* sizeof(disc_information)  = 2 + 34 */
+#define FE_TRACK_INFO_LEN 32u   /* sizeof(track_information) = 2 + 30 */
+
+static void bx510_fe_disc_info(uint8_t *buf)
+{
+    memset(buf, 0, FE_DISC_INFO_LEN);
+    buf[0] = 0x00;                  /* Disc Information Length 34, BE */
+    buf[1] = 0x22;
+    buf[3] = 0x01;                  /* n_first_track */
+    buf[4] = 0x01;                  /* n_sessions_lsb */
+    buf[5] = 0x01;                  /* first_track_lsb */
+    buf[6] = 0x01;                  /* last_track_lsb -> last_track = 1 */
+}
+
+static void bx510_fe_track_info(Bx510State *s, uint8_t *buf)
+{
+    uint64_t sectors = s->sata_blk ? blk_getlength(s->sata_blk) / 2048 : 0;
+    uint32_t last_lba = sectors ? (uint32_t)(sectors - 1) : 0;
+
+    memset(buf, 0, FE_TRACK_INFO_LEN);
+    buf[0]  = 0x00;                 /* Track Information Length 30, BE */
+    buf[1]  = 0x1e;
+    buf[2]  = 0x01;                 /* track_lsb */
+    buf[3]  = 0x01;                 /* session_lsb */
+    buf[5]  = 0x04;                 /* track_mode 4 = data track */
+    buf[6]  = 0x01;                 /* data_mode 1; blank (bit6) clear */
+    buf[7]  = 0x02;                 /* lra_v (bit1): last_rec_address valid */
+    buf[24] = last_lba >> 24;       /* track_size */
+    buf[25] = last_lba >> 16;
+    buf[26] = last_lba >> 8;
+    buf[27] = last_lba;
+    buf[28] = last_lba >> 24;       /* last_rec_address -> *last_written */
+    buf[29] = last_lba >> 16;
+    buf[30] = last_lba >> 8;
+    buf[31] = last_lba;
+}
+
+/* Allocation length for the three opcodes that carry it at CDB[7..8]. Other
+ * data-in rows keep their own byte: READ CAPACITY 0x25 uses CDB[8..9],
+ * MODE SENSE(6) 0x1a uses CDB[4] — do not route them through this. */
+static unsigned bx510_fe_cdb_alloc78(Bx510State *s)
+{
+    uint8_t cdb[12];
+
+    bx510_fe_cdb(s, cdb);
+    return ((unsigned)cdb[7] << 8) | cdb[8];
+}
+
 /* ATAPI PACKET reply (§4.2). One message per packet — a type-0x10 payload
  * offer IS the completion for that qc (the C98 lesson already encoded above:
  * the bottom half reads the status block exactly once). */
@@ -712,15 +855,37 @@ static void bx510_fe_packet(Bx510State *s)
         bx510_fe_read(s);
         return;
     case FE_PKT_GESN:
-        /* sr.c's open-path media poll (C103 trace: ONE GESN, opcode 0x4a,
-         * polled, issued the instant before the first READ — run-c103.md §2
-         * resolution). It answered bare success there with a poisoned buffer
-         * and the whole read path still worked, so the PROVEN answer is that
-         * bare completion; the semantic reply (medium-present bits in the
-         * event descriptor) is a later decode keyed on sr.c's own
-         * ge_media_status reader, not hand-synthesised bytes. */
-        bx510_fe_post(s, 0, 0, 0, 0);
-        return;
+        /* The media-present answer (daemon-gate-c111.md §2): this 8-byte
+         * reply IS the media check on this rig — Sony's sr_test_unit_ready
+         * short-circuits with NO SCSI command while FA-mode is set, so the
+         * blocking open reaches cdrom_get_media_event and buf[5] bit1 decides
+         * ENOMEDIUM vs disc. The C103 bare-success answer predates this
+         * decode; the O_NONBLOCK read path never asked and still doesn't. */
+        bx510_fe_gesn(payload);
+        len = 8;
+        break;
+    case FE_PKT_GET_CONFIG:
+        /* The profile answer (§3): bdpdrv _IDECLI_OddGetProfile reads
+         * be16(bytes 6..7) and the daemon gate needs 0x10; all 2040 C110
+         * posts fell to UNKNOWN bare-success, so u4Result was -1 by the
+         * profile compare alone (zero SenseKey prints). */
+        bx510_fe_get_configuration(payload);
+        len = FE_GETCONFIG_LEN;
+        break;
+    case FE_PKT_READ_TOC:
+        /* One data track at LBA 0 (§3.3): without it cdrom_count_tracks
+         * serves uninitialised kmalloc(32) heap as track counts. */
+        bx510_fe_read_toc(payload);
+        len = 12;
+        break;
+    case FE_PKT_DISC_INFO:
+        bx510_fe_disc_info(payload);
+        len = FE_DISC_INFO_LEN;
+        break;
+    case FE_PKT_TRACK_INFO:
+        bx510_fe_track_info(s, payload);
+        len = FE_TRACK_INFO_LEN;
+        break;
     case FE_PKT_UNKNOWN:
         /* P7: never stay silent — silence is a 30 s libata timeout, not a
          * fast failure. */
@@ -740,6 +905,21 @@ static void bx510_fe_packet(Bx510State *s)
         /* P1/P5: the only packet sr_probe needs before add_disk(). */
         bx510_fe_post(s, 0, 0, 0, 0);
         return;
+    }
+    /* the CDB always wins: never answer with more bytes than it asked for
+     * (allocation length at CDB[7..8] for exactly these three opcodes) */
+    /* CDB[7..8] is the Allocate Length for exactly these five opcodes (0x51 and
+     * 0x52 in MMC-6 §6.24/§6.35); READ CAPACITY 0x25 has NO allocate field at
+     * all (SBC-2 §6.11, its 10-byte CDB is cdb[0] + 9 zero bytes — sr.c:902),
+     * and MODE SENSE(6) 0x1a carries it at CDB[4]. */
+    if (kind == FE_PKT_GESN || kind == FE_PKT_GET_CONFIG ||
+        kind == FE_PKT_READ_TOC || kind == FE_PKT_DISC_INFO ||
+        kind == FE_PKT_TRACK_INFO) {
+        unsigned alloc = bx510_fe_cdb_alloc78(s);
+
+        if (alloc != 0 && alloc < len) {
+            len = alloc;
+        }
     }
     bx510_fe_dram_write(s, FE_PKT_OFF, payload, len);
     bx510_fe_post(s, 0x00100000u, FE_PKT_OFF, len, 0);

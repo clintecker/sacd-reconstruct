@@ -279,8 +279,8 @@ commit-unit:
 	@$(MAKE) --no-print-directory docs-check
 	@echo "-- gate 1: tests (un-piped, exit-code-checked)"
 	@uv run pytest -m "not smoke" -q || (echo "TESTS FAILED — no commit" && exit 1)
-	@echo "-- gate 2: private remote check"
-	@git remote get-url origin | grep -q "clintecker/aftermath" || (echo "REMOTE IS NOT THE PRIVATE ONE — refusing to push" && exit 1)
+	@echo "-- gate 2: private remote check (repo-aware: sacd-reconstruct here, aftermath elsewhere; the a490e51 incident is the CWD-identity hazard, not the repo name)"
+	@git remote get-url origin | grep -q "clintecker/aftermath\|clintecker/sacd-reconstruct" || (echo "REMOTE IS NOT THE PRIVATE ONE — refusing to push" && exit 1)
 	@git add $(if $(PATHS),$(PATHS),-A)
 	@git commit -F $(MSGFILE)
 	@git push origin

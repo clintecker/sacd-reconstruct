@@ -67,6 +67,15 @@ settling experiment named.
    `SACD_IOC_READ` — plain `lseek64`+`read()` only, which the block layer turns
    into READ(10). The 2064-byte ioctl channel starts only at `DISC_READ` /
    track rip, i.e. after the TOC parse succeeds. *VERIFIED (§4.2).*
+9. **C121 was healthy — the whole TOC leg is CLIENT-triggered, not a startup
+   leg.** The `-S` daemon issues **zero** block reads: `main` goes straight to
+   `listener_thread` + `server_loop` (0xe36c/0xe3c8) and both callers of
+   `scarletbook_open` are client paths (`client_thread` 0xcc64, `main_loop`
+   0xdad0, and `main_loop` only runs when `-S` is absent). Rows 4-6 above
+   describe *what happens inside one `DISC_OPEN`*, never a boot sequence, and
+   the 520x16 read C121 showed at LBA 510's tail is page-cache readahead past
+   gate 13's `dd`, not a daemon request — the daemon cannot ask for LBA 520 at
+   all. *VERIFIED, §8 (`issue #11`).*
 
 ---
 
@@ -460,3 +469,283 @@ make vm-exec CMD='cd /home/aftermath/sony-kernel/linux-2.6.35 && grep -n "ATA_MA
 Evidence state: no rig files were modified for this document; the extracted
 20 480 bytes live at `/tmp/sacdmtoc/mtoc.bin` on the Mac and `/tmp/mtoc.bin` on
 the VM, both reproducible with step 1.
+
+---
+
+## 8. C121 resolution — issue #11: the read ORDER was right, the TRIGGER was wrong
+
+*(the C121 follow-up asked for this as "§7"; §7 above is the provenance list,
+so the resolution lands here. Decode-only: no rig files were touched.)*
+
+The anomaly being resolved: §4.1 predicts `read(dev, 544, 40)` (TWOCHTOC) then
+`read(dev, 353804, 40)` (MULCHTOC) right after the master TOC, yet C121 showed
+FE requests `lba=510 nsec=2`, `lba=512 nsec=8`, `lba=520 nsec=16` and then
+nothing but the ~1 Hz get-configuration loop — `lba=544` never appeared
+(`count=0` in that run's mmio census).
+
+### 8.1 Bottom line
+
+1. **The `-S` daemon reads no sectors at all.** In server mode `main` spawns
+   `listener_thread` and enters `server_loop`; the TOC leg exists only inside
+   `scarletbook_open`, whose two callers are the *client*
+   `DISC_OPEN` handler and the non-server `main_loop`. §4.1/§5.1 were read as a
+   startup sequence; they are a `DISC_OPEN` sequence. *VERIFIED (§8.2).*
+2. **So 544x40 / 353804x40 are first-client requests.** They are not "lazy" in
+   the sense of a deferred TOC phase — they are inside the same call frame as
+   the 510x10 read, unconditionally, whenever `scarletbook_open` runs at all.
+   *VERIFIED (§8.3).*
+3. **Therefore C121 reached its healthy steady state**, not a divergence: no
+   client ever spoke protobuf to the listener, so no `DISC_OPEN`, so no TOC
+   leg, so no area read was ever *supposed* to appear. The observed state is
+   `server_loop`'s once-per-second status line plus the driver's TUR retry loop
+   behind ioctl `0x40105306`. *VERIFIED (§8.5).*
+4. **The `lba=520 nsec=16` request cannot be the daemon's.** The only LBAs this
+   binary can ask for are the literal `0x1FE` (510, `0x2b010`) and the two TOC
+   fields (544, 353804) — 520 is not one of them, in any state. The DAEMON's
+   possible request sets are therefore exactly "510x10 then 544x40 then
+   353804x40" or "510x10 and a parse failure", and no client ever connected to
+   the listener in C121 — so the 510-region request set has a non-daemon
+   producer: gate 13's `dd`, which reads *exactly* those 20 480 bytes (uart
+   `GATE 13 PASS master-toc -- LBA 510 x10 = 20480 B ... md5 [45ccd7df...]`).
+   *VERIFIED by the read-site audit (§8.2); the fork is closed in §8.3.*
+5. **The 2 + 8 + 16 decomposition is the block layer, not the daemon.** 510x2
+   and 512x8 are one buffered 20 480-byte read split on 4 KiB page boundaries;
+   520x16 is the page-cache readahead window that follows it, i.e. sectors
+   520-535 = the disc's *second* master-TOC copy (520-529) plus 6 sectors of
+   the third (530-535), verified on the ISO. Nothing parses them. §8.4.
+
+### 8.2 The call graph (VERIFIED, addresses cited)
+
+```
+main 0xe2d8
+  0xe2ec init()            0xe2f8 parse_options()      0xe308 install_modules()
+  0xe360  ldr r3,[0x56e0c +0x32c]      ; options.server_mode, set by -S
+  0xe36c  beq 0xe3c8                  ; server_mode == 0  ->  main_loop
+  0xe384  pthread_create(&t,0,0xcfac,0)  ; listener_thread (literal 0xe490)
+  0xe3c0  bl  0xe1b4 server_loop       ; -S path, every time
+  0xe3c8  bl  0xda5c main_loop         ; CLI path only
+
+listener_thread 0xcfac   socket 0xd004, bind 0xd028, listen 0xd040, accept 0xd068;
+                         0xd094 pthread_create(entry = literal 0xd0c4 = 0xc934)
+client_thread   0xc934   pb_decode(0xf5d4) request loop;
+   DISC_OPEN dispatch word 0xcc38 at 0xca44
+  0xcc40  sacd_open("/dev/sr0")        ; literal 0xcfa0 -> 0x319a0
+  0xcc64  scarletbook_open(dev, 0)     ; <-- the TOC leg, per client
+  0xcd8c  sacd_authenticate(dev)       ; ioctl 0x40105302
+
+main_loop 0xda5c  (non-server only)
+  0xdab0 sacd_open   0xdad0 scarletbook_open   0xdaf4 sacd_authenticate
+
+scarletbook_open 0x297bc
+  0x29858  scarletbook_read_master_toc(sb)
+  0x298c4  if (BE32 mtoc[0x40]) == 0 -> skip          ; area 1 gate
+  0x298f8  malloc(mtoc[0x54] << 11)                  ; 40 x 2048 = 81 920
+  0x299d8  sacd_read_block_raw(dev, mtoc[0x40], mtoc[0x54], buf)   ; 544 x 40
+  0x29a24  scarletbook_read_area_toc(sb, area)        ; no reads of its own
+  0x29a68  area 2: mtoc[0x48] gate, 0x29bac read      ; 353 804 x 40
+
+scarletbook_read_master_toc 0x2a1fc
+  0x2a20c  malloc(20480)
+  0x2a25c  sacd_read_block_raw(sb, 0x1FE, 10, buf)    ; lba literal 0x2b010 = 510
+
+sacd_read_block_raw 0x2eb04   ->  fn ptr [0x59e14]
+  installed by sacd_input_setup 0x22954 (stores at 0x22af8-0x22afc) = 0x21eb4
+sacd_dev_input_read 0x21eb4
+  0x21f08  lseek64(fd, lba << 11, SEEK_SET)
+  0x21f58  read(fd, buf, nsec << 11)          ; ONE read of 10 / 40 sectors
+```
+
+Exhaustive read audit (this extends §4.2 from "three `sacd_read_block_raw`
+sites" to "the daemon has no other way to touch the disc"): the whole binary
+contains **two** `bl read@plt` sites — `id3_read_fd` `0x1e390` (ID3 tags, on an
+image file) and `sacd_dev_input_read` `0x21f58` — and **three**
+`bl lseek64@plt` sites: `id3_seek_fd` `0x1e274` plus `0x21f08`/`0x21fdc` inside
+`sacd_dev_input_read`. There is no `pread`/`readv`, no `fread` on a device, no
+SG_IO. So apart from ID3 scanning, **every disc byte the daemon ever sees
+enters at `0x21f58`**, i.e. through one of the three `sacd_read_block_raw` sites
+in §4.2. *VERIFIED:*
+`grep -n 'bl .*<read@plt>\|bl .*<lseek64@plt>' analysis/disasm.txt` → 2 + 3 hits.
+
+### 8.3 The fork, and which branch C121 took
+
+The prediction in §4.1 is unconditional — inside `scarletbook_open` there is no
+branch between "master TOC parsed" and "read area 1": at `0x298c4` the
+`mtoc[0x40]` gate falls through (544 ≠ 0), `0x298f8` mallocs, `0x299d8` reads.
+So a daemon-produced request at LBA 510 has exactly two possible futures:
+
+| branch | requires | wire signature |
+|---|---|---|
+| **(A)** parse OK | `read_master_toc` returned 1 | 510x10, then **544x40 within the same call**, then 353 804x40 |
+| **(B)** parse failed | one of §3's fatal paths | 510x10, then nothing; stderr has `Not a ScarletBook disc!` / `Unsupported version:` in 2 of 6 fatal cases, **silence** in the other 4 |
+
+C121 matches neither full signature: it showed 510-region requests and no 544.
+Two readings, and the binary decides between them:
+
+* **(B) is only reachable if a client connected.** `read_master_toc` runs only
+  inside `scarletbook_open`, which runs only from `client_thread` (0xcc64) or
+  from `main_loop` (0xdad0) — and `main` does not take `main_loop` in `-S` mode
+  (0xe36c). No client spoke to `listener_thread` in C121 (no client binary was
+  staged or run, and the same launch line in FFDAEMON3 prints `Client none`).
+  Furthermore the gate-verified bundle satisfies every fatal test, so (B) would
+  additionally need the FE's page-split DMA to have filled the daemon's buffer
+  with the wrong pages — a rig bug worth its own finding, not an assumption to
+  hand a CVE-shaped question.
+* **(C) no `scarletbook_open` at all** — the 510-region requests belong to
+  someone else. In C121 the only other block-layer consumer of LBA 510 in that
+  window is gate 13's `dd` (uart line 2454 = `GATE 13 PASS`, in the gate stage
+  that runs before the launch at line 2509). This branch needs no assumption
+  about DMA correctness, and it is exactly what the binary dictates for `-S`
+  with no client.
+
+⇒ **C121 took branch (C): the daemon never entered the TOC leg.** The daemon was
+healthy, and the "divergence" was an attribution error in reading the trace —
+plus the wrong assumption (implicit in §0.4/§5.1) that the TOC leg is part of
+daemon startup.
+
+This also names the *only* remaining ambiguity, and its one-line checker: if a
+future run shows 510-region requests with a client connected and no 544, the
+answer is branch (B) and the FE's split-DMA page mapping is the suspect — see
+§8.7's mandatory ordering marker.
+
+### 8.4 What the C121 LBA-510 requests actually were
+
+| request | bytes | block-layer meaning |
+|---|---|---|
+| `lba=510 nsec=2` | 4 096 | page 255 (sectors 510-511), one page-cache bio |
+| `lba=512 nsec=8` | 16 384 | pages 256-259 (sectors 512-519), four bios merged by the elevator |
+| `lba=520 nsec=16` | 32 768 | pages 260-267 = a **readahead window past the request** |
+
+The three together are one buffered `read()` of 20 480 B at byte offset
+510 x 2048 = 1 044 480 plus the readahead that follows it. Two independent
+cross-checks:
+
+* The ladder's SG_IO leg over the *same* 20 480 bytes is ONE request —
+  `FE READ 28 lba=510 nsec=10 len=20480 frame=2048` in C104 and again in C108 —
+  because SG_IO bypasses the page cache. So "10 sectors in one line" vs
+  "2 + 8 sectors in two lines" is *which syscall path the reader used*, not a
+  daemon chunking strategy. Buffered readers of a disc all look like this.
+* Sectors 520-535 on the Firebird disc are the second master-TOC copy
+  (`520 SACDMTOC` … `529 SACD_Man`) plus the first 6 sectors of the third copy
+  (`530 SACDMTOC`, `535 SACDeTtx`). Re-derived on the VM:
+  `dd if=.../firebird.iso bs=2048 skip=520 count=1 | head -c8` -> `SACDMTOC`.
+  Nothing in the daemon opens, parses or even mentions that range (§5.3's third
+  bullet already said so); reading it is cache warm-up.
+
+The producer was gate 13's `dd if=$SR0 of=/tmp/sacdgate.mtoc bs=2048 skip=510
+count=10` (`daemon_gate.sh`, uart `GATE 13 PASS ... 20480 B ... dd_rc=0`).
+**Evidence caveat, recorded honestly:** the 39.7M-line
+`/tmp/bdpdrv-runC121.mmio.log` has since been rotated off the lab VM by the
+`/tmp` cleanup scripts, so this attribution rests on (a) the exhaustive read-site
+audit of §8.2 plus (b) that gate line, not on re-reading the trace. §8.7's grep
+reproducer settles it on the next fire in one line, and §8.9 names the one
+minute-cheap experiment that confirms the readahead interpretation on the wire.
+
+### 8.5 What state the C121 daemon actually reached
+
+`server_loop` `0xe1b4` — the whole body, once per second:
+
+```
+0xe1f0  disc_sacd()  -> ioctl 0x40105306   sacd_read.ko: _IDECLI_OddTestUnitReadyLoop(20000)
+0xe214  sacd_sacd()  -> ioctl 0x40105307   sacd_read.ko: _IDECLI_OddGetProfile (0x10 => u4Result >= 0)
+0xe230  is_client_connected()
+0xe288  safe_fwprintf(stdout, "SACD Daemon %ls active. Client %ls. %ls. ", "0.37", ...)
+```
+
+* `disc_sacd() != 0` ⇒ `Tray is empty` (0xe1fc-0xe204, 0xe274).
+  `disc_sacd() == 0` and `sacd_sacd() < 0` ⇒ `Disc inserted`; `>= 0` ⇒
+  **`SACD disc inserted`** (0xe258-0xe26c). Same mapping as
+  `daemon-ioctl-side.md` D-6 / `daemon-gate-experiments.md` rows 10-11.
+* The FFDAEMON3 capture of this same launch (`SACD Daemon 0.37 active. Client
+  none. SACD disc inserted.`) is therefore a statement about **ioctls 5306/5307
+  only** — it says the rig's media answers are right, not that the TOC leg ran.
+  No message in this program reports TOC success.
+* The "get-configuration poll loop" is that `5306` TUR retry loop (20 000 ms of
+  driver-side retries per call): FE traffic with no sector in it, exactly as
+  §5.3 predicted for the TOC leg. It never asked for a sector in 480 s because
+  nothing in server mode can.
+* No `DISC_OPEN` ⇒ no ioctl `0x40105301` INIT, no `scarletbook_open`, no
+  `0x40105302` AUTH, no tracks. `DAEMON_ORACLE` stays what it was: the daemon is
+  up and the disc is visible *to the driver*, one step short of the client leg.
+
+### 8.6 What the client leg will hit (this replaces §5.1's headline)
+
+1. **The first wall is bdpdrv's own `0x12800` (75 776 B) per-task cap, not the
+   FE.** 40 sectors x 2048 = 81 920 B > 75 776. Two shapes are both possible and
+   both leave the guest with a short/failed read: a local refusal (→ **no FE log
+   line at all**, so `grep 'lba=544'` misses it) or a driver-side split
+   (75 776 = 37 sectors, i.e. `544x37` + `581x3`). §5.1's "no split is coming"
+   argument covers the *block layer* (1024-sector queue limit), not bdpdrv's
+   task builder.
+2. The FE model already carries `FE_DMA_MAX 0x20000` (131 072)
+   (`emulator-kit/sony-bx510.c:332`), so a 40-sector request *is* served when it
+   arrives and the `unusable transfer` line of §5.1 is no longer the expected
+   observable. The remaining guard-vs-cap question is at the driver, above.
+3. **Model the block, not a request script.** Because these reads are buffered
+   page-cache reads (§8.4), the FE will see page-shaped *groups* covering the
+   requested range, optionally followed by readahead past it. A "next request
+   is 544x40" assertion will fail for the wrong reason; the model must serve
+   any `(lba, nsec)` window of the ISO, including windows that start mid-block.
+4. **Decode quirk that changes the failure signature.**
+   `sacd_read_block_raw` returns `sacd_dev_input_read`'s value, which is
+   *negative errno* on a read error (`0x21f70`), *0* only for a `lseek` failure
+   (`0x21f28`) or a zero-byte EOF, and the sector count otherwise. `0x299e0`
+   tests `cmp r3,#0 / bne <success>` — so **EIO is treated as success**. An
+   EIO at 544 therefore runs `scarletbook_read_area_toc` over the
+   `malloc`'d-but-never-filled buffer (`0x298f8` is `malloc`, not `calloc`),
+   which fails the `TWOCHTOC`/`MULCHTOC` compare and prints
+   `libsacdread: Not a valid Area TOC!` (0x35cbc), after which `scarletbook_open`
+   prints `libsacdread: Can't read Area TOC 1.` (0x35920) and **continues to
+   area 2**, returning a scarletbook with zero areas. Expected failure pair on
+   stderr: *both* strings, then a `DISC_OPEN` that returns success with no
+   tracks — a disc that opens and has nothing on it.
+
+### 8.7 Corrected NEXT-REQUESTS list (FE model pre-check) — first client DISC_OPEN
+
+| # | action | LBA x nsec | bytes | framing | served from |
+|---:|---|---|---:|---|---|
+| 0 | open `/dev/sr0`, ioctl `0x40105301` INIT (`sacd_open` 0x2e674 -> `sacd_dev_input_open` 0x21da4 -> `init_sacd` 0x20f90) | — | — | no data | no disc traffic |
+| 1 | `read_master_toc` 0x2a25c | **510 x 10** | 20 480 | 2048 | ISO 510-519 (`SACDMTOC` + 8x `SACDText` + `SACD_Man`) |
+| 2 | area 1, `0x299d8` | **544 x 40** | 81 920 | 2048 | ISO 544-583 (40-sector 2-ch block, `TWOCHTOC`) |
+| 3 | area 2, `0x29bac` | **353 804 x 40** | 81 920 | 2048 | ISO 353804-353843 (`MULCHTOC`) |
+| 4 | `sacd_authenticate` 0xcd8c, ioctl `0x40105302` | — | — | — | no disc traffic |
+| 5 | (nothing) until the client sends `DISC_READ` — then the 2064-byte ioctl lane, §4.2 | — | — | 2064 | `0xcbc0` |
+
+Expect page-shaped sub-requests for steps 1-3 (§8.6 item 3): 510x10 may arrive as
+510x2 + 512x8 (+ readahead at 520), and 544x40 as a run of page groups inside
+544-583. **Decisive grep for the next fire** (replaces §5.1's one-liner):
+
+```sh
+grep -a 'lba=510\|lba=520\|lba=544\|lba=581\|lba=353804\|no armed 0x5c400\|unusable transfer' <qemu mmio log>
+grep -a "Can't read\|Not a valid Area TOC\|Not a ScarletBook\|Unsupported version" <daemon stdout/stderr>
+```
+
+**Ordering marker, mandatory:** record the mmio line number at the instant the
+client is started, and read only lines after it. Gate 13's `dd` produces a
+*byte-identical* LBA-510 request pattern (that is precisely the trap C121 fell
+into — see §8.4), so "reads at 510 near the end of the log" can never be
+attributed to the daemon by position alone.
+
+### 8.8 Re-derivation (all of §8)
+
+```sh
+objdump -d --no-show-raw-insn --start-address=0xe360 --stop-address=0xe3d4 original/sacd_extract_160  # main(): the -S branch
+objdump -d --no-show-raw-insn --start-address=0xe1b4 --stop-address=0xe2b0 original/sacd_extract_160  # server_loop: 5306/5307 + status line
+objdump -d --no-show-raw-insn --start-address=0xda5c --stop-address=0xdb00 original/sacd_extract_160  # main_loop (non-server): open -> TOC
+grep -n 'bl .*<read@plt>\|bl .*<lseek64@plt>' analysis/disasm.txt    # 2 + 3 sites, exhaustive
+make vm-exec CMD='dd if=/home/aftermath/sacd-verify/firebird.iso bs=2048 skip=520 count=1 | head -c 8'  # 520 = 2nd SACDMTOC copy
+```
+
+### 8.9 Still open (labelled)
+
+* **INFERRED, one-line experiment:** "the 510x2/512x8/520x16 set is a page-cache
+  read + readahead" follows from the addresses and from C104/C108's SG_IO
+  single-request leg, but the C121 trace itself is gone (§8.4). Cheap
+  confirmation: a fast-fire with **no daemon and no client**, guest-side
+  `dd if=/dev/sr0 bs=2048 skip=510 count=10`, then the same grep — the three
+  requests must reappear with no daemon on the box.
+* **OPEN, load-bearing for the client leg:** whether bdpdrv refuses an 81 920 B
+  task (`qc_issu_task`, `0x12800`) or splits it (37 + 3), and what the sr/SCSI
+  layer turns each into. Step 2 of §8.7 is the first request in this campaign
+  that the *driver* may reject before the FE ever sees it.
+* **OPEN, unchanged:** the 2048-vs-2352 framing question for the 40-sector read
+  (§5.1 caveat b) still has to be measured on the wire.

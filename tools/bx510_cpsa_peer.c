@@ -38,13 +38,12 @@ static unsigned long peer_fnslot[4];
  * return values are ignored per the decode (0x548c0..0x548d4, 0x54a54). */
 static int peer_op(void *ctx, unsigned long type, unsigned long compid)
 {
-	static int once;
-
-	if (!once) {
-		once = 1;
-		printk(KERN_INFO "[CPSA_PEER] op call: ctx=%p type=%#lx compid=%lu\n",
-		       ctx, type, compid);
-	}
+	/* C122d lesson: a static-once print gate blinded the decode — two
+	 * Connects (sacdgate INIT + the daemon's own init_sacd) became one log
+	 * line and the second attempt's Im step was unobservable. Log EVERY
+	 * call; the line is cheap and the guest flood filter drops it if noisy. */
+	printk(KERN_INFO "[CPSA_PEER] op call: ctx=%p type=%#lx compid=%lu\n",
+	       ctx, type, compid);
 	return 0;
 }
 

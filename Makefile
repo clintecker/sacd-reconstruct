@@ -576,3 +576,11 @@ sacd-hw-analyze:
 .PHONY: sacd-hw-collect
 sacd-hw-collect:
 	SESSION_DIR="$(SESSION_DIR)" USB="$(USB)" sh experiments/sacd_reconstruct/tools/sacd_hardware.sh collect
+
+# ── BX510 rig ops (client-leg era) ──────────────────────────────────────────
+
+## BX510 rig ops :: bx510-fire RUNID=c123 GCMD_FILE=/tmp/g.txt [TIMEOUT=240] :: the braindead fire+capture loop :: stages probe+cmd, fires on the VM, greps verdict markers, pulls uart+meta into evidence/ — no ad-hoc quoting, one command per experiment
+.PHONY: bx510-fire
+bx510-fire:
+	@test -n "$(RUNID)" && test -n "$(GCMD_FILE)" || (echo "usage: make bx510-fire RUNID=c123 GCMD_FILE=/tmp/g123.txt [TIMEOUT=240]" && exit 1)
+	@RUNID='$(RUNID)' GCMD_FILE='$(GCMD_FILE)' TIMEOUT='$(TIMEOUT)' sh tools/bx510-fire.sh

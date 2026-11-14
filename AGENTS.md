@@ -240,6 +240,7 @@ above. Techniques that live only in session history are lost techniques.
 | `sacd-hw-pair` | `(no arguments)` | run the ground-truth pair capture — request-pair through the real module at PAIR_LSN=600; console teed into SESSION_DIR |
 | `sacd-hw-analyze` | `(no arguments)` | validate pair + baseline against the ISO — media_check.py pair/baseline with the Firebird rip cross-check |
 | `sacd-hw-collect` | `(no arguments)` | assemble + verify the handoff folder — copies pair/baselines/consoles into SESSION_DIR (~/bx510-session), writes a notes template, inventories + SHA-verifies everything |
+| `bx510-fire` | `RUNID=c123 GCMD_FILE=/tmp/g.txt [TIMEOUT=240]` | the braindead fire+capture loop — stages probe+cmd, fires on the VM, greps verdict markers, pulls uart+meta into evidence/ — no ad-hoc quoting, one command per experiment |
 Regenerate with `make docs-sync` after adding any target (the pre-commit hook enforces it).
 <!-- END MAKE-TARGETS -->
 | The method (full) | `docs/playbook.md` |

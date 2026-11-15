@@ -74,13 +74,7 @@
       "sizes": [11, 9, 10],
       "min_ink": 0.002,
       "draws": "2-channel area panel: fill + border + header + track table",
-      "declared_overflow": [
-        {
-          "name": "more_row",
-          "x": 206, "y": 192, "w": 120, "h": 8,
-          "note": "FINDING (recorded, not endorsed): with track_count > 6 the '+N more' row is drawn at y=192 — below the panel's bottom border (y=191) and across the y=196 rule. Scene s5-many-tracks demonstrates it. Delete this entry when the row moves inside the panel."
-        }
-      ]
+      "note": "no '+N more' row: 126 + y*11 for six rows ends on the bottom border (y=191), so a seventh row cannot fit inside the panel and is suppressed (the header's 'N TRACKS' carries the total). Scene s5-many-tracks shows the >6 branch."
     },
     {
       "name": "panel_multi",
@@ -153,7 +147,6 @@
     "y0": 126,
     "stride": 11,
     "rows_shown": 6,
-    "more_row_y": 192,
     "col_x": {"num": 8, "start": 30, "length": 116, "lsn": 206},
     "header_y": 114,
     "rule_y": 123
@@ -195,6 +188,6 @@
     "s2-no-areas": "master TOC only: both panels render the 'no area TOC' path, the log does not fill its ring",
     "s3-session-fail": "SACD_UI_SIM_FAIL=1: the failed-session screen (red DISC line + red state chip)",
     "s4-scale1": "SACD_UI_SCALE=1 (640x360): scale independence",
-    "s5-many-tracks": "area1's track_count byte forced to 9: six rows + the '+3 more' row (exercises declared_overflow)"
+    "s5-many-tracks": "area1's track_count byte forced to 9: six rows, the overflow row suppressed (no room inside the h=104 panel)"
   }
 }

@@ -327,9 +327,18 @@ static void bx510_fe_post(Bx510State *s, uint32_t w0, uint32_t w1,
  * 1024 sectors (BLK_DEF_MAX_SECTORS, verified in the guest tree), so a real
  * BX510 plainly serviced larger requests. The guards that actually keep a
  * decode bug from scribbling RAM are the whole-frame check, the EOF bound and
- * the phys+len ≤ RAM check — all independent of this constant. 0x20000 =
- * 128 KiB covers 40-sector blocks with headroom. */
-#define FE_DMA_MAX   0x20000u
+ * the phys+len ≤ RAM check — all independent of this constant.
+ *
+ * Raised 0x20000 -> 0x200000 (run c133, the port-2002 client-leg battery):
+ * the UNMODIFIED daemon's MAX_PROCESSING_BLOCK_SIZE chunk is 128 sectors and
+ * its encrypted-branch descriptor is 128 x 2064 = 264 192 B in ONE piece
+ * (c133 FE census: 0x5c404=264192, lba=745/600/728/... nsec=128) — the real
+ * module is the ground truth here, so the real FE must accept it; at 128 KiB
+ * the model answered drive error, the module served STALE buffer bytes,
+ * sacd_read_block_raw mislabelled that success (c122 lesson 3) and stale data
+ * went on the wire as a "successful" 128-sector read. 2 MiB covers the
+ * block layer's own maximum request (1024 x 2048). */
+#define FE_DMA_MAX   0x200000u
 #define CD_PAYLOAD   2048u       /* the fixture's logical sector */
 #define CD_FRAME     2352u       /* ATAPI raw CD frame (§4.2) */
 #define CD_SACD      2064u       /* SACD framed sector: 12-byte header + payload

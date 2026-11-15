@@ -572,7 +572,7 @@ def scene_defs(fixtures):
         {"name": "s4-scale1", "args": [mtoc, a1, a2], "env": {"SACD_UI_SCALE": "1"},
          "about": "640x360 (scale 1): scale independence"},
         {"name": "s5-many-tracks", "args": [mtoc, many or a1, a2], "env": {},
-         "about": "area1 track_count forced to 9: six rows + the '+3 more' row"},
+         "about": "area1 track_count forced to 9: six rows, the overflow row suppressed"},
     ]
 
 

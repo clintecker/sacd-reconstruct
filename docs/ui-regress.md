@@ -65,7 +65,7 @@ for the animation analysis).
 | `s2-no-areas` | master TOC only | both panels' "no area TOC" path; a **partly filled** log (6 rows) |
 | `s3-session-fail` | all three + `SACD_UI_SIM_FAIL=1` | the red DISC line and the red `SESSION FAIL` chip |
 | `s4-scale1` | `SACD_UI_SCALE=1` | 640×360: scale independence |
-| `s5-many-tracks` | area1's `track_count` byte forced to 9 | the `+N more` row and the `>6 rows` branch |
+| `s5-many-tracks` | area1's `track_count` byte forced to 9 | the `>6 rows` branch: six rows and **no** overflow row (it cannot fit — see the closed finding below) |
 
 The many-tracks fixture is a **byte mutation of the real area TOC** (byte 69), not a
 synthesised file, so the rows are the disc's own and only one field is moved. The tool
@@ -179,10 +179,24 @@ the "the guest renders what the Mac predicts" proof, at layout level.
 - `make ui-anim RUNID=…` on today's guest template is **NOT MEASURABLE** (exit 2): the
   template dumps one frame per buffer, and a time series needs ≥3. The SIM sequence is
   the ground-truth substrate until a multi-dump capture exists.
-- **FINDING, recorded not endorsed:** with `track_count > 6` the `+N more` row is
-  drawn at `y=192` — below the panel's bottom border (`y=191`) and across the `y=196`
-  rule. `spec.regions[panel_2ch].declared_overflow` records it so the suite can pass
-  while naming it; delete that entry when the row moves inside the panel.
+- **FINDING, recorded not endorsed → CLOSED (overflow-row):** with `track_count > 6`
+  the `+N more` row was drawn at `y=192` — below the panel's bottom border (`y=191`)
+  and across the `y=196` rule. `spec.regions[panel_2ch].declared_overflow` recorded it
+  so the suite could pass while naming it. **Fix:** the six table rows are
+  `126 + y*11`, so the last one ends *on* the bottom border and a seventh row has no
+  room inside the `h=104` panel — the row is now SUPPRESSED, not relocated, and the
+  header's `N TRACKS` line already states the full total. `declared_overflow` is
+  deleted from the spec, so the exact-rect contract on `panel_2ch` is strict again and
+  the `y=196` 1px-locality probe runs instead of being skipped. **Evidence**
+  (`make ui-regress`, Mac only): the two notes naming the finding are gone, the
+  compiled dump now reports `panel_2ch x=12 y=88 w=304 h=104` (was `h=111`), and the
+  remaining pixels the fix removes are logical rows 194,195,197,198 × x=220..241 —
+  exactly the `+3 more` glyphs straddling the `y=196` rule (row 196 itself was already
+  repainted by the rule, so it never differed). **The `s5-many-tracks` golden frame
+  therefore changes** (`8f6baec7a410cd3a…` vs golden `eed6f43152521e55…`, 31 changed
+  logical px, worst named region `log` at 13) and the suite reports one
+  `GOLDEN MISMATCH`; per the golden rule the frames were NOT re-seeded — that
+  re-accept is the human `make ui-golden GOLDEN=accept` step.
 
 ## Determinism — and why the suite retries
 

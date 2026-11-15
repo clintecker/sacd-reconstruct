@@ -1,0 +1,98 @@
+# bx510_client_d_arearead.sh.in — issue #7 item 4: THE 2-CHANNEL AREA READ.
+#
+# Real music sectors, decrypt path active, served through the LIVE daemon to
+# a client, bytes verified against the ISO. This is the Level-0 headline:
+# "the emulated BX510 plays music."
+#
+# Geometry (decoded from the ISO, decode/client-leg-oracles.md): the 2-channel
+# area is TWOCHTOC @544, audio LSN 584..353763, track 0 starts at LSN 745.
+# All four reads below are INSIDE 2ch track 0 / the 2ch audio zone — the
+# branch the daemon's decrypt leg (SACD_IOC_DECRYPT -> GCPU -> CPSA peer)
+# exists for. At Level 0 the peer's transform is identity, so the wire bytes
+# must equal the ISO's bytes exactly: every md5 below has a pre-computed
+# ISO oracle, and ANY mismatch is a finding, not noise.
+#
+#   A1:   845 x1    single music sector      (oracle 9079e1fc…)
+#   A32:  845 x32   64 KiB of music          (oracle 1df16354…)
+#   TRK:  745 x128  track-0 START, one full MAX_PROCESSING_BLOCK_SIZE chunk
+#                                          (oracle 5b5c4f4e…)
+#   EDGE: 353750 x40  the branch-transition read: starts inside the 2ch
+#         area (end 353763), crosses into the TOC-copy zone — the daemon
+#         must split it across the branch boundary and still serve exact
+#         ISO bytes end to end (oracle dffda49f…)
+#
+# Then the watched client rips 600 x1600 (2ch track 0, 13 chunks) with the
+# reactive UI watching /tmp/rip2.bin — the progress band on the panel frame
+# IS the live music-ripping evidence, and the frame is captured.
+# Oracles: decode/client-leg-oracles.md.
+
+# 1. the VFS skeleton an init=/bin/sh guest does not have
+mkdir -p /tmp /res/tmp
+mount -t tmpfs tmpfs /tmp
+# 2. loopback, so the client legs reach the daemon at 127.0.0.1:2002
+ifconfig lo 127.0.0.1 netmask 255.0.0.0 up
+# 3. the payload tgz: daemon + sacd_read.ko + sacdgate + client + UI + FB kit
+tar -xzf /res/shim/daemon_payload.tgz -C /res
+# 4. the SACD session — c122g's proven Connect/Release pair
+insmod /res/shim/bx510_cpsa_peer.ko
+insmod /res/shim/sacd_read.ko minor=201 compid=0
+rm -f /dev/sacd_read
+mknod /dev/sacd_read c 10 201
+/res/shim/sacdgate 0x40105301 /dev/sacd_read
+/res/shim/sacdgate 0x40105305 /dev/sacd_read
+# 5. THE FA-LATCH CLEAR (mandatory — c122f served zero FE traffic without it)
+/res/shim/sr_fa_mode /dev/sr0 clear
+/res/shim/sr_fa_mode /dev/sr0
+grep sr0 /res/proc/partitions
+# 6. the display: fbvirt is the fbdev this rig can read back
+insmod /res/shim/bx510_fbvirt.ko
+cat /res/proc/fb
+set -- $(grep fbvirt /res/proc/fb); mknod /dev/fb0 c 29 $1
+insmod /lib/modules/2.6.35/BDP/fusion.ko
+set -- $(grep fusion /res/proc/devices); mknod /dev/fusion0 c $1 0
+# 7. the daemon
+cd /res/shim
+./sacd_extract_160 -S </dev/null >/res/daemon.out 2>&1 &
+echo DAEMON_PID=$!
+sleep @DAEMON_WAIT@
+cat /res/daemon.out; echo DAEMON_OUT_END
+# 8. THE 2-CHANNEL AREA READS (each md5 is checked against its ISO oracle)
+./sacdclient 127.0.0.1 845 1 /tmp/a1.bin
+echo A1_RC=$?
+md5sum /tmp/a1.bin; echo A1_MD5_END
+./sacdclient 127.0.0.1 845 32 /tmp/a32.bin
+echo A32_RC=$?
+md5sum /tmp/a32.bin; echo A32_MD5_END
+./sacdclient 127.0.0.1 745 128 /tmp/atrack.bin
+echo TRK_RC=$?
+md5sum /tmp/atrack.bin; echo TRK_MD5_END
+./sacdclient 127.0.0.1 353750 40 /tmp/aedge.bin
+echo EDGE_RC=$?
+md5sum /tmp/aedge.bin; echo EDGE_MD5_END
+# 9. THE WATCHED CLIENT: a 1600-sector 2ch rip the UI watches live
+rm -f /res/ui-session.done /res/rip.rc /tmp/rip2.bin
+( while [ ! -f /res/ui-session.done ]; do sleep 1; done; ./sacdclient 127.0.0.1 600 1600 /tmp/rip2.bin; echo RIP_RC=$? >/res/rip.rc; echo RIP_RC=$? ) &
+echo RIP_CLIENT=$!
+# 10. the UI: its own session first (writes the marker), then OBSERVES
+SACD_UI_WATCH_FILE=/tmp/rip2.bin ./sacd_ui @UI_ARGS@ >/res/ui.out 2>&1 &
+U=$!
+echo UI_PID=$U
+sleep @UI_WAIT@
+kill $U 2>/dev/null
+sleep 1
+cat /res/ui.out; echo UI_OUT_END
+# 11. the rip's observable, checked end to end
+cat /res/rip.rc; echo RIP_RC_END
+ls -l /tmp/rip2.bin
+md5sum /tmp/rip2.bin; echo RIP_MD5_END
+cat /res/daemon.out; echo DAEMON_END_END
+cat /res/proc/net/dev; echo WIRE_DEV_END
+# 12. frame egress
+echo UI_SCALE=@SCALE@
+./fbdump --rows /dev/fb0 @SCALE@ >/res/fb-fbdev.txt 2>&1
+echo UI_DUMP_FBDEV=$?
+cat /res/fb-fbdev.txt; echo UI_FBDEV_END
+./fbdump --rows --pool /dev/fb0 @SCALE@ @POOL_ARGS@ >/res/fb-pool.txt 2>&1
+echo UI_DUMP_POOL=$?
+cat /res/fb-pool.txt; echo UI_POOL_END
+echo UI_SHOT_DONE

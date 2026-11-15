@@ -1,0 +1,77 @@
+# bx510_client_b_readfail.sh.in — issue #7 item 2: the read-failure case.
+#
+# Past-EOF must fail LOUDLY at the client: the daemon's DISC_READ handler
+# clamps via §4's branch table and the final min(end_lsn - off, block_size)
+# clamp; past end2 there is no else branch (daemon-socket-protocol.md §4.1),
+# so the first past-EOF read of a connection can return ZERO or a NEGATIVE
+# result. The client contract (same doc §9.1): result<0 = abort, result==0 =
+# stop the range. This fire measures which one the real path produces and
+# proves the daemon SURVIVES it (the control after must still pass).
+#
+#   CTL:     LBA 510 x10      — known-good control FIRST (45ccd7df…)
+#   OOB:     LBA 1064300 x4   — 92 sectors past EOF (1064208): expect
+#                             FAIL DISC_READ with result<=0 printed by
+#                             sacdclient and a nonzero CLIENT_RC
+#   STRADDLE: LBA 1064206 x4 — also past end2 (1064126), different shape
+#   AFTER:    LBA 532104 x1  — control after: daemon still healthy
+#                             (9ed18b47…), a wedged/killed daemon fails here
+#
+# Oracles: decode/client-leg-oracles.md. No UI in this fire.
+
+# 1. the VFS skeleton an init=/bin/sh guest does not have
+mkdir -p /tmp /res/tmp
+mount -t tmpfs tmpfs /tmp
+# 2. loopback, so the client leg reaches the daemon at 127.0.0.1:2002
+ifconfig lo 127.0.0.1 netmask 255.0.0.0 up
+# 3. the payload tgz: daemon + sacd_read.ko + sacdgate + client + FB kit
+tar -xzf /res/shim/daemon_payload.tgz -C /res
+# 4. the SACD session — c122g's proven Connect/Release pair
+insmod /res/shim/bx510_cpsa_peer.ko
+insmod /res/shim/sacd_read.ko minor=201 compid=0
+rm -f /dev/sacd_read
+mknod /dev/sacd_read c 10 201
+/res/shim/sacdgate 0x40105301 /dev/sacd_read
+/res/shim/sacdgate 0x40105305 /dev/sacd_read
+# 5. THE FA-LATCH CLEAR (mandatory — c122f served zero FE traffic without it)
+/res/shim/sr_fa_mode /dev/sr0 clear
+/res/shim/sr_fa_mode /dev/sr0
+grep sr0 /res/proc/partitions
+# 6. fbvirt (invariant: node bound to fbvirt's own index)
+insmod /res/shim/bx510_fbvirt.ko
+cat /res/proc/fb
+set -- $(grep fbvirt /res/proc/fb); mknod /dev/fb0 c 29 $1
+# 7. the daemon
+cd /res/shim
+./sacd_extract_160 -S </dev/null >/res/daemon.out 2>&1 &
+echo DAEMON_PID=$!
+sleep @DAEMON_WAIT@
+cat /res/daemon.out; echo DAEMON_OUT_END
+# 8. CONTROL first: a known-good read (a hostile result is meaningless until
+#    the benign path passes)
+./sacdclient 127.0.0.1 510 10 /tmp/ctl.bin
+echo CTL_RC=$?
+md5sum /tmp/ctl.bin; echo CTL_MD5_END
+# 9. THE FAILURE CASE: 1064300 is past EOF. sacdclient treats result<=0 as
+#    FAIL and PRINTS the daemon's result verbatim — that line is the
+#    "result<0 propagated to the client" observable.
+./sacdclient 127.0.0.1 1064300 4 /tmp/oob.bin
+echo OOB_RC=$?
+ls -l /tmp/oob.bin 2>/dev/null; echo OOB_FILE_END
+# 10. second failure shape: count straddling past end2 from inside
+./sacdclient 127.0.0.1 1064206 4 /tmp/straddle.bin
+echo STRADDLE_RC=$?
+ls -l /tmp/straddle.bin 2>/dev/null; echo STRADDLE_FILE_END
+# 11. CONTROL after: the daemon must still answer (and correctly)
+./sacdclient 127.0.0.1 532104 1 /tmp/after.bin
+echo AFTER_RC=$?
+md5sum /tmp/after.bin; echo AFTER_MD5_END
+cat /res/daemon.out; echo DAEMON_END_END
+# 12. frame egress (invariants; no UI drew — a black frame is expected here)
+echo UI_SCALE=@SCALE@
+./fbdump --rows /dev/fb0 @SCALE@ >/res/fb-fbdev.txt 2>&1
+echo UI_DUMP_FBDEV=$?
+cat /res/fb-fbdev.txt; echo UI_FBDEV_END
+./fbdump --rows --pool /dev/fb0 @SCALE@ 4096 1920 1080 >/res/fb-pool.txt 2>&1
+echo UI_DUMP_POOL=$?
+cat /res/fb-pool.txt; echo UI_POOL_END
+echo UI_SHOT_DONE

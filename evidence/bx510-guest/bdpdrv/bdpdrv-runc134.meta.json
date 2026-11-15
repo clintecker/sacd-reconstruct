@@ -1,0 +1,35 @@
+{
+  "bdpdrv": {
+    "guest_path": "/lib/modules/2.6.35/BDP/bdpdrv.ko",
+    "host_path": "/tmp/rootfs/lib/modules/2.6.35/BDP/bdpdrv.ko",
+    "sha256": "6604f6cd6c204c3399ac047f389f47162b06a3f6576159f21b4e8aaf3a72cf54",
+    "size": 8122068
+  },
+  "clidrive_mode": "PROBE_SEQ",
+  "fatb_fixture": null,
+  "fe_test_data": {
+    "offset": 14680064,
+    "payload_size": 962560,
+    "size": 1048576
+  },
+  "images": "/tmp/images-fe",
+  "osal_stub": {
+    "host_path": "/tmp/osal_b/bx510_osal_stub.ko",
+    "sha256": "a2d4d19aa684b48d6f9267d24e646c074e1b40f2e9851b7884b649059884ae02",
+    "size": 223641
+  },
+  "osal_stub_a": {
+    "host_path": "/tmp/osal_a/bx510_osal_stub_a.ko",
+    "sha256": "c171ff62de6ffe79ee6c97da6985832993567436c888b4d8a79b34b2041d4cd8",
+    "size": 50539
+  },
+  "qemu": "/home/aftermath/bx510-emu/emulator/work/build/qemu-system-arm",
+  "stages": {
+    "daemon": null,
+    "odd_tail": true,
+    "sacdread": null,
+    "sr_ladder": null
+  },
+  "terminal_marker": true,
+  "ts_utc": "2026-11-15T22:00:47.927387Z"
+}

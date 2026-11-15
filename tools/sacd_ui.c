@@ -1631,10 +1631,11 @@ static void draw_frame(double t, unsigned frames, double fps)
             snprintf(l, sizeof l, "%u", k->lsn);
             text_top(l, px0 + 206, ly, 10, C_DIM);
         }
-        if (a->track_count > 6) {
-            snprintf(l, sizeof l, "+%d more", a->track_count - 6);
-            text_top(l, px0 + 206, 126 + 6 * 11, 9, C_AMBER);
-        }
+        /* No '+N more' row: the six table rows are 126 + y*11, so the last one
+           ends ON the panel's bottom border (y=191) and a seventh row would be
+           drawn at y=192 — outside the panel, across the y=196 rule. The count
+           line above ("%d TRACKS") already states the full track total, so the
+           overflow row is suppressed rather than drawn outside its panel. */
     }
     spec_begin("rule_panels_end");
     rect(12, 196, CW - 24, 1, C_RULE);

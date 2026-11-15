@@ -18,7 +18,17 @@
  *     a second client: the daemon's accept loop parks connections in ONE
  *     shared slot (decode/daemon-socket-protocol.md §0.6), so a second
  *     simultaneous connection would corrupt BOTH sessions. The UI therefore
- *     holds one short session and then observes from the outside.
+ *     holds one short session and then observes from the outside. That is
+ *     also how it watches a SECOND client rip (SACD_UI_WATCH_PID): it reads
+ *     that pid's /proc io counter and never opens a session of its own.
+ *
+ * The loop is an explicit event loop ("the event model", below): polled
+ * sources -> a fixed ring of typed events -> ONE apply_event() that moves
+ * state and logs transitions -> a repaint only when the state actually
+ * changed. No threads, no locks, no allocation inside the loop. Two
+ * consequences the rest of the tooling depends on: a scene is replayable from
+ * a text file (SACD_UI_SIM_SCRIPT), and a state-identical repaint is
+ * byte-identical (the frame goldens and the frame-to-frame diff rely on it).
  *
  * Rendering reuses the proven guest-HUD path (tools/bx510_sacd_hud.c):
  * fbdev geometry read, the vendor MT85 pool slice mapped by length
@@ -57,6 +67,14 @@
  *        SACD_UI_FONT       preferred font (chain falls back to the staged copy)
  *        SACD_UI_SCALE      logical->device scale override (default: panel_width/640)
  *        SACD_UI_DONE_FILE  session-closed marker (default /res/ui-session.done)
+ *        SACD_UI_WATCH_FILE a second client's OUTPUT FILE: its size becomes the
+ *                           event log's RIP progress lines (opt-in; the UI never
+ *                           opens a session for it)
+ * Layout iteration on the Mac (SIM):
+ *        SACD_UI_SIM_SCRIPT a text file of synthetic EVENTS replayed through
+ *                           the guest's own apply_event() (grammar: sim_replay())
+ *        SACD_UI_SIM_FRAMES a directory: every painted replay frame lands there
+ *                           as frame-NNN.ppm
  */
 #define _GNU_SOURCE
 #include <stdio.h>
@@ -70,6 +88,7 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <stdint.h>
+#include <sys/stat.h>
 #include <sys/statvfs.h>
 #include <sys/mman.h>
 #include <sys/time.h>
@@ -84,6 +103,23 @@
 #define STB_TRUETYPE_IMPLEMENTATION
 #include "third_party/stb_truetype.h"
 
+/* theme (declared up here so the SACD_UI_SPEC_DUMP palette table can name the
+   C_* macros directly — it must emit the macros' values, never a retyped
+   copy) */
+#define C_BG      0x00020604u
+#define C_PANELBG 0x000a1410u
+#define C_FRAME   0x0000b34du
+#define C_RULE    0x00004824u
+#define C_DIM     0x000a7a30u
+#define C_BODY    0x0050c878u
+#define C_PHOS    0x0022ff66u
+#define C_BRIGHT  0x00d8ffe0u
+#define C_CYAN    0x0033e0ffu
+#define C_MAGENTA 0x00ff66ccu
+#define C_AMBER   0x00ffb000u
+#define C_RED     0x00ff3344u
+#define C_GREY    0x00607a6cu
+
 #define CW 640                 /* logical canvas */
 #define CH 360
 #define PORT 2002
@@ -93,11 +129,137 @@
 #define LOG_RING 24
 #define LOG_SHOWN 7
 
+/* ---- the event model's cadences (see "the event model", below) ---- */
+#define FRAME_PERIOD_S 0.030   /* EV_TICK: the frame clock — the only periodic EVENT */
+#define FRAME_SLEEP_US 30000   /* the loop's sleep; painting is gated on dirty, not on this */
+#define TEL_PERIOD_S   0.250   /* the three /proc sources: one sample every 250 ms */
+#define BLINK_HZ       2.0     /* lamp + cursor blink; the one motion that repaints a static scene */
+#define EVQ_N          16      /* fixed event ring (depth is <= 4 by construction) */
+#define PROGRESS_LOG_S 1.0     /* one RIP line per second of event time, not per sample */
+#define DAEMON_CMD     "sacd_extract_160"
+
+/* The canvas regions a STATE-IDENTICAL frame may differ in — the live-link
+   lamp, the blinking cursor, and the RENDER line whose frame/fps/t counters
+   advance with the clock. The machine-readable home of this list is the layout
+   spec (tools/ui_layout_spec.json, logical 640x360 units), which the
+   frame-to-frame diff regression reads; the numbers below are the C side of
+   that same contract, so a change here is a change there. */
+#define LAMP_X (CW - 22)
+#define LAMP_Y 38
+#define LAMP_W 8
+#define LAMP_H 8
+#define CURSOR_W 5
+#define CURSOR_H 7
+#define CURSOR_Y 341
+
 /* ================= canvas ============================================== */
 static unsigned int *fb;
 static int pitch_px;
 static int SCAL = 3;           /* device px per logical px (from the panel) */
 static int g_visible_w, g_visible_h;
+
+/* ================= layout spec recording (SACD_UI_SPEC_DUMP) ==========
+ * The layout regression (`make ui-regress`) asserts that three things agree:
+ * tools/ui_layout_spec.json (the committed contract), THIS dump (what the
+ * compiled draw_frame() actually draws) and the rendered pixels. The dump is
+ * only compiled in with -DSACD_UI_SPEC_DUMP; every other build sees
+ * `spec_begin()` as a no-op, so the renderer's bytes are unchanged (verified:
+ * the SIM frame's sha256 is identical with and without the flag).
+ *
+ * Rectangles are recorded by the PRIMITIVES (rect() and px_blend()), not by a
+ * hand-written table, so the dump cannot drift from the drawing calls: the
+ * only thing draw_frame() declares is which named region it is drawing. */
+#ifdef SACD_UI_SPEC_DUMP
+typedef struct {
+    const char *name;
+    int x0, y0, x1, y1, draws, ncol, nsizes;
+    unsigned colors[16];       /* 0xRRGGBB, first-seen order */
+    int sizes[8];              /* logical px text sizes drawn in the region */
+} spec_region_t;
+
+#define SPEC_REGIONS 32
+static spec_region_t g_spec[SPEC_REGIONS];
+static int g_spec_n;
+static int g_spec_cur = -1;
+
+static void spec_begin(const char *name)
+{
+    int i;
+    for (i = 0; i < g_spec_n; i++)
+        if (!strcmp(g_spec[i].name, name)) { g_spec_cur = i; return; }
+    if (g_spec_n >= SPEC_REGIONS) { g_spec_cur = -1; return; }
+    g_spec_cur = g_spec_n++;
+    memset(&g_spec[g_spec_cur], 0, sizeof g_spec[0]);
+    g_spec[g_spec_cur].name = name;
+}
+
+static void spec_touch(int x, int y, int w, int h, unsigned c)
+{
+    spec_region_t *r;
+    int i;
+    c &= 0xffffffu;
+    if (g_spec_cur < 0 || w <= 0 || h <= 0) return;
+    r = &g_spec[g_spec_cur];
+    if (!r->draws) {
+        r->x0 = x; r->y0 = y; r->x1 = x + w; r->y1 = y + h;
+    } else {
+        if (x < r->x0) r->x0 = x;
+        if (y < r->y0) r->y0 = y;
+        if (x + w > r->x1) r->x1 = x + w;
+        if (y + h > r->y1) r->y1 = y + h;
+    }
+    r->draws++;
+    for (i = 0; i < r->ncol; i++)
+        if (r->colors[i] == c) return;
+    if (r->ncol < (int)(sizeof r->colors / sizeof r->colors[0]))
+        r->colors[r->ncol++] = c;
+}
+
+static void spec_size(int lp)
+{
+    spec_region_t *r;
+    int i;
+    if (g_spec_cur < 0) return;
+    r = &g_spec[g_spec_cur];
+    for (i = 0; i < r->nsizes; i++)
+        if (r->sizes[i] == lp) return;
+    if (r->nsizes < (int)(sizeof r->sizes / sizeof r->sizes[0]))
+        r->sizes[r->nsizes++] = lp;
+}
+
+/* the palette is emitted from the C_* macros themselves, never retyped */
+static const struct { const char *name; unsigned value; } g_spec_palette[] = {
+    { "C_BG", C_BG }, { "C_PANELBG", C_PANELBG }, { "C_FRAME", C_FRAME },
+    { "C_RULE", C_RULE }, { "C_DIM", C_DIM }, { "C_BODY", C_BODY },
+    { "C_PHOS", C_PHOS }, { "C_BRIGHT", C_BRIGHT }, { "C_CYAN", C_CYAN },
+    { "C_MAGENTA", C_MAGENTA }, { "C_AMBER", C_AMBER }, { "C_RED", C_RED },
+    { "C_GREY", C_GREY },
+};
+
+static void spec_dump(void)
+{
+    int i, j;
+    printf("SPEC canvas w=%d h=%d scale=%d logical=%dx%d pulse_hz=%.0f\n",
+           g_visible_w, CH * SCAL, SCAL, CW, CH, BLINK_HZ);
+    for (i = 0; i < (int)(sizeof g_spec_palette / sizeof g_spec_palette[0]); i++)
+        printf("SPEC palette %s 0x%06x\n", g_spec_palette[i].name,
+               g_spec_palette[i].value & 0xffffffu);
+    for (i = 0; i < g_spec_n; i++) {
+        spec_region_t *r = &g_spec[i];
+        printf("SPEC region=%s x=%d y=%d w=%d h=%d draws=%d colors=",
+               r->name, r->x0, r->y0, r->x1 - r->x0, r->y1 - r->y0, r->draws);
+        for (j = 0; j < r->ncol; j++)
+            printf("%s0x%06x", j ? "," : "", r->colors[j]);
+        printf(" sizes=");
+        for (j = 0; j < r->nsizes; j++)
+            printf("%s%d", j ? "," : "", r->sizes[j]);
+        printf("\n");
+    }
+    fflush(stdout);
+}
+#else
+#define spec_begin(name) ((void)0)
+#endif
 
 /* ================= the Sony font (proven loader, copied from the HUD) === */
 static stbtt_fontinfo g_font;
@@ -179,6 +341,9 @@ static void px_blend(int xd, int yd, unsigned int c, unsigned a)
     unsigned int *o, r, g, b, dr, dg, db;
     if (xd < 0 || yd < 0 || xd >= g_visible_w || yd >= CH * SCAL) return;
     if (yd >= CH * SCAL) return;
+#ifdef SACD_UI_SPEC_DUMP
+    spec_touch(xd / SCAL, yd / SCAL, 1, 1, c);
+#endif
     o = fb + (size_t)yd * pitch_px + xd;
     dr = (*o >> 16) & 0xff; dg = (*o >> 8) & 0xff; db = *o & 0xff;
     r = ((c >> 16) & 0xff) * a / 255 + dr * (255 - a) / 255;
@@ -197,6 +362,9 @@ static void rect(int x, int y, int w, int h, unsigned int c)
     if (x + w > CW) w = CW - x;
     if (y + h > CH) h = CH - y;
     if (w <= 0 || h <= 0) return;
+#ifdef SACD_UI_SPEC_DUMP
+    spec_touch(x, y, w, h, c);
+#endif
     row = fb + (size_t)(y * SCAL) * pitch_px + (size_t)(x * SCAL);
     for (dy = 0; dy < h * SCAL; dy++) {
         unsigned int *o = row + (size_t)dy * pitch_px;
@@ -278,6 +446,9 @@ static int text_top(const char *s, int x, int ytop, int lp, unsigned int col)
 {
     int cx = x * SCAL, ydev, asc;
     float sc;
+#ifdef SACD_UI_SPEC_DUMP
+    spec_size(lp);
+#endif
     if (!g_font_ok) return 0;
     sc = stbtt_ScaleForPixelHeight(&g_font, (float)(lp * SCAL));
     stbtt_GetFontVMetrics(&g_font, &asc, NULL, NULL);
@@ -305,22 +476,12 @@ static void text_right(const char *s, int xr, int ytop, int lp, unsigned int col
 }
 
 /* ================= theme ============================================== */
-#define C_BG      0x00020604u
-#define C_PANELBG 0x000a1410u
-#define C_FRAME   0x0000b34du
-#define C_RULE    0x00004824u
-#define C_DIM     0x000a7a30u
-#define C_BODY    0x0050c878u
-#define C_PHOS    0x0022ff66u
-#define C_BRIGHT  0x00d8ffe0u
-#define C_CYAN    0x0033e0ffu
-#define C_MAGENTA 0x00ff66ccu
-#define C_AMBER   0x00ffb000u
-#define C_RED     0x00ff3344u
-#define C_GREY    0x00607a6cu
+/* the C_* values live at the top of the file (the spec-dump palette table
+   emits them); this is the theme's documentation block. */
 
 /* ================= event log ========================================== */
 typedef struct {
+    unsigned seq;              /* monotone: makes the transcript's ORDER assertable */
     double t;
     char mark;                 /* '>' info  '!' fail  '*' live */
     char text[96];
@@ -337,18 +498,34 @@ static double now_s(void)
     return (double)ts.tv_sec + (double)ts.tv_nsec / 1e9;
 }
 
+/* The EVENT CLOCK — the time base of every UI-EV line and of the progress
+   throttle. A real run advances it with CLOCK_MONOTONIC; a SIM run advances
+   it from its own script (g_clock_sim), which is what makes a replayed scene
+   byte-reproducible run to run (no wall clock ever reaches a frame). */
+static int g_clock_sim;
+static double g_clock_v;
+
+static double ev_clock(void)
+{
+    if (g_clock_sim) return g_clock_v;
+    return now_s() - g_t0;
+}
+
+static unsigned g_ev_seq;
+
 static void ev_log(char mark, const char *fmt, ...)
 {
     va_list ap;
     ev_t *e = &g_log[g_log_head];
-    e->t = now_s() - g_t0;
+    e->seq = ++g_ev_seq;
+    e->t = ev_clock();
     e->mark = mark;
     va_start(ap, fmt);
     vsnprintf(e->text, sizeof e->text, fmt, ap);
     va_end(ap);
     g_log_head = (g_log_head + 1) % LOG_RING;
     if (g_log_n < LOG_RING) g_log_n++;
-    printf("UI-EV %6.2f %c %s\n", e->t, mark, e->text);
+    printf("UI-EV %04u %6.2f %c %s\n", e->seq, e->t, mark, e->text);
     fflush(stdout);
 }
 
@@ -812,17 +989,374 @@ static int ui_session(const char *host, disc_t *d)
 }
 #endif /* !SACD_UI_SIM — the wire client */
 
-/* ================= /proc telemetry (proven HUD paths, guest only) === */
+/* ================= the event model (THE design contract) =================
+ *
+ * Polled inputs become a fixed set of typed events; ONE pure function
+ * (apply_event) moves state; a frame is painted only when apply_event reports
+ * a change. Rendering never happens inside event handling, and event handling
+ * never touches the framebuffer — that split is what makes a scene replayable
+ * and a frame diffable.
+ *
+ *   source (pollable, non-blocking)        event        state it moves
+ *   -------------------------------        -----        -------------
+ *   frame clock              (30 Hz)  ->   EV_TICK      (the glass clock)
+ *   /proc/net/tcp             (4 Hz)  ->   EV_TCP       g_tel.listen_2002/clients_2002
+ *   /proc/<pid>/cmdline       (4 Hz*) ->   EV_PID       g_tel.daemon_pid   (*until found)
+ *   /proc/net/dev  (lo)       (4 Hz)  ->   EV_WIRE      g_tel.wire_bytes/wire_mb
+ *   stat(<watch file>)        (4 Hz)  ->   EV_PROGRESS  g_prog.* (SACD_UI_WATCH_FILE)
+ *   the startup session        (once) ->   EV_SESSION   g_disc.session_ok/err
+ *
+ * WHY THERE IS NO /proc/<pid>/io HERE: the BX510 guest kernel (2.6.35) was
+ * built without CONFIG_TASK_IO_ACCOUNTING, so /proc/<pid>/io does not exist
+ * there at all (fires pio1/pio2: `cat /res/proc/self/io` -> No such file or
+ * directory, while /res/proc/net/tcp and /res/proc/net/dev read fine). The
+ * sources below are the ones that DO exist, and each measures exactly one
+ * thing: the loopback device's byte counter is the WIRE, and the rip file's
+ * size is the RIP's progress. The panel's own "IO" label is the old name for
+ * the first of those and is kept until the layout lane re-accepts its goldens
+ * (renaming it changes the frame).
+ *
+ * DETERMINISM RULES — the reason the shape above is this shape:
+ *
+ *  1. ONE cadence per source, both named here: FRAME_PERIOD_S for the tick,
+ *     TEL_PERIOD_S for the /proc sources. No source is bursty, so the ring
+ *     depth is <= 5 and a drain never has to reorder anything.
+ *  2. FIXED source order inside one drain: TICK -> TCP -> PID -> WIRE ->
+ *     PROGRESS (the order the loop pushes them in). The ring is FIFO, so the
+ *     apply order in a pass is that order in every pass.
+ *  3. Every log line carries a monotone sequence number, printed as
+ *     `UI-EV <seq> <t> <mark> <text>`, so a transcript's log ORDER is
+ *     assertable without parsing timestamps.
+ *  4. apply_event() is the ONLY writer of g_tel/g_prog and the only place a
+ *     transition is logged. Same event sequence -> same state -> same log.
+ *  5. draw_frame() reads state and nothing else (its only clock input is the
+ *     `t` it is handed), so a state-identical repaint is byte-identical.
+ *
+ * Drain-all-per-pass, not one-event-per-pass: a pass pushes at most one event
+ * per source and the order is "clock first, samples after", so draining the
+ * whole ring in FIFO order is both simpler and the only choice that keeps a
+ * burst of samples from starving the tick. The ring is still a real fixed-size
+ * ring with a drop counter, so a depth bug shows up as a count, not as
+ * corruption.
+ *
+ * The /proc samplers are PURE in the sense that matters here: (state_in) ->
+ * (sample, events[]). They read a file, touch no global, log nothing. The
+ * transition (sample -> state change -> log line -> repaint) happens only in
+ * apply_event().
+ */
+typedef enum { EV_TICK, EV_TCP, EV_PID, EV_WIRE, EV_PROGRESS, EV_SESSION } ev_kind_t;
+
+typedef struct {
+    ev_kind_t kind;
+    union {
+        struct { int listen, clients; } tcp;
+        struct { int pid; } pid;
+        /* both byte samples are CUMULATIVE counters, and that is the only
+           thing they have in common: .wire is the loopback device's received
+           bytes (the wire), .rip is the rip file's size (one client's progress) */
+        struct { unsigned long long bytes; } wire;
+        struct { unsigned long long bytes; } rip;
+        struct { int ok; char err[96]; } session;
+    } u;
+} uev_t;
+
+/* ---- state (the only globals the event model writes) ---- */
 typedef struct {
     int listen_2002;
     int clients_2002;
     int clients_seen;
     int daemon_pid;
-    unsigned long long rchar;
-    double rate_mb;
+    unsigned long long wire_bytes;   /* /proc/net/dev lo, cumulative */
+    double wire_mb;                  /* bytes over one TEL_PERIOD_S window */
     int proc_ok;
 } tel_t;
 
+/* The watched second client (opt-in: SACD_UI_WATCH_FILE — the file it rips
+   into). The UI opens no session for it: the daemon's single shared accept slot
+   (§0.6) is never contended. The file's SIZE is the progress, exactly — it is
+   the bytes that client has already written. */
+typedef struct {
+    int active;                    /* a first sample arrived */
+    int stalled;                   /* consecutive samples with no growth */
+    int done;                      /* reported finished: stop re-reporting */
+    unsigned long long last_bytes; /* the previous file size */
+    unsigned long long bytes;      /* the file size == bytes ripped so far */
+    unsigned long long sectors;    /* bytes / SECTOR */
+    double mb_s;
+    double last_log_t;
+} prog_t;
+
+static disc_t g_disc;              /* the disc picture (the session's read) */
+static tel_t g_tel;
+static prog_t g_prog;
+static char g_watch_file[128];     /* SACD_UI_WATCH_FILE — the rip target */
+static int g_dirty;                /* set by apply_event(), cleared by the painter */
+
+/* ---- the fixed-size, allocation-free event ring ---- */
+static uev_t g_evq[EVQ_N];
+static int g_evq_head, g_evq_n;
+static unsigned g_evq_drops;
+
+static void ev_push(const uev_t *e)
+{
+    if (g_evq_n >= EVQ_N) { g_evq_drops++; return; }
+    g_evq[(g_evq_head + g_evq_n) % EVQ_N] = *e;
+    g_evq_n++;
+}
+
+static void ev_push_kind(ev_kind_t k)
+{
+    uev_t e;
+    memset(&e, 0, sizeof e);
+    e.kind = k;
+    ev_push(&e);
+}
+
+static void ev_push_tcp(int listen, int clients)
+{
+    uev_t e;
+    memset(&e, 0, sizeof e);
+    e.kind = EV_TCP;
+    e.u.tcp.listen = listen;
+    e.u.tcp.clients = clients;
+    ev_push(&e);
+}
+
+static void ev_push_pid(int pid)
+{
+    uev_t e;
+    memset(&e, 0, sizeof e);
+    e.kind = EV_PID;
+    e.u.pid.pid = pid;
+    ev_push(&e);
+}
+
+/* EV_WIRE (the loopback wire) and EV_PROGRESS (the rip file) are both "this
+   counter now reads N", from sources that differ; the kind says which. */
+static void ev_push_bytes(ev_kind_t kind, unsigned long long bytes)
+{
+    uev_t e;
+    memset(&e, 0, sizeof e);
+    e.kind = kind;
+    if (kind == EV_WIRE) e.u.wire.bytes = bytes;
+    else e.u.rip.bytes = bytes;
+    ev_push(&e);
+}
+
+static void ev_push_session(int ok, const char *err)
+{
+    uev_t e;
+    memset(&e, 0, sizeof e);
+    e.kind = EV_SESSION;
+    e.u.session.ok = ok;
+    if (err && err[0]) snprintf(e.u.session.err, sizeof e.u.session.err, "%s", err);
+    ev_push(&e);
+}
+
+/* bytes accumulated over ONE telemetry window -> MB/s. The window IS
+   TEL_PERIOD_S, so the old hard-typed `* 4.0` (a bare 1/0.25 s) is derived
+   from the cadence constant now and cannot drift away from it. */
+static double window_mb_s(unsigned long long delta)
+{
+    return (double)delta / (1024.0 * 1024.0) / TEL_PERIOD_S;
+}
+
+/* A window with no bytes HALVES the displayed rate instead of snapping to
+   zero: a hard zero makes one idle sample look like a stall, and this panel is
+   read by eye. Below RATE_FLOOR_MB_S the display settles at 0.0. */
+#define RATE_DECAY 0.5
+#define RATE_FLOOR_MB_S 0.05
+static double rate_next(double prev, unsigned long long delta)
+{
+    double r = delta ? window_mb_s(delta) : prev * RATE_DECAY;
+    return r < RATE_FLOOR_MB_S ? 0.0 : r;
+}
+
+/* ---- the ONE state machine: (event, state) -> state, + a log line ----
+   Returns 1 when state changed (and sets g_dirty). No rendering here. */
+static int apply_event(const uev_t *e)
+{
+    int changed = 0;
+
+    switch (e->kind) {
+    case EV_TICK:
+        /* the frame clock has no state of its own: it exists so every drain
+           starts with the same event and so the blink + the fps counters have
+           one time base (rule 2). */
+        break;
+
+    case EV_TCP:
+        g_tel.proc_ok = 1;
+        if (e->u.tcp.listen != g_tel.listen_2002) {
+            ev_log('*', e->u.tcp.listen ? "LISTENER :2002 UP"
+                                        : "LISTENER :2002 DOWN");
+            g_tel.listen_2002 = e->u.tcp.listen;
+            changed = 1;
+        }
+        if (e->u.tcp.clients != g_tel.clients_2002) {
+            ev_log('*', e->u.tcp.clients > g_tel.clients_2002
+                        ? "DAEMON CLIENT CONNECT (%d live)"
+                        : "DAEMON CLIENT GONE (%d live)", e->u.tcp.clients);
+            g_tel.clients_2002 = e->u.tcp.clients;
+            if (g_tel.clients_2002 > g_tel.clients_seen)
+                g_tel.clients_seen = g_tel.clients_2002;
+            changed = 1;
+        }
+        break;
+
+    case EV_PID:
+        if (e->u.pid.pid > 0 && e->u.pid.pid != g_tel.daemon_pid) {
+            g_tel.daemon_pid = e->u.pid.pid;
+            ev_log('>', "DAEMON pid=%d (%s)", g_tel.daemon_pid, DAEMON_CMD);
+            changed = 1;
+        }
+        break;
+
+    case EV_WIRE: {
+        double r;
+        if (e->u.wire.bytes < g_tel.wire_bytes) {
+            /* a cumulative device counter that went backwards is a new
+               counter (the interface was re-created), not negative traffic */
+            ev_log('*', "WIRE COUNTER RESET");
+            g_tel.wire_bytes = e->u.wire.bytes;
+            g_tel.wire_mb = 0.0;
+            changed = 1;
+            break;
+        }
+        r = rate_next(g_tel.wire_mb, e->u.wire.bytes - g_tel.wire_bytes);
+        g_tel.wire_bytes = e->u.wire.bytes;
+        if (r != g_tel.wire_mb) { g_tel.wire_mb = r; changed = 1; }
+        break;
+    }
+
+    case EV_PROGRESS: {
+        unsigned long long delta = 0;
+
+        if (!g_prog.active) {
+            /* the watch target appeared: progress starts from its size */
+            memset(&g_prog, 0, sizeof g_prog);
+            g_prog.active = 1;
+            g_prog.last_bytes = e->u.rip.bytes;
+            g_prog.bytes = e->u.rip.bytes;
+            g_prog.sectors = g_prog.bytes / SECTOR;
+            g_prog.last_log_t = ev_clock();
+            ev_log('*', "RIP WATCH file=%s", g_watch_file[0] ? g_watch_file : "(none)");
+            changed = 1;
+        }
+        if (g_prog.done) break;        /* a finished rip is not re-reported */
+
+        if (e->u.rip.bytes > g_prog.last_bytes) {
+            delta = e->u.rip.bytes - g_prog.last_bytes;
+            g_prog.stalled = 0;
+        } else if (g_prog.bytes > 0) {
+            /* two quiet samples (0.5 s at TEL_PERIOD_S) = the rip finished */
+            g_prog.stalled++;
+        }
+        g_prog.bytes = e->u.rip.bytes;      /* the file size IS the truth */
+        g_prog.last_bytes = e->u.rip.bytes;
+        g_prog.sectors = g_prog.bytes / SECTOR;
+        g_prog.mb_s = rate_next(g_prog.mb_s, delta);
+
+        if (g_prog.stalled >= 2) {
+            g_prog.done = 1;
+            ev_log('>', "RIP DONE %llu sectors", g_prog.sectors);
+            changed = 1;
+        } else if (g_prog.bytes > 0 &&
+                   ev_clock() - g_prog.last_log_t >= PROGRESS_LOG_S) {
+            /* one RIP line per PROGRESS_LOG_S of event time: the rendered log
+               is a fixed 7-line window, so an unthrottled line every 250 ms
+               would erase the session lines before anyone read them. The
+               counters are not on canvas, so a silent sample repaints nothing. */
+            g_prog.last_log_t = ev_clock();
+            ev_log('>', "RIP %llu sectors %3.1f MB/s", g_prog.sectors, g_prog.mb_s);
+            changed = 1;
+        }
+        break;
+    }
+
+    case EV_SESSION:
+        g_disc.session_ok = e->u.session.ok;
+        if (!g_disc.session_ok) {
+            if (e->u.session.err[0])
+                snprintf(g_disc.err, sizeof g_disc.err, "%s", e->u.session.err);
+            ev_log('!', "SESSION FAILED: %s", g_disc.err);
+        } else {
+            ev_log('>', "SESSION COMPLETE — disc picture from the wire");
+        }
+        changed = 1;
+        break;
+    }
+    if (changed) g_dirty = 1;
+    return changed;
+}
+
+/* ---- the transition table the unit tests read ---------------------------
+   Compiled ONLY into the test build (-DSACD_UI_EVENTS_TEST). A guest run's
+   stdout is a transcript of what it LOGGED; the tests want what it COMPUTED,
+   i.e. the (event, state) pair the determinism rules are about. One line per
+   applied event, in apply order, with the state it produced. */
+#ifdef SACD_UI_EVENTS_TEST
+static const char *ev_kind_name(ev_kind_t k)
+{
+    switch (k) {
+    case EV_TICK: return "tick";
+    case EV_TCP: return "tcp";
+    case EV_PID: return "pid";
+    case EV_WIRE: return "wire";
+    case EV_PROGRESS: return "progress";
+    case EV_SESSION: return "session";
+    }
+    return "?";
+}
+
+static void evtrace(const uev_t *e, int changed)
+{
+    printf("UI-EVAPP kind=%s changed=%d listen=%d clients=%d clients_seen=%d "
+           "daemon_pid=%d wire_bytes=%llu wire_mb=%.3f proc=%d "
+           "rip_bytes=%llu rip_sectors=%llu rip_mb_s=%.3f session_ok=%d "
+           "seq=%u drops=%u\n",
+           ev_kind_name(e->kind), changed, g_tel.listen_2002,
+           g_tel.clients_2002, g_tel.clients_seen, g_tel.daemon_pid,
+           g_tel.wire_bytes, g_tel.wire_mb, g_tel.proc_ok, g_prog.bytes,
+           g_prog.sectors, g_prog.mb_s, g_disc.session_ok, g_ev_seq,
+           g_evq_drops);
+}
+#else
+#define evtrace(e, changed) ((void)0)
+#endif
+
+/* apply every queued event, FIFO. -> events applied. */
+static int ev_drain(void)
+{
+    int n = 0;
+    while (g_evq_n > 0) {
+        uev_t e = g_evq[g_evq_head];
+        int changed;
+        g_evq_head = (g_evq_head + 1) % EVQ_N;
+        g_evq_n--;
+        changed = apply_event(&e);
+        (void)changed;             /* the trace is compiled out of guest builds */
+        evtrace(&e, changed);
+        n++;
+    }
+    return n;
+}
+
+/* The 2 Hz blink is the ONE motion that repaints without a state change: its
+   phase transition forces a paint, so a static scene repaints twice a second
+   instead of thirty times. draw_frame() derives the same phase from the `t` it
+   is handed (BLINK_HZ), so the two cannot disagree. */
+static int g_blink_phase;
+static int blink_flip(double t)
+{
+    int p = ((int)(t * BLINK_HZ) & 1);
+    if (p == g_blink_phase) return 0;
+    g_blink_phase = p;
+    return 1;
+}
+
+/* ================= /proc samplers (pure: file -> sample) ==============
+   Guest only: a SIM run gets its samples from a replay script instead. */
 #ifndef SACD_UI_SIM
 static long read_small(const char *path, char *b, size_t n)
 {
@@ -835,14 +1369,15 @@ static long read_small(const char *path, char *b, size_t n)
     return (long)got;
 }
 
-static void tel_tcp(tel_t *t)
+/* /proc/net/tcp -> (listen, clients) on :2002. No state, no logging: the
+   transition lives in apply_event(). */
+static int tel_sample_tcp(int *listen_out, int *clients_out)
 {
     char b[32768], *ln, *save = NULL;
     int clients = 0, listen = 0;
     if (read_small("/proc/net/tcp", b, sizeof b) < 0 &&
         read_small("/res/proc/net/tcp", b, sizeof b) < 0)
-        return;
-    t->proc_ok = 1;
+        return -1;
     for (ln = strtok_r(b, "\n", &save); ln; ln = strtok_r(NULL, "\n", &save)) {
         char la[16], ra[16], st[8];
         unsigned lport = 0, rport = 0;
@@ -852,53 +1387,70 @@ static void tel_tcp(tel_t *t)
         if (!strcmp(st, "0A")) listen = 1;
         else if (!strcmp(st, "01") || !strcmp(st, "08")) clients++;
     }
-    if (clients > t->clients_2002) ev_log('*', "DAEMON CLIENT CONNECT (%d live)", clients);
-    else if (clients < t->clients_2002) ev_log('*', "DAEMON CLIENT GONE (%d live)", clients);
-    if (!t->listen_2002 && listen) ev_log('*', "LISTENER :2002 UP");
-    t->listen_2002 = listen;
-    t->clients_2002 = clients;
-    if (clients > t->clients_seen) t->clients_seen = clients;
+    *listen_out = listen;
+    *clients_out = clients;
+    return 0;
 }
 
-static void tel_daemon(tel_t *t)
+/* the daemon's pid by cmdline; -1 while it is not up yet */
+static int tel_find_pid(const char *name)
 {
     DIR *d;
     struct dirent *e;
-    char b[4096], *p;
-    unsigned long long rb = 0;
-
-    if (t->daemon_pid <= 0) {
-        d = opendir("/proc");
-        if (!d) d = opendir("/res/proc");
-        if (!d) return;
-        while ((e = readdir(d))) {
-            char path[64], cmd[256];
-            long pid = atol(e->d_name);
-            if (pid <= 0) continue;
-            snprintf(path, sizeof path, "/proc/%ld/cmdline", pid);
-            if (read_small(path, cmd, sizeof cmd) <= 0) {
-                snprintf(path, sizeof path, "/res/proc/%ld/cmdline", pid);
-                if (read_small(path, cmd, sizeof cmd) <= 0) continue;
-            }
-            if (strstr(cmd, "sacd_extract_160")) { t->daemon_pid = (int)pid; break; }
+    int found = -1;
+    d = opendir("/proc");
+    if (!d) d = opendir("/res/proc");
+    if (!d) return -1;
+    while ((e = readdir(d))) {
+        char path[64], cmd[256];
+        long pid = atol(e->d_name);
+        if (pid <= 0) continue;
+        snprintf(path, sizeof path, "/proc/%ld/cmdline", pid);
+        if (read_small(path, cmd, sizeof cmd) <= 0) {
+            snprintf(path, sizeof path, "/res/proc/%ld/cmdline", pid);
+            if (read_small(path, cmd, sizeof cmd) <= 0) continue;
         }
-        closedir(d);
+        if (strstr(cmd, name)) { found = (int)pid; break; }
     }
-    if (t->daemon_pid <= 0) return;
-    {
-        char path[64];
-        snprintf(path, sizeof path, "/proc/%d/io", t->daemon_pid);
-        if (read_small(path, b, sizeof b) <= 0) {
-            snprintf(path, sizeof path, "/res/proc/%d/io", t->daemon_pid);
-            read_small(path, b, sizeof b);
-        }
-        if ((p = strstr(b, "rchar:"))) rb = strtoull(p + 6, NULL, 10);
-    }
-    if (rb > t->rchar) t->rate_mb = (double)(rb - t->rchar) / (1024.0 * 1024.0) * 4.0;
-    else t->rate_mb = 0.0;
-    t->rchar = rb;
+    closedir(d);
+    return found;
 }
-#endif /* !SACD_UI_SIM — /proc telemetry */
+
+/* /proc/net/dev -> the loopback device's cumulative RECEIVED bytes. Loopback
+   frames land on the receive side exactly once, which is why this is the
+   receive column and not the sum of both (a kernel that also accounts the
+   transmit side would double every byte). This is the WIRE, not a process: the
+   guest has no /proc/<pid>/io at all (see the event-model header). */
+static int tel_sample_wire(unsigned long long *bytes_out)
+{
+    char b[8192], *ln, *save = NULL;
+    if (read_small("/proc/net/dev", b, sizeof b) <= 0 &&
+        read_small("/res/proc/net/dev", b, sizeof b) <= 0)
+        return -1;
+    for (ln = strtok_r(b, "\n", &save); ln; ln = strtok_r(NULL, "\n", &save)) {
+        char *colon = strchr(ln, ':');
+        unsigned long long rx = 0;
+        if (!colon) continue;
+        *colon = 0;
+        while (*ln == ' ' || *ln == '\t') ln++;
+        if (strcmp(ln, "lo")) continue;
+        if (sscanf(colon + 1, "%llu", &rx) != 1) return -1;
+        *bytes_out = rx;
+        return 0;
+    }
+    return -1;
+}
+
+/* the rip's output file, growing: the progress source that EXISTS in this
+   guest. A file size cannot lie about how far the client got. */
+static int tel_sample_file(const char *path, unsigned long long *bytes_out)
+{
+    struct stat st;
+    if (!path || !path[0] || stat(path, &st) != 0) return -1;
+    *bytes_out = (unsigned long long)st.st_size;
+    return 0;
+}
+#endif /* !SACD_UI_SIM — /proc samplers */
 
 /* ================= framebuffer open (proven pool path) ================ */
 #ifndef SACD_UI_SIM
@@ -987,32 +1539,33 @@ static int sim_write_ppm(const char *path)
 #endif
 
 /* ================= render ============================================= */
-static disc_t g_disc;
-static tel_t g_tel;
-
 static void draw_frame(double t, unsigned frames, double fps)
 {
     char l[160], m1[16], m2[16], num[40];
     int y, i;
-    int pulse = ((int)(t * 2) & 1);
+    int pulse = ((int)(t * BLINK_HZ) & 1);
 
     clear_canvas(C_BG);
+    spec_begin("frame");
     box(0, 0, CW, CH, C_FRAME);
 
     /* ---- title bar ---- */
+    spec_begin("title");
     text_top("SACD RECONSTRUCT", 12, 8, 17, C_PHOS);
     snprintf(l, sizeof l, "BX510 DAEMON CONSOLE");
     text_right(l, CW - 12, 10, 10, C_DIM);
     rect(12, 30, CW - 24, 1, C_RULE);
 
     /* ---- status block ---- */
+    spec_begin("status");
     snprintf(l, sizeof l, "DAEMON  %s:%d %s   CLIENTS %d   PID %d   IO %.1f MB/s",
              "127.0.0.1", PORT,
              g_tel.listen_2002 ? "LISTEN" : "CLOSED",
-             g_tel.clients_2002, g_tel.daemon_pid, g_tel.rate_mb);
+             g_tel.clients_2002, g_tel.daemon_pid, g_tel.wire_mb);
     text_top(l, 12, 37, 11, g_tel.listen_2002 ? C_BRIGHT : C_RED);
     /* the live link lamp */
-    rect(CW - 22, 38, 8, 8, g_tel.clients_2002 ? (pulse ? C_PHOS : C_DIM)
+    rect(LAMP_X, LAMP_Y, LAMP_W, LAMP_H,
+         g_tel.clients_2002 ? (pulse ? C_PHOS : C_DIM)
                                               : (g_tel.listen_2002 ? C_AMBER : C_RED));
 
     if (g_disc.session_ok || g_disc.sectors) {
@@ -1038,6 +1591,7 @@ static void draw_frame(double t, unsigned frames, double fps)
 
     /* ---- the two area panels ---- */
     for (i = 0; i < 2; i++) {
+        spec_begin(i == 0 ? "panel_2ch" : "panel_multi");
         int px0 = (i == 0) ? 12 : 324;
         int pw = 304;
         unsigned head = (i == 0) ? C_CYAN : C_MAGENTA;
@@ -1082,9 +1636,11 @@ static void draw_frame(double t, unsigned frames, double fps)
             text_top(l, px0 + 206, 126 + 6 * 11, 9, C_AMBER);
         }
     }
+    spec_begin("rule_panels_end");
     rect(12, 196, CW - 24, 1, C_RULE);
 
     /* ---- event log (newest last) ---- */
+    spec_begin("log");
     text_top("EVENT LOG", 12, 200, 10, C_DIM);
     {
         int shown = g_log_n < LOG_SHOWN ? g_log_n : LOG_SHOWN;
@@ -1100,9 +1656,11 @@ static void draw_frame(double t, unsigned frames, double fps)
         }
         if (!shown) text_top("(no events yet)", 12, 212, 10, C_GREY);
     }
+    spec_begin("rule_log_end");
     rect(12, 296, CW - 24, 1, C_RULE);
 
     /* ---- session summary + client watch ---- */
+    spec_begin("summary");
     snprintf(l, sizeof l,
              "SESSION  open %.0f ms   size %.0f ms   mtoc %.0f ms   a1 %.0f ms   a2 %.0f ms   close %.0f ms",
              g_disc.ms_open, g_disc.ms_size, g_disc.ms_mtoc,
@@ -1123,11 +1681,181 @@ static void draw_frame(double t, unsigned frames, double fps)
     /* blinking cursor left of the state chip */
     {
         int w = text_w(g_disc.session_ok ? "SESSION OK" : "SESSION FAIL", 9 * SCAL) / SCAL;
-        if (pulse) rect(CW - 14 - w - 14, 341, 5, 7, C_PHOS);
+        if (pulse) rect(CW - 14 - w - 14, CURSOR_Y, CURSOR_W, CURSOR_H, C_PHOS);
     }
     snprintf(l, sizeof l, "%s", g_disc.session_ok ? "SESSION OK" : "SESSION FAIL");
     text_right(l, CW - 14, 340, 9, g_disc.session_ok ? C_PHOS : C_RED);
 }
+
+#ifdef SACD_UI_SIM
+/* ---- the SIM drivers -------------------------------------------------
+ * Two ways to reach the same state machine, deliberately different:
+ *
+ *   the argv EPISODE (below)  sets state DIRECTLY. It is the seeded GOLDEN:
+ *                             its log lines and its frame are what the frame
+ *                             goldens were taken from, so routing it through
+ *                             apply_event() (which would add transition lines
+ *                             a real run would have logged) would change the
+ *                             frame. Left exactly as it was.
+ *   the EVENT REPLAY          feeds synthetic events through the SAME
+ *                             apply_event() the guest loop uses. This is the
+ *                             deterministic scenario driver: same script ->
+ *                             same state -> same log -> same frames.
+ */
+
+/* Load the real TOC fixtures into g_disc: the disc picture without a wire.
+   quiet=0 (the argv golden episode) also logs the READ/AREA lines it always
+   logged; quiet=1 (an event replay) only parses — a replay's log belongs to
+   its events, not to the fixture. Returns -1 if the Master TOC cannot be
+   opened. */
+static int sim_load_fixtures(const char *mtoc, const char *a1, const char *a2,
+                             int quiet)
+{
+    unsigned char *buf;
+    FILE *f;
+    size_t n;
+    unsigned lba, cnt;
+
+    f = fopen(mtoc, "rb");
+    if (!f) { printf("SIM: cannot open %s\n", mtoc); return -1; }
+    buf = (unsigned char *)malloc(256 * SECTOR);
+    n = fread(buf, 1, 10 * SECTOR, f);
+    fclose(f);
+    g_disc.sectors = 1064208;
+    g_disc.mtoc_lba = 510; g_disc.mtoc_count = 10;
+    g_disc.ms_open = 12; g_disc.ms_size = 7; g_disc.ms_mtoc = 1840;
+    g_disc.bytes_wire = n;
+    if (!parse_master_toc(buf, n, &g_disc)) printf("SIM: mtoc parse: %s\n", g_disc.err);
+    lba = be32u(buf + 0x40); cnt = be16u(buf + 0x54);
+    if (!quiet) ev_log('>', "READ lba=%u x%u %u B (SIM)", g_disc.mtoc_lba, 10, (unsigned)n);
+    free(buf);
+    for (int k = 0; k < 2; k++) {
+        const char *fn = k == 0 ? a1 : a2;
+        unsigned char *ab;
+        if (!fn) continue;
+        f = fopen(fn, "rb");
+        if (!f) continue;
+        ab = (unsigned char *)malloc((size_t)(cnt ? cnt : 40) * SECTOR);
+        n = fread(ab, 1, (size_t)(cnt ? cnt : 40) * SECTOR, f);
+        fclose(f);
+        g_disc.bytes_wire += n;
+        g_disc.ms_area[k] = 2600 + k * 180;
+        if (parse_area_toc(ab, n, lba, (unsigned)(n / SECTOR), &g_disc.area[g_disc.nareas])) {
+            if (!quiet) {
+                ev_log('>', "READ lba=%u x%u %u B (SIM)", lba, (unsigned)(n / SECTOR), (unsigned)n);
+                ev_log('>', "AREA %s ch=%d trk=%d", g_disc.area[g_disc.nareas].id,
+                       g_disc.area[g_disc.nareas].channels,
+                       g_disc.area[g_disc.nareas].track_count);
+            }
+            g_disc.nareas++;
+        }
+        free(ab);
+        lba = 353804; cnt = 40;
+    }
+    return 0;
+}
+
+/* every painted replay frame lands in $SACD_UI_SIM_FRAMES as frame-NNN.ppm */
+static char g_sim_frames_dir[256];
+static unsigned g_sim_frame;
+
+static void sim_paint(void)
+{
+    char path[320];
+    draw_frame(g_clock_v, g_sim_frame + 1, 0.0);
+    g_sim_frame++;
+    if (g_sim_frames_dir[0]) {
+        snprintf(path, sizeof path, "%s/frame-%03u.ppm", g_sim_frames_dir,
+                 g_sim_frame);
+        sim_write_ppm(path);
+    }
+    g_dirty = 0;
+}
+
+/* ---- SACD_UI_SIM_SCRIPT replay: the deterministic scenario driver -----
+ * One event per line, applied through the SAME apply_event() the guest uses.
+ * Blank lines and '#' comments are skipped. Grammar:
+ *
+ *   tick [secs]              advance the event clock (default FRAME_PERIOD_S)
+ *   tcp <listen> <clients>   one /proc/net/tcp sample (0/1, live count)
+ *   pid <pid>                the daemon's pid (a /proc/<pid>/cmdline scan)
+ *   wire <bytes>             one /proc/net/dev lo sample (cumulative)
+ *   watch <path>             the rip file's path (what the log names)
+ *   rip <bytes>              one stat(<watch file>) sample (the file's size)
+ *   session ok|fail [text]   the startup session's outcome
+ *
+ * A line that changes state paints a frame — the same rule the guest loop
+ * uses — plus the scenario's own t=0 frame. Painted frames are written to
+ * $SACD_UI_SIM_FRAMES/frame-NNN.ppm, and the final one also to the argv output
+ * path. Same script -> same frames byte for byte: the clock is the script's own
+ * ticks, and nothing in this path reads the wall clock.
+ *
+ * Usage: SACD_UI_SIM_SCRIPT=events.txt sacd_ui <out.ppm>
+ *        (or, with real disc bytes: sacd_ui <mtoc> <a1> <a2> <out.ppm>)
+ */
+static int sim_replay(const char *path, const char *out)
+{
+    FILE *f = fopen(path, "r");
+    char line[256];
+    unsigned applied = 0;
+
+    if (!f) { printf("SIM: cannot open script %s\n", path); return 0; }
+    sim_paint();                     /* the scenario's t=0 frame */
+    while (fgets(line, sizeof line, f)) {
+        char *p = line, *nl;
+        while (*p == ' ' || *p == '\t') p++;
+        nl = strchr(p, '\n'); if (nl) *nl = 0;
+        if (!*p || *p == '#') continue;
+        if (!strncmp(p, "tick", 4)) {
+            double dt = p[4] ? atof(p + 4) : FRAME_PERIOD_S;
+            g_clock_v += dt;
+            ev_push_kind(EV_TICK);
+        } else if (!strncmp(p, "tcp ", 4)) {
+            int listen = 0, clients = 0;
+            if (sscanf(p + 4, "%d %d", &listen, &clients) != 2) goto bad;
+            ev_push_tcp(listen, clients);
+        } else if (!strncmp(p, "watch ", 6)) {
+            snprintf(g_watch_file, sizeof g_watch_file, "%s", p + 6);
+            continue;                 /* configuration, not an event */
+        } else if (!strncmp(p, "rip ", 4)) {
+            unsigned long long bytes = 0;
+            if (sscanf(p + 4, "%llu", &bytes) != 1) goto bad;
+            ev_push_bytes(EV_PROGRESS, bytes);
+        } else if (!strncmp(p, "wire ", 5)) {
+            unsigned long long bytes = 0;
+            if (sscanf(p + 5, "%llu", &bytes) != 1) goto bad;
+            ev_push_bytes(EV_WIRE, bytes);
+        } else if (!strncmp(p, "pid ", 4)) {
+            int pid = 0;
+            if (sscanf(p + 4, "%d", &pid) != 1) goto bad;
+            ev_push_pid(pid);
+        } else if (!strncmp(p, "session ", 8)) {
+            ev_push_session(!strncmp(p + 8, "ok", 2), p + 8);
+        } else {
+            goto bad;
+        }
+        ev_drain();
+        applied++;
+        if (blink_flip(g_clock_v)) g_dirty = 1;
+        if (g_dirty) sim_paint();
+        continue;
+    bad:
+        printf("SIM: bad event line: %s\n", p);
+        fclose(f);
+        return 0;
+    }
+    fclose(f);
+    /* the final frame goes to the argv path even if the last event changed
+       nothing: a scenario's artifact is its end state. */
+    /* the end state is the scenario's artifact, even if the last event changed
+       nothing. Same state, same clock -> byte-identical to the last painted
+       frame (rule 5), so it is written, not counted as another frame. */
+    draw_frame(g_clock_v, g_sim_frame + 1, 0.0);
+    if (out && !sim_write_ppm(out)) return 0;
+    printf("SIM: replay %s %u events, %u frames\n", path, applied, g_sim_frame);
+    return 1;
+}
+#endif /* SACD_UI_SIM — the SIM drivers */
 
 /* ================= main ============================================== */
 int main(int argc, char **argv)
@@ -1139,7 +1867,7 @@ int main(int argc, char **argv)
     int hold = (argc > 2) ? atoi(argv[2]) : 45;
     const char *fbdev = getenv("SACD_UI_FB");
     unsigned frames = 0;
-    double t, fps = 0.0, next_tel = 0.0, render_t0;
+    double t, fps = 0.0, next_tick = 0.0, next_tel = 0.0, render_t0;
 
     if (hold < 1) hold = 1;
     if (hold > 600) hold = 600;
@@ -1147,6 +1875,12 @@ int main(int argc, char **argv)
 
     setvbuf(stdout, NULL, _IOLBF, 0);
     g_t0 = now_s();
+#ifdef SACD_UI_SIM
+    /* a SIM run never reads the wall clock (rule 5's precondition): the event
+       clock starts at 0 and only a replay's own `tick` lines advance it, so the
+       same scenario renders the same bytes on any machine. */
+    g_clock_sim = 1;
+#endif
 
 #ifdef SACD_UI_SIM
     if (!sim_open()) return 4;
@@ -1168,51 +1902,34 @@ int main(int argc, char **argv)
 
 #ifdef SACD_UI_SIM
     {
+        /* SACD_UI_SIM_SCRIPT: the deterministic EVENT replay (see sim_replay).
+           Checked first because it is a different driver of the same state
+           machine, not a variation of the golden episode below. */
+        const char *script = getenv("SACD_UI_SIM_SCRIPT");
+        if (script && script[0]) {
+            const char *out;
+            const char *fdir = getenv("SACD_UI_SIM_FRAMES");
+            if (fdir) snprintf(g_sim_frames_dir, sizeof g_sim_frames_dir, "%s", fdir);
+            if (argc >= 5) {
+                /* with disc bytes: same positions as the argv episode */
+                if (sim_load_fixtures(argv[1], argv[2], argv[3], 1) < 0) return 2;
+                out = argv[4];
+            } else {
+                out = (argc > 1) ? argv[1] : "/tmp/sacd_ui_sim.ppm";
+            }
+            if (!sim_replay(script, out)) return 3;
+            return 0;
+        }
+    }
+    {
         /* layout iteration: real TOC bytes from files, synthetic wire/timing */
         const char *mtoc = (argc > 1) ? argv[1] : NULL;
         const char *a1 = (argc > 2) ? argv[2] : NULL;
         const char *a2 = (argc > 3) ? argv[3] : NULL;
         const char *out = (argc > 4) ? argv[4] : "/tmp/sacd_ui.ppm";
-        unsigned char *buf;
-        FILE *f;
-        size_t n;
-        unsigned lba, cnt;
 
         if (!mtoc) { printf("SIM: usage: sacd_ui <mtoc.bin> <area1.bin> <area2.bin> <out.ppm>\n"); return 2; }
-        f = fopen(mtoc, "rb");
-        if (!f) { printf("SIM: cannot open %s\n", mtoc); return 2; }
-        buf = (unsigned char *)malloc(256 * SECTOR);
-        n = fread(buf, 1, 10 * SECTOR, f);
-        fclose(f);
-        g_disc.sectors = 1064208;
-        g_disc.mtoc_lba = 510; g_disc.mtoc_count = 10;
-        g_disc.ms_open = 12; g_disc.ms_size = 7; g_disc.ms_mtoc = 1840;
-        g_disc.bytes_wire = n;
-        if (!parse_master_toc(buf, n, &g_disc)) printf("SIM: mtoc parse: %s\n", g_disc.err);
-        lba = be32u(buf + 0x40); cnt = be16u(buf + 0x54);
-        ev_log('>', "READ lba=%u x%u %u B (SIM)", g_disc.mtoc_lba, 10, (unsigned)n);
-        free(buf);
-        for (int k = 0; k < 2; k++) {
-            const char *fn = k == 0 ? a1 : a2;
-            unsigned char *ab;
-            if (!fn) continue;
-            f = fopen(fn, "rb");
-            if (!f) continue;
-            ab = (unsigned char *)malloc((size_t)(cnt ? cnt : 40) * SECTOR);
-            n = fread(ab, 1, (size_t)(cnt ? cnt : 40) * SECTOR, f);
-            fclose(f);
-            g_disc.bytes_wire += n;
-            g_disc.ms_area[k] = 2600 + k * 180;
-            if (parse_area_toc(ab, n, lba, (unsigned)(n / SECTOR), &g_disc.area[g_disc.nareas])) {
-                ev_log('>', "READ lba=%u x%u %u B (SIM)", lba, (unsigned)(n / SECTOR), (unsigned)n);
-                ev_log('>', "AREA %s ch=%d trk=%d", g_disc.area[g_disc.nareas].id,
-                       g_disc.area[g_disc.nareas].channels,
-                       g_disc.area[g_disc.nareas].track_count);
-                g_disc.nareas++;
-            }
-            free(ab);
-            lba = 353804; cnt = 40;
-        }
+        if (sim_load_fixtures(mtoc, a1, a2, 0) < 0) return 2;
         ev_log('>', "MTOC SACD %d.%02d cat=%s year=%d", g_disc.ver_major,
                g_disc.ver_minor, g_disc.disc_cat, g_disc.year);
         ev_log('>', "DISC_SIZE %llu sectors (SIM)", g_disc.sectors);
@@ -1223,17 +1940,65 @@ int main(int argc, char **argv)
         g_tel.clients_2002 = 1;
         g_tel.clients_seen = 1;
         g_tel.daemon_pid = 4682;
-        g_tel.rate_mb = 3.4;
+        g_tel.wire_mb = 3.4;
+        /* scene knob (ui-regress s3): the wire path reaches the FAILED-session
+           screen through a real failed ui_session(); the SIM path has no wire,
+           so the same state is forced explicitly — sectors too, because the
+           status block's OK branch keys off (session_ok || sectors). */
+        if (getenv("SACD_UI_SIM_FAIL")) {
+            g_disc.session_ok = 0;
+            g_disc.sectors = 0;
+            snprintf(g_disc.err, sizeof g_disc.err, "SIM FAIL (scene knob)");
+        }
         draw_frame(1.7, frames, 0.0);
+#ifdef SACD_UI_SPEC_DUMP
+        spec_dump();
+#endif
         if (!sim_write_ppm(out)) return 4;
         return 0;
     }
+    {
+        /* animation substrate (ui-regress): N frames at a fixed cadence with an
+           EXACTLY known t sequence, so the blink/fps analysis has deterministic
+           ground truth on the Mac. argv[4] is then a DIRECTORY (must exist).
+           The loop prints nothing (a log line between frames would make the
+           event-log region change, which the animation diff asserts never
+           happens outside lamp+cursor+render-line). */
+        const char *seq = getenv("SACD_UI_SIM_SEQ");
+        const char *sqout = (argc > 4) ? argv[4] : NULL;
+        if (seq && atoi(seq) > 0 && sqout) {
+            int k, n = atoi(seq);
+            double dt = getenv("SACD_UI_SIM_DT") ? atof(getenv("SACD_UI_SIM_DT")) : 0.125;
+            char p[512];
+            for (k = 0; k < n; k++) {
+                double tk = (double)k * dt;
+                char tbuf[32];
+                snprintf(tbuf, sizeof tbuf, "%.3f", tk);
+                draw_frame(tk, (unsigned)k + 1, k ? ((double)k + 1) / tk : 0.0);
+                snprintf(p, sizeof p, "%s/frame-%03d-t%s.ppm", sqout, k, tbuf);
+                if (!sim_write_ppm(p)) return 4;
+            }
+            printf("UI: SIM sequence %d frames dt=%.4f -> %s\n", n, dt, sqout);
+            return 0;
+        }
+    }
 #else
-    if (ui_session(host, &g_disc) != 0) {
-        g_disc.session_ok = 0;
-        ev_log('!', "SESSION FAILED: %s", g_disc.err);
-    } else {
-        ev_log('>', "SESSION COMPLETE — disc picture from the wire");
+    /* The startup session is an ACT (a blocking protocol conversation — the
+       only blocking thing in this program). Its OUTCOME is the EV_SESSION
+       event, so even that state move flows through the one path (rule 4). */
+    if (ui_session(host, &g_disc) != 0) g_disc.session_ok = 0;
+    ev_push_session(g_disc.session_ok, g_disc.err);
+    ev_drain();
+
+    /* Opt-in RIP progress for a SECOND client (SACD_UI_WATCH_FILE, the file it
+       rips into). The UI stats that file and never connects to the daemon for
+       it — the accept slot (§0.6) stays free for the real client. */
+    {
+        const char *w = getenv("SACD_UI_WATCH_FILE");
+        if (w && w[0]) {
+            snprintf(g_watch_file, sizeof g_watch_file, "%s", w);
+            ev_log('>', "WATCHING %s for RIP progress", g_watch_file);
+        }
     }
 
     /* The session is CLOSED at this point (DISC_CLOSE ends the connection).
@@ -1256,28 +2021,67 @@ int main(int argc, char **argv)
     }
     render_t0 = now_s();
 
-    /* the loop: redraw, watch /proc, keep the last frame complete */
+    /* ---- the loop: poll -> queue -> apply_event -> paint if dirty ----
+       Source order per pass is FIXED (determinism rule 2): the frame clock,
+       then /proc/net/tcp, then the daemon's io, then the watched client's io.
+       The sleep is the only thing that is not an event. A painted frame is
+       counted, so `fps` is frames PAINTED per second — the number that used to
+       be capped by the redraw, not by the work. */
     for (;;) {
         t = now_s() - render_t0;
         if (t >= (double)hold) break;
-        if (t >= next_tel) {
-            tel_tcp(&g_tel);
-            tel_daemon(&g_tel);
-            next_tel = t + 0.25;
+        if (t >= next_tick) {
+            ev_push_kind(EV_TICK);
+            next_tick = t + FRAME_PERIOD_S;
         }
-        draw_frame(t, frames, fps);
-        frames++;
-        if (t > 0.5) fps = frames / t;
-        usleep(30000);
+        if (t >= next_tel) {
+            int listen = 0, clients = 0, dpid = 0;
+            unsigned long long bytes = 0;
+            next_tel = t + TEL_PERIOD_S;
+            if (tel_sample_tcp(&listen, &clients) == 0)
+                ev_push_tcp(listen, clients);
+            if (g_tel.daemon_pid <= 0) {
+                dpid = tel_find_pid(DAEMON_CMD);
+                if (dpid > 0) ev_push_pid(dpid);
+            }
+            if (tel_sample_wire(&bytes) == 0)
+                ev_push_bytes(EV_WIRE, bytes);
+            if (g_watch_file[0] && tel_sample_file(g_watch_file, &bytes) == 0)
+                ev_push_bytes(EV_PROGRESS, bytes);
+        }
+        ev_drain();
+        if (blink_flip(t)) g_dirty = 1;
+        if (g_dirty) {
+            draw_frame(t, frames, fps);
+            frames++;
+            g_dirty = 0;
+        }
+        if (t > 0.5) fps = (double)frames / t;
+        usleep(FRAME_SLEEP_US);
     }
     t = now_s() - render_t0;
-    if (t > 0.5) fps = frames / t;
-    tel_tcp(&g_tel);
-    tel_daemon(&g_tel);
+    if (t > 0.5) fps = (double)frames / t;
+    /* one last sample + apply, so the final frame carries the leaving client,
+       then the final complete frame */
+    {
+        int listen = 0, clients = 0;
+        unsigned long long bytes = 0;
+        if (tel_sample_tcp(&listen, &clients) == 0) ev_push_tcp(listen, clients);
+        if (tel_sample_wire(&bytes) == 0) ev_push_bytes(EV_WIRE, bytes);
+        if (g_watch_file[0] && tel_sample_file(g_watch_file, &bytes) == 0)
+            ev_push_bytes(EV_PROGRESS, bytes);
+        ev_drain();
+    }
     draw_frame(t, frames, fps);              /* final, complete frame */
+    frames++;
     printf("UI: frames=%u secs=%.1f fps=%.1f session_ok=%d clients_seen=%d "
            "bytes=%llu areas=%d\n", frames, t, fps, g_disc.session_ok,
            g_tel.clients_seen, g_disc.bytes_wire, g_disc.nareas);
+    printf("UI: event model: %u events, %u dropped, daemon_pid=%d "
+           "wire_bytes=%llu wire_mb=%.1f rip_bytes=%llu rip_sectors=%llu "
+           "rip_mb_s=%.1f\n", g_ev_seq, g_evq_drops, g_tel.daemon_pid,
+           g_tel.wire_bytes, g_tel.wire_mb, g_prog.bytes, g_prog.sectors,
+           g_prog.mb_s);
     printf("UI: POOL-RENDER DONE\n");
     if (g_disc.session_ok) printf("UI_PASS\n");
     else printf("UI_FAIL %s\n", g_disc.err);

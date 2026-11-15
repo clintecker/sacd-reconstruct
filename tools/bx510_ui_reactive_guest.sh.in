@@ -1,0 +1,103 @@
+# bx510_ui_reactive_guest.sh.in — THE guest command of a REACTIVE UI fire.
+#
+# Same rig and the same mandatory invariants as bx510_ui_guest.sh.in (that file
+# stays the standard scenario and is not touched by this one), with ONE
+# difference: a second client rips WHILE the UI is observing, and the UI is
+# given that client's pid (SACD_UI_WATCH_PID) so its event log can carry live
+# RIP progress. That is the proof the event model needs — the UI logs
+# CONNECT/GONE from /proc/net/tcp and sector progress from /proc/<pid>/io
+# without ever opening a session of its own (the daemon's accept slot is shared,
+# decode/daemon-socket-protocol.md §0.6).
+#
+# Rendered by tools/bx510_ui_render.py --template (the invariant gate applies to
+# this file too: an unknown @NAME@ or a missing FA-latch clear is an error).
+#
+# Placeholders:
+#   @SCALE@        fbdump pixel decimation (6 = 320x180 preview)
+#   @DAEMON_WAIT@  seconds for sacd_extract_160 to reach "active"
+#   @UI_WAIT@      seconds the UI gets before it is killed (must exceed its
+#                  session + hold, or the log is cut mid-scenario)
+#   @CLIENT_LSN@ / @CLIENT_CNT@   the pre-flight client leg (step 8)
+#   @UI_ARGS@      argv for ./sacd_ui: "<host> <hold_seconds>" (may be empty)
+#
+# The watched client's read is this scenario's own constant (RIP_LSN/RIP_CNT
+# below): 1600 sectors is 13 max-size chunks, long enough for several RIP lines
+# at the 1 Hz log throttle, and it lands in the audio area the area TOC points
+# at (never in the TOC the UI itself reads).
+#   @POOL_ARGS@    fbdump --pool geometry: "<byte-ofs> <w> <h>"
+
+# 1. the VFS skeleton an init=/bin/sh guest does not have
+mkdir -p /tmp /res/tmp
+mount -t tmpfs tmpfs /tmp
+# 2. loopback, so the client leg reaches the daemon at 127.0.0.1:2002
+ifconfig lo 127.0.0.1 netmask 255.0.0.0 up
+# 3. the payload tgz: daemon + sacd_read.ko + sacdgate + client + UI + FB kit
+tar -xzf /res/shim/daemon_payload.tgz -C /res
+# 4. the SACD session — c122g's proven Connect/Release pair
+insmod /res/shim/bx510_cpsa_peer.ko
+insmod /res/shim/sacd_read.ko minor=201 compid=0
+rm -f /dev/sacd_read
+mknod /dev/sacd_read c 10 201
+/res/shim/sacdgate 0x40105301 /dev/sacd_read
+/res/shim/sacdgate 0x40105305 /dev/sacd_read
+# 5. THE FA-LATCH CLEAR (mandatory — c122f served zero FE traffic without it).
+#    The second invocation is the read-back AND the next /dev/sr0 open.
+/res/shim/sr_fa_mode /dev/sr0 clear
+/res/shim/sr_fa_mode /dev/sr0
+grep sr0 /res/proc/partitions
+# 6. the display: fbvirt is the fbdev this rig can read back, and it comes up as
+#    fb1 once the daemon stack is resident, so the node is bound to fbvirt's own
+#    index (a hard-coded minor 0 is the MT8530 driver -> SIGBUS).
+insmod /res/shim/bx510_fbvirt.ko
+cat /res/proc/fb
+set -- $(grep fbvirt /res/proc/fb); mknod /dev/fb0 c 29 $1
+insmod /lib/modules/2.6.35/BDP/fusion.ko
+set -- $(grep fusion /res/proc/devices); mknod /dev/fusion0 c $1 0
+# 7. the daemon: -S only, stdin NOT a tty or server_loop skips the poll
+cd /res/shim
+./sacd_extract_160 -S </dev/null >/res/daemon.out 2>&1 &
+echo DAEMON_PID=$!
+sleep @DAEMON_WAIT@
+cat /res/daemon.out; echo DAEMON_OUT_END
+# 8. the pre-flight client leg — real disc data through the port-2002 protocol
+./sacdclient 127.0.0.1 @CLIENT_LSN@ @CLIENT_CNT@ /tmp/client-toc.bin
+echo CLIENT_RC=$?
+md5sum /tmp/client-toc.bin
+# 9. THE WATCHED CLIENT. It waits for the UI's session-closed marker (never a
+#    sleep guess) and then rips 1600 sectors into /tmp/rip.bin. The UI is told
+#    the FILE, not the pid: the guest kernel has no /proc/<pid>/io
+#    (CONFIG_TASK_IO_ACCOUNTING off — fires pio1/pio2), and a file's size is
+#    the one progress number that cannot lie.
+rm -f /res/ui-session.done /res/rip.rc /tmp/rip.bin
+( while [ ! -f /res/ui-session.done ]; do sleep 1; done; ./sacdclient 127.0.0.1 600 1600 /tmp/rip.bin; echo RIP_RC=$? >/res/rip.rc ) &
+echo RIP_CLIENT=$!
+# 10. the UI under test: it runs its own short session first (DISC_OPEN .. CLOSE
+#     then writes the marker), then holds and OBSERVES. Backgrounded, and killed
+#     before its log is read — a live UI keeps appending UI-EV lines and `cat` of
+#     a growing file never returns (run uiloop2).
+SACD_UI_WATCH_FILE=/tmp/rip.bin ./sacd_ui @UI_ARGS@ >/res/ui.out 2>&1 &
+U=$!
+echo UI_PID=$U
+sleep @UI_WAIT@
+kill $U 2>/dev/null
+sleep 1
+cat /res/ui.out; echo UI_OUT_END
+# 11. the watched client's observable, checked end to end: the rip's exit code,
+#     the file it wrote, and the loopback counter the UI samples (a cumulative
+#     device counter must be non-zero after a real session).
+cat /res/rip.rc; echo RIP_RC_END
+ls -l /tmp/rip.bin
+md5sum /tmp/rip.bin
+echo RIP_FILE_END
+cat /res/proc/net/dev
+echo WIRE_DEV_END
+# 12. frame egress: both buffers as RGB888 hex over the UART (--rows is
+#     mandatory: one long FBPIX line gets interleaved and truncated).
+echo UI_SCALE=@SCALE@
+./fbdump --rows /dev/fb0 @SCALE@ >/res/fb-fbdev.txt 2>&1
+echo UI_DUMP_FBDEV=$?
+cat /res/fb-fbdev.txt; echo UI_FBDEV_END
+./fbdump --rows --pool /dev/fb0 @SCALE@ @POOL_ARGS@ >/res/fb-pool.txt 2>&1
+echo UI_DUMP_POOL=$?
+cat /res/fb-pool.txt; echo UI_POOL_END
+echo UI_SHOT_DONE

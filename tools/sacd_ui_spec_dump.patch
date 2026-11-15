@@ -1,0 +1,281 @@
+--- a/tools/sacd_ui.c
++++ b/tools/sacd_ui.c
+@@ -84,6 +84,23 @@
+ #define STB_TRUETYPE_IMPLEMENTATION
+ #include "third_party/stb_truetype.h"
+ 
++/* theme (declared up here so the SACD_UI_SPEC_DUMP palette table can name the
++   C_* macros directly — it must emit the macros' values, never a retyped
++   copy) */
++#define C_BG      0x00020604u
++#define C_PANELBG 0x000a1410u
++#define C_FRAME   0x0000b34du
++#define C_RULE    0x00004824u
++#define C_DIM     0x000a7a30u
++#define C_BODY    0x0050c878u
++#define C_PHOS    0x0022ff66u
++#define C_BRIGHT  0x00d8ffe0u
++#define C_CYAN    0x0033e0ffu
++#define C_MAGENTA 0x00ff66ccu
++#define C_AMBER   0x00ffb000u
++#define C_RED     0x00ff3344u
++#define C_GREY    0x00607a6cu
++
+ #define CW 640                 /* logical canvas */
+ #define CH 360
+ #define PORT 2002
+@@ -99,6 +116,110 @@
+ static int SCAL = 3;           /* device px per logical px (from the panel) */
+ static int g_visible_w, g_visible_h;
+ 
++/* ================= layout spec recording (SACD_UI_SPEC_DUMP) ==========
++ * The layout regression (`make ui-regress`) asserts that three things agree:
++ * tools/ui_layout_spec.json (the committed contract), THIS dump (what the
++ * compiled draw_frame() actually draws) and the rendered pixels. The dump is
++ * only compiled in with -DSACD_UI_SPEC_DUMP; every other build sees
++ * `spec_begin()` as a no-op, so the renderer's bytes are unchanged (verified:
++ * the SIM frame's sha256 is identical with and without the flag).
++ *
++ * Rectangles are recorded by the PRIMITIVES (rect() and px_blend()), not by a
++ * hand-written table, so the dump cannot drift from the drawing calls: the
++ * only thing draw_frame() declares is which named region it is drawing. */
++#ifdef SACD_UI_SPEC_DUMP
++typedef struct {
++    const char *name;
++    int x0, y0, x1, y1, draws, ncol, nsizes;
++    unsigned colors[16];       /* 0xRRGGBB, first-seen order */
++    int sizes[8];              /* logical px text sizes drawn in the region */
++} spec_region_t;
++
++#define SPEC_REGIONS 32
++static spec_region_t g_spec[SPEC_REGIONS];
++static int g_spec_n;
++static int g_spec_cur = -1;
++
++static void spec_begin(const char *name)
++{
++    int i;
++    for (i = 0; i < g_spec_n; i++)
++        if (!strcmp(g_spec[i].name, name)) { g_spec_cur = i; return; }
++    if (g_spec_n >= SPEC_REGIONS) { g_spec_cur = -1; return; }
++    g_spec_cur = g_spec_n++;
++    memset(&g_spec[g_spec_cur], 0, sizeof g_spec[0]);
++    g_spec[g_spec_cur].name = name;
++}
++
++static void spec_touch(int x, int y, int w, int h, unsigned c)
++{
++    spec_region_t *r;
++    int i;
++    c &= 0xffffffu;
++    if (g_spec_cur < 0 || w <= 0 || h <= 0) return;
++    r = &g_spec[g_spec_cur];
++    if (!r->draws) {
++        r->x0 = x; r->y0 = y; r->x1 = x + w; r->y1 = y + h;
++    } else {
++        if (x < r->x0) r->x0 = x;
++        if (y < r->y0) r->y0 = y;
++        if (x + w > r->x1) r->x1 = x + w;
++        if (y + h > r->y1) r->y1 = y + h;
++    }
++    r->draws++;
++    for (i = 0; i < r->ncol; i++)
++        if (r->colors[i] == c) return;
++    if (r->ncol < (int)(sizeof r->colors / sizeof r->colors[0]))
++        r->colors[r->ncol++] = c;
++}
++
++static void spec_size(int lp)
++{
++    spec_region_t *r;
++    int i;
++    if (g_spec_cur < 0) return;
++    r = &g_spec[g_spec_cur];
++    for (i = 0; i < r->nsizes; i++)
++        if (r->sizes[i] == lp) return;
++    if (r->nsizes < (int)(sizeof r->sizes / sizeof r->sizes[0]))
++        r->sizes[r->nsizes++] = lp;
++}
++
++/* the palette is emitted from the C_* macros themselves, never retyped */
++static const struct { const char *name; unsigned value; } g_spec_palette[] = {
++    { "C_BG", C_BG }, { "C_PANELBG", C_PANELBG }, { "C_FRAME", C_FRAME },
++    { "C_RULE", C_RULE }, { "C_DIM", C_DIM }, { "C_BODY", C_BODY },
++    { "C_PHOS", C_PHOS }, { "C_BRIGHT", C_BRIGHT }, { "C_CYAN", C_CYAN },
++    { "C_MAGENTA", C_MAGENTA }, { "C_AMBER", C_AMBER }, { "C_RED", C_RED },
++    { "C_GREY", C_GREY },
++};
++
++static void spec_dump(void)
++{
++    int i, j;
++    printf("SPEC canvas w=%d h=%d scale=%d logical=%dx%d pulse_hz=2\n",
++           g_visible_w, CH * SCAL, SCAL, CW, CH);
++    for (i = 0; i < (int)(sizeof g_spec_palette / sizeof g_spec_palette[0]); i++)
++        printf("SPEC palette %s 0x%06x\n", g_spec_palette[i].name,
++               g_spec_palette[i].value & 0xffffffu);
++    for (i = 0; i < g_spec_n; i++) {
++        spec_region_t *r = &g_spec[i];
++        printf("SPEC region=%s x=%d y=%d w=%d h=%d draws=%d colors=",
++               r->name, r->x0, r->y0, r->x1 - r->x0, r->y1 - r->y0, r->draws);
++        for (j = 0; j < r->ncol; j++)
++            printf("%s0x%06x", j ? "," : "", r->colors[j]);
++        printf(" sizes=");
++        for (j = 0; j < r->nsizes; j++)
++            printf("%s%d", j ? "," : "", r->sizes[j]);
++        printf("\n");
++    }
++    fflush(stdout);
++}
++#else
++#define spec_begin(name) ((void)0)
++#endif
++
++
+ /* ================= the Sony font (proven loader, copied from the HUD) === */
+ static stbtt_fontinfo g_font;
+ static unsigned char *g_ttf;
+@@ -179,6 +300,9 @@
+     unsigned int *o, r, g, b, dr, dg, db;
+     if (xd < 0 || yd < 0 || xd >= g_visible_w || yd >= CH * SCAL) return;
+     if (yd >= CH * SCAL) return;
++#ifdef SACD_UI_SPEC_DUMP
++    spec_touch(xd / SCAL, yd / SCAL, 1, 1, c);
++#endif
+     o = fb + (size_t)yd * pitch_px + xd;
+     dr = (*o >> 16) & 0xff; dg = (*o >> 8) & 0xff; db = *o & 0xff;
+     r = ((c >> 16) & 0xff) * a / 255 + dr * (255 - a) / 255;
+@@ -197,6 +321,9 @@
+     if (x + w > CW) w = CW - x;
+     if (y + h > CH) h = CH - y;
+     if (w <= 0 || h <= 0) return;
++#ifdef SACD_UI_SPEC_DUMP
++    spec_touch(x, y, w, h, c);
++#endif
+     row = fb + (size_t)(y * SCAL) * pitch_px + (size_t)(x * SCAL);
+     for (dy = 0; dy < h * SCAL; dy++) {
+         unsigned int *o = row + (size_t)dy * pitch_px;
+@@ -278,6 +405,9 @@
+ {
+     int cx = x * SCAL, ydev, asc;
+     float sc;
++#ifdef SACD_UI_SPEC_DUMP
++    spec_size(lp);
++#endif
+     if (!g_font_ok) return 0;
+     sc = stbtt_ScaleForPixelHeight(&g_font, (float)(lp * SCAL));
+     stbtt_GetFontVMetrics(&g_font, &asc, NULL, NULL);
+@@ -305,19 +435,8 @@
+ }
+ 
+ /* ================= theme ============================================== */
+-#define C_BG      0x00020604u
+-#define C_PANELBG 0x000a1410u
+-#define C_FRAME   0x0000b34du
+-#define C_RULE    0x00004824u
+-#define C_DIM     0x000a7a30u
+-#define C_BODY    0x0050c878u
+-#define C_PHOS    0x0022ff66u
+-#define C_BRIGHT  0x00d8ffe0u
+-#define C_CYAN    0x0033e0ffu
+-#define C_MAGENTA 0x00ff66ccu
+-#define C_AMBER   0x00ffb000u
+-#define C_RED     0x00ff3344u
+-#define C_GREY    0x00607a6cu
++/* the C_* values live at the top of the file (the spec-dump palette table
++   emits them); this is the theme's documentation block. */
+ 
+ /* ================= event log ========================================== */
+ typedef struct {
+@@ -997,15 +1116,18 @@
+     int pulse = ((int)(t * 2) & 1);
+ 
+     clear_canvas(C_BG);
++    spec_begin("frame");
+     box(0, 0, CW, CH, C_FRAME);
+ 
+     /* ---- title bar ---- */
++    spec_begin("title");
+     text_top("SACD RECONSTRUCT", 12, 8, 17, C_PHOS);
+     snprintf(l, sizeof l, "BX510 DAEMON CONSOLE");
+     text_right(l, CW - 12, 10, 10, C_DIM);
+     rect(12, 30, CW - 24, 1, C_RULE);
+ 
+     /* ---- status block ---- */
++    spec_begin("status");
+     snprintf(l, sizeof l, "DAEMON  %s:%d %s   CLIENTS %d   PID %d   IO %.1f MB/s",
+              "127.0.0.1", PORT,
+              g_tel.listen_2002 ? "LISTEN" : "CLOSED",
+@@ -1038,6 +1160,7 @@
+ 
+     /* ---- the two area panels ---- */
+     for (i = 0; i < 2; i++) {
++        spec_begin(i == 0 ? "panel_2ch" : "panel_multi");
+         int px0 = (i == 0) ? 12 : 324;
+         int pw = 304;
+         unsigned head = (i == 0) ? C_CYAN : C_MAGENTA;
+@@ -1082,9 +1205,11 @@
+             text_top(l, px0 + 206, 126 + 6 * 11, 9, C_AMBER);
+         }
+     }
++    spec_begin("rule_panels_end");
+     rect(12, 196, CW - 24, 1, C_RULE);
+ 
+     /* ---- event log (newest last) ---- */
++    spec_begin("log");
+     text_top("EVENT LOG", 12, 200, 10, C_DIM);
+     {
+         int shown = g_log_n < LOG_SHOWN ? g_log_n : LOG_SHOWN;
+@@ -1100,9 +1225,11 @@
+         }
+         if (!shown) text_top("(no events yet)", 12, 212, 10, C_GREY);
+     }
++    spec_begin("rule_log_end");
+     rect(12, 296, CW - 24, 1, C_RULE);
+ 
+     /* ---- session summary + client watch ---- */
++    spec_begin("summary");
+     snprintf(l, sizeof l,
+              "SESSION  open %.0f ms   size %.0f ms   mtoc %.0f ms   a1 %.0f ms   a2 %.0f ms   close %.0f ms",
+              g_disc.ms_open, g_disc.ms_size, g_disc.ms_mtoc,
+@@ -1224,7 +1351,40 @@
+         g_tel.clients_seen = 1;
+         g_tel.daemon_pid = 4682;
+         g_tel.rate_mb = 3.4;
++        /* scene knob (ui-regress s3): the wire path reaches the FAILED-session
++           screen through a real failed ui_session(); the SIM path has no wire,
++           so the same state is forced explicitly — sectors too, because the
++           status block's OK branch keys off (session_ok || sectors). */
++        if (getenv("SACD_UI_SIM_FAIL")) {
++            g_disc.session_ok = 0;
++            g_disc.sectors = 0;
++            snprintf(g_disc.err, sizeof g_disc.err, "SIM FAIL (scene knob)");
++        }
++        /* scene knob (ui-regress anim): N frames at a fixed cadence with an
++           EXACTLY known t sequence, so the blink/fps analysis has deterministic
++           ground truth on the Mac. argv[4] is then a DIRECTORY (must exist).
++           Nothing is logged between frames: a log line would change the
++           event-log region, which the animation diff asserts only lamp +
++           cursor + RENDER line may do. */
++        if (getenv("SACD_UI_SIM_SEQ") && argc > 4) {
++            int k, n = atoi(getenv("SACD_UI_SIM_SEQ"));
++            double dt = getenv("SACD_UI_SIM_DT") ? atof(getenv("SACD_UI_SIM_DT")) : 0.125;
++            char p[512];
++            for (k = 0; k < n; k++) {
++                double tk = (double)k * dt;
++                char tbuf[32];
++                snprintf(tbuf, sizeof tbuf, "%.3f", tk);
++                draw_frame(tk, (unsigned)k + 1, k ? ((double)k + 1) / tk : 0.0);
++                snprintf(p, sizeof p, "%s/frame-%03d-t%s.ppm", argv[4], k, tbuf);
++                if (!sim_write_ppm(p)) return 4;
++            }
++            printf("UI: SIM sequence %d frames dt=%.4f -> %s\n", n, dt, argv[4]);
++            return 0;
++        }
+         draw_frame(1.7, frames, 0.0);
++#ifdef SACD_UI_SPEC_DUMP
++        spec_dump();
++#endif
+         if (!sim_write_ppm(out)) return 4;
+         return 0;
+     }

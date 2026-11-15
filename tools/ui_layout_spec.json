@@ -1,0 +1,200 @@
+{
+  "schema": "sacd-ui-layout/1",
+  "status": "THE layout contract for tools/sacd_ui.c draw_frame(). Authored 2026-11-15 from the renderer at commit b39b521 (+ tools/sacd_ui_spec_dump.patch). The renderer reads NOTHING from this file — it is the independent statement of what the renderer is supposed to draw, and tools/ui_regress.py proves the two still agree.",
+
+  "canvas": {
+    "logical_w": 640,
+    "logical_h": 360,
+    "default_scale": 3,
+    "scales": [1, 3]
+  },
+
+  "font": {
+    "path": "evidence/bx510/display-payload/sony-font.ttf",
+    "sha256": "98121878fc7fc85205aa6b62bd40d9fb478b3629e62ec4f947c80ec9830d7fd9"
+  },
+
+  "palette": {
+    "C_BG": "0x00020604",
+    "C_PANELBG": "0x000a1410",
+    "C_FRAME": "0x0000b34d",
+    "C_RULE": "0x00004824",
+    "C_DIM": "0x000a7a30",
+    "C_BODY": "0x0050c878",
+    "C_PHOS": "0x0022ff66",
+    "C_BRIGHT": "0x00d8ffe0",
+    "C_CYAN": "0x0033e0ff",
+    "C_MAGENTA": "0x00ff66cc",
+    "C_AMBER": "0x00ffb000",
+    "C_RED": "0x00ff3344",
+    "C_GREY": "0x00607a6c"
+  },
+
+  "pulse": {
+    "hz": 2.0,
+    "cycle_period_s": 1.0,
+    "expression": "pulse = ((int)(t * 2) & 1)",
+    "units": "hz is the TOGGLE rate (state changes per second, the '*2' in the expression); a full on+off cycle is cycle_period_s = 1.0 s. The animation check asserts the measured CYCLE, and reports the toggle rate it implies.",
+    "drives": ["lamp", "cursor"],
+    "note": "the only motion in a state-identical scene: the lamp and the cursor blink at 2 Hz off the frame clock t; everything else may only change when state changes"
+  },
+
+  "regions": [
+    {
+      "name": "frame",
+      "x": 0, "y": 0, "w": 640, "h": 360,
+      "mode": "exact",
+      "colors": ["C_FRAME"],
+      "sizes": [],
+      "draws": "box(0,0,CW,CH,C_FRAME) — the 1px panel border, drawn first"
+    },
+    {
+      "name": "title",
+      "x": 0, "y": 0, "w": 640, "h": 32,
+      "mode": "contain",
+      "colors": ["C_PHOS", "C_DIM", "C_RULE"],
+      "sizes": [17, 10],
+      "min_ink": 0.008,
+      "draws": "'SACD RECONSTRUCT' 17px + right-hand label 10px + the y=30 rule"
+    },
+    {
+      "name": "status",
+      "x": 0, "y": 32, "w": 640, "h": 49,
+      "mode": "contain",
+      "colors": ["C_BRIGHT", "C_PHOS", "C_BODY", "C_RULE", "C_RED", "C_GREY"],
+      "sizes": [11],
+      "min_ink": 0.015,
+      "draws": "DAEMON / DISC / ALBUM lines 11px, the link lamp, the y=80 rule"
+    },
+    {
+      "name": "panel_2ch",
+      "x": 12, "y": 88, "w": 304, "h": 104,
+      "mode": "exact",
+      "colors": ["C_PANELBG", "C_RULE", "C_CYAN", "C_DIM", "C_BRIGHT", "C_BODY", "C_GREY", "C_AMBER"],
+      "sizes": [11, 9, 10],
+      "min_ink": 0.002,
+      "draws": "2-channel area panel: fill + border + header + track table",
+      "declared_overflow": [
+        {
+          "name": "more_row",
+          "x": 206, "y": 192, "w": 120, "h": 8,
+          "note": "FINDING (recorded, not endorsed): with track_count > 6 the '+N more' row is drawn at y=192 — below the panel's bottom border (y=191) and across the y=196 rule. Scene s5-many-tracks demonstrates it. Delete this entry when the row moves inside the panel."
+        }
+      ]
+    },
+    {
+      "name": "panel_multi",
+      "x": 324, "y": 88, "w": 304, "h": 104,
+      "mode": "exact",
+      "colors": ["C_PANELBG", "C_RULE", "C_MAGENTA", "C_DIM", "C_BRIGHT", "C_BODY", "C_GREY", "C_AMBER"],
+      "sizes": [11, 9, 10],
+      "min_ink": 0.002,
+      "draws": "multi-channel area panel: same shape, magenta head, x=324"
+    },
+    {
+      "name": "rule_panels_end",
+      "x": 12, "y": 196, "w": 616, "h": 1,
+      "mode": "exact",
+      "colors": ["C_RULE"],
+      "sizes": [],
+      "draws": "the 1px rule that closes the area-panel band"
+    },
+    {
+      "name": "log",
+      "x": 0, "y": 197, "w": 640, "h": 98,
+      "mode": "contain",
+      "colors": ["C_DIM", "C_BODY", "C_BRIGHT", "C_AMBER", "C_RED", "C_GREY"],
+      "sizes": [10],
+      "min_ink": 0.008,
+      "draws": "'EVENT LOG' header + up to 7 event rows 10px (newest last)"
+    },
+    {
+      "name": "rule_log_end",
+      "x": 12, "y": 296, "w": 616, "h": 1,
+      "mode": "exact",
+      "colors": ["C_RULE"],
+      "sizes": [],
+      "draws": "the 1px rule that closes the event-log band"
+    },
+    {
+      "name": "summary",
+      "x": 0, "y": 297, "w": 640, "h": 63,
+      "mode": "contain",
+      "colors": ["C_BODY", "C_GREY", "C_PHOS", "C_RED"],
+      "sizes": [10, 9],
+      "min_ink": 0.012,
+      "draws": "SESSION / WIRE / RENDER lines 10px + the state chip 9px + the blinking cursor"
+    }
+  ],
+
+  "rules": [
+    {"y": 30, "x": 12, "w": 616, "region": "title"},
+    {"y": 80, "x": 12, "w": 616, "region": "status"},
+    {"y": 196, "x": 12, "w": 616, "region": "rule_panels_end"},
+    {"y": 296, "x": 12, "w": 616, "region": "rule_log_end"}
+  ],
+
+  "event_log": {
+    "header_x": 12,
+    "header_y": 200,
+    "header_size": 10,
+    "row_x": 12,
+    "row_y0": 212,
+    "row_stride": 12,
+    "rows_shown": 7,
+    "ring": 24,
+    "marks": {"info": ">", "fail": "!", "live": "*"}
+  },
+
+  "track_rows": {
+    "panel_x0": 12,
+    "panel_x1": 324,
+    "panel_w": 304,
+    "y0": 126,
+    "stride": 11,
+    "rows_shown": 6,
+    "more_row_y": 192,
+    "col_x": {"num": 8, "start": 30, "length": 116, "lsn": 206},
+    "header_y": 114,
+    "rule_y": 123
+  },
+
+  "motion_regions": [
+    {
+      "name": "lamp",
+      "x": 618, "y": 38, "w": 8, "h": 8,
+      "kind": "blink",
+      "note": "the live-link lamp: C_PHOS/C_DIM with the pulse when a client is attached, C_AMBER/C_RED otherwise (measured: the only pixel block that moves in the lamp position)"
+    },
+    {
+      "name": "cursor",
+      "x": 574, "y": 340, "w": 38, "h": 9,
+      "kind": "blink",
+      "note": "the 5x7 C_PHOS cursor left of the state chip; its x depends on the chip label's width, so the band covers both SESSION OK (x=583) and SESSION FAIL (x=578) and the pulse on/off (measured at scale 1: x=583..587 y=341..347)"
+    },
+    {
+      "name": "render_line",
+      "x": 12, "y": 327, "w": 616, "h": 13,
+      "kind": "counter",
+      "note": "the RENDER line's frames/fps/t counters advance every frame by design (measured at scale 1: the t=/fps tail at x=224..295 y=328..334)"
+    }
+  ],
+
+  "source_invariants": {
+    "note": "constants with no drawn rect of their own (loop geometry). They cannot be recorded by the compiled spec dump, so they are extracted from the source text by the narrow regexes below — the one place a regex stands in for a compiled value. A changed expression fails the check with the constant's name.",
+    "log_ring": {"regex": "#define LOG_RING (\\d+)", "equals": "24"},
+    "log_rows_shown": {"regex": "#define LOG_SHOWN (\\d+)", "equals": "7"},
+    "log_row_geometry": {"regex": "int ly = (\\d+) \\+ i \\* (\\d+);", "equals": "212,12"},
+    "track_row_geometry": {"regex": "int ly = (\\d+) \\+ y \\* (\\d+);", "equals": "126,11"},
+    "track_rows_shown": {"regex": "y < a->track_count && y < (\\d+)", "equals": "6"}
+  },
+
+  "scenes": {
+    "note": "the scene inventory ui_regress.py renders; every scene is a full frame from real fixture bytes (no synthetic state)",
+    "s1-full": "all three fixture TOC files — the default SIM scene",
+    "s2-no-areas": "master TOC only: both panels render the 'no area TOC' path, the log does not fill its ring",
+    "s3-session-fail": "SACD_UI_SIM_FAIL=1: the failed-session screen (red DISC line + red state chip)",
+    "s4-scale1": "SACD_UI_SCALE=1 (640x360): scale independence",
+    "s5-many-tracks": "area1's track_count byte forced to 9: six rows + the '+3 more' row (exercises declared_overflow)"
+  }
+}

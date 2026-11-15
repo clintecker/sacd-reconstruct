@@ -6,6 +6,11 @@ Makefile (`make help` → `BX510 UI loop`). The UI *source* is its own lane's
 artifact (`tools/sacd_ui.c`); this harness builds, stages, fires, captures and
 decodes it.
 
+The UI's own loop — what repaints a frame and why, the `/proc` event model, the
+`SACD_UI_WATCH_PID` rip-progress band in the event log, the `SACD_UI_SIM_SCRIPT`
+scenario replay and the determinism rules — is `docs/ui-reactive.md`. The
+scenario script this page fires is rendered from `tools/bx510_ui_guest.sh.in`.
+
 ## The loop
 
 ```sh

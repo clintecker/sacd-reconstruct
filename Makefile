@@ -616,6 +616,36 @@ bx510-ui-shot:
 	    --out evidence/bx510-guest/graphics/ui-$(RUNID) --runid '$(RUNID)' \
 	    --min-lum $(if $(MIN_LUM),$(MIN_LUM),4.0)
 
+## BX510 UI regress :: ui-regress [SRC=tools/sacd_ui.c] :: Mac-side layout regression (fast) :: renders the 5 scene inventory, proves spec == compiled SPEC dump == pixels (the SPEC dump comes from tools/sacd_ui_spec_dump.patch), compares the frame goldens (a pass rewrites nothing; a mismatch names the scene + the worst region and writes regress/diff/<scene>.diff.png) and runs the hash-free invariants (per-region ink floors, palette + rogue colours, the 4 structural rules + the frame border, scale independence, the loop constants read back from the source)
+.PHONY: ui-regress
+ui-regress:
+	@python3 tools/ui_regress.py regress --src '$(if $(SRC),$(SRC),tools/sacd_ui.c)'
+
+## BX510 UI regress :: ui-golden GOLDEN=accept [SRC=] :: re-seed the frame goldens :: EXPLICIT HUMAN ACTION ONLY — refuses unless GOLDEN=accept; records the renderer, patch, spec and font sha256 plus the date in regress/golden/manifest.json, and stores the accepted frames next to their hashes so a later mismatch can be diffed
+.PHONY: ui-golden
+ui-golden:
+	@test "$(GOLDEN)" = "accept" || (echo "REFUSING: ui-golden rewrites the referees (the frame hashes). The intentional form is: make ui-golden GOLDEN=accept" && exit 2)
+	@echo "-- GOLDEN ACCEPT: re-seeding evidence/bx510-guest/graphics/regress/golden/ from the CURRENT renderer"
+	@python3 tools/ui_regress.py golden --accept --src '$(if $(SRC),$(SRC),tools/sacd_ui.c)'
+
+## BX510 UI regress :: ui-anim [RUNID=x] [DT=] :: animation diff over a frame sequence :: without RUNID it renders a SIM sequence (SACD_UI_SIM_SEQ, exactly known t) and diffs THAT — the analyzer's ground truth; with RUNID it reads that ui-loop run's UART capture (DT is then required for the Hz assertion) — blink period against the spec's 2 Hz +/-10%, the RENDER line changing every frame, and EVERY frame-to-frame change confined to lamp + cursor + RENDER line (a moving track row FAILS with the region named)
+.PHONY: ui-anim
+ui-anim:
+	@if [ -n "$(RUNID)" ]; then 	    python3 tools/ui_regress.py anim 	      --uart evidence/bx510-guest/bdpdrv/bdpdrv-run$(RUNID).uart.log --runid '$(RUNID)' 	      $(if $(DT),--dt $(DT),); 	 else 	    python3 tools/ui_regress.py seq --src '$(if $(SRC),$(SRC),tools/sacd_ui.c)' --runid sim && 	    python3 tools/ui_regress.py anim 	      --seq-dir evidence/bx510-guest/graphics/regress/anim/sim/frames --runid sim; 	 fi
+
+## BX510 UI regress :: ui-parity RUNID=x [SCENE=s1-full] :: guest-vs-SIM parity :: decodes that run's captured frame(s) and correlates per-region ink against the SIM golden (>= 0.85, damaged rows reported separately) — the "the guest renders what the Mac predicts" proof; a capture with no ink is an honest FAIL, not a skipped check
+.PHONY: ui-parity
+ui-parity:
+	@test -n "$(RUNID)" || (echo "usage: make ui-parity RUNID=c123d [SCENE=s1-full]" && exit 2)
+	@python3 tools/ui_regress.py parity 	    --uart evidence/bx510-guest/bdpdrv/bdpdrv-run$(RUNID).uart.log 	    --runid '$(RUNID)' --scene '$(if $(SCENE),$(SCENE),s1-full)'
+
+## BX510 UI regress :: ui-regress-all :: the whole suite, the guest legs pointed at the LATEST ui-loop run :: ui-regress, then ui-anim (SIM sequence), then ui-parity against the newest evidence/bx510-guest/graphics/ui-<runid> — one command after a fire; prints which run it picked
+.PHONY: ui-regress-all
+ui-regress-all:
+	@$(MAKE) --no-print-directory ui-regress
+	@$(MAKE) --no-print-directory ui-anim
+	@RUNID=$$(ls -1 evidence/bx510-guest/graphics 2>/dev/null | grep '^ui-' | sed 's/^ui-//' | sort | tail -1); 	 if [ -z "$$RUNID" ]; then echo "-- no ui-<runid> evidence dir: parity skipped (run make bx510-ui-loop RUNID=x first)"; exit 0; fi; 	 echo "-- latest ui-loop run: $$RUNID"; 	 $(MAKE) --no-print-directory ui-parity RUNID=$$RUNID
+
 ## BX510 UI loop :: bx510-ui-loop RUNID=x :: THE iterate command :: build + fire + shot in one target — a UI change is a source edit and one command; the artifact lands in evidence/bx510-guest/graphics/ui-<runid>/ (shot.md carries the verdict and the run's markers)
 .PHONY: bx510-ui-loop
 bx510-ui-loop:

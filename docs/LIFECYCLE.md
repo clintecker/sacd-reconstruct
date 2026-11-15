@@ -113,6 +113,18 @@ Everything else — protocol behavior, daemon interaction, module loads,
 framebuffer output — is proven in the emulated BX510 (Sony's real kernel
 and rootfs under our QEMU model) before hardware.
 
+> **State (2026-11-15, runs c130-c134): R3 Level 0 is COMPLETE and green.**
+> The full port-2002 story is proven at wire level against the real Firebird
+> disc: DISC_OPEN -> DISC_SIZE -> Master TOC -> both area TOCs -> 2-channel
+> music sectors through the decrypt-active branch (byte-exact vs ISO oracles,
+> 13-chunk rip included) -> DISC_CLOSE -> reconnect -> repeat -> failure case
+> (past-EOF = result 0) -> overlapping clients (2nd client REFUSED at OPEN;
+> 1st wedges — the F-1 verdict, amended from the accept-aliasing prediction).
+> The UI watches all of it live. One model bug was caught and fixed on the
+> way (FE_DMA_MAX stale-bytes, run-c130-c134.md). Remaining to Level 1: the
+> synthetic cipher (#10); to hardware: #6 parity, gated on #12/#2 literal
+> scope.
+
 ```sh
 # one experiment = one command (stages, fires, greps verdicts, pulls evidence)
 make bx510-fire RUNID=cNNN GCMD_FILE=/tmp/g-cNNN.txt [TIMEOUT=240]

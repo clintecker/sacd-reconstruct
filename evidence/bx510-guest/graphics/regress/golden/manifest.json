@@ -1,0 +1,113 @@
+{
+  "schema": "sacd-ui-regress-golden/1",
+  "accepted": "2026-11-15T14:28:06-06:00",
+  "why": "seeded by `make ui-golden GOLDEN=accept` \u2014 goldens change ONLY on an explicit accept",
+  "renderer": {
+    "path": "/tmp/pin/sacd_ui.c",
+    "sha256": "206119820866bcc9a2752bb75fcda5518480a10edd7ccead64583d0aba34a589"
+  },
+  "patch": {
+    "path": "tools/sacd_ui_spec_dump.patch",
+    "sha256": "c3e140b4c4bf6a0d69fb134bc69c5fc7a6464fef28c6e747307fbfe703cf3fac"
+  },
+  "spec": {
+    "path": "/Users/clint/code/sacd-reconstruct/tools/ui_layout_spec.json",
+    "sha256": "54ffc800bca2e79fd03befece41186632e6a13a9e90e89f669fbf8e9e7acdd22"
+  },
+  "font": {
+    "path": "/Users/clint/code/sacd-reconstruct/evidence/bx510/display-payload/sony-font.ttf",
+    "sha256": "98121878fc7fc85205aa6b62bd40d9fb478b3629e62ec4f947c80ec9830d7fd9"
+  },
+  "scenes": {
+    "s1-full": {
+      "ppm_sha256": "9f24414161b865dc97a48642433604801f954a5d0d61697fffa2bc6b0e828dcc",
+      "geometry": [
+        1920,
+        1080
+      ],
+      "ink": {
+        "frame": 0.021462,
+        "title": 0.01618,
+        "status": 0.034323,
+        "panel_2ch": 0.019579,
+        "panel_multi": 0.020591,
+        "rule_panels_end": 0.0,
+        "log": 0.019784,
+        "rule_log_end": 0.0,
+        "summary": 0.025331
+      }
+    },
+    "s2-no-areas": {
+      "ppm_sha256": "4ea9140b99b36d4a7944514385d85c2de44d723d0d8e30dd5ce89598510f04af",
+      "geometry": [
+        1920,
+        1080
+      ],
+      "ink": {
+        "frame": 0.01665,
+        "title": 0.01618,
+        "status": 0.034323,
+        "panel_2ch": 0.00253,
+        "panel_multi": 0.003543,
+        "rule_panels_end": 0.0,
+        "log": 0.019832,
+        "rule_log_end": 0.0,
+        "summary": 0.024724
+      }
+    },
+    "s3-session-fail": {
+      "ppm_sha256": "b43b1cc243bdab42b9fef1189e550922913bc490b30cc3fc5ed32a4151d0a9a5",
+      "geometry": [
+        1920,
+        1080
+      ],
+      "ink": {
+        "frame": 0.020284,
+        "title": 0.01618,
+        "status": 0.026006,
+        "panel_2ch": 0.019579,
+        "panel_multi": 0.020591,
+        "rule_panels_end": 0.0,
+        "log": 0.019784,
+        "rule_log_end": 0.0,
+        "summary": 0.025104
+      }
+    },
+    "s4-scale1": {
+      "ppm_sha256": "1eaa3f78b518b6de15d105862001c9c199142faec7b07aa5f5b93245e01acc18",
+      "geometry": [
+        640,
+        360
+      ],
+      "ink": {
+        "frame": 0.018494,
+        "title": 0.015623,
+        "status": 0.032052,
+        "panel_2ch": 0.021603,
+        "panel_multi": 0.021382,
+        "rule_panels_end": 0.0,
+        "log": 0.016138,
+        "rule_log_end": 0.0,
+        "summary": 0.013778
+      }
+    },
+    "s5-many-tracks": {
+      "ppm_sha256": "eed6f43152521e554faf8bb7d376ae671ff065b18df5af15fc110dbb9edb6aca",
+      "geometry": [
+        1920,
+        1080
+      ],
+      "ink": {
+        "frame": 0.021532,
+        "title": 0.01618,
+        "status": 0.034323,
+        "panel_2ch": 0.019579,
+        "panel_multi": 0.020591,
+        "rule_panels_end": 0.0,
+        "log": 0.019832,
+        "rule_log_end": 0.0,
+        "summary": 0.025331
+      }
+    }
+  }
+}

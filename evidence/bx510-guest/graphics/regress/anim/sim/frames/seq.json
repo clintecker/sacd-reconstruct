@@ -1,0 +1,10 @@
+{
+  "schema": "sacd-ui-regress-seq/1",
+  "generated": "2026-11-15T14:41:39-06:00",
+  "scene": "s1-full",
+  "dt": 0.125,
+  "frames": 12,
+  "scale": 1,
+  "renderer_sha256": "206119820866bcc9a2752bb75fcda5518480a10edd7ccead64583d0aba34a589",
+  "note": "SIM ground truth for the animation diff: t_k = k*dt is exact, so the 2 Hz pulse has an analytically known period"
+}

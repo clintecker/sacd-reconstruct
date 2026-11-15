@@ -1,0 +1,22 @@
+FAIL: region panel_multi (s1-full): the renderer draws x=330 y=88 w=304 h=104 but the spec says x=324 y=88 w=304 h=104
+FAIL: region panel_multi (s2-no-areas): the renderer draws x=330 y=88 w=304 h=104 but the spec says x=324 y=88 w=304 h=104
+FAIL: region panel_multi (s3-session-fail): the renderer draws x=330 y=88 w=304 h=104 but the spec says x=324 y=88 w=304 h=104
+FAIL: region panel_multi (s4-scale1): the renderer draws x=330 y=88 w=304 h=104 but the spec says x=324 y=88 w=304 h=104
+FAIL: region panel_multi (s5-many-tracks): the renderer draws x=330 y=88 w=304 h=104 but the spec says x=324 y=88 w=304 h=104
+FAIL: GOLDEN MISMATCH s1-full: 3d9cb8d87ebe0e17… != golden 9f24414161b865dc… — 40,384 px changed, worst region panel_multi (3,833 changed px); diff: /Users/clint/code/sacd-reconstruct/evidence/bx510-guest/graphics/regress/diff/s1-full.diff.png
+FAIL: GOLDEN MISMATCH s2-no-areas: b6d4d19880b9432d… != golden 4ea9140b99b36d4a… — 17,098 px changed, worst region panel_multi (1,292 changed px); diff: /Users/clint/code/sacd-reconstruct/evidence/bx510-guest/graphics/regress/diff/s2-no-areas.diff.png
+FAIL: GOLDEN MISMATCH s3-session-fail: 2e7ce5022f16d618… != golden b43b1cc243bdab42… — 40,384 px changed, worst region panel_multi (3,833 changed px); diff: /Users/clint/code/sacd-reconstruct/evidence/bx510-guest/graphics/regress/diff/s3-session-fail.diff.png
+FAIL: GOLDEN MISMATCH s4-scale1: 575974d81bdff433… != golden 1eaa3f78b518b6de… — 5,787 px changed, worst region panel_multi (5,163 changed px); diff: /Users/clint/code/sacd-reconstruct/evidence/bx510-guest/graphics/regress/diff/s4-scale1.diff.png
+FAIL: GOLDEN MISMATCH s5-many-tracks: d1283bbf0ecfa92d… != golden eed6f43152521e55… — 40,384 px changed, worst region panel_multi (3,833 changed px); diff: /Users/clint/code/sacd-reconstruct/evidence/bx510-guest/graphics/regress/diff/s5-many-tracks.diff.png
+scene s1-full          1920x1080 sha256 3d9cb8d87ebe0e17…
+scene s2-no-areas      1920x1080 sha256 b6d4d19880b9432d…
+scene s3-session-fail  1920x1080 sha256 2e7ce5022f16d618…
+scene s4-scale1        640x360 sha256 575974d81bdff433…
+scene s5-many-tracks   1920x1080 sha256 d1283bbf0ecfa92d…
+note: FINDING region panel_2ch (s5-many-tracks): drawn x=12 y=88 w=304 h=111 != spec (12, 88, 304, 104) but inside a declared_overflow — see spec.declared_overflow
+note: rule y=196 (s5-many-tracks): 1px-locality probe skipped — row 198 is inside the declared overflow 'more_row'
+note: scale independence title: ink 0.0494 vs 0.0499, bbox drift 1px
+note: scale independence status: ink 0.0351 vs 0.0373, bbox drift 0px
+note: scale independence log: ink 0.0192 vs 0.0228, bbox drift 15px
+note: scale independence summary: ink 0.0325 vs 0.0438, bbox drift 0px
+verdict: FAIL (5 scenes, 10 problem(s)) -> /Users/clint/code/sacd-reconstruct/evidence/bx510-guest/graphics/regress/report.md

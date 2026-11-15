@@ -1,0 +1,37 @@
+4115893:bx510: FE READ 28 lba=845 nsec=1: 0x5c404=2064 means 2064 bytes per sector, not 2048 — taking the descriptor length
+4506909:bx510: FE READ 28 lba=845 nsec=32: 0x5c404=66048 means 2064 bytes per sector, not 2048 — taking the descriptor length
+4923598:bx510: FE READ 28 lba=745 nsec=128: 0x5c404=264192 means 2064 bytes per sector, not 2048 — taking the descriptor length
+4923599:bx510: FE READ 28: unusable transfer (nsec=128, 2064-byte frames, cap 131072) — answering drive error
+5426642:bx510: FE READ 28 lba=353750 nsec=14: 0x5c404=28896 means 2064 bytes per sector, not 2048 — taking the descriptor length
+5439068:bx510: FE READ 28 lba=353764 nsec=26: 0x5c404=53664 means 2064 bytes per sector, not 2048 — taking the descriptor length
+5869526:bx510: FE READ 28 lba=510 nsec=10: 0x5c404=20640 means 2064 bytes per sector, not 2048 — taking the descriptor length
+5878709:bx510: FE READ 28 lba=544 nsec=40: 0x5c404=82560 means 2064 bytes per sector, not 2048 — taking the descriptor length
+5915194:bx510: FE READ 28 lba=353804 nsec=40: 0x5c404=82560 means 2064 bytes per sector, not 2048 — taking the descriptor length
+6355615:bx510: FE READ 28 lba=600 nsec=128: 0x5c404=264192 means 2064 bytes per sector, not 2048 — taking the descriptor length
+6355616:bx510: FE READ 28: unusable transfer (nsec=128, 2064-byte frames, cap 131072) — answering drive error
+6469907:bx510: FE READ 28 lba=728 nsec=128: 0x5c404=264192 means 2064 bytes per sector, not 2048 — taking the descriptor length
+6469908:bx510: FE READ 28: unusable transfer (nsec=128, 2064-byte frames, cap 131072) — answering drive error
+6584161:bx510: FE READ 28 lba=856 nsec=128: 0x5c404=264192 means 2064 bytes per sector, not 2048 — taking the descriptor length
+6584162:bx510: FE READ 28: unusable transfer (nsec=128, 2064-byte frames, cap 131072) — answering drive error
+6697346:bx510: FE READ 28 lba=984 nsec=128: 0x5c404=264192 means 2064 bytes per sector, not 2048 — taking the descriptor length
+6697347:bx510: FE READ 28: unusable transfer (nsec=128, 2064-byte frames, cap 131072) — answering drive error
+6811255:bx510: FE READ 28 lba=1112 nsec=128: 0x5c404=264192 means 2064 bytes per sector, not 2048 — taking the descriptor length
+6811256:bx510: FE READ 28: unusable transfer (nsec=128, 2064-byte frames, cap 131072) — answering drive error
+6924189:bx510: FE READ 28 lba=1240 nsec=128: 0x5c404=264192 means 2064 bytes per sector, not 2048 — taking the descriptor length
+6924190:bx510: FE READ 28: unusable transfer (nsec=128, 2064-byte frames, cap 131072) — answering drive error
+7038087:bx510: FE READ 28 lba=1368 nsec=128: 0x5c404=264192 means 2064 bytes per sector, not 2048 — taking the descriptor length
+7038088:bx510: FE READ 28: unusable transfer (nsec=128, 2064-byte frames, cap 131072) — answering drive error
+7151166:bx510: FE READ 28 lba=1496 nsec=128: 0x5c404=264192 means 2064 bytes per sector, not 2048 — taking the descriptor length
+7151167:bx510: FE READ 28: unusable transfer (nsec=128, 2064-byte frames, cap 131072) — answering drive error
+7264947:bx510: FE READ 28 lba=1624 nsec=128: 0x5c404=264192 means 2064 bytes per sector, not 2048 — taking the descriptor length
+7264948:bx510: FE READ 28: unusable transfer (nsec=128, 2064-byte frames, cap 131072) — answering drive error
+7377948:bx510: FE READ 28 lba=1752 nsec=128: 0x5c404=264192 means 2064 bytes per sector, not 2048 — taking the descriptor length
+7377949:bx510: FE READ 28: unusable transfer (nsec=128, 2064-byte frames, cap 131072) — answering drive error
+7491809:bx510: FE READ 28 lba=1880 nsec=128: 0x5c404=264192 means 2064 bytes per sector, not 2048 — taking the descriptor length
+7491810:bx510: FE READ 28: unusable transfer (nsec=128, 2064-byte frames, cap 131072) — answering drive error
+7604735:bx510: FE READ 28 lba=2008 nsec=128: 0x5c404=264192 means 2064 bytes per sector, not 2048 — taking the descriptor length
+7604736:bx510: FE READ 28: unusable transfer (nsec=128, 2064-byte frames, cap 131072) — answering drive error
+7718673:bx510: FE READ 28 lba=2136 nsec=64: 0x5c404=132096 means 2064 bytes per sector, not 2048 — taking the descriptor length
+7718674:bx510: FE READ 28: unusable transfer (nsec=64, 2064-byte frames, cap 131072) — answering drive error
+14
+72

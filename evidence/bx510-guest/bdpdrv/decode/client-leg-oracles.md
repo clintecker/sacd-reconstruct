@@ -39,3 +39,17 @@
 # | 600     | 1600 | 2609c51af8831e3e3c9f1eaaf2ce5449 | long 2ch rip (obs watch) |
 # | 1064207 | 1    | d1c54ec6c395d7092ce06f04705d33ae | final sector (recorded) |
 # | 1064300 | 4    | (empty: past EOF)                | failure-case probe |
+#
+# SUPERSESSION NOTES (review 2026-11-15):
+# - "LBA 532104 is inside the 2-channel area" in firebird-fixture.md:307 and
+#   "mid 2-channel area, branch 2" in daemon-socket-protocol.md:602 are
+#   STALE — 532104 is inside the MULTICHANNEL area's audio zone
+#   (353844..1064126, MULCHTOC trk_start..trk_end). This table's geometry
+#   row is the corrected one.
+# - TOC naming: this table labels @353804 'daemon area_2_toc_1' per
+#   master-toc-structure.md's field map (0x48 = area_2_toc_1_start = 353804,
+#   VERIFIED from the real TOC bytes; the daemon reads the two _toc_1
+#   copies, 544 + 353804). firebird-fixture.md s2.6's "353804 =
+#   area_1_toc_2_start" label is the stale one. Both MULCHTOC copies carry
+#   identical content, so no oracle changes — but cite the master-toc
+#   field map, not the fixture section, for the names.

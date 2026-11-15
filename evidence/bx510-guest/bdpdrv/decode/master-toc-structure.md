@@ -50,8 +50,11 @@ settling experiment named.
 6. **⚠ PREDICTED MODEL BLOCKER — the area-TOC read is 4× larger than anything
    the FE has ever served.** Each area TOC read is 40 sectors: 81 920 B at the
    plain 2048 framing (94 080 B if the vendor driver arms the 2352 raw
-   framing). `bx510_fe_read()` refuses any transfer `> FE_DMA_MAX` (75 776 B)
-   with a drive error, and **no block-layer split is coming** — the guest's
+   framing). `bx510_fe_read()` refuses any transfer `> FE_DMA_MAX` (75 776 B
+   AS WRITTEN — the model cap is now 0x200000, raised in run c133,
+   decode/run-c130-c134.md; the prediction below was about the old cap and
+   its resolution is recorded there) with a drive error, and **no block-layer
+   split is coming** — the guest's
    own queue limit is `BLK_DEF_MAX_SECTORS`=1024 (512 KiB) with Sony's
    `ATA_MAX_SECTORS`=1024 hack, so an 80 KiB request is one READ(10).
    Predicted observable: `libsacdread: Can't read Area TOC 1.` This needs a
@@ -356,7 +359,9 @@ fixture-based PASS with a firebird-based fire.
 ### 5.1 The 40-sector area read vs `FE_DMA_MAX` — the one to decide
 
 `bx510_fe_read()` (`emulator-kit/sony-bx510.c`) refuses when
-`nsec * flen > FE_DMA_MAX` (`0x12800` = 75 776 B) and answers `FE_STATUS_ERR`
+`nsec * flen > FE_DMA_MAX` (`0x12800` = 75 776 B as written; the model cap is
+`0x200000` since run c133 — decode/run-c130-c134.md) and answers
+`FE_STATUS_ERR`
 (one type-0 reply, byte3 ≠ 0 → `hw_chg_st(priv,5)` → SCSI status 0x51).
 
 | request | nsec | flen (plain 2048) | flen (raw 2352) | vs 75 776 |

@@ -337,7 +337,12 @@ static void bx510_fe_post(Bx510State *s, uint32_t w0, uint32_t w1,
  * the model answered drive error, the module served STALE buffer bytes,
  * sacd_read_block_raw mislabelled that success (c122 lesson 3) and stale data
  * went on the wire as a "successful" 128-sector read. 2 MiB covers the
- * block layer's own maximum request (1024 x 2048). */
+ * block layer's own maximum request (1024 x 2048 = 2097152 exactly; the
+ * guard is a strict >, so it passes). Honest limit: a HYPOTHETICAL
+ * 1024-sector request on the 2064-framed channel (2113536 B) would still
+ * be refused — unreachable today (the daemon caps every request at 128
+ * sectors, MAX_PROCESSING_BLOCK_SIZE), but raise the constant again before
+ * ever widening the module's chunking. */
 #define FE_DMA_MAX   0x200000u
 #define CD_PAYLOAD   2048u       /* the fixture's logical sector */
 #define CD_FRAME     2352u       /* ATAPI raw CD frame (§4.2) */

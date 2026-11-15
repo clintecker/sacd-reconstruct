@@ -1,5 +1,7 @@
 # UI regression — deterministic layout verification for `tools/sacd_ui.c`
 
+> Lifecycle position: rung R2 of `docs/LIFECYCLE.md` (the build/test ladder). Read that document for the gates around this one.
+
 One spec, one renderer, five machine-computed checks. The renderer is `tools/sacd_ui.c`
 (draw_frame); the contract is `tools/ui_layout_spec.json`; the referee is the frame
 hashes in `evidence/bx510-guest/graphics/regress/golden/`. Nothing here is eyeballed,

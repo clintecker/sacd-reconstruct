@@ -1,5 +1,7 @@
 # The QEMU-speed UI loop — one command from a UI source edit to a viewable frame
 
+> Lifecycle position: rung R3 of `docs/LIFECYCLE.md` (the build/test ladder). Read that document for the gates around this one.
+
 Scope: iterate the emulated player's on-screen UI without USB sticks, TV
 photos, or hand-typed QEMU command lines. Owner of the targets: this repo's
 Makefile (`make help` → `BX510 UI loop`). The UI *source* is its own lane's

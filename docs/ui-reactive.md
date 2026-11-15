@@ -1,5 +1,7 @@
 # The reactive UI — one event loop, one state machine, one painter
 
+> Lifecycle position: rung R3 of `docs/LIFECYCLE.md` (the build/test ladder). Read that document for the gates around this one.
+
 Scope: `tools/sacd_ui.c` (the guest console) and its controls
 `tools/test_sacd_ui_events.py`. The layout the loop paints is the layout lane's
 contract (`tools/ui_layout_spec.json`, `make ui-regress`); this doc owns the

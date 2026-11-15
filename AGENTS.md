@@ -5,6 +5,14 @@ vulnerabilities in widely-deployed server software. Read this file first,
 then `docs/playbook.md` (the full method) and `docs/prd.md` (the mission).
 Everything here exists because it was violated or proven the hard way.
 
+**If your work touches the SACD/BX510 lane (the emulated player, the
+daemon, the UI), read `docs/LIFECYCLE.md` second** — it maps the idea →
+unit-test → Mac-SIM → emulator → guest-gates → USB-hardware ladder, the
+make targets that gate each rung, and the trap catalogue every gate
+exists because it caught. The sacd lane's short form: unit tests on the
+Mac, then the emulator at wire level, hardware LAST and only as a
+confirmation.
+
 ## Binding policies — never violate
 
 1. **NEVER disclose any finding.** No maintainer contact, no publication,
@@ -252,6 +260,7 @@ above. Techniques that live only in session history are lost techniques.
 | `bx510-ui-loop` | `RUNID=x` | THE iterate command — build + fire + shot in one target — a UI change is a source edit and one command; the artifact lands in evidence/bx510-guest/graphics/ui-<runid>/ (shot.md carries the verdict and the run's markers) |
 Regenerate with `make docs-sync` after adding any target (the pre-commit hook enforces it).
 <!-- END MAKE-TARGETS -->
+| **The build/test lifecycle** | `docs/LIFECYCLE.md` (the six-rung ladder: idea → unit → Mac-SIM → emulator → guest-gates → USB-hardware; the gate per rung; the trap catalogue) |
 | The method (full) | `docs/playbook.md` |
 | Target queue + waves | `docs/target-survey.md` (waves 1-5: HTTP tier, protocol daemons, AI infra, OS tier, legacy web) |
 | Leads (LEAD-1..9) | `controller/recon.py` (sourcemine) + `docs/technique-ledger.md` |

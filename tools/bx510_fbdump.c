@@ -7,6 +7,14 @@
  *   FBPIX  <hex>            one long hex string, RGB888, row-major, scaled
  *   FBEND
  *
+ * --rows (anywhere on the command line) replaces the single FBPIX line with
+ * one line per sampled row:
+ *   FBPIXROW <y> <hex>      RGB888, row-major, scaled
+ * Reason: on a busy guest the kernel's own console writers interleave into one
+ * 691 KB line and truncate it mid-hex (c123c: the dump died at 1016 of 230400
+ * pixels). A row per line confines any interleaving to a single row, so the
+ * frame is still reconstructable and the loss is countable.
+ *
  * Usage: fbdump [fbdev] [scale]      (default /dev/fb0, scale 2)
  *
  * Scale N keeps every Nth pixel, so a 1280x720 panel becomes 640x360 and the
@@ -27,12 +35,19 @@
 #include <linux/fb.h>
 
 static int g_pool_ofs;
+static int g_rows;      /* --rows: one FBPIXROW line per sampled row */
 static int g_pool_w = 1920, g_pool_h = 1080;
 
 int main(int argc, char **argv)
 {
     /* --md5: print only the md5 of the mapped region (composited-frame
        coexistence evidence; no pixel dump) */
+    int k, m = 1;
+    for (k = 1; k < argc; k++) {          /* strip --rows, keep the rest in place */
+        if (!strcmp(argv[k], "--rows")) { g_rows = 1; continue; }
+        argv[m++] = argv[k];
+    }
+    argc = m;
     int md5_only = (argc > 1 && !strcmp(argv[1], "--md5"));
     const char *dev = (argc > 1 && !md5_only) ? argv[1] : "/dev/fb0";
     int scale = (argc > 2 && !md5_only) ? atoi(argv[2]) : 2;
@@ -71,13 +86,25 @@ int main(int argc, char **argv)
             fi.line_length = g_pool_w * 4;
             printf("FBGEOM %s(pool) %u %u %u %u\n", dev, vi.xres, vi.yres,
                    vi.bits_per_pixel, fi.line_length);
-            printf("FBPIX ");
-            for (y = 0; y < (int)vi.yres; y += scale)
-                for (x = 0; x < (int)vi.xres; x += scale) {
-                    unsigned char *p = mem + g_pool_ofs + (size_t)y * fi.line_length + (size_t)x * 4;
-                    printf("%02x%02x%02x", p[2], p[1], p[0]);
+            if (g_rows) {
+                for (y = 0; y < (int)vi.yres; y += scale) {
+                    printf("FBPIXROW %d ", y);
+                    for (x = 0; x < (int)vi.xres; x += scale) {
+                        unsigned char *p = mem + g_pool_ofs + (size_t)y * fi.line_length + (size_t)x * 4;
+                        printf("%02x%02x%02x", p[2], p[1], p[0]);
+                    }
+                    printf("\n");
                 }
-            printf("\nFBEND\n");
+            } else {
+                printf("FBPIX ");
+                for (y = 0; y < (int)vi.yres; y += scale)
+                    for (x = 0; x < (int)vi.xres; x += scale) {
+                        unsigned char *p = mem + g_pool_ofs + (size_t)y * fi.line_length + (size_t)x * 4;
+                        printf("%02x%02x%02x", p[2], p[1], p[0]);
+                    }
+                printf("\n");
+            }
+            printf("FBEND\n");
             fflush(stdout);
             munmap(mem, pool_len);
             close(fd);
@@ -114,8 +141,9 @@ int main(int argc, char **argv)
 
     printf("FBGEOM %s %u %u %u %u\n", dev, vi.xres, vi.yres,
            vi.bits_per_pixel, fi.line_length);
-    printf("FBPIX ");
+    if (!g_rows) printf("FBPIX ");
     for (y = 0; y < (int)vi.yres; y += scale) {
+        if (g_rows) printf("FBPIXROW %d ", y);   /* same per-row shape as --pool */
         for (x = 0; x < (int)vi.xres; x += scale) {
             unsigned char *p = mem + (size_t)y * fi.line_length
                              + (size_t)x * (vi.bits_per_pixel / 8);
@@ -135,8 +163,9 @@ int main(int argc, char **argv)
             }
             printf("%02x%02x%02x", r, g, b);
         }
+        if (g_rows) printf("\n");
     }
-    printf("\nFBEND\n");
+    printf("%sFBEND\n", g_rows ? "" : "\n");
     fflush(stdout);
     munmap(mem, fi.smem_len);
     close(fd);

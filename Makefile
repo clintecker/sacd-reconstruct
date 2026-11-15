@@ -579,8 +579,47 @@ sacd-hw-collect:
 
 # ── BX510 rig ops (client-leg era) ──────────────────────────────────────────
 
-## BX510 rig ops :: bx510-fire RUNID=c123 GCMD_FILE=/tmp/g.txt [TIMEOUT=240] :: the braindead fire+capture loop :: stages probe+cmd, fires on the VM, greps verdict markers, pulls uart+meta into evidence/ — no ad-hoc quoting, one command per experiment
+## BX510 rig ops :: bx510-fire RUNID=c123 GCMD_FILE=/tmp/g.txt [TIMEOUT=240] [DRYRUN=1] :: the braindead fire+capture loop :: stages probe+cmd, fires on the VM, greps verdict markers, pulls uart+meta into evidence/ — no ad-hoc quoting, one command per experiment; DRYRUN=1 renders the command list + real payload arithmetic and stops before QEMU (the staging-budget gate)
 .PHONY: bx510-fire
 bx510-fire:
-	@test -n "$(RUNID)" && test -n "$(GCMD_FILE)" || (echo "usage: make bx510-fire RUNID=c123 GCMD_FILE=/tmp/g123.txt [TIMEOUT=240]" && exit 1)
-	@RUNID='$(RUNID)' GCMD_FILE='$(GCMD_FILE)' TIMEOUT='$(TIMEOUT)' sh tools/bx510-fire.sh
+	@test -n "$(RUNID)" && test -n "$(GCMD_FILE)" || (echo "usage: make bx510-fire RUNID=c123 GCMD_FILE=/tmp/g123.txt [TIMEOUT=240] [DRYRUN=1]" && exit 1)
+	@RUNID='$(RUNID)' GCMD_FILE='$(GCMD_FILE)' TIMEOUT='$(TIMEOUT)' DRYRUN='$(DRYRUN)' sh tools/bx510-fire.sh
+
+# ── BX510 UI iteration loop (QEMU-speed UI work — no USB-disk round-trips) ──
+# Three stages, one artifact class each, chained by bx510-ui-loop. The seam
+# between fire and shot is the pulled UART transcript: the guest dumps its
+# framebuffer as FBPIX hex (tools/bx510_fbdump.c), the shot stage decodes it.
+# The fastest egress is that hex at a coarse scale — one line per frame, no
+# image tooling in the guest (the guest has no base64/uudecode/od).
+
+## BX510 UI loop :: bx510-ui-build [UI_SRC=tools/sacd_ui.c] :: stage + era-build the UI kit on the VM and repack the daemon payload tgz :: builds sacdclient + fbdump + sacdgate + fbvirt.ko + the UI with the era toolchain, then GATES the fe_test_data budget (1,048,576 B) through the probe's own payload arithmetic — an over-budget kit fails before an expensive boot
+.PHONY: bx510-ui-build
+bx510-ui-build:
+	@UI_SRC='$(UI_SRC)' sh tools/bx510_ui_build.sh
+
+## BX510 UI loop :: bx510-ui-fire RUNID=x [SCALE=6] [UI_ARGS='...'] [TIMEOUT=420] :: fire the UI scenario :: renders tools/bx510_ui_guest.sh.in into a staged guest SCRIPT (the guest console truncates long one-liners — measured) plus the 85-byte `tar -xzf …; sh /res/shim/<name>` command, stages the script INTO the payload tgz, and fires through tools/bx510-fire.sh — the FA-latch clear, the CPSA pre-arm, the /tmp tmpfs and fbvirt's own fb node are mandatory invariants (render REFUSES without them: c122f/u1 lessons): daemon + client + UI + both framebuffer dumps — RUNID must be unique per lane: the traces are /tmp/bdpdrv-run<RUNID>.* on the VM and a second lane that reuses one overwrites the transcript you are about to pull
+.PHONY: bx510-ui-fire
+bx510-ui-fire:
+	@test -n "$(RUNID)" || (echo "usage: make bx510-ui-fire RUNID=c124 [SCALE=6] [UI_ARGS='--flag'] [TIMEOUT=420]" && exit 2)
+	@python3 tools/bx510_ui_render.py --runid '$(RUNID)' \
+	    --script /tmp/bx510_ui_guest-$(RUNID).sh --out /tmp/g-$(RUNID).txt \
+	    --scale $(if $(SCALE),$(SCALE),6) --ui-args '$(UI_ARGS)'
+	@sh tools/bx510_ui_stage.sh /tmp/bx510_ui_guest-$(RUNID).sh
+	@RUNID='$(RUNID)' GCMD_FILE=/tmp/g-$(RUNID).txt TIMEOUT='$(if $(TIMEOUT),$(TIMEOUT),420)' sh tools/bx510-fire.sh
+
+## BX510 UI loop :: bx510-ui-shot RUNID=x [MIN_LUM=4.0] :: captured frames -> viewable artifacts + verdict :: FBPIX hex out of the fire's UART transcript -> PNG (+ GIF when both buffers carry a frame) under evidence/bx510-guest/graphics/ui-<runid>/, per-buffer mean-luminance verdict (the hud_guest_gate pattern: a black frame FAILS instead of being eyeballed) and the run's markers in shot.md
+.PHONY: bx510-ui-shot
+bx510-ui-shot:
+	@test -n "$(RUNID)" || (echo "usage: make bx510-ui-shot RUNID=c124 [MIN_LUM=4.0]" && exit 2)
+	@python3 tools/bx510_ui_shot.py \
+	    --uart evidence/bx510-guest/bdpdrv/bdpdrv-run$(RUNID).uart.log \
+	    --out evidence/bx510-guest/graphics/ui-$(RUNID) --runid '$(RUNID)' \
+	    --min-lum $(if $(MIN_LUM),$(MIN_LUM),4.0)
+
+## BX510 UI loop :: bx510-ui-loop RUNID=x :: THE iterate command :: build + fire + shot in one target — a UI change is a source edit and one command; the artifact lands in evidence/bx510-guest/graphics/ui-<runid>/ (shot.md carries the verdict and the run's markers)
+.PHONY: bx510-ui-loop
+bx510-ui-loop:
+	@test -n "$(RUNID)" || (echo "usage: make bx510-ui-loop RUNID=c124 [SCALE=6] [UI_ARGS='--flag'] [TIMEOUT=420]" && exit 2)
+	@$(MAKE) --no-print-directory bx510-ui-build
+	@$(MAKE) --no-print-directory bx510-ui-fire RUNID='$(RUNID)' SCALE='$(SCALE)' UI_ARGS='$(UI_ARGS)' TIMEOUT='$(TIMEOUT)'
+	@$(MAKE) --no-print-directory bx510-ui-shot RUNID='$(RUNID)' MIN_LUM='$(MIN_LUM)'

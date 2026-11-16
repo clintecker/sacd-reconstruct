@@ -13,15 +13,16 @@ so it reads the daemon's own live state directly (see
 
 Two other graphics programs appear below and are **not** the HUD:
 
-- **`sacd_ui`** — the *daemon UI*: a disc console that holds a real client
+- **`sacd_ui`** — a *separate-process disc console* that holds a real client
   session and reads the TOC off port 2002. A milestone artifact from the
-  client-leg proof, kept for regression, not shipped on the stick.
+  client-leg proof, kept for regression, not shipped on the stick, and not
+  the HUD (the HUD is the in-daemon one above).
 - **`cyberdraw`** — a display-leg *test pattern*, not a product.
 
 Both non-HUD programs (and the HUD) are proven to run inside Sony's real
 guest OS.
 
-## The daemon UI (`sacd_ui`)
+## The separate-process console (`sacd_ui`)
 
 ![The UI golden frame — disc TOC, both areas, track list, ASCII disc map](../evidence/bx510-guest/graphics/gallery/ui-sim-golden-s1.png)
 
@@ -67,7 +68,7 @@ was painted BY `sacd_extract_160` itself (the `--hud=panel` thread inside
 the daemon process), captured in the guest, pool mean luminance 50.49
 PASS. One binary serves the rip and draws the panel.*
 
-## The daemon UI (`sacd_ui`) — client-driven disc console (milestone artifact,
+## The separate-process console (`sacd_ui`) — client-driven disc console (milestone artifact,
 not the HUD)
 
 | image | what it shows | provenance |

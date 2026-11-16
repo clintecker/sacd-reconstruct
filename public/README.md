@@ -48,9 +48,8 @@ reconstructed protocol stack.
 The **HUD** — one program, one product — is built **into the daemon**:
 `sacd_extract_160 -S --hud=console|panel` serves the rip and renders live
 telemetry from its own internal state (clients, ripping progress, disc
-stats), and the panel mode paints the retro console from inside the daemon
-process — proven in the guest. The images below show the renderer core in
-its standalone forms (host simulator, guest render).
+stats). The image below is the daemon itself painting its panel in the
+guest, taken from the run's captured frame.
 
 ## How it's proven
 
@@ -64,16 +63,15 @@ altitudes, cheapest first, each with committed evidence:
 | **the real player** | a USB stick boots the daemon on actual hardware | sector hashes matching the reference ISO, beyond-EOF refusal, standby survival ([`evidence/bx510/hw-session-2026-11-05/`](evidence/bx510/hw-session-2026-11-05/RESULTS.md)) |
 
 <p align="center">
-  <img src="evidence/bx510-guest/graphics/gallery/hud-sim.png" width="420" alt="The HUD: host render">&nbsp;
-  <img src="evidence/bx510-guest/graphics/gallery/hud-guest-render.png" width="290" alt="The same HUD code rendered inside Sony's real guest OS">
+  <img src="evidence/bx510-guest/graphics/gallery/hud-in-daemon-panel.png" width="640" alt="The in-daemon HUD: the daemon itself painting its panel">
 </p>
 
-*The **HUD** (`sacd_hud`) — the one HUD, in both of its proven render
-paths: host simulator (left) and Sony's real guest OS (right). Live
-telemetry — daemon liveness, throughput, verify status — while a rip runs.
-The decrypt leg is proven for real too: a derived disc image carries the
-audio areas encrypted at rest, and the emulated CPSA path decrypts under
-seven acceptance gates.*
+*The **HUD** — painted by `sacd_extract_160` itself. This frame came out of
+the daemon process (`--hud=panel`) running inside Sony's real guest OS,
+captured during the same run in which a real client read the disc over
+port 2002. One binary: serves the rip, draws the panel. The decrypt leg is
+proven for real too: a derived disc image carries the audio areas encrypted
+at rest, and the emulated CPSA path decrypts under seven acceptance gates.*
 
 ## The protocol
 

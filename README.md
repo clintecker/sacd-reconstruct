@@ -11,8 +11,11 @@ touching hardware.
 ![The daemon UI, as the emulated player paints it](evidence/bx510-guest/graphics/gallery/ui-sim-golden-s1.png)
 
 *The daemon's console UI — this exact frame is proven to render inside
-Sony's own guest OS; [docs/GRAPHICS-GALLERY.md](docs/GRAPHICS-GALLERY.md)
-embeds the rest, including the cyberpunk HUD.*
+Sony's own guest OS. Below, the in-daemon HUD: the daemon painting its own
+telemetry panel. [docs/GRAPHICS-GALLERY.md](docs/GRAPHICS-GALLERY.md)
+embeds the rest.*
+
+![The in-daemon HUD: the daemon itself painting its panel](evidence/bx510-guest/graphics/gallery/hud-in-daemon-panel.png)
 
 ## Status (updated 2026-11-16)
 

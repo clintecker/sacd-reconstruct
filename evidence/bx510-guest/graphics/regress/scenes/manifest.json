@@ -1,9 +1,9 @@
 {
   "schema": "sacd-ui-regress-scenes/1",
-  "generated": "2026-11-15T15:52:07-06:00",
+  "generated": "2026-11-15T19:58:00-06:00",
   "renderer": {
     "path": "tools/sacd_ui.c",
-    "sha256": "0884b302940851928928798fafa1ae6e4ae09f596c137587eb01a5e59d1b2e73",
+    "sha256": "8bf52cf15da68f0ebed8f77a35eb3aecb36a29ab133479bbec53d1e5e1328137",
     "dump_enabled": true
   },
   "spec": {
@@ -55,7 +55,7 @@
         "control": "two consecutive renders must agree; the plain build must equal the dump build"
       },
       "cross_check_sha256": "9f24414161b865dc97a48642433604801f954a5d0d61697fffa2bc6b0e828dcc",
-      "source_sha256": "0884b302940851928928798fafa1ae6e4ae09f596c137587eb01a5e59d1b2e73",
+      "source_sha256": "8bf52cf15da68f0ebed8f77a35eb3aecb36a29ab133479bbec53d1e5e1328137",
       "spec_sha256": "09f6c3f31f34b2f8a7cee8eeb2afd0baaf934e895b2b03656f35c7ef86fd7086",
       "spec_dump": {
         "canvas": {
@@ -280,7 +280,7 @@
         "control": "two consecutive renders must agree; the plain build must equal the dump build"
       },
       "cross_check_sha256": "4ea9140b99b36d4a7944514385d85c2de44d723d0d8e30dd5ce89598510f04af",
-      "source_sha256": "0884b302940851928928798fafa1ae6e4ae09f596c137587eb01a5e59d1b2e73",
+      "source_sha256": "8bf52cf15da68f0ebed8f77a35eb3aecb36a29ab133479bbec53d1e5e1328137",
       "spec_sha256": "09f6c3f31f34b2f8a7cee8eeb2afd0baaf934e895b2b03656f35c7ef86fd7086",
       "spec_dump": {
         "canvas": {
@@ -501,7 +501,7 @@
         "control": "two consecutive renders must agree; the plain build must equal the dump build"
       },
       "cross_check_sha256": "b43b1cc243bdab42b9fef1189e550922913bc490b30cc3fc5ed32a4151d0a9a5",
-      "source_sha256": "0884b302940851928928798fafa1ae6e4ae09f596c137587eb01a5e59d1b2e73",
+      "source_sha256": "8bf52cf15da68f0ebed8f77a35eb3aecb36a29ab133479bbec53d1e5e1328137",
       "spec_sha256": "09f6c3f31f34b2f8a7cee8eeb2afd0baaf934e895b2b03656f35c7ef86fd7086",
       "spec_dump": {
         "canvas": {
@@ -730,7 +730,7 @@
         "control": "two consecutive renders must agree; the plain build must equal the dump build"
       },
       "cross_check_sha256": "1eaa3f78b518b6de15d105862001c9c199142faec7b07aa5f5b93245e01acc18",
-      "source_sha256": "0884b302940851928928798fafa1ae6e4ae09f596c137587eb01a5e59d1b2e73",
+      "source_sha256": "8bf52cf15da68f0ebed8f77a35eb3aecb36a29ab133479bbec53d1e5e1328137",
       "spec_sha256": "09f6c3f31f34b2f8a7cee8eeb2afd0baaf934e895b2b03656f35c7ef86fd7086",
       "spec_dump": {
         "canvas": {
@@ -955,7 +955,7 @@
         "control": "two consecutive renders must agree; the plain build must equal the dump build"
       },
       "cross_check_sha256": "8f6baec7a410cd3a9b249b13cc74d339f01cb831cb6d1c9c07f9cd8d6f2624d7",
-      "source_sha256": "0884b302940851928928798fafa1ae6e4ae09f596c137587eb01a5e59d1b2e73",
+      "source_sha256": "8bf52cf15da68f0ebed8f77a35eb3aecb36a29ab133479bbec53d1e5e1328137",
       "spec_sha256": "09f6c3f31f34b2f8a7cee8eeb2afd0baaf934e895b2b03656f35c7ef86fd7086",
       "spec_dump": {
         "canvas": {

@@ -23,6 +23,11 @@ the live number.
 | `evidence/bx510-guest/rip/` | the rip milestone: DSF files produced by the reconstructed client against the emulated player (md5s + reproduce recipe; files stay VM-side over the 100 MB git limit) |
 | `evidence/bx510-guest/graphics/` | UI/HUD lane: guest frame captures per run (`ui-<runid>/`), the accepted layout goldens, and `gallery/` — the human-viewable index ([docs/GRAPHICS-GALLERY.md](GRAPHICS-GALLERY.md)) |
 
+## Archive
+
+`evidence/archive/` holds superseded lane records (kept for the
+negative-evidence record; nothing current references them from here).
+
 ## Conventions in the results documents
 
 - **Demonstrated** — a transcript, capture or photograph in the same directory

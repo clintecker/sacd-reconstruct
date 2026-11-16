@@ -1,0 +1,4 @@
+bx510-fire: run hudint1 — disc=/home/aftermath/sacd-verify/firebird.iso cipher=off
+/tmp/bx510_bdpdrv_stub_probe.py:570: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  "ts_utc": __import__("datetime").datetime.utcnow().isoformat() + "Z",
+FIRE_RC=0

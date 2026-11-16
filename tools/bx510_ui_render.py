@@ -66,6 +66,7 @@ def placeholders(a):
         "CLIENT_CNT": str(a.client_cnt),
         "UI_ARGS": a.ui_args,
         "POOL_ARGS": f"{a.pool_ofs} {a.pool_w} {a.pool_h}",
+        "DAEMON_LAUNCH": getattr(a, "daemon_launch", None) or DAEMON_LAUNCH,
     }
 
 
@@ -100,7 +101,7 @@ def guest_command(script_name):
     return f"tar -xzf {STAGED_DIR}/daemon_payload.tgz -C /res; sh {STAGED_DIR}/{script_name}"
 
 
-def check_invariants(code):
+def check_invariants(code, daemon_launch=DAEMON_LAUNCH):
     """code: the script's executable lines joined by newlines -> [(desc, ok, detail)]."""
     checks = []
 
@@ -118,7 +119,7 @@ def check_invariants(code):
     # The c122f rule: clear, then read back / open again — two invocations.
     need("FA-latch CLEAR (c122f lesson)", "/res/shim/sr_fa_mode /dev/sr0 clear")
     need("FA-latch read-back", "/res/shim/sr_fa_mode /dev/sr0", count=2)
-    need("daemon launch", DAEMON_LAUNCH)
+    need("daemon launch", daemon_launch)
     # fbvirt is fb1 once the daemon stack is resident (run u1), so the node is
     # bound to the index fbvirt reported, never to a hard-coded minor 0.
     need("fbdev node bound to fbvirt's own index (not the driver's fb0)",
@@ -129,7 +130,7 @@ def check_invariants(code):
     need("shot marker", "echo UI_SHOT_DONE")
 
     clear_at = code.find("/res/shim/sr_fa_mode /dev/sr0 clear")
-    launch_at = code.find(DAEMON_LAUNCH)
+    launch_at = code.find(daemon_launch)
     checks.append((
         "FA-latch clear BEFORE the daemon's /dev/sr0 open "
         "(a clear after it is thrown away)",
@@ -183,6 +184,11 @@ def main(argv=None):
     ap.add_argument("--scale", type=int, default=6,
                     help="fbdump decimation; 6 = 320x180 per dump (fast), 2 = 960x540")
     ap.add_argument("--daemon-wait", type=int, default=8)
+    ap.add_argument("--daemon-launch", default=None,
+                    help="override the daemon launch line (e.g. for the "
+                         "in-daemon HUD: './sacd_extract_160 -S --hud=console'); "
+                         "the invariants still check the FA-clear ordering "
+                         "against whatever line is used")
     ap.add_argument("--ui-wait-max", type=int, default=90,
                     help="upper bound, in seconds, on the UI's first-frame "
                          "marker wait (the marker normally ends it far sooner: "
@@ -215,7 +221,8 @@ def main(argv=None):
         print(f"FAIL template {a.template}: {exc}", file=sys.stderr)
         return 1
 
-    checks = check_invariants("\n".join(executable_lines(script)))
+    checks = check_invariants("\n".join(executable_lines(script)),
+                              getattr(a, "daemon_launch", None) or DAEMON_LAUNCH)
     for desc, ok, detail in checks:
         print(f"{'ok  ' if ok else 'FAIL'} {desc} [{detail}]")
     if not all(ok for _, ok, _ in checks):

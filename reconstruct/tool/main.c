@@ -64,6 +64,11 @@
 #include <scarletbook_read.h>
 #include <scarletbook_output.h>
 #include <scarletbook_print.h>
+
+#ifdef ENABLE_HUD
+#include "hud_state.h"
+#include "hud.h"
+#endif
 #include <scarletbook_helpers.h>
 #include <scarletbook_id3.h>
 #include <cuesheet.h>
@@ -89,6 +94,9 @@ static struct opts_s
     int            select_tracks;
     char           selected_tracks[256]; /* scarletbook is limited to 256 tracks */
     int            server_mode;
+#ifdef ENABLE_HUD
+    int            hud_mode;      /* HUD_NONE / HUD_CONSOLE / HUD_PANEL */
+#endif
 } opts;
 
 scarletbook_handle_t *handle;
@@ -133,6 +141,15 @@ static void *client_thread(void *userdata)
     uint32_t end_lsn = 0;
 
     client_connected = 1;
+#ifdef ENABLE_HUD
+    {
+        hud_state_t hs;
+        memset(&hs, 0, sizeof hs);
+        hud_state_copy(&hs);
+        hs.client_connected = 1;
+        hud_state_publish(&hs);
+    }
+#endif
 
     response.data.bytes = (uint8_t *) malloc(MAX_PROCESSING_BLOCK_SIZE * SACD_RAW_SECTOR_SIZE);
 
@@ -185,6 +202,27 @@ static void *client_thread(void *userdata)
                     response.data.size = response.result * SACD_LSN_SIZE;
 
                     sacd_decrypt(sacd_reader, response.data.bytes, block_size);
+
+#ifdef ENABLE_HUD
+                    if (response.result > 0)
+                    {
+                        hud_state_t hs;
+                        memset(&hs, 0, sizeof hs);
+                        hud_state_copy(&hs);
+                        hs.reads_served    += 1;
+                        hs.sectors_served  += (uint64_t)response.result;
+                        if (encrypted)
+                            hs.encrypted_sectors += (uint64_t)response.result;
+                        hs.last_lsn   = request.sector_offset;
+                        hs.last_count = block_size;
+                        if (request.sector_offset + response.result > hs.max_lsn_served)
+                            hs.max_lsn_served = request.sector_offset + response.result;
+                        hs.disc_loaded = 1;
+                        hs.is_encrypted = hs.encrypted_sectors > 0 || encrypted;
+                        hs.total_sectors = sacd_get_total_sectors(sacd_reader);
+                        hud_state_publish(&hs);
+                    }
+#endif
                 }
             }
             break;
@@ -236,6 +274,16 @@ static void *client_thread(void *userdata)
             if (sacd_reader)
             {
                 response.result = sacd_get_total_sectors(sacd_reader);
+#ifdef ENABLE_HUD
+                {
+                    hud_state_t hs;
+                    memset(&hs, 0, sizeof hs);
+                    hud_state_copy(&hs);
+                    hs.disc_loaded = 1;
+                    hs.total_sectors = (uint32_t)response.result;
+                    hud_state_publish(&hs);
+                }
+#endif
             }
             break;
         }
@@ -278,6 +326,16 @@ static void *client_thread(void *userdata)
 
     close(*client);
     client_connected = 0;
+#ifdef ENABLE_HUD
+    {
+        hud_state_t hs;
+        memset(&hs, 0, sizeof hs);
+        hud_state_copy(&hs);          /* keep rip counters; drop the client */
+        hs.client_connected = 0;
+        hs.client_peer[0] = '\0';
+        hud_state_publish(&hs);
+    }
+#endif
 
     pthread_exit(0);
 }
@@ -361,6 +419,9 @@ static int parse_options(int argc, char *argv[])
         {"input", required_argument, NULL, 'i' },
         {"print", no_argument, NULL, 'P' },
         {"server-mode", no_argument, NULL, 'S' },
+#ifdef ENABLE_HUD
+        {"hud", required_argument, NULL, 700 },   /* --hud=console|panel: the ONE HUD, in-daemon */
+#endif
 
         {"help", no_argument, NULL, '?' },
         {"usage", no_argument, NULL, 'u' },
@@ -425,6 +486,11 @@ static int parse_options(int argc, char *argv[])
         case 'i': opts.input_device = strdup(optarg); break;
         case 'P': opts.print = 1; break;
         case 'S': opts.server_mode = 1; break;
+#ifdef ENABLE_HUD
+        case 700:
+            opts.hud_mode = strcmp(optarg, "panel") == 0 ? HUD_PANEL : HUD_CONSOLE;
+            break;
+#endif
 
         case '?':
             fprintf(stdout, help_text, program_name);
@@ -678,6 +744,18 @@ void server_loop(void)
                           is_client_connected() ? L"connected" : L"none",
                           !has_disc ? L"Tray is empty" : (is_sacd ? L"SACD disc inserted" : L"Disc inserted"));
         }
+#ifdef ENABLE_HUD
+        {
+            hud_state_t hs;
+            memset(&hs, 0, sizeof hs);
+            hud_state_copy(&hs);
+            hs.disc_loaded = has_disc;
+            hs.is_sacd = is_sacd;
+            hs.client_connected = is_client_connected() ? 1 : 0;
+            hud_state_tick(&hs);
+            hud_state_publish(&hs);
+        }
+#endif
         sleep(1);
     }
 }
@@ -703,6 +781,10 @@ int main(int argc, char* argv[])
             if (opts.server_mode)
             {
                 pthread_t thread;
+#ifdef ENABLE_HUD
+                if (opts.hud_mode != 0)
+                    hud_start(opts.hud_mode);
+#endif
                 int rc = pthread_create(&thread, NULL, listener_thread, NULL);
                 if (rc != 0)
                 {

@@ -127,7 +127,10 @@ def test_render_splits_into_a_staged_script_and_a_short_fire_command(tmp_path):
     assert code.index(FA_CLEAR) < code.index(DAEMON_LAUNCH), \
         "the clear must precede the daemon's /dev/sr0 open or it is thrown away"
     assert "mount -t tmpfs tmpfs /tmp" in code
-    assert code.rstrip().endswith("echo UI_SHOT_DONE")
+    assert "echo UI_SHOT_DONE" in code
+    # the script ends with the second daemon.out read (the in-daemon HUD's
+    # rip-progress lines land after the first cat)
+    assert code.rstrip().endswith("echo DAEMON_OUT_END2")
 
 
 def test_render_refuses_a_template_without_the_fa_latch_clear(tmp_path):
@@ -143,7 +146,9 @@ def test_render_refuses_a_clear_placed_after_the_daemon_launch(tmp_path):
     """Same lines, wrong order — the c122f shape one step further along."""
     lines = [ln for ln in TEMPLATE.read_text().splitlines()]
     clear = [ln for ln in lines if ln.strip() == FA_CLEAR]
-    launch = [i for i, ln in enumerate(lines) if ln.strip().startswith(DAEMON_LAUNCH)]
+    # the template carries the @DAEMON_LAUNCH@ placeholder (the renderer owns
+    # the actual line); the invariant check runs on the RENDERED code
+    launch = [i for i, ln in enumerate(lines) if ln.strip().startswith("@DAEMON_LAUNCH@")]
     assert clear and launch
     moved = [ln for ln in lines if ln.strip() != FA_CLEAR]
     moved.insert(moved.index(lines[launch[0]]) + 1, clear[0])

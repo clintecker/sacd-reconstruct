@@ -15,9 +15,20 @@ CC      := $(CROSS)gcc
 LD      := $(CROSS)gcc
 OBJCOPY_LD := $(CROSS)ld
 
+# ENABLE_HUD=1 builds the ONE HUD into the daemon (reconstruct/tool/hud_state.c
+# + -DENABLE_HUD). Default OFF: the parity/verify build is byte-shape-identical
+# to the no-HUD lineage. See docs/HUD.md "Architecture: where the HUD lives".
+ifeq ($(ENABLE_HUD),1)
+HUD_FLAG := -DENABLE_HUD
+HUD_OBJS := tool/hud_state.c tool/hud.c
+else
+HUD_FLAG :=
+HUD_OBJS :=
+endif
+
 CFLAGS  := -O0 -marm -march=armv6z -Wall -fno-unwind-tables -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE \
            -Itool -Ilibsacd -Ilibcommon -Ilibcommon/sys -Ilibid3 -Ilibdstdec \
-           -DLIBSACD_INTERNAL
+           -DLIBSACD_INTERNAL $(HUD_FLAG)
 LDFLAGS := -lpthread
 
 BUILD   := build
@@ -80,6 +91,7 @@ ID3_SRCS := \
 
 TOOL_SRCS := \
 	tool/main.c \
+	$(HUD_OBJS) \
 	tool/install.c \
 	tool/getopt.c \
 	tool/getopt1.c
@@ -89,10 +101,16 @@ OBJS := $(patsubst %.c,$(BUILD)/%.o,$(SRCS))
 
 all: $(TARGET)
 
-# embedded kernel module: `ld -b binary` yields _binary_sacd_read_ko_start/_end/_size
-$(BUILD)/sacd_read_ko.o: sacd_read.ko
+# embedded kernel module: GAS .incbin yields _binary_sacd_read_ko_start/_end/_size
+# (the ld -b binary route trips a BFD 2.19.1 internal error on this blob — the
+# release pipeline has used .incbin for the same reason since issue #4)
+$(BUILD)/sacd_read_ko.o: sacd_read.ko $(BUILD)/sacd_read_ko.inc.S
 	@mkdir -p $(dir $@)
-	$(OBJCOPY_LD) -r -b binary -o $@ $<
+	$(CC) $(CFLAGS) -c -o $@ $(BUILD)/sacd_read_ko.inc.S
+
+$(BUILD)/sacd_read_ko.inc.S: Makefile sacd_read.ko
+	@mkdir -p $(dir $@)
+	printf '.data\n.globl _binary_sacd_read_ko_start,_binary_sacd_read_ko_end,_binary_sacd_read_ko_size\n_binary_sacd_read_ko_start:\n.incbin "sacd_read.ko"\n_binary_sacd_read_ko_end:\n.set _binary_sacd_read_ko_size,_binary_sacd_read_ko_end-_binary_sacd_read_ko_start\n' > $@
 
 # FSF gcc-4.4.1 libgcc pieces that differ from the CodeSourcery 2009q3 build
 # (proven by byte-identical reproduction of the original binary's libgcc

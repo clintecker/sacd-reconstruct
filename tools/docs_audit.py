@@ -62,6 +62,15 @@ INFRA = [
 EXTLINK = [
     re.compile(r"chatgpt\.com/library"),
 ]
+# vague-time markers a public reader cannot anchor: "recently", "soon",
+# "currently" (status claims that rot), "now supports" (stales quickly),
+# "as discussed" / "as mentioned" (refers to a conversation the reader lacks)
+VAGUE = [
+    re.compile(r"\b(recently (added|updated|fixed|landed|changed)|a recent (run|session))\b", re.I),
+    re.compile(r"\bwill (soon|shortly)\b", re.I),
+    re.compile(r"\bas (discussed|mentioned|noted) (above|earlier|before)\b", re.I),
+    re.compile(r"\bcoming soon\b", re.I),
+]
 STALE = [
     re.compile(r"38[588]/390|377/390|369/390"),
     re.compile(r"e91720fb"),
@@ -106,7 +115,7 @@ def audit_file(path, text, all_files):
     # src-mode simulates the publish pipeline's scrub so the audit measures
     # what the public reader will actually see (verbatim command transcripts
     # in evidence carry real addresses; the pipeline rewrites them).
-    lines = [apply_scrub(l) for l in text.splitlines()]
+    lines = [apply_scrub(ln) for ln in text.splitlines()]
     for i, line in enumerate(lines, 1):
         for rx in COACH:
             if rx.search(line):
@@ -123,6 +132,10 @@ def audit_file(path, text, all_files):
         for rx in EXTLINK:
             if rx.search(line):
                 add("EXTLINK", i, line)
+                break
+        for rx in VAGUE:
+            if rx.search(line):
+                add("VAGUE", i, line)
                 break
     # STALE: only counts when no history/superseded marker appears on the
     # line itself or within the surrounding 3 lines (the marker convention
@@ -182,13 +195,47 @@ def load_files(src, ref=None):
     return files, all_files
 
 
+def orphans(files):
+    """Canonical docs not reachable from the reading path (README/DELTA/LIFECYCLE/REPRODUCE)."""
+    seeds = [f for f in ("README.md", "DELTA.md", "docs/LIFECYCLE.md",
+                         "docs/REPRODUCE.md") if f in files]
+    seen = set()
+
+    def walk(f):
+        if f in seen:
+            return
+        seen.add(f)
+        for m in re.finditer(r"\]\(([^)#]+?)(?:#[^)]*)?\)", files[f]):
+            t = m.group(1).strip()
+            if t.startswith(("http://", "https://", "mailto:")):
+                continue
+            r = posixpath.normpath(posixpath.join(posixpath.dirname(f), t))
+            if (r in files and r.endswith(".md")
+                    and not r.startswith(("evidence/", "emulator-handoff/",
+                                          "public/"))):
+                walk(r)
+
+    for s in seeds:
+        walk(s)
+    return sorted(f for f in files
+                  if f.startswith("docs/") and f.endswith(".md")
+                  and f not in seen)
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--src", default=".", help="working tree to audit")
     ap.add_argument("--ref", default=None,
                     help="audit a git ref's tree instead (e.g. refs/heads/public)")
+    ap.add_argument("--orphans", action="store_true",
+                    help="list canonical docs unreachable from the reading path")
     a = ap.parse_args()
     files, all_paths = load_files(a.src, a.ref)
+    if a.orphans:
+        o = orphans(files)
+        print("\n".join(o) if o else "no orphan canonical docs")
+        return 1 if o else 0
+
     by_class = {}
     for path, text in list(files.items()):
         # public/README.md lives at repo root on the public branch; audit it

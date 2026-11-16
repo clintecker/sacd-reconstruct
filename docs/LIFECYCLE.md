@@ -86,7 +86,7 @@ What belongs here (the current suite demonstrates each class):
 
 ## R2 — Mac-side rendering/design regression: golden discipline
 
-For anything with pixels or layout (currently the UI):
+For anything with pixels or layout (the UI and the HUD):
 
 ```sh
 make ui-regress          # scenes -> goldens -> invariants (seconds)
@@ -95,7 +95,9 @@ make ui-golden GOLDEN=accept   # ONLY after a deliberate, reviewed design change
 
 The accepted frames are viewable in `evidence/bx510-guest/graphics/gallery/`
 (indexed by `docs/GRAPHICS-GALLERY.md`), which also carries the guest-side
-captures for R3.
+captures for R3. The R2 toolchain's own documents: [ui-regress](ui-regress.md)
+(goldens + invariants), [ui-loop](ui-loop.md) (the fire/iterate loop), and
+[ui-reactive](ui-reactive.md) (the event model).
 
 - **Goldens change only via explicit accept.** A passing run rewrites
   nothing (mtime-verified). An intentional redesign is one loud command

@@ -78,10 +78,12 @@ HUD-specific additions:
   a second colour. Instantly readable progress on a TV photo.
 - **Glitch bars** on real events only: an error line (from T1), module EBUSY,
   a client disconnect. Honest: the glitch means something.
-- **Alerts panel** that renders the failure classes we learned the hard way —
+- **Alerts panel** that renders the failure classes learned the hard way during
+  this reconstruction —
   `compid in use`, `insmod EBUSY`, `/tmp` full (zero-byte log), CLI truncation —
   so the HUD doubles as a bring-up diagnosis surface.
-- **STANDBY state** (we proved the daemon keeps serving in standby): the HUD can
+- **STANDBY state** (the reconstruction proved the daemon keeps serving in
+  standby): the HUD can
   show a dimmed "serving in standby" mode, which is exactly the ripping-station
   posture.
 
@@ -125,7 +127,7 @@ one that makes it a *monitor*; H2 is the one that makes it *the product*.
 
 | Need | Already exists |
 |---|---|
-| DirectFB bring-up, surface + flip | `tools/bx510_dfbhello.c` (proven on panel) |
+| DirectFB bring-up, surface + flip | `tools/archive/bx510_dfbhello.c` (proven on panel) |
 | Bitmap font, scene style | `tools/bx510_cyberdraw.c` |
 | Per-ioctl telemetry | `evidence/bx510-guest/pair-observer/` (LD_PRELOAD observer) |
 | Host-side job state | `hostctl/` (Phase-2 skeleton, journal/resume) |

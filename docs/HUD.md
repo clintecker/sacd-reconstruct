@@ -53,10 +53,14 @@ The standalone `tools/bx510_sacd_hud.c` binary remains as the panel-renderer
 stepping stone: it proved the render path (pool-mmap, Sony font, guest gate
 green) and carries the UDP-push + `/proc` telemetry that the in-daemon HUD
 will absorb when its panel mode integrates the renderer core
-(`--hud=panel` currently degrades to console, loudly). It is scaffolding,
+(`--hud=panel` degrades to console, loudly, if the pool surface cannot be
+opened). It is scaffolding,
 not a second HUD, and is never presented as one.
 
 ## Why it is built the way it is
+
+> The full design walk-through (panels, alert classes, the state model and
+> its evidence trail) is [HUD-DESIGN](HUD-DESIGN.md).
 
 Three findings from the hardware shaped the design:
 

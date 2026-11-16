@@ -129,6 +129,9 @@ The original reuses **one stack slot** for the peer address across every accepte
 
 ## The community delta — the part with no upstream source
 
+> Related decode lanes against the shipped firmware images (kernel-module
+> symbols, the initrd): [U4-INITRD](U4-INITRD.md).
+
 The binary is a port of **sacd-ripper v0.3.7** (commit `de008ff`, 2012-12-29). Everything below exists only in the shipped ARM build, so it had to be recovered from the binary:
 
 ```mermaid

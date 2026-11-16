@@ -488,8 +488,10 @@ Corrections and additions against the current `tools/bx510_fbvirt.c`
      issues DISPATCHHW after every item (VERIFIED path), which is the
      simplest correct behavior for a software interpreter,
    - leave +0x60 alone (gfxdriver writes it).
-2. **Accept the gfxdriver's ring ioctls (currently ENOTTY → provider
-   SIGSEGV in guest).** All four take the ring pointer (mmap+32) as arg:
+2. **Accept the gfxdriver's ring ioctls (retail numbers; the earlier
+   provider revision answered ENOTTY for them, which segfaulted the retail
+   gfxdriver in the guest).** All four take the ring pointer (mmap+32) as
+   arg:
    - `0x4651` = DISPATCHHW (retail gfxdriver): consume items `(Rd, Wr]` in
      order; for each, execute-or-log; then `RdPoint = Wr`. Execute at least
      cmd 0x191 (no-op flush) and 0x01 (rFill, layout §3.2) to keep the

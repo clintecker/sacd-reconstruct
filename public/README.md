@@ -11,7 +11,8 @@ an emulated player.
 *The **daemon UI** (`sacd_ui`) — a disc console that reads the TOC and track
 list over the daemon's own port-2002 protocol and paints them. This exact
 frame is proven to render inside Sony's real guest OS
-([gallery](docs/GRAPHICS-GALLERY.md)).
+([gallery](docs/GRAPHICS-GALLERY.md)). It is a milestone artifact from the
+client-leg proof — the product HUD is `sacd_hud` below.*
 
 ## The story
 
@@ -42,9 +43,10 @@ sacd_extract_160 -s -c -t 1 -i 127.0.0.1:2002 ~/rip
 That rip was the finish line, and it's crossed — under the emulator. The
 daemon and the client are the same program, the DSF files are deterministic
 (two rips, one md5), and every byte the client received came through the
-reconstructed protocol stack. A separate companion program — the **HUD**
-(`sacd_hud`) — draws a cyberpunk telemetry console on the player's display;
-see the two images below.
+reconstructed protocol stack. The **HUD** (`sacd_hud`) — one program,
+one product — draws a cyberpunk telemetry console on the player's display
+while a rip runs; the images below show it rendered by the host simulator
+and by the same code inside Sony's real guest OS.
 
 ## How it's proven
 
@@ -62,12 +64,12 @@ altitudes, cheapest first, each with committed evidence:
   <img src="evidence/bx510-guest/graphics/gallery/hud-guest-render.png" width="290" alt="The same HUD code rendered inside Sony's real guest OS">
 </p>
 
-*The **HUD** (`sacd_hud`) — a second, separate program. Host render (left)
-and the same code running inside Sony's real guest OS (right). It shows live
-telemetry (daemon liveness, throughput, verify status) while a rip runs. The
-decrypt leg is proven for real too: a derived disc image carries the audio
-areas encrypted at rest, and the emulated CPSA path decrypts under seven
-acceptance gates.*
+*The **HUD** (`sacd_hud`) — the one HUD, in both of its proven render
+paths: host simulator (left) and Sony's real guest OS (right). Live
+telemetry — daemon liveness, throughput, verify status — while a rip runs.
+The decrypt leg is proven for real too: a derived disc image carries the
+audio areas encrypted at rest, and the emulated CPSA path decrypts under
+seven acceptance gates.*
 
 ## The protocol
 
@@ -116,7 +118,7 @@ Full reproduction ladder (rig → guest → hardware): [docs/REPRODUCE.md](docs/
 | [docs/RIG-ARCHITECTURE.md](docs/RIG-ARCHITECTURE.md) | how the emulation rigs work (qemu-user + full-system) |
 | [docs/LIFECYCLE.md](docs/LIFECYCLE.md) | the build/test ladder from idea to hardware |
 | [docs/EVIDENCE.md](docs/EVIDENCE.md) | how to read the evidence bundles |
-| [docs/HUD.md](docs/HUD.md) | the HUD (`sacd_hud`) — and how it differs from the daemon UI (`sacd_ui`) |
+| [docs/HUD.md](docs/HUD.md) | the HUD (`sacd_hud`) — one HUD, its architecture, and its roadmap into the daemon |
 | [DELTA.md](DELTA.md) | the exact change-set vs public v0.3.7, verified from disassembly |
 
 ## Not in this repository

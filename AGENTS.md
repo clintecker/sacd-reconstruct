@@ -13,6 +13,14 @@ exists because it caught. The sacd lane's short form: unit tests on the
 Mac, then the emulator at wire level, hardware LAST and only as a
 confirmation.
 
+**ONE HUD doctrine (binding, set by the operator 2026-11-16):** the BX510
+lane has exactly ONE HUD — `sacd_hud`, the cyberpunk telemetry console —
+and its target architecture is **built into the reconstructed daemon**
+(`sacd_extract_160`), reading the daemon's own live state, not a separate
+process. Never present `sacd_ui` (a client-leg milestone artifact) or
+`cyberdraw` (a display-leg test pattern) as a HUD, in docs, READMEs, or
+communication. Docs must keep the three roles distinct.
+
 ## Binding policies — never violate
 
 1. **NEVER disclose any finding.** No maintainer contact, no publication,

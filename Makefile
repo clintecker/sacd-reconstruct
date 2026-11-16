@@ -216,18 +216,18 @@ sacd-commit:
 ## SACD session :: sacd-sync-standalone [MSG=...] :: mirror the canonical tree into the standalone review repo (tests there, commit, push) :: the dual-repo discipline as one command — stages tools + gate/hdhost evidence + docs + kit + Makefile/AGENTS into clintecker/sacd-reconstruct, verifies ITS origin remote and top-level, runs the 11 alteration controls in that tree, and commits with the canonical hash; refuses if either repo has the wrong identity or the canonical tree is dirty
 .PHONY: sacd-sync-standalone
 sacd-sync-standalone:
-	bash experiments/sacd_reconstruct/tools/sacd_sync_standalone.sh "$(MSG)"
+	bash $(SACD)/tools/sacd_sync_standalone.sh "$(MSG)"
 
 ## SACD vm-tools :: sacd-stage :: (no arguments) :: stage every tracked guest-tool source to the VM in one shot :: the stale-copy killer — the tree is the single source of truth; VM copies are disposable and re-staged before every consuming run (the stale-probe trap bit three times: an old probe/runner silently produced old-format evidence that only the hardened gate caught)
 .PHONY: sacd-stage
 sacd-stage:
-	$(VM_SCP) experiments/sacd_reconstruct/tools/bx510_*.c experiments/sacd_reconstruct/tools/bx510_*.py experiments/sacd_reconstruct/tools/bx510_*.sh experiments/sacd_reconstruct/tools/fixture_gen.py $(VM_USER)@$(VM_HOST):/tmp/ || exit 1
+	$(VM_SCP) $(SACD)/tools/bx510_*.c $(SACD)/tools/bx510_*.py $(SACD)/tools/bx510_*.sh $(SACD)/tools/fixture_gen.py $(VM_USER)@$(VM_HOST):/tmp/ || exit 1
 	@echo "staged: tracked bx510_* tools + fixture_gen.py -> VM:/tmp"
 
 ## SACD vm-tools :: sacd-kit-stage :: (no arguments) :: stage the tracked emulator-kit sources to the VM :: the QEMU kit on the VM (~/bx510-emu/emulator) is disposable — the tracked emulator-kit/ dir is the live state; build.sh on the VM consumes exactly these files
 .PHONY: sacd-kit-stage
 sacd-kit-stage:
-	$(VM_SCP) experiments/sacd_reconstruct/emulator-kit/sony-bx510.c experiments/sacd_reconstruct/emulator-kit/mt8560-nfi.c experiments/sacd_reconstruct/emulator-kit/mt8560-nfi.h experiments/sacd_reconstruct/emulator-kit/mt8560-hdhost.c experiments/sacd_reconstruct/emulator-kit/mt8560-hdhost.h experiments/sacd_reconstruct/emulator-kit/build.sh experiments/sacd_reconstruct/emulator-kit/qemu-integration.patch experiments/sacd_reconstruct/emulator-kit/run.py experiments/sacd_reconstruct/emulator-kit/smoke.py $(VM_USER)@$(VM_HOST):bx510-emu/emulator/ || exit 1
+	$(VM_SCP) $(SACD)/emulator-kit/sony-bx510.c $(SACD)/emulator-kit/mt8560-nfi.c $(SACD)/emulator-kit/mt8560-nfi.h $(SACD)/emulator-kit/mt8560-hdhost.c $(SACD)/emulator-kit/mt8560-hdhost.h $(SACD)/emulator-kit/build.sh $(SACD)/emulator-kit/qemu-integration.patch $(SACD)/emulator-kit/run.py $(SACD)/emulator-kit/smoke.py $(VM_USER)@$(VM_HOST):bx510-emu/emulator/ || exit 1
 	@echo "staged: tracked emulator-kit -> VM:~/bx510-emu/emulator/"
 
 ## SACD hdhost :: sacd-hdhost-qemu :: (no arguments) :: rebuild QEMU on the VM from the tracked kit state :: build.sh copies the staged kit files into the pinned qemu-9.2.4 tree and ninjas qemu-system-arm — minutes; run after any emulator-kit change
@@ -243,28 +243,28 @@ sacd-hdhost-mod: sacd-stage
 ## SACD hdhost :: sacd-hdhost-smoke :: (no arguments) :: HDHOST end-to-end smoke: sentinel image, guest boot with device checks, host-vs-guest md5 verdict :: runs tools/bx510_hdsmoke.sh on the VM — patterned sectors through the guest block node must match host expectations and a past-capacity read must FAIL (EIO, never zero-filled); pulls the smoke log back into evidence/bx510-guest/hdhost/
 .PHONY: sacd-hdhost-smoke
 sacd-hdhost-smoke: sacd-stage sacd-hdhost-mod
-	$(VM_SCP) experiments/sacd_reconstruct/tools/bx510_hdsmoke.sh $(VM_USER)@$(VM_HOST):/tmp/bx510_hdsmoke.sh
+	$(VM_SCP) $(SACD)/tools/bx510_hdsmoke.sh $(VM_USER)@$(VM_HOST):/tmp/bx510_hdsmoke.sh
 	$(VM_SSH) 'sh /tmp/bx510_hdsmoke.sh' | tee /tmp/hdsmoke-local.out | tail -12
-	-$(VM_SSH) 'ls -dt /tmp/hdsmoke-* | head -1' | xargs -I{} $(VM_SCP) -r "$(VM_USER)@$(VM_HOST):{}" experiments/sacd_reconstruct/evidence/bx510-guest/hdhost/ 2>/dev/null
+	-$(VM_SSH) 'ls -dt /tmp/hdsmoke-* | head -1' | xargs -I{} $(VM_SCP) -r "$(VM_USER)@$(VM_HOST):{}" $(SACD)/evidence/bx510-guest/hdhost/ 2>/dev/null
 
 ## SACD gates :: sacd-gate4 :: (no arguments) :: the 5 GiB boundary-sentinel battery — the team's final large-image validation :: both pinned daemons serve hash-verified sectors straddling the 2 GiB and 4 GiB byte-offset boundaries from a host-backed sparse image through BOTH read paths; clamp at the new track range, final sector, beyond-capacity; byte-identity, raw-frame verification, self-pairs in the verdict; image is regenerable (SHA-recorded manifest kept, binaries dropped)
 .PHONY: sacd-gate4
 sacd-gate4: sacd-stage
-	$(VM_SSH) 'sh /tmp/bx510_gate4.sh' 2>/dev/null || { $(VM_SCP) experiments/sacd_reconstruct/tools/bx510_gate4.sh $(VM_USER)@$(VM_HOST):/tmp/; $(VM_SSH) 'sh /tmp/bx510_gate4.sh'; }
-	-OUT=$$($(VM_SSH) 'ls -dt /tmp/gate4v-* 2>/dev/null | head -1'); if [ -n "$$OUT" ]; then mkdir -p experiments/sacd_reconstruct/evidence/bx510-guest/gates4; $(VM_SCP) -r "$(VM_USER)@$(VM_HOST):$$OUT" experiments/sacd_reconstruct/evidence/bx510-guest/gates4/ >/dev/null 2>&1; echo "evidence pulled: gates4/$$(basename $$OUT)"; fi
+	$(VM_SSH) 'sh /tmp/bx510_gate4.sh' 2>/dev/null || { $(VM_SCP) $(SACD)/tools/bx510_gate4.sh $(VM_USER)@$(VM_HOST):/tmp/; $(VM_SSH) 'sh /tmp/bx510_gate4.sh'; }
+	-OUT=$$($(VM_SSH) 'ls -dt /tmp/gate4v-* 2>/dev/null | head -1'); if [ -n "$$OUT" ]; then mkdir -p $(SACD)/evidence/bx510-guest/gates4; $(VM_SCP) -r "$(VM_USER)@$(VM_HOST):$$OUT" $(SACD)/evidence/bx510-guest/gates4/ >/dev/null 2>&1; echo "evidence pulled: gates4/$$(basename $$OUT)"; fi
 
 ## SACD gates :: sacd-gate3 :: (no arguments) :: HDHOST intermediate gate: the canonical 6-boot validation with the disc served through the host-image interface :: reuses the existing fixture content and gate expectations UNCHANGED — only the transport differs (tmpfs file -> HDHOST block node), so a PASS proves the whole large-image path with known expectations; per-boot C-vs-PY byte-identity asserted; negative control corrupts the host image variant; pulls evidence into evidence/bx510-guest/gates3/
 .PHONY: sacd-gate3
 sacd-gate3: sacd-stage
 	$(VM_SSH) 'cp /tmp/bx510_gate3.sh /tmp/gate3.sh; sh /tmp/gate3.sh' | tail -30
-	-OUT=$$($(VM_SSH) 'ls -dt /tmp/gate3v-* 2>/dev/null | head -1'); if [ -n "$$OUT" ]; then mkdir -p experiments/sacd_reconstruct/evidence/bx510-guest/gates3; $(VM_SCP) -r "$(VM_USER)@$(VM_HOST):$$OUT" experiments/sacd_reconstruct/evidence/bx510-guest/gates3/ >/dev/null 2>&1; echo "evidence pulled: gates3/$$(basename $$OUT)"; fi
+	-OUT=$$($(VM_SSH) 'ls -dt /tmp/gate3v-* 2>/dev/null | head -1'); if [ -n "$$OUT" ]; then mkdir -p $(SACD)/evidence/bx510-guest/gates3; $(VM_SCP) -r "$(VM_USER)@$(VM_HOST):$$OUT" $(SACD)/evidence/bx510-guest/gates3/ >/dev/null 2>&1; echo "evidence pulled: gates3/$$(basename $$OUT)"; fi
 
 ## SACD gates :: sacd-gate :: (no arguments) :: the canonical 6-boot gate from tracked sources, end to end :: stages every tracked tool first (kills the stale-copies class), runs tools/bx510_gate2.sh (fresh timestamped dir, probe-failure propagation, raw-frame verification in the verdict), then pulls the evidence dir into evidence/bx510-guest/gates/
 .PHONY: sacd-gate
 sacd-gate: sacd-stage
 	$(VM_SSH) 'cp /tmp/bx510_gate2.sh /tmp/gate2.sh' 2>/dev/null || true
 	$(VM_SSH) 'cp /tmp/bx510_gate2.sh /tmp/gate2.sh; sh /tmp/gate2.sh' | tail -8
-	-OUT=$$($(VM_SSH) 'ls -dt /tmp/gatev-* 2>/dev/null | head -1'); if [ -n "$$OUT" ]; then $(VM_SCP) -r "$(VM_USER)@$(VM_HOST):$$OUT" experiments/sacd_reconstruct/evidence/bx510-guest/gates/ >/dev/null 2>&1; echo "evidence pulled: experiments/sacd_reconstruct/evidence/bx510-guest/gates/$$(basename $$OUT)"; fi
+	-OUT=$$($(VM_SSH) 'ls -dt /tmp/gatev-* 2>/dev/null | head -1'); if [ -n "$$OUT" ]; then $(VM_SCP) -r "$(VM_USER)@$(VM_HOST):$$OUT" $(SACD)/evidence/bx510-guest/gates/ >/dev/null 2>&1; echo "evidence pulled: $(SACD)/evidence/bx510-guest/gates/$$(basename $$OUT)"; fi
 
 ## Unit-of-work gates :: tests :: the verbatim finished-unit test gate :: uv run pytest -m "not smoke"; un-piped, exit-code-checked
 .PHONY: tests
@@ -423,8 +423,8 @@ sacd-selftest:
 .PHONY: sacd-stub-build
 sacd-stub-build:
 	$(VM_SSH) 'mkdir -p /tmp/osal_src'
-	$(VM_SCP) experiments/sacd_reconstruct/tools/bx510_osal_stub.c experiments/sacd_reconstruct/tools/bx510_clidrive.c $(VM_USER)@$(VM_HOST):/tmp/
-	$(VM_SCP) experiments/sacd_reconstruct/tools/bx510_stub_build.sh experiments/sacd_reconstruct/tools/bx510_vermagic_patch.py $(VM_USER)@$(VM_HOST):/tmp/
+	$(VM_SCP) $(SACD)/tools/bx510_osal_stub.c $(SACD)/tools/bx510_clidrive.c $(VM_USER)@$(VM_HOST):/tmp/
+	$(VM_SCP) $(SACD)/tools/bx510_stub_build.sh $(SACD)/tools/bx510_vermagic_patch.py $(VM_USER)@$(VM_HOST):/tmp/
 	$(VM_SSH) 'sh /tmp/bx510_stub_build.sh'
 
 ## SACD :: sacd-emu-build :: build the full-system sony-bx510 QEMU on the lab VM :: the pinned 9.2.4 tarball is pre-staged (SHA f3cc1c4e… verified at stage time) so build.sh performs no outbound fetch; JOBS=6
@@ -452,31 +452,31 @@ sacd-emu-daemons:
 ## SACD hardware :: sacd-hw-payload-check :: the stick gate :: verifies EVERY payload SHA against the repo, asserts the AutoScript shape (<=9 lines / <=460 bytes), shell-syntax checks the wrappers, and fails loudly (staging calls it automatically)
 .PHONY: sacd-hw-payload-check
 sacd-hw-payload-check:
-	sh experiments/sacd_reconstruct/tools/sacd_hardware.sh payload-check
+	sh $(SACD)/tools/sacd_hardware.sh payload-check
 
 ## SACD reconstruction :: sacd-daemon-map :: regenerate docs/DAEMON-MAP.md from the linker map :: per-module byte budget, biggest translation units, source tree, threads, delta table — numbers parsed from release.map so the illustration cannot drift from the binary
 .PHONY: sacd-daemon-map
 sacd-daemon-map:
-	python3 experiments/sacd_reconstruct/tools/daemon_map.py \
+	python3 $(SACD)/tools/daemon_map.py \
 	  --map $${MAP:-/Users/clint/code/sacd-reconstruct/reconstruct/release/release.map} \
 	  --src $${SRC:-/Users/clint/code/sacd-reconstruct/reconstruct} \
-	  --out experiments/sacd_reconstruct/docs/DAEMON-MAP.md
+	  --out $(SACD)/docs/DAEMON-MAP.md
 
 ## SACD reconstruction :: sacd-public-publish :: refresh the PUBLIC branch of the standalone repo :: assembles the public tree from staging (Sony binaries out, identifiers scrubbed, EXIF stripped), runs the audit as a gate, then commits and pushes `public`
 .PHONY: sacd-public-publish
 sacd-public-publish:
-	sh experiments/sacd_reconstruct/tools/public_publish.sh
+	sh $(SACD)/tools/public_publish.sh
 
 ## SACD hardware :: sacd-hud-anim :: render the HUD as an animated GIF + MP4 :: runs the host simulator for 40 frames (0.2 s apart) and assembles both; the panel animates the same way
 .PHONY: sacd-hud-anim
 sacd-hud-anim:
 	cd experiments/sacd_reconstruct && cc -O2 -Wall -Wextra -Wno-pragmas -DHUD_SIM -I. -o /tmp/hudsim tools/bx510_sacd_hud.c
-	python3 experiments/sacd_reconstruct/tools/hud_anim.py --sim /tmp/hudsim --frames 40 --scale $${SIZE:-480} --out /tmp/hud_anim
+	python3 $(SACD)/tools/hud_anim.py --sim /tmp/hudsim --frames 40 --scale $${SIZE:-480} --out /tmp/hud_anim
 
 ## SACD hardware :: sacd-hud-build :: build the HUD for the player (VM, era toolchain) and pull it into display-payload :: one place for the flags (-std=gnu99, -Wno-pragmas, dynamic) that each cost a failed run
 .PHONY: sacd-hud-build
 sacd-hud-build:
-	sh experiments/sacd_reconstruct/tools/hud_build.sh
+	sh $(SACD)/tools/hud_build.sh
 
 ## SACD hardware :: sacd-hud-sim :: render the HUD scene on the Mac (no DirectFB, no device) :: real Sony font + fake telemetry -> PNG, for layout/text iteration in seconds
 .PHONY: sacd-hud-sim
@@ -486,98 +486,98 @@ sacd-hud-sim:
 ## SACD hardware :: sacd-usb-calib :: arm the CALIBRATION pattern on the stick :: sets AutoScript/hudcalib then display mode, so the next player run photographs a known pattern (grid/bars/edges) instead of the HUD
 .PHONY: sacd-usb-calib
 sacd-usb-calib:
-	sh experiments/sacd_reconstruct/tools/sacd_hardware.sh usb-display-mode
+	sh $(SACD)/tools/sacd_hardware.sh usb-display-mode
 	printf '1\n' > /Volumes/SONYUSB/AutoScript/hudcalib
 
 ## SACD hardware :: sacd-hud-diff :: does the rig predict the panel? :: SSIM + luminance + best global shift between a device photo and a render; exits non-zero below MIN_SSIM (default 0.55)
 .PHONY: sacd-hud-diff
 sacd-hud-diff:
-	python3 experiments/sacd_reconstruct/tools/bx510_hud_diff.py "$(PHOTO)" "$(RENDER)" --min-ssim $${MIN_SSIM:-0.55}
+	python3 $(SACD)/tools/bx510_hud_diff.py "$(PHOTO)" "$(RENDER)" --min-ssim $${MIN_SSIM:-0.55}
 
 ## SACD hardware :: sacd-hud-guest :: run the HUD in the real Sony guest and GATE it :: asserts rc=0 and a non-black framebuffer (a black screenshot fails instead of being eyeballed); currently red because fbvirt's FBIO_DISPATCHHW is a no-op
 .PHONY: sacd-hud-guest
 sacd-hud-guest:
-	sh experiments/sacd_reconstruct/tools/hud_guest_run.sh
+	sh $(SACD)/tools/hud_guest_run.sh
 
 ## SACD hardware :: sacd-usb-prune :: tidy the session stick back to payload-only :: drops the player's own hwmon snapshots/backups, recovered logs and inventory reports (collect them first); reports the KiB freed
 .PHONY: sacd-usb-prune
 sacd-usb-prune:
-	sh experiments/sacd_reconstruct/tools/sacd_hardware.sh usb-prune
+	sh $(SACD)/tools/sacd_hardware.sh usb-prune
 
 ## SACD hardware :: sacd-hw-preflight :: Mac preflight for the on-player session :: ISO present + both pinned ELF SHAs + client selftest + next-steps checklist
 .PHONY: sacd-hw-preflight
 sacd-hw-preflight:
-	sh experiments/sacd_reconstruct/tools/sacd_hardware.sh preflight
+	sh $(SACD)/tools/sacd_hardware.sh preflight
 
 ## SACD hardware :: sacd-usb-build :: DESTRUCTIVE: build the baseline USB from blank :: usage: make sacd-usb-build DISK=/dev/diskN CONFIRM=ERASE — FAT32 erase + original daemon + observer kit + baseline AutoScript; refuses without CONFIRM=ERASE
 .PHONY: sacd-usb-build
 sacd-usb-build:
-	DISK="$(DISK)" CONFIRM="$(CONFIRM)" sh experiments/sacd_reconstruct/tools/sacd_hardware.sh usb-build
+	DISK="$(DISK)" CONFIRM="$(CONFIRM)" sh $(SACD)/tools/sacd_hardware.sh usb-build
 
 ## SACD hardware :: sacd-usb-check :: verify the USB stick :: daemon SHA vs both pinned ELFs, AutoScript mode, observer kit presence, stale pair file note
 .PHONY: sacd-usb-check
 sacd-usb-check:
-	sh experiments/sacd_reconstruct/tools/sacd_hardware.sh usb-check
+	sh $(SACD)/tools/sacd_hardware.sh usb-check
 
 ## SACD hardware :: sacd-usb-baseline-mode :: set the AutoScript to the normal daemon line :: the stock baseline launcher
 .PHONY: sacd-usb-baseline-mode
 sacd-usb-baseline-mode:
-	sh experiments/sacd_reconstruct/tools/sacd_hardware.sh usb-baseline-mode
+	sh $(SACD)/tools/sacd_hardware.sh usb-baseline-mode
 
 ## SACD hardware :: sacd-usb-pair-mode :: set the AutoScript to the instrumented trace-launch line :: LSN=600 by default; removes a stale firebird.pair (trace-launch refuses to overwrite)
 .PHONY: sacd-usb-pair-mode
 sacd-usb-pair-mode:
-	PAIR_LSN="$(PAIR_LSN)" sh experiments/sacd_reconstruct/tools/sacd_hardware.sh usb-pair-mode
+	PAIR_LSN="$(PAIR_LSN)" sh $(SACD)/tools/sacd_hardware.sh usb-pair-mode
 
 ## SACD hardware :: sacd-usb-debug-mode :: set the AutoScript to the daemon-debug launcher :: runs the stick's daemon with output captured + exit status + dmesg (candlaunch.sh) — for naming a fast on-player death
 .PHONY: sacd-usb-debug-mode
 sacd-usb-debug-mode:
-	sh experiments/sacd_reconstruct/tools/sacd_hardware.sh usb-debug-mode
+	sh $(SACD)/tools/sacd_hardware.sh usb-debug-mode
 
 ## SACD hardware :: sacd-usb-display-mode :: set the AutoScript to the display leg :: cyberdraw --anim on /dev/fb0 through displaylaunch.sh (DISPLAY_ANIM=45 default) — the TV photo/video test; the log names the cause when the screen stays black
 .PHONY: sacd-usb-display-mode
 sacd-usb-display-mode:
-	DISPLAY_ANIM="$(DISPLAY_ANIM)" sh experiments/sacd_reconstruct/tools/sacd_hardware.sh usb-display-mode
+	DISPLAY_ANIM="$(DISPLAY_ANIM)" sh $(SACD)/tools/sacd_hardware.sh usb-display-mode
 
 ## SACD hardware :: sacd-usb-original :: put the ORIGINAL ELF on the stick :: SHA-verified 0fdcefdb… — the baseline daemon
 .PHONY: sacd-usb-original
 sacd-usb-original:
-	sh experiments/sacd_reconstruct/tools/sacd_hardware.sh usb-original
+	sh $(SACD)/tools/sacd_hardware.sh usb-original
 
 ## SACD hardware :: sacd-usb-candidate :: put the RELEASE CANDIDATE ELF on the stick :: SHA-verified e91720fb… — for the #6 candidate trial after the baseline lands
 .PHONY: sacd-usb-candidate
 sacd-usb-candidate:
-	sh experiments/sacd_reconstruct/tools/sacd_hardware.sh usb-candidate
+	sh $(SACD)/tools/sacd_hardware.sh usb-candidate
 
 ## SACD hardware :: sacd-hw-wait :: block until the player's daemon listens :: HW_HOST=10.20.1.236 HW_PORT=2002 — run after powering the player on
 .PHONY: sacd-hw-wait
 sacd-hw-wait:
-	HW_HOST="$(HW_HOST)" HW_PORT="$(HW_PORT)" sh experiments/sacd_reconstruct/tools/sacd_hardware.sh wait
+	HW_HOST="$(HW_HOST)" HW_PORT="$(HW_PORT)" sh $(SACD)/tools/sacd_hardware.sh wait
 
 ## SACD hardware :: sacd-hw-baseline :: run the on-player baseline capture :: waits for the listener, captures with full metadata, tees the console into SESSION_DIR
 .PHONY: sacd-hw-baseline
 sacd-hw-baseline:
-	HW_HOST="$(HW_HOST)" HW_PORT="$(HW_PORT)" SESSION_DIR="$(SESSION_DIR)" USB="$(USB)" sh experiments/sacd_reconstruct/tools/sacd_hardware.sh baseline
+	HW_HOST="$(HW_HOST)" HW_PORT="$(HW_PORT)" SESSION_DIR="$(SESSION_DIR)" USB="$(USB)" sh $(SACD)/tools/sacd_hardware.sh baseline
 
 ## SACD hardware :: sacd-hw-baseline-retry :: retry the baseline capture (fresh out dir + label) :: for the zero-byte-DISC_OPEN case — wait ~90s first (no-SO_REUSEADDR TIME_WAIT)
 .PHONY: sacd-hw-baseline-retry
 sacd-hw-baseline-retry:
-	HW_HOST="$(HW_HOST)" HW_PORT="$(HW_PORT)" SESSION_DIR="$(SESSION_DIR)" USB="$(USB)" sh experiments/sacd_reconstruct/tools/sacd_hardware.sh baseline-retry
+	HW_HOST="$(HW_HOST)" HW_PORT="$(HW_PORT)" SESSION_DIR="$(SESSION_DIR)" USB="$(USB)" sh $(SACD)/tools/sacd_hardware.sh baseline-retry
 
 ## SACD hardware :: sacd-hw-pair :: run the ground-truth pair capture :: request-pair through the real module at PAIR_LSN=600; console teed into SESSION_DIR
 .PHONY: sacd-hw-pair
 sacd-hw-pair:
-	HW_HOST="$(HW_HOST)" HW_PORT="$(HW_PORT)" SESSION_DIR="$(SESSION_DIR)" PAIR_LSN="$(PAIR_LSN)" sh experiments/sacd_reconstruct/tools/sacd_hardware.sh pair
+	HW_HOST="$(HW_HOST)" HW_PORT="$(HW_PORT)" SESSION_DIR="$(SESSION_DIR)" PAIR_LSN="$(PAIR_LSN)" sh $(SACD)/tools/sacd_hardware.sh pair
 
 ## SACD hardware :: sacd-hw-analyze :: validate pair + baseline against the ISO :: media_check.py pair/baseline with the Firebird rip cross-check
 .PHONY: sacd-hw-analyze
 sacd-hw-analyze:
-	HW_ISO="$(HW_ISO)" USB="$(USB)" sh experiments/sacd_reconstruct/tools/sacd_hardware.sh analyze
+	HW_ISO="$(HW_ISO)" USB="$(USB)" sh $(SACD)/tools/sacd_hardware.sh analyze
 
 ## SACD hardware :: sacd-hw-collect :: assemble + verify the handoff folder :: copies pair/baselines/consoles into SESSION_DIR (~/bx510-session), writes a notes template, inventories + SHA-verifies everything
 .PHONY: sacd-hw-collect
 sacd-hw-collect:
-	SESSION_DIR="$(SESSION_DIR)" USB="$(USB)" sh experiments/sacd_reconstruct/tools/sacd_hardware.sh collect
+	SESSION_DIR="$(SESSION_DIR)" USB="$(USB)" sh $(SACD)/tools/sacd_hardware.sh collect
 
 # ── BX510 rig ops (client-leg era) ──────────────────────────────────────────
 

@@ -53,7 +53,7 @@ by `daemon_map.py`.
 
 | File | Role |
 |---|---|
-| `sacd_ui.c` | the enhanced daemon UI (client-driven console; renders in the guest) |
+| `sacd_ui.c` | the client-leg console (milestone artifact, regression fixture; renders in the guest) |
 | `ui_regress.py` | layout regression: scenes, goldens, invariants, animation, guest parity |
 | `ui_layout_spec.json` | the layout contract (regions, palette, invariants) |
 | `bx510_ui_render.py` / `bx510_ui_stage.sh` / `bx510_ui_shot.py` / `bx510_ui_build*.sh` | the ui-loop pipeline: render guest script, stage, fire, capture -> PNG/GIF + verdict |

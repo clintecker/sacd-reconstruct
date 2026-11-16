@@ -87,7 +87,7 @@ for real. `tools/bx510_cipher_check.py` gates the run against the oracle table
 battery results and the decisive byte-level evidence are in
 `evidence/bx510-guest/bdpdrv/decode/level1-cipher-spec.md`.
 
-## 6. The UI/HUD on the emulated panel
+## 6. The HUD on the emulated panel
 
 ```sh
 make sacd-hud-sim                 # host render -> PNG (seconds)

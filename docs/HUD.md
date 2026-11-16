@@ -3,13 +3,15 @@
 A cyberpunk console drawn on the player's own display while the daemon works,
 designed to be legible from a sofa and honest about what the daemon is doing.
 
-**There is one HUD.** This is it. Two other graphics programs exist in the
-tree and neither is a HUD:
+**There is one HUD, and the HUD is the daemon's UI — one thing.** The daemon
+presents a single user-facing interface, built into `sacd_extract_160`
+itself. Two other graphics programs exist in the tree and neither is the
+daemon's UI:
 
-- **`sacd_ui`** — the *daemon UI*, a disc console that holds a real client
-  session and reads the TOC off the wire. It is a milestone artifact from the
-  client-leg proof (it proved a client-driven panel render plus wire parity),
-  kept and regression-tested, but it is not the HUD and it is not shipped on
+- **`sacd_ui`** — a *client-leg milestone artifact*: a separate-process disc
+  console that holds a real client session and reads the TOC off the wire.
+  It proved a client-driven panel render plus wire parity; it is kept as a
+  regression fixture, but it is not the daemon's UI and it is not shipped on
   the stick.
 - **`cyberdraw`** — a *display-leg test payload*: a self-authenticating
   procedural pattern whose TV photo can only mean "our pixels reached the

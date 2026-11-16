@@ -5,45 +5,29 @@ goldens are the reference frames; the guest captures are what Sony's real
 guest OS painted; the parities tie the two together. Files live in
 `evidence/bx510-guest/graphics/gallery/` (same names as below).
 
-One HUD: **`sacd_hud`**, the cyberpunk telemetry console (event matrix,
-wireframe cube, throughput panels). It watches the daemon from `/proc` and
-the host's UDP push — and the target architecture builds it INTO the daemon
-so it reads the daemon's own live state directly (see
-[HUD.md](HUD.md) §Architecture).
+**The daemon's UI is its HUD** — one thing: **`sacd_hud`**, the cyberpunk
+telemetry console (event matrix, wireframe cube, throughput panels), built
+INTO `sacd_extract_160` so it reads the daemon's own live state directly
+(see [HUD.md](HUD.md) §Architecture). It is the only product UI in this
+gallery.
 
-Two other graphics programs appear below and are **not** the HUD:
+Two other graphics programs appear below and are **not** the daemon's UI:
 
-- **`sacd_ui`** — a *separate-process disc console* that holds a real client
-  session and reads the TOC off port 2002. A milestone artifact from the
-  client-leg proof, kept for regression, not shipped on the stick, and not
-  the HUD (the HUD is the in-daemon one above).
+- **`sacd_ui`** — a *client-leg milestone artifact*: a separate-process
+  console that holds a real client session and reads the TOC off port 2002.
+  Kept as a regression fixture, not shipped on the stick.
 - **`cyberdraw`** — a display-leg *test pattern*, not a product.
 
-Both non-HUD programs (and the HUD) are proven to run inside Sony's real
-guest OS.
+All three programs are proven to run inside Sony's real guest OS.
 
-## The separate-process console (`sacd_ui`)
+## The HUD (`sacd_hud`) — the daemon's UI
 
-![The UI golden frame — disc TOC, both areas, track list, ASCII disc map](../evidence/bx510-guest/graphics/gallery/ui-sim-golden-s1.png)
+![The in-daemon HUD's own frame, rendered inside the daemon process in the guest](../evidence/bx510-guest/graphics/ui-hudpan2/pool-3x.png)
 
-*`ui-sim-golden-s1.png` — the accepted golden frame, 1920x1080. Renderer,
-spec and font shas are pinned in `regress/golden/manifest.json`; this is the
-frame the guest is proven to reproduce per-region (>= 0.85 ink correlation).*
-
-![The same scene rendered inside Sony's real guest OS](../evidence/bx510-guest/graphics/gallery/ui-guest-docshot1.png)
-
-*`ui-guest-docshot1.png` — run docshot1 (2026-11-16): the UI held its own
-wire session in the guest (DISC_OPEN -> SIZE -> TOC reads -> DISC_CLOSE,
-catalog `CDSML8558` decoded off port 2002) and the rip client PASSED in the
-same run. Captured at 320x180 over the UART (3x upscaled here).*
-
-![The UI watching a second client rip](../evidence/bx510-guest/graphics/gallery/ui-guest-c132-watch.png)
-
-*`ui-guest-c132-watch.png` — the c132 overlap experiment: `DAEMON CLIENT
-CONNECT (1 live)`, `RIP WATCH file=/tmp/ripA.bin`, `RIP DONE 128 sectors` —
-the UI observed a second client working, live.*
-
-## The HUD (`sacd_hud`)
+*`ui-hudpan2/pool-3x.png` — the panel mode of the in-daemon HUD: this frame
+was painted BY `sacd_extract_160` itself (the `--hud=panel` thread inside
+the daemon process), captured in the guest, pool mean luminance 50.49
+PASS. One binary serves the rip and draws the panel.*
 
 ![The cyberpunk HUD, Mac render](../evidence/bx510-guest/graphics/gallery/hud-sim.png)
 
@@ -61,33 +45,43 @@ non-black (mean luminance 83.84), PASS 3x on 2026-11-16.*
 *`hud-anim.gif` — the wireframe cube, perspective grid, CRT sweep and the
 2 Hz blink; blink period asserted by `make ui-anim`.*
 
-![The in-daemon HUD's own frame, rendered inside the daemon process in the guest](../evidence/bx510-guest/graphics/ui-hudpan2/pool-3x.png)
+| image | what it shows | provenance |
+|---|---|---|
+| `ui-hudpan2/pool-3x.png` | the in-daemon panel frame: the daemon painting its own telemetry from its live state | run `hudpan2` (2026-11-16), `--hud=panel` in the guest; pool mean luminance 50.49, gated PASS — `evidence/bx510-guest/graphics/ui-hudpan2/` |
+| `hud-sim.png` | Mac SIM render, 1280x720, real Sony font + synthetic telemetry | `make sacd-hud-sim` (the layout-iteration loop, seconds per frame) |
+| `hud-guest-render.png` | the HUD rendered in the real Sony guest, 640x360x3 capture decoded from the UART `FBPIX` hex line | `make sacd-hud-guest` — gate PASS 3x on 2026-11-16 (rc=0, mean luminance 83.84); green since e9dbd8b (pool-mmap render path) |
+| `hud-anim.gif` | the HUD animating: rotating wireframe cube, perspective grid, CRT sweep, cursor blink | `make sacd-hud-anim`; blink period asserted 2 Hz +/-10% by `make ui-anim` |
 
-*`ui-hudpan2/pool-3x.png` — the panel mode of the in-daemon HUD: this frame
-was painted BY `sacd_extract_160` itself (the `--hud=panel` thread inside
-the daemon process), captured in the guest, pool mean luminance 50.49
-PASS. One binary serves the rip and draws the panel.*
+## The client-leg console (`sacd_ui`) — milestone artifact, regression fixture (not the daemon's UI)
 
-## The separate-process console (`sacd_ui`) — client-driven disc console (milestone artifact,
-not the HUD)
+![The console golden frame — disc TOC, both areas, track list, ASCII disc map](../evidence/bx510-guest/graphics/gallery/ui-sim-golden-s1.png)
+
+*`ui-sim-golden-s1.png` — the accepted golden frame, 1920x1080. Renderer,
+spec and font shas are pinned in `regress/golden/manifest.json`; this is the
+frame the guest is proven to reproduce per-region (>= 0.85 ink correlation).*
+
+![The same scene rendered inside Sony's real guest OS](../evidence/bx510-guest/graphics/gallery/ui-guest-docshot1.png)
+
+*`ui-guest-docshot1.png` — run docshot1 (2026-11-16): the console held its
+own wire session in the guest (DISC_OPEN -> SIZE -> TOC reads -> DISC_CLOSE,
+catalog `CDSML8558` decoded off port 2002) and the rip client PASSED in the
+same run. Captured at 320x180 over the UART (3x upscaled here).*
+
+![The console watching a second client rip](../evidence/bx510-guest/graphics/gallery/ui-guest-c132-watch.png)
+
+*`ui-guest-c132-watch.png` — the c132 overlap experiment: `DAEMON CLIENT
+CONNECT (1 live)`, `RIP WATCH file=/tmp/ripA.bin`, `RIP DONE 128 sectors` —
+the console observed a second client working, live.*
 
 | image | what it shows | provenance |
 |---|---|---|
 | `ui-sim-golden-s1.png` | the accepted golden frame, scene s1-full, 1920x1080: master TOC + both area TOCs + 6 tracks + ASCII disc map | accepted by explicit human `make ui-golden GOLDEN=accept`; renderer sha + spec sha + font sha recorded in `regress/golden/manifest.json` |
-| `ui-guest-docshot1.png` | the SAME scene rendered INSIDE the Sony guest (QEMU, kernel 2.6.35), 320x180 capture upscaled 3x | run `ui-docshot1` (2026-11-16): the UI held its own wire session (`UI-EV 0003-0012`: DISC_OPEN -> SIZE -> READ 510x10 -> READ 544x40 -> READ 353804x40 -> DISC_CLOSE), decoded `cat=CDSML8558 year=2019` from bytes read off port 2002, and the rip client PASSED in the same run (`CLIENT_PASS`). Transcript: `evidence/bx510-guest/bdpdrv/bdpdrv-rundocshot1.uart.log` |
-| `ui-guest-c132-watch.png` | the UI while a SECOND client rips: `* DAEMON CLIENT CONNECT (1 live)`, `RIP WATCH file=/tmp/ripA.bin`, `RIP DONE 128 sectors` | run c132 (the F-1 overlap experiment); `evidence/bx510-guest/graphics/ui-c132/shot.md` |
+| `ui-guest-docshot1.png` | the SAME scene rendered INSIDE the Sony guest (QEMU, kernel 2.6.35), 320x180 capture upscaled 3x | run `ui-docshot1` (2026-11-16): the console held its own wire session (`UI-EV 0003-0012`: DISC_OPEN -> SIZE -> READ 510x10 -> READ 544x40 -> READ 353804x40 -> DISC_CLOSE), decoded `cat=CDSML8558 year=2019` from bytes read off port 2002, and the rip client PASSED in the same run (`CLIENT_PASS`). Transcript: `evidence/bx510-guest/bdpdrv/bdpdrv-rundocshot1.uart.log` |
+| `ui-guest-c132-watch.png` | the console while a SECOND client rips: `* DAEMON CLIENT CONNECT (1 live)`, `RIP WATCH file=/tmp/ripA.bin`, `RIP DONE 128 sectors` | run c132 (the F-1 overlap experiment); `evidence/bx510-guest/graphics/ui-c132/shot.md` |
 
 Guest-vs-SIM parity: per-region ink correlation >= 0.85 on the latest ui-loop
 runs (`make ui-parity`); layout regression 5/5 scenes PASS with the accepted
 goldens (`make ui-regress`).
-
-## The HUD (`sacd_hud`) — cyberpunk capture console
-
-| image | what it shows | provenance |
-|---|---|---|
-| `hud-sim.png` | Mac SIM render, 1280x720, real Sony font + synthetic telemetry | `make sacd-hud-sim` (the layout-iteration loop, seconds per frame) |
-| `hud-guest-render.png` | the HUD rendered in the real Sony guest, 640x360x3 capture decoded from the UART `FBPIX` hex line | `make sacd-hud-guest` — gate PASS 3x on 2026-11-16 (rc=0, mean luminance 83.84); green since e9dbd8b (pool-mmap render path) |
-| `hud-anim.gif` | the HUD animating: rotating wireframe cube, perspective grid, CRT sweep, cursor blink | `make sacd-hud-anim`; blink period asserted 2 Hz +/-10% by `make ui-anim` |
 
 ## Capture-fidelity notes (read before judging image quality)
 
@@ -107,4 +101,4 @@ goldens (`make ui-regress`).
     make sacd-hud-anim                # hud-anim.gif
     make sacd-hud-guest               # guest HUD render + gate verdict
     make bx510-ui-loop RUNID=<id>     # fresh guest UI capture -> ui-<id>/
-    make ui-regress-all               # layout + animation + guest parity suite
+    make ui-regress-all               # layout + animation + guest-parity suite

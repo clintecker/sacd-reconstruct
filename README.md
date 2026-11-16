@@ -8,14 +8,12 @@ same binary as a client rips playable DSF files from it, and a QEMU model of
 the player runs Sony's own kernel and rootfs to prove all of it without
 touching hardware.
 
-![The daemon UI, as the emulated player paints it](evidence/bx510-guest/graphics/gallery/ui-sim-golden-s1.png)
+![The daemon's UI — the HUD, painted by the daemon itself](evidence/bx510-guest/graphics/gallery/hud-in-daemon-panel.png)
 
-*The daemon's console UI — this exact frame is proven to render inside
-Sony's own guest OS. Below, the in-daemon HUD: the daemon painting its own
-telemetry panel. [docs/GRAPHICS-GALLERY.md](docs/GRAPHICS-GALLERY.md)
-embeds the rest.*
-
-![The in-daemon HUD: the daemon itself painting its panel](evidence/bx510-guest/graphics/gallery/hud-in-daemon-panel.png)
+*The daemon's UI is its HUD: `sacd_extract_160 -S --hud=panel` paints this
+panel from its own live state while it serves port 2002. This exact frame is
+proven to render inside Sony's own guest OS
+([docs/GRAPHICS-GALLERY.md](docs/GRAPHICS-GALLERY.md) embeds the rest).*
 
 ## Status (updated 2026-11-16)
 
@@ -50,8 +48,9 @@ embeds the rest.*
   through the reconstructed daemon — 213,188,877 B (track 1) and
   301,154,576 B (track 2), deterministic across repeat rips, DST→DSD decode
   exercised (`evidence/bx510-guest/rip/README.md`).
-- **The UI/HUD renders**: layout regression with accepted frame goldens,
-  guest renders gated on non-black, guest-vs-sim per-region parity ≥ 0.85;
+- **The HUD (the daemon's UI) renders**: layout regression with accepted
+  frame goldens (from the client-leg console artifact), guest renders gated
+  on non-black, guest-vs-sim per-region parity ≥ 0.85;
   screenshots in `evidence/bx510-guest/graphics/gallery/`
   ([docs/GRAPHICS-GALLERY.md](docs/GRAPHICS-GALLERY.md)).
 - **One HUD, built into the daemon**: `sacd_extract_160 -S --hud=console`
@@ -86,7 +85,7 @@ The rule everywhere: emulator results are predictions; the player is truth.
 - `emulator-kit/` — the `sony-bx510` QEMU machine (NAND, HDHOST, UART, cipher)
 - `tools/` — verification + harness (see [tools/README.md](tools/README.md)
   for the full index: parity gates, wire client, rig runners, guest shims,
-  UI/HUD, hardware lane, publishing pipeline)
+  HUD lane, hardware lane, publishing pipeline)
 - `evidence/` — recorded proof, one self-contained bundle per claim, results
   docs separating **demonstrated** from **inferred**
 - `docs/` — [architecture](docs/ARCHITECTURE.md) · [what's inside the

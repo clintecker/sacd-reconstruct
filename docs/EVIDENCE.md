@@ -21,7 +21,7 @@ the live number.
 | `evidence/bx510/hw-session-*/` | the hardware session: candidate acceptance, standby behaviour, and the mechanisms learned the hard way |
 | `evidence/bx510-guest/bdpdrv/` | the bdpdrv/bdpvirt lane: guest runs C50..C139 with per-run transcripts + decode notes (read path, cipher spec, oracles) |
 | `evidence/bx510-guest/rip/` | the rip milestone: DSF files produced by the reconstructed client against the emulated player (md5s + reproduce recipe; files stay VM-side over the 100 MB git limit) |
-| `evidence/bx510-guest/graphics/` | UI/HUD lane: guest frame captures per run (`ui-<runid>/`), the accepted layout goldens, and `gallery/` — the human-viewable index ([docs/GRAPHICS-GALLERY.md](GRAPHICS-GALLERY.md)) |
+| `evidence/bx510-guest/graphics/` | HUD lane: guest frame captures per run (`ui-<runid>/`), the accepted layout goldens, and `gallery/` — the human-viewable index ([docs/GRAPHICS-GALLERY.md](GRAPHICS-GALLERY.md)) |
 
 ## Archive
 

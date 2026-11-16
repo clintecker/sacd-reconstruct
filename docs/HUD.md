@@ -136,14 +136,16 @@ make sacd-hud-guest       # render inside the QEMU guest, gated on rc + non-blac
 
 ## What it looks like (screenshots)
 
-`docs/GRAPHICS-GALLERY.md` holds the current gallery: the Mac SIM render
-(`gallery/hud-sim.png`), the guest render decoded from the UART capture
-(`gallery/hud-guest-render.png`, gate PASS 3x 2026-11-16, mean luminance
-83.84), and the animation (`gallery/hud-anim.gif`).
+The product screenshot is the in-daemon panel frame:
+`gallery/hud-in-daemon-panel.png` — `sacd_extract_160 --hud=panel` painting
+its own panel in the guest (run hudpan2, pool mean luminance 50.49, gated
+PASS). `docs/GRAPHICS-GALLERY.md` embeds it with the run's markers, plus
+the renderer core's standalone forms (SIM render, standalone guest render,
+animation) for the stepping-stone lineage.
 
-On the player the HUD is started by the session stick's supervisor, which
-preloads the CPSA module on a free compid, starts the daemon with its stdout
-captured, then draws into the pool slice.
+On hardware the daemon IS the HUD: the stick's supervisor preloads the CPSA
+module on a free compid and starts `sacd_extract_160 -S --hud=panel`; no
+second process exists.
 
 ## The game it plays with the appliance
 

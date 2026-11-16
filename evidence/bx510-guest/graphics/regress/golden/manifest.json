@@ -1,10 +1,10 @@
 {
   "schema": "sacd-ui-regress-golden/1",
-  "accepted": "2026-11-15T14:28:06-06:00",
+  "accepted": "2026-11-15T19:56:06-06:00",
   "why": "seeded by `make ui-golden GOLDEN=accept` \u2014 goldens change ONLY on an explicit accept",
   "renderer": {
-    "path": "/tmp/pin/sacd_ui.c",
-    "sha256": "206119820866bcc9a2752bb75fcda5518480a10edd7ccead64583d0aba34a589"
+    "path": "tools/sacd_ui.c",
+    "sha256": "8bf52cf15da68f0ebed8f77a35eb3aecb36a29ab133479bbec53d1e5e1328137"
   },
   "patch": {
     "path": "tools/sacd_ui_spec_dump.patch",
@@ -12,7 +12,7 @@
   },
   "spec": {
     "path": "/Users/clint/code/sacd-reconstruct/tools/ui_layout_spec.json",
-    "sha256": "54ffc800bca2e79fd03befece41186632e6a13a9e90e89f669fbf8e9e7acdd22"
+    "sha256": "09f6c3f31f34b2f8a7cee8eeb2afd0baaf934e895b2b03656f35c7ef86fd7086"
   },
   "font": {
     "path": "/Users/clint/code/sacd-reconstruct/evidence/bx510/display-payload/sony-font.ttf",
@@ -92,19 +92,19 @@
       }
     },
     "s5-many-tracks": {
-      "ppm_sha256": "eed6f43152521e554faf8bb7d376ae671ff065b18df5af15fc110dbb9edb6aca",
+      "ppm_sha256": "8f6baec7a410cd3a9b249b13cc74d339f01cb831cb6d1c9c07f9cd8d6f2624d7",
       "geometry": [
         1920,
         1080
       ],
       "ink": {
-        "frame": 0.021532,
+        "frame": 0.021449,
         "title": 0.01618,
         "status": 0.034323,
         "panel_2ch": 0.019579,
         "panel_multi": 0.020591,
         "rule_panels_end": 0.0,
-        "log": 0.019832,
+        "log": 0.019736,
         "rule_log_end": 0.0,
         "summary": 0.025331
       }

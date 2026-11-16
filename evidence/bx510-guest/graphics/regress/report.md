@@ -1,9 +1,9 @@
-# UI layout regression — FAIL
+# UI layout regression — PASS
 
-- renderer: `tools/sacd_ui.c` sha256 `0884b302940851928928798fafa1ae6e4ae09f596c137587eb01a5e59d1b2e73`
+- renderer: `tools/sacd_ui.c` sha256 `8bf52cf15da68f0ebed8f77a35eb3aecb36a29ab133479bbec53d1e5e1328137`
 - spec: `/Users/clint/code/sacd-reconstruct/tools/ui_layout_spec.json` sha256 `09f6c3f31f34b2f8a7cee8eeb2afd0baaf934e895b2b03656f35c7ef86fd7086`
 - font: `/Users/clint/code/sacd-reconstruct/evidence/bx510/display-payload/sony-font.ttf` sha256 `98121878fc7fc85205aa6b62bd40d9fb478b3629e62ec4f947c80ec9830d7fd9`
-- run: 2026-11-15T15:53:36-06:00
+- run: 2026-11-15T19:59:24-06:00
 
 ## scenes
 
@@ -31,24 +31,3 @@
 - scale independence status: ink 0.0321 vs 0.0343, bbox drift 0px
 - scale independence log: ink 0.0161 vs 0.0198, bbox drift 15px
 - scale independence summary: ink 0.0138 vs 0.0253, bbox drift 0px
-
-## FAILURES
-
-- GOLDEN MISMATCH s5-many-tracks: 8f6baec7a410cd3a… != golden eed6f43152521e55… — 328 px changed, worst region log (13 changed px); diff: /Users/clint/code/sacd-reconstruct/evidence/bx510-guest/graphics/regress/diff/s5-many-tracks.diff.png
-
-## golden mismatch, per-region ink
-
-
-#### s5-many-tracks
-
-| region | changed px | golden ink | now ink | ink delta |
-|---|---|---|---|---|
-| frame | 31 | 0.0215 | 0.0214 | -0.0001 |
-| title | 0 | 0.0162 | 0.0162 | +0.0000 |
-| status | 0 | 0.0343 | 0.0343 | +0.0000 |
-| panel_2ch | 0 | 0.0196 | 0.0196 | +0.0000 |
-| panel_multi | 0 | 0.0206 | 0.0206 | +0.0000 |
-| rule_panels_end | 0 | 0.0000 | 0.0000 | +0.0000 |
-| log | 13 | 0.0198 | 0.0197 | -0.0001 |
-| rule_log_end | 0 | 0.0000 | 0.0000 | +0.0000 |
-| summary | 0 | 0.0253 | 0.0253 | -0.0000 |

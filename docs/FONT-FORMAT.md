@@ -1,7 +1,7 @@
-# FONT-FORMAT.md — Sony's shipped screen font `/res/font.bin` (BX510, S1)
+# Sony's shipped screen font: `/res/font.bin`
 
-Status: **decoded 2026-11-08**, source file `incoming/mt85-analyst/font.bin`
-(62572 bytes, sha256 `cd5fa82a1044bc486e6ac2347209ac721709f26f87caa31805950e65b0a16827`).
+The BX510's own typeface, decoded from the shipped file (62,572 bytes,
+sha256 `cd5fa82a…`).
 Every structural claim below is VERIFIED from bytes (Python `struct` parses over
 the actual file; offsets are file-absolute hex unless marked sfnt-relative).
 Decoded by `tools/bx510_font_decode.py` (stdlib-only); cross-checked with

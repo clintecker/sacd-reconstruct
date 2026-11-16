@@ -150,7 +150,7 @@ Both marker files exist so a guest sequence never has to guess a duration:
 | `/res/ui-session.done` (`SACD_UI_DONE_FILE`) | the UI, after `DISC_CLOSE` | the accept slot is free — a second client may start |
 | `/res/ui-frame.done` (`SACD_UI_FRAME_FILE`) | the UI, once, after its FIRST painted frame | there is a frame on the surface to dump — the UI may be killed |
 
-The frame marker is what replaced the fixed `UI_WAIT` sleep (issue #13: the
+The frame marker is what replaced the fixed `UI_WAIT` sleep (the sleep was
 session alone is a 22 s `DISC_OPEN`, so a sleep was too short in `uiloop7` and
 had to be 150 s in `c126`). In WATCH mode the guest wait is the frame marker
 **AND** the rip client's own rc marker (`/res/rip.rc`), so the UI stays alive

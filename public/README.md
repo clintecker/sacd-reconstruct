@@ -1,47 +1,74 @@
-# SACD daemon reconstruction — Sony BDP-BX510 (`sacd_extract_160`)
+# sacd_extract_160
 
-In 2013, Sony shipped a Blu-ray player — the BDP-BX510 — that could play SACDs
-and, quietly, rip them: a small daemon on the player (`sacd_extract_160`) reads
+Reconstructing Sony's secret SACD-ripping daemon — from the shipped binary to
+working source, proven byte-for-byte, and now ripping real music files out of
+an emulated player.
+
+<p align="center">
+  <img src="evidence/bx510-guest/graphics/gallery/ui-sim-golden-s1.png" width="720" alt="The reconstructed UI: disc TOC, track list, ASCII disc map">
+</p>
+
+*The daemon's console UI, re-rendered by the reconstructed code — the same
+frame the emulated player paints ([gallery](docs/GRAPHICS-GALLERY.md) for the
+rest, including what the real guest OS draws).*
+
+## The story
+
+In 2013 Sony shipped the BDP-BX510 Blu-ray player. It played SACDs — and,
+quietly, ripped them. A small daemon on the player (`sacd_extract_160`) reads
 raw encrypted sectors through the player's CPSA decryption hardware and serves
 the plaintext over TCP port 2002. The tool leaked, became the community's
-ripping method, and was never documented.
+standard ripping method, and was never documented. The source was never
+public. The last release shipped as a stripped ARM binary.
 
-This repository is a **function-level reconstruction** of that daemon, written
-from the shipped binary: the public [sacd-ripper v0.3.7](DELTA.md) tree plus the
-closed-source community delta, recovered from disassembly and verified against
-the original. The tooling that ships with it proves the reconstruction behaves
-**byte-identically** to the original — verified at three altitudes, ending on
-the real player with a real disc.
+This repository is that binary, rebuilt: the public
+[sacd-ripper v0.3.7](DELTA.md) tree plus the closed-source community delta,
+recovered from disassembly and verified against the original — 387 of 390
+functions instruction-identical, the rest accounted for, down to literal-pool
+contents and wire bytes.
 
-![The HUD scene, rendered by the host simulator](evidence/bx510/display-payload/hud-anim.gif)
+## What it does today
 
-*Side project: a companion HUD for the player, rendered here by the host
-simulator — LCARS-style console on an 8088-VGA canvas (320×180, 16 colours,
-integer-scaled ×6). The on-device state, honestly negative in places, is
-documented in [docs/HUD.md](docs/HUD.md).*
+```sh
+# the daemon, serving a disc over TCP 2002 (just like the original):
+sacd_extract_160 -S
 
-## What was demonstrated
+# the ripper client — the SAME binary, no -S:
+sacd_extract_160 -s -c -t 1 -i 127.0.0.1:2002 ~/rip
+#   -> ~/rip/01 - <album>.dsf      (DST lossless -> DSD, playable)
+```
 
-| Claim | How it is established |
-|---|---|
-| Function-level parity (387/390 functions identical after normalisation) | [`tools/fn_diff.py`](tools/fn_diff.py) against the original binary; three accepted residuals: the two startup stubs and one **deliberate divergence** (`recursive_mkdir` tolerates `EPERM` — the original ran as root on the player and never met it; a non-root reproducer does) |
-| Literal-pool parity (content + load-site position) | [`tools/pool_audit.py`](tools/pool_audit.py) — this caught two real reconstruction misreads (`L"c"` and `__FILE__`) |
-| Byte-identical wire behaviour | full-system differential: Sony's own kernel + rootfs in QEMU, both binaries, same disc, raw TX/RX captures compared byte-for-byte |
-| Byte-identical on the **real player** | on-device run: `DISC_OPEN`, `SIZE 1064208`, sector hashes matching the reference ISO, beyond-EOF refusal, clean reconnect — and the reconstruction survives player standby |
-| Large-image boundary behaviour (in the QEMU guest) | multi-GiB battery through the HDHOST device, sentinels across the 2 GiB and 4 GiB byte-offset boundaries |
-| The decrypt leg, for real | Level-1 synthetic cipher: a derived disc image carries the audio areas encrypted at rest; the emulated CPSA decrypt runs on the real ioctl path; 7 acceptance gates incl. negative controls (`tools/bx510_cipher_check.py`) |
-| **A real rip out of the emulated player** | the same binary runs as the ripper client: `sacd_extract_160 -s -c` produced playable DSF files of the fixture disc's tracks through the reconstructed daemon (deterministic: two rips, one md5); DST->DSD decode exercised end to end |
-| The panel UI/HUD | layout regression with accepted frame goldens, guest renders gated on non-black, guest-vs-sim per-region parity >= 0.85; see [docs/GRAPHICS-GALLERY.md](docs/GRAPHICS-GALLERY.md) |
+That rip was the finish line, and it's crossed — under the emulator. The
+daemon and the client are the same program, the DSF files are deterministic
+(two rips, one md5), and every byte the client received came through the
+reconstructed protocol stack. The [gallery](docs/GRAPHICS-GALLERY.md) also
+shows the on-panel UI and a cyberpunk HUD for the player's display.
 
-Every bundle lives in [`evidence/`](evidence/) with a results document that
-separates **demonstrated** from **inferred**; see
-[docs/EVIDENCE.md](docs/EVIDENCE.md) for how to read them and
-[docs/REPRODUCE.md](docs/REPRODUCE.md) to rerun any of it.
+## How it's proven
 
-## The wire protocol
+Nothing here is claimed from a library call or an eyeballed diff. Three
+altitudes, cheapest first, each with committed evidence:
 
-The whole protocol is two messages over TCP 2002 — nanopb-era protobuf frames
-terminated by a single `0x00` tag byte, no length prefix:
+| Altitude | What runs | The proof |
+|---|---|---|
+| **qemu-user rig** | the daemon as real ARM code; device touches interposed onto a disc image | original vs reconstruction on the same disc, manifests identical ([`evidence/qemu-rig/`](evidence/qemu-rig/)) |
+| **full-system guest** | Sony's own Linux 2.6.35 kernel + rootfs booting in our [`sony-bx510`](emulator-kit/) QEMU machine | same client sequence to both binaries, raw TX/RX compared byte-for-byte ([`evidence/bx510-guest/differential/`](evidence/bx510-guest/differential/)) |
+| **the real player** | a USB stick boots the daemon on actual hardware | sector hashes matching the reference ISO, beyond-EOF refusal, standby survival ([`evidence/bx510/hw-session-2026-11-05/`](evidence/bx510/hw-session-2026-11-05/RESULTS.md)) |
+
+<p align="center">
+  <img src="evidence/bx510-guest/graphics/gallery/hud-sim.png" width="420" alt="The cyberpunk HUD (host render)">&nbsp;
+  <img src="evidence/bx510-guest/graphics/gallery/hud-guest-render.png" width="290" alt="The same HUD rendered inside Sony's real guest OS">
+</p>
+
+*The companion HUD: host render (left) and the same code running inside
+Sony's real guest OS (right). The decrypt leg is proven for real too — a
+derived disc image carries the audio areas encrypted at rest, and the
+emulated CPSA path decrypts under seven acceptance gates.*
+
+## The protocol
+
+Two messages over TCP 2002 — protobuf frames terminated by a single `0x00`
+byte, no length prefix:
 
 ```
 ServerRequest:   08 <type> 10 <offset> 18 <count> 00
@@ -50,63 +77,56 @@ ServerResponse:  08 <type> 10 <result:int64> [1A <len> <data>] 00
 type:  1=DISC_OPEN  2=DISC_CLOSE  3=DISC_READ  4=DISC_SIZE
 ```
 
-`DISC_READ` returns `result` = sectors read and `data` = `result × 2048` bytes.
-The server clamps `block_size` to 128 and to the disc's encryption-range
-boundaries, and closes the connection after `DISC_CLOSE`. The two numbers that
-define everything: a raw SACD sector is **2064** bytes (2048 payload + 16
-header); the daemon reads the 2064-byte form, has the CPSA module decrypt it
-via ioctl, and ships the **2048-byte** logical sector — which is why TOC
-total-sectors × 2048 equals the ISO byte length exactly.
+The two numbers that define everything: a raw SACD sector is **2064** bytes
+(2048 payload + 16 header); the daemon reads the 2064-byte form, has the CPSA
+module decrypt it via ioctl, and ships the **2048-byte** logical sector.
+[`tools/sacd_client.py`](tools/sacd_client.py) is a stdlib-only client that
+speaks this protocol.
 
-[`tools/sacd_client.py`](tools/sacd_client.py) is a stdlib-only client
-(`capture`/`compare`/`selftest`) that speaks this protocol.
-
-## Quick start
+## Using this repository
 
 ```sh
-# 1. build the reconstructed daemon (ARM)
-#    Toolchain: gnuarm 2009q3 (GCC 4.4.1, glibc 2.9) — the release build is
-#    driven by tools/release_build.py, which also documents its prerequisites.
-#    sacd_read.ko is embedded at link time and is NOT in this repo: extract it
-#    from your own player (see docs/PROVENANCE.md).
-make -C reconstruct CROSS=/path/to/arm-none-linux-gnueabi- verify
+# build the reconstruction (GNU GCC 4.4.1 / glibc 2.9 — the recovered recipe):
+python3 tools/release_build.py
+sh    tools/release_verify.sh        # the 5-leg verification gate
 
-# 2. verify parity against a dump of your own player:
+# verify parity against a dump of YOUR player's binary:
 python3 tools/fn_diff.py dump/sacd_extract_160 reconstruct/release/sacd_extract_160_release
 python3 tools/pool_audit.py dump/sacd_extract_160 reconstruct/release/sacd_extract_160_release
 
-# 3. or talk to a running daemon over the wire:
-python3 tools/sacd_client.py capture --host player.local --port 2002 --out out/
+# unit gates (77 tests, including the alteration controls that keep PASS honest):
+make tests
+
+# boot the emulated player:
+python3 emulator-kit/run.py --images <dir> shell <fixture.img>
 ```
 
-## Repository map
+Full reproduction ladder (rig → guest → hardware): [docs/REPRODUCE.md](docs/REPRODUCE.md).
 
-| Path | What it is |
+## Where to read next
+
+| Doc | What it covers |
 |---|---|
-| `reconstruct/` | the reconstructed C source (daemon, libsacd, libdstdec, libcommon, libid3) |
-| `tools/` | verification + harness: parity diff, wire client, pool auditor, HUD, guest shims |
-| `emulator-kit/` | QEMU SoC model of the player (NAND, HDHOST block device, UART, sacd-cipher) — targets without hardware |
-| `docs/` | [architecture](docs/ARCHITECTURE.md) · [what's inside the binary](docs/DAEMON-MAP.md) · [evidence guide](docs/EVIDENCE.md) · [reproduction](docs/REPRODUCE.md) · [provenance](docs/PROVENANCE.md) |
-| `evidence/` | recorded proof: gate runs, differential captures, on-player sessions, rip results, HUD/UI renders ([gallery](docs/GRAPHICS-GALLERY.md)) |
-| `DELTA.md` | the change-set the closed binary applies to the public v0.3.7 tree, verified from disassembly |
+| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | the device, the daemon, the harness — three layers |
+| [docs/DAEMON-MAP.md](docs/DAEMON-MAP.md) | a guided tour of the binary: module byte budgets, thread model, the 2064/2048 geometry |
+| [docs/RIG-ARCHITECTURE.md](docs/RIG-ARCHITECTURE.md) | how the emulation rigs work (qemu-user + full-system) |
+| [docs/LIFECYCLE.md](docs/LIFECYCLE.md) | the build/test ladder from idea to hardware |
+| [docs/EVIDENCE.md](docs/EVIDENCE.md) | how to read the evidence bundles |
+| [docs/HUD.md](docs/HUD.md) | the on-panel HUD |
+| [DELTA.md](DELTA.md) | the exact change-set vs public v0.3.7, verified from disassembly |
 
-The best entry point after this README is **[docs/DAEMON-MAP.md](docs/DAEMON-MAP.md)** —
-a guided tour of the binary (byte budget per module, thread model, the 2064/2048
-geometry), with numbers parsed from the linker map rather than hand-written.
-
-## What is *not* in this repository
+## Not in this repository
 
 Sony's binaries. The original daemon, the CPSA kernel module (`sacd_read.ko`)
 and the firmware are **not redistributed** — [docs/PROVENANCE.md](docs/PROVENANCE.md)
-records their SHA-256 fingerprints (full digests live in the evidence manifests)
-so you can verify against your own device. Large
-regenerable fixtures (NAND images, QEMU disks) are also omitted; see
-[docs/REPRODUCE.md](docs/REPRODUCE.md).
+records their SHA-256 fingerprints so you can verify against your own device.
+Large regenerable fixtures (NAND images, QEMU disks) are omitted;
+[docs/REPRODUCE.md](docs/REPRODUCE.md) shows how to regenerate them.
 
 ## Licence
 
-Our additions: MIT (see [LICENSE](LICENSE)). The reconstruction itself has
-derivable lineage you should know about: `libsacd/` is built on the public
-sacd-ripper v0.3.7 tree, `libid3/` derives from libid3tag, and `libdstdec/`
-follows the Philips DST reference decoder — see [THIRD_PARTY.md](THIRD_PARTY.md)
-and [DELTA.md](DELTA.md). Sony's binaries remain Sony's.
+Our additions: MIT ([LICENSE](LICENSE)). The reconstruction has derivable
+lineage you should know about: `libsacd/` builds on the public sacd-ripper
+v0.3.7 tree, `libid3/` derives from libid3tag, `libdstdec/` follows the
+Philips DST reference decoder — see [THIRD_PARTY.md](THIRD_PARTY.md) and
+[DELTA.md](DELTA.md). Sony's binaries remain Sony's.

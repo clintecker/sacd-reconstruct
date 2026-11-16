@@ -1,9 +1,8 @@
 # Reproducing the results
 
 > Lifecycle context: this document maps the same ladder as
-> `docs/LIFECYCLE.md` — unit gates (§5), wire-level without hardware (§2),
-> full-system QEMU (§3), hardware gate (§4) — from the outside-in
-> (reproducer's view rather than developer's view).
+> `docs/LIFECYCLE.md` from the reproducer's view rather than the developer's —
+> parity first, then wire-level, then the full-system guest, then hardware.
 
 Nothing here needs a player except the hardware gate. Everything else runs on a
 Linux host (x86-64 is fine) with Python 3, and `qemu-system-arm` for the full

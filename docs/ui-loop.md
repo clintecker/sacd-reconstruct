@@ -86,7 +86,7 @@ Measured lessons, each of which cost a fire:
    exits 2 unless the transcript carries the template's own `UI_SHOT_DONE`
    marker: another lane's trace can carry `FBGEOM` blocks and would otherwise
    "pass" as a frame from a build nobody asked about.
-10. **The UI kill waits on a MARKER, never on a sleep (issue #13).** The UI's
+10. **The UI kill waits on a MARKER, never on a sleep.** The UI's
    first frame includes its own client session — `DISC_OPEN` alone measured
    22 s (c123/c132/c133) — so one number cannot be right on both sides:
    `UI_WAIT=3 s` read both buffers BLACK (`uiloop7`: an honest verdict on a
@@ -139,7 +139,7 @@ Exit codes from `bx510-ui-shot`: 0 at least one buffer passed, 1 both black,
 | Run | UI built | Result |
 |---|---|---|
 | `uiloop6` | a throwaway raw-fbdev painter (validation stand-in) | `fbdev PASS (mean luminance 40.57)` / `pool BLACK` — the egress path produces a real, viewable frame through QEMU |
-| `uiloop7` | `tools/sacd_ui.c` (the UI lane's build) | both buffers `BLACK` at `UI_WAIT=3 s` — the fixed sleep that became issue #13 (shorter than the 22 s session, so no frame could exist); honest verdict for the UI as it stood, not a harness failure |
+| `uiloop7` | `tools/sacd_ui.c` (the UI lane's build) | both buffers `BLACK` at `UI_WAIT=3 s` — the fixed sleep that was replaced by the frame marker (shorter than the 22 s session, so no frame could exist); honest verdict for the UI as it stood, not a harness failure |
 | `docshot1` (2026-11-16) | `tools/sacd_ui.c` | PASS — the UI held its own wire session (`UI-EV 0003–0012`: DISC_OPEN → SIZE → READ 510×10 → both area TOCs → DISC_CLOSE), decoded `cat=CDSML8558` off the socket, the rip client PASSED in the same run, pool mean luminance 13.12 with 3 damaged rows. Gallery: `docs/GRAPHICS-GALLERY.md` (`gallery/ui-guest-docshot1.png`) |
 
 `u1`/`u2`/`ui1` in `evidence/bx510-guest/bdpdrv/` are concurrency casualties

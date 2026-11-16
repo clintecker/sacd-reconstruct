@@ -1,7 +1,7 @@
-# QEMU protocol rig architecture (issue #5)
+# The QEMU protocol rig
 
-How the port-2002 daemon is exercised end-to-end under emulation, for
-teams reproducing this pathway.
+How the port-2002 daemon is exercised end-to-end under emulation —
+the reproducible alternative to owning the player.
 
 ## Model: qemu-user + LD_PRELOAD, not full-system emulation
 
@@ -91,7 +91,8 @@ two manifests.
 
 The rig proves protocol-behavior equivalence above the ioctl boundary.
 It does not prove kernel-module crypto, the player's loader/libc, or real
-module installation — that is the on-player baseline/replay (issue #6).
+module installation — those are the full-system rig's job and the on-player
+session is the final confirmation.
 
 ## The full-system companion: HDHOST, the synthetic host-image device
 

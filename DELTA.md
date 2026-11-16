@@ -222,7 +222,9 @@ critical path). .data order finding documented above instead of fixed.
 
 One release ELF built from tracked sources by tools/release_build.py via
 `make verify` (tools/release_verify.sh), reproducing bit-for-bit across
-independent full runs:
+independent full runs (the ELF of the Nov-5 hardware trial; **the current
+release candidate is b0848b73…** — it gained the recursive_mkdir EPERM fix
+on 2026-11-16 and re-passed the same gates):
 
     RELEASE IMAGE  reconstruct/release/sacd_extract_160_release
     SHA-256       e91720fbbbd592505bde6630843b0495ff82a93e40c0e427aaa70a081ff9ae22
@@ -339,7 +341,9 @@ Overlap (&conn_s race) verdicts: the starved-session tail class
 both across runs — so starved exchanges compare as one class; successful
 exchanges still compare exactly. Both replays IDENTICAL
 (evidence/qemu-rig/20261103-rawframe/, daemon SHAs stamped in manifests:
-0fdcefdb… original, e91720fb… release).
+0fdcefdb… original, e91720fb… the then-release; **superseded 2026-11-16** —
+the release candidate now carries the recursive_mkdir EPERM fix and hashes
+to b0848b73…, re-verified identical in the newer qemu-rig runs).
 
 Player: BDP-S5100/BX510 family unit at 10.20.1.236 (M15.R.0257),
 pinned into evidence/bx510/BASELINE-RUNBOOK.md. Physical baseline still

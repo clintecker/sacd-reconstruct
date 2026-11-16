@@ -8,6 +8,12 @@ same binary as a client rips playable DSF files from it, and a QEMU model of
 the player runs Sony's own kernel and rootfs to prove all of it without
 touching hardware.
 
+![The daemon UI, as the emulated player paints it](evidence/bx510-guest/graphics/gallery/ui-sim-golden-s1.png)
+
+*The daemon's console UI — this exact frame is proven to render inside
+Sony's own guest OS; [docs/GRAPHICS-GALLERY.md](docs/GRAPHICS-GALLERY.md)
+embeds the rest, including the cyberpunk HUD.*
+
 ## Status (updated 2026-11-16)
 
 - **387/390 functions instruction-identical** (normalized disassembly,

@@ -241,7 +241,7 @@ above. Techniques that live only in session history are lost techniques.
 | `sacd-usb-debug-mode` | `(no arguments)` | set the AutoScript to the daemon-debug launcher — runs the stick's daemon with output captured + exit status + dmesg (candlaunch.sh) — for naming a fast on-player death |
 | `sacd-usb-display-mode` | `(no arguments)` | set the AutoScript to the display leg — cyberdraw --anim on /dev/fb0 through displaylaunch.sh (DISPLAY_ANIM=45 default) — the TV photo/video test; the log names the cause when the screen stays black |
 | `sacd-usb-original` | `(no arguments)` | put the ORIGINAL ELF on the stick — SHA-verified 0fdcefdb… — the baseline daemon |
-| `sacd-usb-candidate` | `(no arguments)` | put the RELEASE CANDIDATE ELF on the stick — SHA-verified e91720fb… — for the #6 candidate trial after the baseline lands |
+| `sacd-usb-candidate` | `(no arguments)` | put the RELEASE CANDIDATE ELF on the stick — SHA-verified against reconstruct/release/sacd_extract_160_release (currently b0848b73…, rebuilt with the EPERM fix 2026-11-16) — for the next hardware visit |
 | `sacd-hw-wait` | `(no arguments)` | block until the player's daemon listens — HW_HOST=10.20.1.236 HW_PORT=2002 — run after powering the player on |
 | `sacd-hw-baseline` | `(no arguments)` | run the on-player baseline capture — waits for the listener, captures with full metadata, tees the console into SESSION_DIR |
 | `sacd-hw-baseline-retry` | `(no arguments)` | retry the baseline capture (fresh out dir + label) — for the zero-byte-DISC_OPEN case — wait ~90s first (no-SO_REUSEADDR TIME_WAIT) |

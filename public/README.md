@@ -51,8 +51,8 @@ altitudes, cheapest first, each with committed evidence:
 
 | Altitude | What runs | The proof |
 |---|---|---|
-| **qemu-user rig** | the daemon as real ARM code; device touches interposed onto a disc image | original vs reconstruction on the same disc, manifests identical ([`evidence/qemu-rig/`](evidence/qemu-rig/)) |
-| **full-system guest** | Sony's own Linux 2.6.35 kernel + rootfs booting in our [`sony-bx510`](emulator-kit/) QEMU machine | same client sequence to both binaries, raw TX/RX compared byte-for-byte ([`evidence/bx510-guest/differential/`](evidence/bx510-guest/differential/)) |
+| **qemu-user rig** | the daemon as real ARM code; device touches interposed onto a disc image | original vs reconstruction on the same disc, manifests identical ([`evidence/qemu-rig/`](evidence/qemu-rig/20261116-032705/capture-orig/manifest.json) — latest run manifest) |
+| **full-system guest** | Sony's own Linux 2.6.35 kernel + rootfs booting in our `sony-bx510` QEMU machine ([`emulator-kit/`](emulator-kit/README.md)) | same client sequence to both binaries, raw TX/RX compared byte-for-byte ([`evidence/bx510-guest/differential/`](evidence/bx510-guest/differential/transcript-orig.txt) — the transcript; captures alongside) |
 | **the real player** | a USB stick boots the daemon on actual hardware | sector hashes matching the reference ISO, beyond-EOF refusal, standby survival ([`evidence/bx510/hw-session-2026-11-05/`](evidence/bx510/hw-session-2026-11-05/RESULTS.md)) |
 
 <p align="center">

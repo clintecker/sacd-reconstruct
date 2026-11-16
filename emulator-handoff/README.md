@@ -73,7 +73,7 @@ python3 verify_daemons.py --qemu work/build/qemu-system-arm --images images \
   --release ../sacd-reconstruct/reconstruct/release/sacd_extract_160_release
 ```
 
-Use `--qemu bin/qemu-system-arm` with the prebuilt bundle. Both ELFs exited 0 and produced 1,059 identical stdout bytes with SHA-256 `139e40a3f95c22b1d3d4d6d172739be93d0618c39f4b8c06ef6eae9210664e18`. The reference ELF starts with SHA-256 `0fdcefdb` and the tested release starts with `e91720fb`. This exercises the target’s dynamic loader and libraries. The optical driver, port-2002 protocol and physical hardware remain separate tests. The `evidence/` directory holds the serial transcripts and the firmware partition manifest.
+Use `--qemu bin/qemu-system-arm` with the prebuilt bundle. (2026-11 run) Both ELFs exited 0 and produced 1,059 identical stdout bytes with SHA-256 `139e40a3f95c22b1d3d4d6d172739be93d0618c39f4b8c06ef6eae9210664e18`. The reference ELF starts with SHA-256 `0fdcefdb` and the release tested then started with `e91720fb` (the current release candidate hashes differently — it has since gained the recursive_mkdir EPERM fix; rerun this check against your build). This exercises the target’s dynamic loader and libraries. The optical driver, port-2002 protocol and physical hardware remain separate tests. The `evidence/` directory holds the serial transcripts and the firmware partition manifest.
 
 ## Image provenance
 

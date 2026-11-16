@@ -539,7 +539,7 @@ sacd-usb-display-mode:
 sacd-usb-original:
 	sh $(SACD)/tools/sacd_hardware.sh usb-original
 
-## SACD hardware :: sacd-usb-candidate :: put the RELEASE CANDIDATE ELF on the stick :: SHA-verified e91720fb… — for the #6 candidate trial after the baseline lands
+## SACD hardware :: sacd-usb-candidate :: put the RELEASE CANDIDATE ELF on the stick :: SHA-verified against reconstruct/release/sacd_extract_160_release (currently b0848b73…, rebuilt with the EPERM fix 2026-11-16) — for the next hardware visit
 .PHONY: sacd-usb-candidate
 sacd-usb-candidate:
 	sh $(SACD)/tools/sacd_hardware.sh usb-candidate

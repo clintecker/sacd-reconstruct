@@ -17,10 +17,13 @@ tree and neither is a HUD:
 
 ## Architecture: where the HUD lives
 
-**The in-daemon HUD is LANDED (2026-11-16).** One binary: `sacd_extract_160
--S --hud=console` serves port 2002 AND renders the HUD from its own live
-state — clients, ripping progress, disc stats — no `/proc` scraping, no
-ticker file, no second process, no UDP hop.
+**The in-daemon HUD is LANDED (2026-11-16) — both modes.** One binary:
+`sacd_extract_160 -S --hud=console|panel` serves port 2002 AND renders the
+HUD from its own live state — clients, ripping progress, disc stats — no
+`/proc` scraping, no ticker file, no second process, no UDP hop. The panel
+mode runs the proven retro renderer core (pool-mmap surface, Sony font)
+inside the daemon process; guest run `hudpan2` captured its frame (pool
+mean luminance 50.49, gated PASS — `evidence/bx510-guest/graphics/ui-hudpan2/`).
 
 The seam (`reconstruct/tool/hud_state.h`): the daemon publishes a state
 snapshot at its existing 1 Hz `server_loop` heartbeat and inside the
@@ -87,15 +90,18 @@ The **event matrix** replaces a text log: one column per event, bar height =
 sectors, colour = class (read / decrypt / client / error / system), older columns
 fade. You read bursts, gaps and errors as a pattern.
 
-## Telemetry sources (no daemon changes)
+## Telemetry sources
 
-| Source | Gives |
-|---|---|
-| `/proc/net/tcp` | whether `:2002` listens, how many sessions |
-| `/proc/<pid>/io`, `/proc/<pid>/stat` | daemon liveness (note: the daemon reads via ioctl, so `read_bytes` stays 0) |
-| `/proc/modules`, `/proc/misc` | CPSA module / minor 201 state |
-| host push (UDP 20023) | per-request events from the client: `OPEN`, `READ lsn=… n=…`, `CLOSE` |
-| daemon stdout | startup, module install, heartbeats, errors |
+**In-daemon HUD (the product):** the daemon's own live state, published
+through `hud_state.h` at the 1 Hz heartbeat and in the DISC_READ dispatch —
+client connectivity, reads served, sectors served, encrypted sectors, last
+LSN, progress against `total_sectors`, disc presence/type. No scraping, no
+second channel.
+
+**Stepping-stone HUD (the separate-process renderer):** `/proc/net/tcp`
+(listener state), `/proc/<pid>/io` daemon liveness, `/proc/modules` CPSA
+state, the daemon's stdout ticker, and the host's UDP 20023 push. These
+inputs retire when the panel-mode renderer moves in-daemon.
 
 ## What Sony ships that we use (verified on the real rootfs)
 
@@ -117,6 +123,11 @@ Sony's font sizes are what the device ships.
 ## Build and run
 
 ```sh
+# the ONE HUD, in the daemon (product form):
+make -C reconstruct ENABLE_HUD=1 CROSS=<arm-gcc>   # sacd_extract_160 gains --hud=console|panel
+# in the guest fire: --daemon-launch="./sacd_extract_160 -S --hud=console"
+
+# the panel-renderer stepping stone (standalone, proven):
 make sacd-hud-build       # ARM build through the era toolchain
 make sacd-hud-sim         # host render (same scene code) -> PNG
 make sacd-hud-anim        # host render -> animated GIF + MP4

@@ -72,27 +72,55 @@ static void hud_console_render(const hud_state_t *s)
     fflush(stdout);
 }
 
+#ifdef HUD_PANEL_RENDERER
+/* the panel renderer core (tools/bx510_sacd_hud.c compiled with
+ * -DHUD_IN_DAEMON) — declared here, defined there */
+int  hud_panel_init(const char *pool_dev, const char *font_path);
+void hud_panel_tick(const hud_state_t *st, double t, unsigned frame);
+#endif
+
 static void *hud_thread(void *unused)
 {
     (void)unused;
     hud_state_t snap;
     memset(&snap, 0, sizeof snap);
+    double t = 0.0;
+    unsigned frame = 0;
 
+#ifdef HUD_PANEL_RENDERER
     if (hud_mode == HUD_PANEL)
     {
-        /* The panel render reuses the proven sacd_hud renderer core; until
-         * that integration lands this mode degrades to console — loud, so
-         * no gate mistakes degradation for a working panel. */
-        fwprintf(stderr, L"HUD: panel mode renderer integration pending; "
-                         L"falling back to console\n");
+        const char *pool = getenv("HUD_POOL_DEV");
+        const char *font = getenv("HUD_FONT");
+        if (hud_panel_init(pool, font) != 0)
+        {
+            fwprintf(stderr, L"HUD: panel init failed — falling back to console\n");
+            hud_mode = HUD_CONSOLE;
+        }
+        else
+        {
+            fwprintf(stdout, L"HUD: panel renderer live (pool-mmap, in-daemon)\n");
+            fflush(stdout);
+        }
     }
+#endif
 
     while (!hud_stop)
     {
         if (hud_state_copy(&snap))
         {
             hud_state_tick(&snap);
-            hud_console_render(&snap);
+            if (hud_mode == HUD_PANEL)
+            {
+#ifdef HUD_PANEL_RENDERER
+                t += 0.5;
+                hud_panel_tick(&snap, t, frame++);
+#endif
+            }
+            else
+            {
+                hud_console_render(&snap);
+            }
         }
         sleep(1);
     }

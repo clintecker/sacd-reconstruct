@@ -51,6 +51,11 @@ embeds the rest, including the cyberpunk HUD.*
   guest renders gated on non-black, guest-vs-sim per-region parity ≥ 0.85;
   screenshots in `evidence/bx510-guest/graphics/gallery/`
   ([docs/GRAPHICS-GALLERY.md](docs/GRAPHICS-GALLERY.md)).
+- **One HUD, built into the daemon**: `sacd_extract_160 -S --hud=console`
+  serves the rip AND renders the HUD from the daemon's own live state
+  (clients, ripping progress, disc stats) — proven in the guest while a
+  real client ripped ([docs/HUD.md](docs/HUD.md)). The parity build is
+  untouched (`sacd-verify` passes with the same release SHA).
 
 ## The emulation rig (everything above hardware, reproducible)
 

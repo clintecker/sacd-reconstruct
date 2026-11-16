@@ -46,7 +46,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <fcntl.h>
-#ifndef HUD_SIM
+#if !defined(HUD_SIM) && !defined(HUD_IN_DAEMON)
 #include <directfb.h>
 #endif
 
@@ -2150,6 +2150,7 @@ static int pool_open(const char *dev)
     return 1;
 }
 
+#ifndef HUD_IN_DAEMON
 int main(int argc, char **argv)
 {
     IDirectFB *dfb;
@@ -2360,4 +2361,64 @@ int main(int argc, char **argv)
     dfb->Release(dfb);
     return 0;
 }
+#endif /* !HUD_IN_DAEMON */
+
+/* =====================================================================
+ * HUD_IN_DAEMON — the ONE HUD's panel mode: this renderer core, running
+ * as a thread inside sacd_extract_160 (see reconstruct/tool/hud.c and
+ * docs/HUD.md "Architecture: where the HUD lives"). The daemon publishes
+ * its own state through hud_state.h; hud_panel_tick() paints one frame
+ * from it into the proven pool-mmap surface.
+ * ===================================================================== */
+#ifdef HUD_IN_DAEMON
+#include "../reconstruct/tool/hud_state.h"
+
+static int g_pool_ok;
+
+int hud_panel_init(const char *pool_dev, const char *font_path)
+{
+    const char *loaded = NULL;
+    g_pool_ok = pool_open(pool_dev && pool_dev[0] ? pool_dev : "/dev/fb0");
+    if (!g_pool_ok) return -1;
+    if (font_load_chain(font_path, &loaded)) {
+        fprintf(stdout, "HUD: font %s\n", loaded);
+    } else {
+        fprintf(stdout, "HUD: no font — falling back to the 5x7 face\n");
+    }
+    profile_load();
+    g_fx = 0;               /* no CRT sweep/fx until the merge is proven */
+    return 0;
+}
+
+/* one frame from the daemon's own state; t advances the animations */
+void hud_panel_tick(const hud_state_t *st, double t, unsigned frame)
+{
+    hud_t h;
+    memset(&h, 0, sizeof h);
+    h.module_loaded = 1; h.misc_201 = st->disc_loaded; 
+    h.listen_2002 = 1; h.clients_2002 = st->client_connected;
+    h.daemon_pid = (int)getpid();
+    h.read_bytes = st->sectors_served * 2048ULL;
+    h.read_bytes_prev = h.read_bytes;   /* rate comes from hud_state_tick */
+    h.mbps = st->mbs_per_sec;
+    h.uptime_s = st->updated_at ? (unsigned long)st->updated_at : 0;
+    h.memfree_kb = 0; h.tmp_pct = 0;
+    snprintf(h.state, sizeof h.state, "%s",
+             st->client_connected ? "SERVING" : "IDLE");
+    if (st->sectors_served != ev_sectors) {
+        {
+            char l[64];
+            snprintf(l, sizeof l, "READ lsn=%u n=%u", st->last_lsn, st->last_count);
+            tick_push(l);
+        }
+    }
+    ev_sectors = st->sectors_served;
+    ev_requests = (unsigned)st->reads_served;
+    ev_last_lsn = st->last_lsn;
+    ev_mbps = st->mbs_per_sec;
+    spark[frame % 39] = (unsigned)(6 + (int)(st->mbs_per_sec * 4.0) % 18);
+    scene_retro(&h, t, st->mbs_per_sec, (int)frame);
+    retro_present((int)frame, t);
+}
+#endif /* HUD_IN_DAEMON */
 #endif /* HUD_SIM */

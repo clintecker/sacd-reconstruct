@@ -20,7 +20,17 @@ OBJCOPY_LD := $(CROSS)ld
 # to the no-HUD lineage. See docs/HUD.md "Architecture: where the HUD lives".
 ifeq ($(ENABLE_HUD),1)
 HUD_FLAG := -DENABLE_HUD
+# the panel renderer uses sqrt/floor/ceil (the fx effects) — -lm at link
+HUD_LDFLAGS := -lm
 HUD_OBJS := tool/hud_state.c tool/hud.c
+# panel renderer: the proven sacd_hud core compiled INTO the daemon
+# (HUD_IN_DAEMON excludes its main()s; HUD_PANEL_RENDERER enables the
+# hud.c call sites). Paths: ../../tools relative to reconstruct/tool/.
+HUD_FLAG += -DHUD_PANEL_RENDERER -DHUD_IN_DAEMON -I../tools
+HUD_OBJS += ../tools/bx510_sacd_hud.c
+# the renderer core needs C99 (its own file's contract); per-object flag so the
+# daemon's other TUs keep the era default
+CFLAGS_SACDHUD := -std=gnu99 -Wno-pragmas
 else
 HUD_FLAG :=
 HUD_OBJS :=
@@ -29,7 +39,7 @@ endif
 CFLAGS  := -O0 -marm -march=armv6z -Wall -fno-unwind-tables -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE \
            -Itool -Ilibsacd -Ilibcommon -Ilibcommon/sys -Ilibid3 -Ilibdstdec \
            -DLIBSACD_INTERNAL $(HUD_FLAG)
-LDFLAGS := -lpthread
+LDFLAGS := -lpthread $(HUD_LDFLAGS)
 
 BUILD   := build
 TARGET  := sacd_extract_160
@@ -135,7 +145,7 @@ $(TARGET): $(OBJS) $(BUILD)/sacd_read_ko.o $(FSFLIBGCC_OBJS)
 
 $(BUILD)/%.o: %.c
 	@mkdir -p $(dir $@)
-	$(CC) $(CFLAGS) -c -o $@ $(if $(filter lib%,$<),$(BUILDROOT)/$<,$<)
+	$(CC) $(CFLAGS) $(if $(findstring bx510_sacd_hud,$<),$(CFLAGS_SACDHUD)) -c -o $@ $(if $(filter lib%,$<),$(BUILDROOT)/$<,$<)
 
 clean:
 	rm -rf $(BUILD) $(TARGET)

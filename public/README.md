@@ -43,10 +43,14 @@ sacd_extract_160 -s -c -t 1 -i 127.0.0.1:2002 ~/rip
 That rip was the finish line, and it's crossed — under the emulator. The
 daemon and the client are the same program, the DSF files are deterministic
 (two rips, one md5), and every byte the client received came through the
-reconstructed protocol stack. The **HUD** (`sacd_hud`) — one program,
-one product — draws a cyberpunk telemetry console on the player's display
-while a rip runs; the images below show it rendered by the host simulator
-and by the same code inside Sony's real guest OS.
+reconstructed protocol stack.
+
+The **HUD** — one program, one product — is built **into the daemon**:
+`sacd_extract_160 -S --hud=console` serves the rip and renders live
+telemetry from its own internal state (clients, ripping progress, disc
+stats). The panel renderer is the next rung; the images below show it in
+its two proven render paths (host simulator, and the same code inside
+Sony's real guest OS).
 
 ## How it's proven
 

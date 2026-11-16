@@ -62,8 +62,8 @@ by `daemon_map.py`.
 | `hud_build.sh` / `hud_anim.py` / `hud_scenarios.py` / `hud_push.py` | HUD build, animation, scenario telemetry, host-side UDP pusher |
 | `hud_guest_run.sh` / `hud_guest_gate.py` | run + gate the HUD in the real guest |
 | `bx510_fbdump.c` / `bx510_fbmd5.c` / `bx510_fbdraw.c` / `bx510_fbvirt.c`(+`.h`) | framebuffer dump/md5/draw + the MT85xx fbdev provider model |
-| `bx510_cyberdraw.c` / `bx510_dfbhello.c` | DirectFB smoke tools (the vendor-contract ladder) |
-| `bx510_fbmt85_repro.py` / `bx510_sawman_repro.py` | vendor-contract + SaWMan coexistence run harnesses |
+| `bx510_cyberdraw.c` | the display-leg test pattern (self-authenticating evidence; see `evidence/bx510/display-payload/DISPLAY-SPEC.md`) |
+| `bx510_fbmt85_repro.py` | the MT85xx vendor-contract run harness (rungs a–e) |
 | `bx510_font_carve.py` / `bx510_font_decode.py` / `bx510_fontprobe.c` | Sony `/res/font.bin` decode chain |
 | `bx510_hud_diff.py` | rig-render vs panel-photo SSIM gate (hardware leg) |
 
@@ -73,8 +73,7 @@ by `daemon_map.py`.
 |---|---|
 | `sacd_hardware.sh` | the USB-stick/session driver: build stick, modes, baseline capture, pair capture |
 | `bx510_hwmon.c` / `bx510_hwmon_analyze.py` | on-player hardware snapshots + deterministic analyzer |
-| `bx510_inventory.c` | guest inventory probe |
-| `bx510_pair_repro.py` / `bx510_pair_debug.c` | the pair-observer lane |
+| `bx510_pair_repro.py` | the pair-observer lane (silent-miss repro) |
 | `bx510_hud_diff.py` | panel-photo vs render verification |
 
 ## Module / firmware analysis
@@ -86,13 +85,17 @@ by `daemon_map.py`.
 | `bx510_osal_stub.c` / `bx510_stub_build.sh` | the OSAL stub for loading bdpdrv in the rig |
 | `bx510_feboot.c` / `bx510_lo_up.c` / `bx510_sacdstat.c` / `bx510_mkfixture.c` / `bx510_bgstart*.c` | guest boot/fixture helpers |
 
-## Discovery probes (historical, kept as method record)
+## Guest fire driver
 
-One-shot probes used while the rig was being built; they still run and are
-part of the negative-evidence record:
+| File | Role |
+|---|---|
+| `bx510_bdpdrv_stub_probe.py` | the fire pipeline's guest driver: OSAL stub + bdpdrv insmod trace (staged by `bx510-fire.sh`) |
 
-`bx510_phase0_probe.py`, `bx510_rawdecode.py`, `bx510_bdpdrv_stub_probe.py`,
-`bx510_sawman_probe.c`.
+## Historical probes
+
+One-shot probes, debugging instruments and lane-closing harnesses from the
+rig-building phase live in `tools/archive/` (indexed there). They are part
+of the negative-evidence record, not the reproduction path.
 
 ## Publishing pipeline
 

@@ -34,8 +34,10 @@ claim (#6)
    **IS blob byte identity**, now checked (`module blob: identical …`) and
    byte-identical across all four ELFs in the tree today.
 5. The fixes restored **384/384 clean** on the release image and left
-   `fn_diff` at its documented 388/390 · 385/390 counts — no accepted residual
-   moved, no new one appeared.
+   `fn_diff` at its then-documented 388/390 · 385/390 counts — no accepted
+   residual moved, no new one appeared. (History: since 2026-11-16 the
+   accepted list is three — `_start`, `call_gmon_start`, and the deliberate
+   `recursive_mkdir` EPERM divergence; current count 387/390.)
 
 ## 1. What the harness compares today (code paths, not prose)
 

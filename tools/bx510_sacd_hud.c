@@ -46,6 +46,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <fcntl.h>
+#include "../reconstruct/tool/hud_state.h"   /* the ONE HUD's state seam; scene_disc renders it */
 #if !defined(HUD_SIM) && !defined(HUD_IN_DAEMON)
 #include <directfb.h>
 #endif
@@ -105,6 +106,7 @@ static void px_blend(int xd, int yd, unsigned int c, unsigned a);
 static stbtt_fontinfo g_font;
 static unsigned char *g_ttf;
 static int g_font_ok;
+static char g_font_path[128];   /* the face the RENDER line reports (scene_disc) */
 static float g_fsc;            /* scale for the current size */
 
 static unsigned be32(const unsigned char *p)
@@ -161,6 +163,7 @@ static int font_load(const char *path)
     if (!g_ttf) { free(raw); return 0; }
     memcpy(g_ttf, sf, sf_n);
     free(raw);
+    snprintf(g_font_path, sizeof g_font_path, "%s", path);
 
     if (!stbtt_InitFont(&g_font, g_ttf, stbtt_GetFontOffsetForIndex(g_ttf, 0))) {
         font_reset();
@@ -404,6 +407,81 @@ static int text_top_r(const char *s, int xr, int ytop, int dev_px, unsigned int 
 {
     int w = ttf_width(s, dev_px / SCAL ? dev_px / SCAL : 6);
     return text_top(s, xr - w, ytop, dev_px, col);
+}
+
+/* glyph cache for the device-res path: stbtt rasterization per char per frame
+   starved the HUD thread on the emulated ARM926 during a rip (run hudisc3:
+   the pool dump caught a mid-repaint stall) — sacd_ui solved the same cost
+   with a cache; same pattern here, keyed (codepoint, device px). */
+typedef struct { int ch, px, gw, gh, xo, yo, adv; unsigned char *bmp; } dvglyph_t;
+#define DV_CACHE 512
+static dvglyph_t dv_cache[DV_CACHE];
+static int dv_n, dv_next;
+
+static dvglyph_t *dv_glyph(int ch, int dev_px)
+{
+    int i;
+    float sc;
+    dvglyph_t *g;
+    for (i = 0; i < dv_n; i++)
+        if (dv_cache[i].ch == ch && dv_cache[i].px == dev_px) return &dv_cache[i];
+    g = (dv_n < DV_CACHE) ? &dv_cache[dv_n++] : &dv_cache[dv_next++ % DV_CACHE];
+    sc = stbtt_ScaleForPixelHeight(&g_font, (float)dev_px);
+    {
+        int adv, lsb, gw = 0, gh = 0, xo = 0, yo = 0;
+        unsigned char *bmp = stbtt_GetCodepointBitmap(&g_font, sc, sc, ch,
+                                                      &gw, &gh, &xo, &yo);
+        stbtt_GetCodepointHMetrics(&g_font, ch, &adv, &lsb);
+        if (g->bmp) free(g->bmp);
+        g->ch = ch; g->px = dev_px;
+        g->bmp = bmp; g->gw = gw; g->gh = gh; g->xo = xo; g->yo = yo;
+        g->adv = (int)(adv * sc);
+    }
+    return g;
+}
+
+/* sacd_ui-style DEVICE-RES text: rasterize the glyph at dev_px and blit 1:1,
+   so small text keeps full-alpha crisp strokes (the chunky ttf_text path
+   block-scales logical-size glyphs, which turns 10-px console text muddy).
+   x/ytop are LOGICAL px like every other primitive; returns logical advance. */
+static int text_dev(const char *s, int x, int ytop, int dev_px, unsigned int col)
+{
+    int cx = x * SCAL, asc;
+    float sc;
+    if (!g_font_ok) {
+        int cy = ytop;
+        for (; *s; s++) { glyph1(*s, cx / SCAL, cy, col); cx += 6 * SCAL; }
+        return cx / SCAL - x;
+    }
+    sc = stbtt_ScaleForPixelHeight(&g_font, (float)dev_px);
+    stbtt_GetFontVMetrics(&g_font, &asc, NULL, NULL);
+    {
+        int ydev = ytop * SCAL + (int)(asc * sc);
+        g_quant_off = 1;
+        for (; *s; s++) {
+            dvglyph_t *g = dv_glyph((unsigned char)*s, dev_px);
+            if (g->bmp) {
+                int yy, xx;
+                for (yy = 0; yy < g->gh; yy++)
+                    for (xx = 0; xx < g->gw; xx++) {
+                        unsigned char a = g->bmp[yy * g->gw + xx];
+                        if (a) px_blend(cx + g->xo + xx, ydev + g->yo + yy, col, a);
+                    }
+            }
+            cx += g->adv;
+        }
+        g_quant_off = 0;
+    }
+    return cx / SCAL - x;
+}
+
+/* device-res text width in DEVICE px (for right-aligned text_dev) */
+static int text_dev_w(const char *s, int dev_px)
+{
+    int w = 0;
+    if (!g_font_ok) return (int)strlen(s) * 6 * SCAL;
+    for (; *s; s++) w += dv_glyph((unsigned char)*s, dev_px)->adv;
+    return w;
 }
 
 static int text2(const char *s, int x, int y, unsigned int col)
@@ -798,6 +876,10 @@ static unsigned spark[40];
 static int g_selftest __attribute__((unused));
 static int g_render_only;
 
+/* scene_disc selector + daemon-event import cursor (panel mode + sim) */
+static int g_scene_disc;
+static unsigned char st_ev_seen_head;
+
 /* ---- calibration pattern -------------------------------------------------
    Designed so a single photo names the fault:
      - green 1-px grid every 32 logical px      -> stride / scale mismatch
@@ -885,17 +967,30 @@ static void fx_scanlines(int w, int h)
 
 static void fx_aberration(int w, int h)
 {
+    /* Per-row snapshot: the original in-place ascending loop sampled its own
+       output — each pixel's blue came from the already-rewritten pixel two
+       back, so the left border's blue propagated across the whole row (found
+       by the scene_disc pixel probes; the sim never ran fx before). */
+    static unsigned int *row;
+    static size_t row_cap;
     int y, x, d = 2;                        /* channel separation, device px */
-    for (y = 0; y < h; y++)
+    if (row_cap < (size_t)w) {
+        unsigned int *nr = realloc(row, (size_t)w * sizeof(unsigned int));
+        if (!nr) return;
+        row = nr; row_cap = (size_t)w;
+    }
+    for (y = 0; y < h; y++) {
+        memcpy(row, fxd(0, y), (size_t)w * sizeof(unsigned int));
         for (x = 0; x < w; x++) {
-            unsigned int *c = fxd(x, y);
-            unsigned int l = (x >= d) ? *fxd(x - d, y) : *c;
-            unsigned int r = (x + d < w) ? *fxd(x + d, y) : *c;
+            unsigned int c0 = row[x];
+            unsigned int l = (x >= d) ? row[x - d] : c0;   /* original left  */
+            unsigned int r = (x + d < w) ? row[x + d] : c0; /* original right */
             unsigned int rr = (r >> 16) & 0xff;   /* red sampled right  */
-            unsigned int gg = ((*c) >> 8) & 0xff;
+            unsigned int gg = (c0 >> 8) & 0xff;
             unsigned int bb = l & 0xff;           /* blue sampled left  */
-            *c = (rr << 16) | (gg << 8) | bb;
+            *fxd(x, y) = (rr << 16) | (gg << 8) | bb;
         }
+    }
 }
 
 static void fx_glitch(int w, int h, int frame)
@@ -1927,6 +2022,203 @@ static void scene(const hud_t *h, double t, double fps, int frame)
     }
 }
 
+/* ---- scene_disc: the merged disc console --------------------------------
+   The sacd_ui layout (the client-leg milestone artifact's proven 640x360
+   geometry: title bar, status block, two area panels with track tables,
+   event log, summary) drawn at DEVICE resolution inside the ONE HUD, in
+   this renderer's palette, finished with the same device fx (scanlines,
+   aberration, vignette). sacd_ui's client-side session-summary block is
+   replaced by the HUD's own live rip telemetry (reads, sectors, rate, ETA,
+   progress) — the data only the daemon knows.
+   Text sizes are LOGICAL px (multiplied by SCAL at the text_top call), the
+   sacd_ui convention, so the layout density matches the accepted golden at
+   any panel scale.
+   Selected with HUD_SCENE=disc (panel mode + sim). sacd_ui itself is
+   untouched — it stays the client-leg regression fixture. */
+
+static void disc_msf(char *o, int n, unsigned m, unsigned s)
+{
+    snprintf(o, (size_t)n, "%02u:%02u", m, s);
+}
+
+static void scene_disc(const hud_state_t *st, const hud_t *h,
+                       double t, double fps, unsigned frames)
+{
+    /* sacd_ui's logical type scale: title 17, heads 11, rows 10, small 9 */
+    const int T_TITLE = 17 * SCAL, T_HEAD = 11 * SCAL;
+    const int T_ROW = 10 * SCAL, T_SMALL = 9 * SCAL;
+    int lhH = 15, lhR = 11, lhS = 10;      /* logical line heights (sacd_ui's) */
+    char l[160], m1[16], m2[16];
+    int i, pulse = ((int)(t * 2.0) & 1);
+
+    rect(0, 0, CW, CH, C_BG);
+    {   /* the same perspective grid sweep scene() uses, dimmed for text */
+        int gy = 250 + (int)(fmod(t * 8.0, 8.0));
+        for (; gy < CH; gy += 8) {
+            int half = (gy - 250) * 2 + 20;
+            rect(320 - half, gy, half * 2, 1, C_GRID);
+        }
+    }
+    box(0, 0, CW, CH, C_FRAME);
+
+    /* ---- title bar (sacd_ui geometry) ---- */
+    text_dev("SACD//DAEMON", 12, 8, T_TITLE, C_PHOS);
+    text_top_r("BX510 DAEMON CONSOLE", CW - 12, 10, T_HEAD, C_PHOSD);
+    rect(12, 30, CW - 24, 1, C_FRAME);
+
+    /* ---- status block: what the daemon knows about the disc ---- */
+    if (st->toc_valid)
+    {
+        snprintf(l, sizeof l, "DISC    %u SECTORS   CAT %s   %04u-%02u-%02u",
+                 st->total_sectors,
+                 st->disc_cat[0] ? st->disc_cat : "-",
+                 st->disc_year, st->disc_month, st->disc_day);
+        text_dev(l, 12, 37, T_HEAD, C_PHOS);
+        if (st->album[0])
+            snprintf(l, sizeof l, "ALBUM   %s        ARTIST   %s",
+                     st->album, st->artist[0] ? st->artist : "-");
+        else
+            snprintf(l, sizeof l, "ALBUM   -        ARTIST   -        (no SACDText)");
+        text_dev(l, 12, 51, T_HEAD, C_WHITE);
+    }
+    else
+    {
+        text_dev(st->disc_loaded ? "DISC    LOADED - NO PARSED TOC"
+                                 : "DISC    NO SESSION   (awaiting DISC_OPEN)",
+                 12, 37, T_HEAD, C_AMBER);
+        text_dev("ALBUM   -        ARTIST   -", 12, 51, T_HEAD, C_PHOSD);
+    }
+    {
+        int y = 65;
+        snprintf(l, sizeof l, "DAEMON  :%d %s   CLIENTS %d   PID %d   %.1f MB/s",
+                 2002, h->listen_2002 ? "LISTEN" : "CLOSED",
+                 h->clients_2002, h->daemon_pid, h->mbps);
+        text_dev(l, 12, y, T_HEAD, h->listen_2002 ? C_CYAN : C_RED);
+        /* the live-link lamp (sacd_ui's, moved to the status block's right) */
+        rect(CW - 22, y - 2, 10, 6,
+             h->clients_2002 ? (pulse ? C_PHOS : C_PHOSD)
+                             : (h->listen_2002 ? C_AMBER : C_RED));
+    }
+    rect(12, 80, CW - 24, 1, C_FRAME);
+
+    /* ---- the two area panels (sacd_ui geometry: y88 h104) ---- */
+    for (i = 0; i < 2; i++)
+    {
+        int px0 = (i == 0) ? 12 : 324;
+        int pw = 304;
+        unsigned headc = (i == 0) ? C_CYAN : C_MAGENTA;
+        const hud_area_t *a = (st && st->toc_valid && i < st->nareas) ? &st->area[i] : NULL;
+
+        rect(px0, 88, pw, 104, C_PANEL);
+        box(px0, 88, pw, 104, C_FRAME);
+        if (!a || !a->present)
+        {
+            text_dev(i == 0 ? "2-CHANNEL AREA" : "MULTI-CHANNEL AREA",
+                     px0 + 6, 93, T_HEAD, C_PHOSD);
+            text_dev("no area TOC", px0 + 6, 108, T_SMALL, C_PHOSD);
+            continue;
+        }
+        snprintf(l, sizeof l, "%s   %d CH",
+                 (i == 0) ? "2-CHANNEL" : "MULTI-CHANNEL", a->channels);
+        text_dev(l, px0 + 6, 92, T_HEAD, headc);
+        snprintf(l, sizeof l, "%d TRACKS   LSN %u..%u",
+                 a->track_count, a->lsn_start, a->lsn_end);
+        text_dev(l, px0 + 6, 103, T_SMALL, C_PHOSD);
+
+        text_dev("#", px0 + 8, 114, T_SMALL, C_PHOSD);
+        text_dev("START", px0 + 30, 114, T_SMALL, C_PHOSD);
+        text_dev("LENGTH", px0 + 116, 114, T_SMALL, C_PHOSD);
+        text_dev("LSN", px0 + 206, 114, T_SMALL, C_PHOSD);
+        rect(px0 + 6, 123, pw - 12, 1, C_FRAME);
+
+        {
+            int r, shown = a->track_count < 6 ? a->track_count : 6;
+            for (r = 0; r < shown; r++)
+            {
+                const hud_track_t *k = &a->track[r];
+                int ly = 126 + r * 11;
+                disc_msf(m1, sizeof m1, k->sm, k->ss);
+                disc_msf(m2, sizeof m2, k->dm, k->ds);
+                snprintf(l, sizeof l, "%d", r + 1);
+                text_dev(l, px0 + 8, ly, T_ROW, C_WHITE);
+                text_dev(m1, px0 + 30, ly, T_ROW, C_PHOS);
+                text_dev(m2, px0 + 116, ly, T_ROW, C_PHOS);
+                snprintf(l, sizeof l, "%u", k->lsn);
+                text_dev(l, px0 + 206, ly, T_ROW, C_PHOSD);
+            }
+        }
+    }
+    rect(12, 196, CW - 24, 1, C_FRAME);
+
+    /* ---- event log (left) + live rip telemetry (right) ---- */
+    text_dev("EVENT LOG", 12, 200, T_ROW, C_PHOSD);
+    {
+        int shown = tick_n < 6 ? tick_n : 6;
+        for (i = 0; i < shown; i++)
+        {
+            int idx = (tick_n - shown + i) % TICK_MAX;
+            unsigned col = (i == shown - 1) ? C_WHITE : (i >= shown - 3 ? C_PHOS : C_PHOSD);
+            if (idx < 0) continue;
+            text_dev(tick[idx], 12, 212 + i * 12, T_ROW, col);
+        }
+        if (!shown) text_dev("(no events yet)", 12, 212, T_ROW, C_PHOSD);
+    }
+    {
+        int px0 = 324, pw = 304;
+        int cells = 36, cw = (pw - 16) / cells;
+        unsigned long long tot = st->total_sectors, hi = st->max_lsn_served;
+        int lit = tot ? (int)((double)hi / (double)tot * cells) : 0;
+        rect(px0, 196, pw, 96, C_PANEL);
+        box(px0, 196, pw, 96, C_FRAME);
+        text_dev("RIP TELEMETRY", px0 + 6, 200, T_ROW, C_CYAN);
+        if (lit > cells) lit = cells;
+        for (i = 0; i < cells; i++)
+        {
+            unsigned c = C_PHOSD;
+            if (i < lit) c = C_PHOS;
+            if (i == lit && tot) c = C_WHITE;
+            rect(px0 + 8 + i * cw, 214, cw - 1, 6, c);
+        }
+        snprintf(l, sizeof l, "SEC %llu / %llu   %u%%",
+                 hi, tot, tot ? (unsigned)(100 * hi / tot) : 0);
+        text_dev(l, px0 + 8, 226, T_ROW, C_PHOS);
+        snprintf(l, sizeof l, "READS %llu   ENC %llu",
+                 (unsigned long long)st->reads_served,
+                 (unsigned long long)st->encrypted_sectors);
+        text_dev(l, px0 + 8, 238, T_ROW, C_WHITE);
+        snprintf(l, sizeof l, "%.1f MB/s   ETA %us",
+                 st->mbs_per_sec, st->eta_seconds);
+        text_dev(l, px0 + 8, 250, T_ROW, C_CYAN);
+        snprintf(l, sizeof l, "LAST LSN %u (n%u)", st->last_lsn, st->last_count);
+        text_dev(l, px0 + 8, 262, T_SMALL, C_PHOSD);
+        snprintf(l, sizeof l, "%s", h->clients_2002 ? "SERVING" : "IDLE");
+        text_dev(l, px0 + 8, 274, T_SMALL, h->clients_2002 ? C_PHOS : C_AMBER);
+    }
+    rect(12, 296, CW - 24, 1, C_FRAME);
+
+    /* ---- summary (sacd_ui geometry) ---- */
+    snprintf(l, sizeof l,
+             "SERVE    %llu REQ   %llu SEC   %llu ENC   LAST %u (n%u)",
+             (unsigned long long)st->reads_served,
+             (unsigned long long)st->sectors_served,
+             (unsigned long long)st->encrypted_sectors,
+             st->last_lsn, st->last_count);
+    text_dev(l, 12, 301, T_ROW, C_PHOS);
+    snprintf(l, sizeof l,
+             "RENDER   %ux%u panel   font %s   %u frames   %.1f fps   t=%.1f s",
+             g_visible_w, g_visible_h,
+             g_font_ok ? g_font_path : "(5x7 fallback)", frames, fps, t);
+    text_dev(l, 12, 314, T_ROW, C_PHOSD);
+    /* blinking cursor + state chip */
+    {
+        const char *chip = h->clients_2002 ? "SERVING" : "IDLE";
+        int w = ttf_width(chip, T_SMALL) / SCAL;
+        if (pulse) rect(CW - 14 - w - 14, 336, 8, 12, C_PHOS);
+        text_top_r(chip, CW - 14, 340, T_SMALL, h->clients_2002 ? C_PHOS : C_AMBER);
+    }
+    (void)lhH; (void)lhR; (void)lhS;
+}
+
 #ifdef HUD_SIM
 /* ---- host simulator: same scene(), real font, no DirectFB, no device ----
    cc -DHUD_SIM -I. -o hudsim bx510_sacd_hud.c && ./hudsim out.ppm [frames] */
@@ -1978,6 +2270,18 @@ int main(int argc, char **argv)
     }
 
     g_visible_w = CW * SCAL; g_visible_h = CH * SCAL;
+    {   /* HUD_SIM_SCALE: render at a bigger panel scale (3 = the real 1080p pool) */
+        const char *sc = getenv("HUD_SIM_SCALE");
+        if (sc && atoi(sc) > 0) {
+            SCAL = atoi(sc);
+            pitch_px = CW * SCAL;
+            free(fb);
+            fb = calloc((size_t)pitch_px * CH * SCAL, sizeof(unsigned int));
+            g_visible_w = CW * SCAL; g_visible_h = CH * SCAL;
+            typography_set(g_visible_h);
+            g_rx = g_visible_w / RW; if (g_rx < 1) g_rx = 1;
+        }
+    }
     typography_set(g_visible_h);
     printf("SIM: type head=%d body=%d (visible_h=%d)\n", g_head_px, g_body_px, g_visible_h);
     if (getenv("HUD_FX") && !strcmp(getenv("HUD_FX"), "amiga")) g_fx = AMIGA_PRESET;
@@ -2010,6 +2314,53 @@ int main(int argc, char **argv)
             if (getenv("HUD_RETRO_FX")) retro_fx_mask = (unsigned)strtoul(getenv("HUD_RETRO_FX"), NULL, 0);
             retro_fx(i * 4);
             retro_present(i * 4, 1.7 + i * 0.2);
+        }
+        else if (getenv("HUD_SCENE") && !strcmp(getenv("HUD_SCENE"), "disc")) {
+            /* the merged disc console, with a Firebird-shaped scenario:
+               the layout/data the guest publishes at DISC_OPEN, seeded so
+               every block carries text. Numbers are scenario values, not
+               measured — the real TOC comes from the daemon in the guest. */
+            static hud_state_t sd;
+            static int sd_init;
+            if (!sd_init) {
+                int ai, ti;
+                memset(&sd, 0, sizeof sd);
+                sd.ver = HUD_STATE_VER;
+                sd.disc_loaded = 1; sd.is_sacd = 1; sd.is_encrypted = 1;
+                sd.toc_valid = 1;
+                sd.total_sectors = 1064208;
+                snprintf(sd.disc_cat, sizeof sd.disc_cat, "CDSML8558");
+                sd.disc_year = 2019; sd.disc_month = 6; sd.disc_day = 28;
+                snprintf(sd.album, sizeof sd.album, "FIREBIRD (SIM)");
+                snprintf(sd.artist, sizeof sd.artist, "STRAVINSKY");
+                sd.nareas = 2;
+                for (ai = 0; ai < 2; ai++) {
+                    hud_area_t *a = &sd.area[ai];
+                    a->present = 1;
+                    a->channels = ai == 0 ? 2 : 5;
+                    a->track_count = ai == 0 ? 6 : 4;
+                    a->lsn_start = ai == 0 ? 544 : 353804;
+                    a->lsn_end = ai == 0 ? 353803 : 1064207;
+                    for (ti = 0; ti < HUD_TOC_TRACKS; ti++) {
+                        hud_track_t *k = &a->track[ti];
+                        k->lsn = a->lsn_start + ti * 45000;
+                        k->len = 45000;
+                        k->sm = 0; k->ss = (uint8_t)(ti * (ai ? 20 : 10)); k->sf = 0;
+                        k->dm = (uint8_t)(ai ? 1 : 2); k->ds = (uint8_t)(ti * 3); k->df = 32;
+                    }
+                }
+                sd.reads_served = 4212; sd.sectors_served = 861384;
+                sd.encrypted_sectors = 861384;
+                sd.max_lsn_served = 861384; sd.last_lsn = 861256; sd.last_count = 128;
+                sd.mbs_per_sec = 13.0; sd.eta_seconds = 26;
+                sd.client_connected = 1;
+                tick_push("CLIENT CONNECT");
+                tick_push("DISC OPEN");
+                tick_push("READ lsn=861256 n=128");
+                sd_init = 1;
+            }
+            scene_disc(&sd, &h, 1.7 + i * 0.2, 13.0, (unsigned)i);
+            fx_apply(i);
         }
         else scene(&h, 1.7 + i * 0.2, 13.0, i * 4);
         if (getenv("HUD_SIM_ANIM")) {
@@ -2378,6 +2729,7 @@ static int g_pool_ok;
 int hud_panel_init(const char *pool_dev, const char *font_path)
 {
     const char *loaded = NULL;
+    const char *scene = getenv("HUD_SCENE");
     g_pool_ok = pool_open(pool_dev && pool_dev[0] ? pool_dev : "/dev/fb0");
     if (!g_pool_ok) return -1;
     if (font_load_chain(font_path, &loaded)) {
@@ -2386,7 +2738,9 @@ int hud_panel_init(const char *pool_dev, const char *font_path)
         fprintf(stdout, "HUD: no font — falling back to the 5x7 face\n");
     }
     profile_load();
-    g_fx = 0;               /* no CRT sweep/fx until the merge is proven */
+    g_scene_disc = scene && !strcmp(scene, "disc");
+    if (getenv("HUD_FX")) g_fx = (unsigned)strtoul(getenv("HUD_FX"), NULL, 0);
+    if (g_scene_disc) fprintf(stdout, "HUD: scene disc (merged console) fx=0x%x\n", g_fx);
     return 0;
 }
 
@@ -2417,8 +2771,33 @@ void hud_panel_tick(const hud_state_t *st, double t, unsigned frame)
     ev_last_lsn = st->last_lsn;
     ev_mbps = st->mbs_per_sec;
     spark[frame % 39] = (unsigned)(6 + (int)(st->mbs_per_sec * 4.0) % 18);
-    scene_retro(&h, t, st->mbs_per_sec, (int)frame);
-    retro_present((int)frame, t);
+    /* import daemon-side transition events into the renderer's text ring so
+       the disc console's EVENT LOG carries them (dedup is tick_push's) */
+    if (st->ev_count)
+    {
+        unsigned seen = (unsigned)st_ev_seen_head;
+        unsigned newn = ((unsigned)st->ev_head - seen) & 0xffu;
+        if (newn && newn <= HUD_EVENT_MAX)
+        {
+            unsigned k;
+            for (k = 0; k < newn; k++)
+            {
+                unsigned idx = ((unsigned)st->ev_head - newn + k) % HUD_EVENT_MAX;
+                tick_push(st->ev[idx].text);
+            }
+        }
+        st_ev_seen_head = st->ev_head;
+    }
+    if (g_scene_disc)
+    {
+        scene_disc(st, &h, t, st->mbs_per_sec, frame);
+        fx_apply((int)frame);
+    }
+    else
+    {
+        scene_retro(&h, t, st->mbs_per_sec, (int)frame);
+        retro_present((int)frame, t);
+    }
 }
 #endif /* HUD_IN_DAEMON */
 #endif /* HUD_SIM */

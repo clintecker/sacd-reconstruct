@@ -147,6 +147,7 @@ static void *client_thread(void *userdata)
         memset(&hs, 0, sizeof hs);
         hud_state_copy(&hs);
         hs.client_connected = 1;
+        hud_state_event(&hs, "CLIENT CONNECT");
         hud_state_publish(&hs);
     }
 #endif
@@ -250,12 +251,94 @@ static void *client_thread(void *userdata)
                     }
 
                     response.result = sacd_authenticate(sacd_reader);
+#ifdef ENABLE_HUD
+                    /* publish the parsed TOC for the disc console scene: the
+                       handle already carries everything the layout shows */
+                    {
+                        hud_state_t hs;
+                        int ai, ti;
+                        memset(&hs, 0, sizeof hs);
+                        hud_state_copy(&hs);
+                        hs.disc_loaded = 1;
+                        hs.toc_valid = 1;
+                        hs.nareas = (uint8_t)handle->area_count;
+                        hs.is_sacd = 1;
+                        if (handle->master_toc)
+                        {
+                            const char *cat = handle->master_toc->album_catalog_number;
+                            int ci;
+                            for (ci = 0; ci < 15 && cat[ci] == ' '; ci++) ;
+                            snprintf(hs.disc_cat, sizeof hs.disc_cat, "%s", cat + ci);
+                            hs.disc_year  = handle->master_toc->disc_date_year;
+                            hs.disc_month = handle->master_toc->disc_date_month;
+                            hs.disc_day   = handle->master_toc->disc_date_day;
+                        }
+                        if (handle->master_text.album_title)
+                            snprintf(hs.album, sizeof hs.album, "%s", handle->master_text.album_title);
+                        if (handle->master_text.album_artist)
+                            snprintf(hs.artist, sizeof hs.artist, "%s", handle->master_text.album_artist);
+                        for (ai = 0; ai < 2; ai++)
+                        {
+                            scarletbook_area_t *ar = &handle->area[ai];
+                            hud_area_t *ha = &hs.area[ai];
+                            if (!ar->area_toc) continue;
+                            ha->present     = 1;
+                            ha->channels    = ar->area_toc->channel_count;
+                            ha->track_count = ar->area_toc->track_count;
+                            ha->lsn_start   = ar->area_toc->track_start;
+                            ha->lsn_end     = ar->area_toc->track_end;
+                            for (ti = 0; ti < ar->area_toc->track_count && ti < HUD_TOC_TRACKS; ti++)
+                            {
+                                hud_track_t *ht = &ha->track[ti];
+                                if (ar->area_tracklist_offset)
+                                {
+                                    ht->lsn = ar->area_tracklist_offset->track_start_lsn[ti];
+                                    ht->len = ar->area_tracklist_offset->track_length_lsn[ti];
+                                }
+                                if (ar->area_tracklist_time)
+                                {
+                                    ht->sm = ar->area_tracklist_time->start[ti].minutes;
+                                    ht->ss = ar->area_tracklist_time->start[ti].seconds;
+                                    ht->sf = ar->area_tracklist_time->start[ti].frames;
+                                    ht->dm = ar->area_tracklist_time->duration[ti].minutes;
+                                    ht->ds = ar->area_tracklist_time->duration[ti].seconds;
+                                    ht->df = ar->area_tracklist_time->duration[ti].frames;
+                                }
+                            }
+                        }
+                        hud_state_event(&hs, "DISC OPEN");
+                        hud_state_publish(&hs);
+                    }
+#endif
+                }
+                else
+                {
+#ifdef ENABLE_HUD
+                    {
+                        hud_state_t hs;
+                        memset(&hs, 0, sizeof hs);
+                        hud_state_copy(&hs);
+                        hs.toc_valid = 0;
+                        hud_state_event(&hs, "DISC OPEN FAILED");
+                        hud_state_publish(&hs);
+                    }
+#endif
                 }
             }
             break;
         case ServerRequest_Type_DISC_CLOSE:
             {
                 response.type = ServerResponse_Type_DISC_CLOSED;
+#ifdef ENABLE_HUD
+                {
+                    hud_state_t hs;
+                    memset(&hs, 0, sizeof hs);
+                    hud_state_copy(&hs);
+                    hs.toc_valid = 0;
+                    hud_state_event(&hs, "DISC CLOSE");
+                    hud_state_publish(&hs);
+                }
+#endif
                 if (handle)
                 {
                     scarletbook_close(handle);
@@ -333,6 +416,7 @@ static void *client_thread(void *userdata)
         hud_state_copy(&hs);          /* keep rip counters; drop the client */
         hs.client_connected = 0;
         hs.client_peer[0] = '\0';
+        hud_state_event(&hs, "CLIENT DISCONNECT");
         hud_state_publish(&hs);
     }
 #endif

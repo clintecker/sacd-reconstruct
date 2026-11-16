@@ -1,7 +1,7 @@
 # MT85xx fbdev vendor-ioctl + command-ring contract (S1 extraction)
 
-Run: 2026-11-08, Mac-side, from the staged retail binaries only.
-Author: Stage-1 analyst run (S1 of the stock-leverage plan; feeds S3 rig work).
+Decoded from the staged retail binaries (the system provider and the vendor
+gfxdriver as shipped on the player).
 
 Inputs (sha256, recorded in `incoming/mt85-analyst/`):
 
@@ -29,7 +29,7 @@ Everything below was derived with tools, in this order:
    a literal-pool load (`ldr r1, [pc, #imm] @ 0xADDR`), and the word at that
    address was read **out of the file bytes** with pyelftools — the number is
    never hand-derived (scripts: `/tmp/mt85_ioctl_extract.py`,
-   `/tmp/mt85_strxref.py` this session; scripts and outputs retained under
+   `/tmp/mt85_strxref.py`; scripts and outputs retained under
    `evidence/bx510-guest/graphics/mt85-extraction/` — `mt85_ioctl_extract.py`,
    `mt85_strxref.py`, `mt85_annotate.py`, `mtk_ioctl.txt`, `mt85_ioctl.txt`,
    `mtk.strx`, `mt85.strx`).

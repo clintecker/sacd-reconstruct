@@ -1,8 +1,8 @@
-# SACD HUD — a cyberpunk console that shows what the daemon is doing
+# The HUD, by design
 
-Status: design (2026-11-05), grounded in tonight's hardware results.
-Target: our own full-screen UI on the BX510, driven by **real daemon state**,
-not decoration.
+The full-screen HUD on the BX510's display, driven by **real daemon state**,
+not decoration. The implementation notes live in [HUD.md](HUD.md); this
+document is the design record — why each choice was made.
 
 ## Why this is now possible
 
@@ -131,18 +131,18 @@ one that makes it a *monitor*; H2 is the one that makes it *the product*.
 | Stick plumbing, flag-arming, logs | `evidence/bx510/hwmon-payload/{hwmon_restore.sh,candlaunch.sh}` |
 | Disc facts for the map | baseline manifest: 1,064,208 sectors, ISO-verified hashes |
 
-## Open questions to settle in H1/H2
+## The hardware questions (open until the next player session)
 
-1. Achieved fps at 960x540-render + 1080p stretch-blit on the real ARM926.
-2. Does the LD_PRELOAD observer see the daemon's `ioctl`s when loaded via the
-   AutoScript launcher (pair-retry proved the plumbing, not the visibility).
-3. Does `Flip` keep the panel refresh while the appliance is in **standby**
+1. Achieved fps at 960x540-render + 1080p stretch-blit on the real ARM926
+   (the H1 measurement was 13 FPS draw-side; timing magnitude is a hardware
+   fact, QEMU cannot predict it).
+2. Does `Flip` keep the panel refresh while the appliance is in **standby**
    (the daemon serves there; the HUD might be the thing that keeps the panel
    out of deep-blank).
-4. How much of the scene can be repainted from a dirty-rect list before the
+3. How much of the scene can be repainted from a dirty-rect list before the
    cost of tracking exceeds the savings.
 
-## H3 status (2026-11-06): host push — sender + parser + panel line SHIPPED
+## Host push (H3) — shipped and machine-verified Mac-side
 
 The T2 sender and the HUD-side parser/render now exist and round-trip on the
 Mac (no VM needed):

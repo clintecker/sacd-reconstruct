@@ -1,9 +1,48 @@
 # Graphics gallery — what the reconstructed stack actually renders
 
-Every image here is a captured or reproducible artifact, not a mock-up. One
-line per image names the run and the evidence trail. The goldens are the
-reference frames; the guest captures are what Sony's real guest OS painted;
-the parities tie the two together.
+Every image here is a captured or reproducible artifact, not a mock-up. The
+goldens are the reference frames; the guest captures are what Sony's real
+guest OS painted; the parities tie the two together. Files live in
+`evidence/bx510-guest/graphics/gallery/` (same names as below).
+
+## The daemon UI
+
+![The UI golden frame — disc TOC, both areas, track list, ASCII disc map](evidence/bx510-guest/graphics/gallery/ui-sim-golden-s1.png)
+
+*`ui-sim-golden-s1.png` — the accepted golden frame, 1920x1080. Renderer,
+spec and font shas are pinned in `regress/golden/manifest.json`; this is the
+frame the guest is proven to reproduce per-region (>= 0.85 ink correlation).*
+
+![The same scene rendered inside Sony's real guest OS](evidence/bx510-guest/graphics/gallery/ui-guest-docshot1.png)
+
+*`ui-guest-docshot1.png` — run docshot1 (2026-11-16): the UI held its own
+wire session in the guest (DISC_OPEN -> SIZE -> TOC reads -> DISC_CLOSE,
+catalog `CDSML8558` decoded off port 2002) and the rip client PASSED in the
+same run. Captured at 320x180 over the UART (3x upscaled here).*
+
+![The UI watching a second client rip](evidence/bx510-guest/graphics/gallery/ui-guest-c132-watch.png)
+
+*`ui-guest-c132-watch.png` — the c132 overlap experiment: `DAEMON CLIENT
+CONNECT (1 live)`, `RIP WATCH file=/tmp/ripA.bin`, `RIP DONE 128 sectors` —
+the UI observed a second client working, live.*
+
+## The HUD
+
+![The cyberpunk HUD, Mac render](evidence/bx510-guest/graphics/gallery/hud-sim.png)
+
+*`hud-sim.png` — the host simulator (1280x720, real Sony font), the
+seconds-per-iteration layout loop.*
+
+![The HUD inside Sony's real guest OS](evidence/bx510-guest/graphics/gallery/hud-guest-render.png)
+
+*`hud-guest-render.png` — the same HUD code running in the real guest
+(kernel 2.6.35), decoded from the UART `FBPIX` capture. Gate: rc=0 and
+non-black (mean luminance 83.84), PASS 3x on 2026-11-16.*
+
+![The HUD animating](evidence/bx510-guest/graphics/gallery/hud-anim.gif)
+
+*`hud-anim.gif` — the wireframe cube, perspective grid, CRT sweep and the
+2 Hz blink; blink period asserted by `make ui-anim`.*
 
 ## The daemon UI (`sacd_ui`) — client-driven disc console
 

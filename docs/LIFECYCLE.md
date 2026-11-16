@@ -58,7 +58,7 @@ down as data:
 ## R1 — unit tests: everything that can be tested without the VM
 
 ```sh
-uv run pytest -m "not smoke"     # currently 64 tests, must be green to commit
+uv run pytest -m "not smoke"     # 77 tests, must be green to commit
 ```
 
 What belongs here (the current suite demonstrates each class):
@@ -117,7 +117,11 @@ Everything else — protocol behavior, daemon interaction, module loads,
 framebuffer output — is proven in the emulated BX510 (Sony's real kernel
 and rootfs under our QEMU model) before hardware.
 
-> **State (2026-11-15, runs c130-c134): R3 Level 0 is COMPLETE and green.**
+> **State (2026-11-16): R3 Level 0 complete and green (c130–c134); Level 1
+> (the synthetic cipher) proven at wire level (c135–c138); the client rip
+> works end to end (c139). Hardware rung R5: the 2026-11-05 session PASSED
+> candidate acceptance + standby; the next hardware visit is a baseline
+> confirmation only.**
 > The full port-2002 story is proven at wire level against the real Firebird
 > disc: DISC_OPEN -> DISC_SIZE -> Master TOC -> both area TOCs -> 2-channel
 > music sectors through the decrypt-active branch (byte-exact vs ISO oracles,

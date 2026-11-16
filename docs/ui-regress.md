@@ -10,6 +10,11 @@ and nothing here can update a golden by accident.
 Labels used below: **VERIFIED** = demonstrated on this machine with the artifact named;
 **INFERRED** = reasoned from evidence but not demonstrated end-to-end here.
 
+For human-viewable versions of the accepted frames (plus guest captures and
+the HUD renders), see `docs/GRAPHICS-GALLERY.md` and
+`evidence/bx510-guest/graphics/gallery/` — a passing run deletes its transient
+1080p PPMs (they are reproducible), so the goldens' PNGs are the kept frames.
+
 ## How to run
 
 ```sh

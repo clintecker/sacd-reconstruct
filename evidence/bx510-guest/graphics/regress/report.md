@@ -3,7 +3,7 @@
 - renderer: `tools/sacd_ui.c` sha256 `8bf52cf15da68f0ebed8f77a35eb3aecb36a29ab133479bbec53d1e5e1328137`
 - spec: `/Users/clint/code/sacd-reconstruct/tools/ui_layout_spec.json` sha256 `09f6c3f31f34b2f8a7cee8eeb2afd0baaf934e895b2b03656f35c7ef86fd7086`
 - font: `/Users/clint/code/sacd-reconstruct/evidence/bx510/display-payload/sony-font.ttf` sha256 `98121878fc7fc85205aa6b62bd40d9fb478b3629e62ec4f947c80ec9830d7fd9`
-- run: 2026-11-15T19:59:24-06:00
+- run: 2026-11-16T10:21:11-06:00
 
 ## scenes
 

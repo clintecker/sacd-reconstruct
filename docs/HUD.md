@@ -56,6 +56,13 @@ make sacd-hud-anim        # host render -> animated GIF + MP4
 make sacd-hud-guest       # render inside the QEMU guest, gated on rc + non-black
 ```
 
+## What it looks like (screenshots)
+
+`docs/GRAPHICS-GALLERY.md` holds the current gallery: the Mac SIM render
+(`gallery/hud-sim.png`), the guest render decoded from the UART capture
+(`gallery/hud-guest-render.png`, gate PASS 3x 2026-11-16, mean luminance
+83.84), and the animation (`gallery/hud-anim.gif`).
+
 On the player the HUD is started by the session stick's supervisor, which
 preloads the CPSA module on a free compid, starts the daemon with its stdout
 captured, then draws into the pool slice.

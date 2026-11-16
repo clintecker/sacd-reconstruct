@@ -93,6 +93,10 @@ make ui-regress          # scenes -> goldens -> invariants (seconds)
 make ui-golden GOLDEN=accept   # ONLY after a deliberate, reviewed design change
 ```
 
+The accepted frames are viewable in `evidence/bx510-guest/graphics/gallery/`
+(indexed by `docs/GRAPHICS-GALLERY.md`), which also carries the guest-side
+captures for R3.
+
 - **Goldens change only via explicit accept.** A passing run rewrites
   nothing (mtime-verified). An intentional redesign is one loud command
   that stamps the manifest with the renderer sha, spec sha, and date.

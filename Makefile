@@ -476,7 +476,7 @@ sacd-hud-build:
 ## SACD hardware :: sacd-hud-sim :: render the HUD scene on the Mac (no DirectFB, no device) :: real Sony font + fake telemetry -> PNG, for layout/text iteration in seconds
 .PHONY: sacd-hud-sim
 sacd-hud-sim:
-	cd experiments/sacd_reconstruct && cc -O2 -Wall -Wextra -Wno-pragmas -DHUD_SIM -I. -o /tmp/hudsim tools/bx510_sacd_hud.c && HUD_FONT=evidence/bx510/display-payload/sony-font.ttf /tmp/hudsim /tmp/hud_sim.ppm 1 && sips -s format png /tmp/hud_sim.ppm --out /tmp/hud_sim.png >/dev/null && echo "wrote /tmp/hud_sim.png"
+	cd $(SACD) && cc -O2 -Wall -Wextra -Wno-pragmas -DHUD_SIM -I. -o /tmp/hudsim tools/bx510_sacd_hud.c && HUD_FONT=$(CURDIR)/evidence/bx510/display-payload/sony-font.ttf /tmp/hudsim /tmp/hud_sim.ppm 1 && sips -s format png /tmp/hud_sim.ppm --out /tmp/hud_sim.png >/dev/null && echo "wrote /tmp/hud_sim.png"
 
 ## SACD hardware :: sacd-usb-calib :: arm the CALIBRATION pattern on the stick :: sets AutoScript/hudcalib then display mode, so the next player run photographs a known pattern (grid/bars/edges) instead of the HUD
 .PHONY: sacd-usb-calib

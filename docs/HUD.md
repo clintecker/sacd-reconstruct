@@ -1,7 +1,14 @@
-# The on-panel HUD
+# The on-panel HUD (`sacd_hud`)
 
 A cyberpunk console drawn on the player's own display while the daemon works,
 designed to be legible from a sofa and honest about what the daemon is doing.
+
+**Not to be confused with the daemon UI (`sacd_ui`)** — a separate program
+([docs/GRAPHICS-GALLERY.md](GRAPHICS-GALLERY.md) shows both side by side).
+The UI is a disc console that holds a real client session and reads the TOC
+off the wire; the HUD opens no session and instead watches the daemon from
+`/proc` + the host's UDP push. Different jobs, different data paths, both
+render in the guest.
 
 ## Why it is built the way it is
 

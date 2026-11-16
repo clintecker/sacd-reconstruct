@@ -5,12 +5,13 @@ working source, proven byte-for-byte, and now ripping real music files out of
 an emulated player.
 
 <p align="center">
-  <img src="evidence/bx510-guest/graphics/gallery/ui-sim-golden-s1.png" width="720" alt="The reconstructed UI: disc TOC, track list, ASCII disc map">
+  <img src="evidence/bx510-guest/graphics/gallery/ui-sim-golden-s1.png" width="720" alt="The daemon UI: disc TOC, track list, ASCII disc map">
 </p>
 
-*The daemon's console UI, re-rendered by the reconstructed code — the same
-frame the emulated player paints ([gallery](docs/GRAPHICS-GALLERY.md) for the
-rest, including what the real guest OS draws).*
+*The **daemon UI** (`sacd_ui`) — a disc console that reads the TOC and track
+list over the daemon's own port-2002 protocol and paints them. This exact
+frame is proven to render inside Sony's real guest OS
+([gallery](docs/GRAPHICS-GALLERY.md)).
 
 ## The story
 
@@ -41,8 +42,9 @@ sacd_extract_160 -s -c -t 1 -i 127.0.0.1:2002 ~/rip
 That rip was the finish line, and it's crossed — under the emulator. The
 daemon and the client are the same program, the DSF files are deterministic
 (two rips, one md5), and every byte the client received came through the
-reconstructed protocol stack. The [gallery](docs/GRAPHICS-GALLERY.md) also
-shows the on-panel UI and a cyberpunk HUD for the player's display.
+reconstructed protocol stack. A separate companion program — the **HUD**
+(`sacd_hud`) — draws a cyberpunk telemetry console on the player's display;
+see the two images below.
 
 ## How it's proven
 
@@ -56,14 +58,16 @@ altitudes, cheapest first, each with committed evidence:
 | **the real player** | a USB stick boots the daemon on actual hardware | sector hashes matching the reference ISO, beyond-EOF refusal, standby survival ([`evidence/bx510/hw-session-2026-11-05/`](evidence/bx510/hw-session-2026-11-05/RESULTS.md)) |
 
 <p align="center">
-  <img src="evidence/bx510-guest/graphics/gallery/hud-sim.png" width="420" alt="The cyberpunk HUD (host render)">&nbsp;
-  <img src="evidence/bx510-guest/graphics/gallery/hud-guest-render.png" width="290" alt="The same HUD rendered inside Sony's real guest OS">
+  <img src="evidence/bx510-guest/graphics/gallery/hud-sim.png" width="420" alt="The HUD: host render">&nbsp;
+  <img src="evidence/bx510-guest/graphics/gallery/hud-guest-render.png" width="290" alt="The same HUD code rendered inside Sony's real guest OS">
 </p>
 
-*The companion HUD: host render (left) and the same code running inside
-Sony's real guest OS (right). The decrypt leg is proven for real too — a
-derived disc image carries the audio areas encrypted at rest, and the
-emulated CPSA path decrypts under seven acceptance gates.*
+*The **HUD** (`sacd_hud`) — a second, separate program. Host render (left)
+and the same code running inside Sony's real guest OS (right). It shows live
+telemetry (daemon liveness, throughput, verify status) while a rip runs. The
+decrypt leg is proven for real too: a derived disc image carries the audio
+areas encrypted at rest, and the emulated CPSA path decrypts under seven
+acceptance gates.*
 
 ## The protocol
 
@@ -112,7 +116,7 @@ Full reproduction ladder (rig → guest → hardware): [docs/REPRODUCE.md](docs/
 | [docs/RIG-ARCHITECTURE.md](docs/RIG-ARCHITECTURE.md) | how the emulation rigs work (qemu-user + full-system) |
 | [docs/LIFECYCLE.md](docs/LIFECYCLE.md) | the build/test ladder from idea to hardware |
 | [docs/EVIDENCE.md](docs/EVIDENCE.md) | how to read the evidence bundles |
-| [docs/HUD.md](docs/HUD.md) | the on-panel HUD |
+| [docs/HUD.md](docs/HUD.md) | the HUD (`sacd_hud`) — and how it differs from the daemon UI (`sacd_ui`) |
 | [DELTA.md](DELTA.md) | the exact change-set vs public v0.3.7, verified from disassembly |
 
 ## Not in this repository

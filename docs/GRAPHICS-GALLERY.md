@@ -5,17 +5,21 @@ goldens are the reference frames; the guest captures are what Sony's real
 guest OS painted; the parities tie the two together. Files live in
 `evidence/bx510-guest/graphics/gallery/` (same names as below).
 
-Two separate programs render on the player's display, and the names are
-easy to confuse:
+One HUD: **`sacd_hud`**, the cyberpunk telemetry console (event matrix,
+wireframe cube, throughput panels). It watches the daemon from `/proc` and
+the host's UDP push — and the target architecture builds it INTO the daemon
+so it reads the daemon's own live state directly (see
+[HUD.md](HUD.md) §Architecture).
 
-- **`sacd_ui` — the daemon UI**: a disc console (TOC, tracks, disc map).
-  It is itself a daemon CLIENT: everything it shows is bytes it read off
-  port 2002.
-- **`sacd_hud` — the HUD**: a cyberpunk telemetry console (event matrix,
-  wireframe cube, throughput panels). It never opens a client session; it
-  watches the daemon from /proc and a host UDP push.
+Two other graphics programs appear below and are **not** the HUD:
 
-Both are proven to run inside Sony's real guest OS.
+- **`sacd_ui`** — the *daemon UI*: a disc console that holds a real client
+  session and reads the TOC off port 2002. A milestone artifact from the
+  client-leg proof, kept for regression, not shipped on the stick.
+- **`cyberdraw`** — a display-leg *test pattern*, not a product.
+
+Both non-HUD programs (and the HUD) are proven to run inside Sony's real
+guest OS.
 
 ## The daemon UI (`sacd_ui`)
 
@@ -56,7 +60,8 @@ non-black (mean luminance 83.84), PASS 3x on 2026-11-16.*
 *`hud-anim.gif` — the wireframe cube, perspective grid, CRT sweep and the
 2 Hz blink; blink period asserted by `make ui-anim`.*
 
-## The daemon UI (`sacd_ui`) — client-driven disc console
+## The daemon UI (`sacd_ui`) — client-driven disc console (milestone artifact,
+not the HUD)
 
 | image | what it shows | provenance |
 |---|---|---|

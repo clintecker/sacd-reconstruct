@@ -3,12 +3,34 @@
 A cyberpunk console drawn on the player's own display while the daemon works,
 designed to be legible from a sofa and honest about what the daemon is doing.
 
-**Not to be confused with the daemon UI (`sacd_ui`)** — a separate program
-([docs/GRAPHICS-GALLERY.md](GRAPHICS-GALLERY.md) shows both side by side).
-The UI is a disc console that holds a real client session and reads the TOC
-off the wire; the HUD opens no session and instead watches the daemon from
-`/proc` + the host's UDP push. Different jobs, different data paths, both
-render in the guest.
+**There is one HUD.** This is it. Two other graphics programs exist in the
+tree and neither is a HUD:
+
+- **`sacd_ui`** — the *daemon UI*, a disc console that holds a real client
+  session and reads the TOC off the wire. It is a milestone artifact from the
+  client-leg proof (it proved a client-driven panel render plus wire parity),
+  kept and regression-tested, but it is not the HUD and it is not shipped on
+  the stick.
+- **`cyberdraw`** — a *display-leg test payload*: a self-authenticating
+  procedural pattern whose TV photo can only mean "our pixels reached the
+  panel". It is rig instrumentation, never a product.
+
+## Architecture: where the HUD lives
+
+Today the HUD is a **separate process** launched by the stick's supervisor
+alongside the daemon, watching it from the outside (`/proc` counters, the
+daemon's own stdout as a ticker file, and the host's UDP push on port 20023).
+That separation was deliberate at first — it kept the reconstructed daemon
+untouched while the display path was being proven.
+
+**The target architecture is one HUD built into the daemon**: a HUD thread
+inside `sacd_extract_160` that renders the panel from the daemon's own live
+state — no `/proc` scraping, no ticker file, no second process, no UDP
+channel. The separate-process form remains the stepping stone (it is what is
+proven in the guest today); the in-daemon merge is the roadmap item, gated
+by the same ladder: unit → SIM → guest → hardware. Until that merge lands,
+one binary is the product, the other is scaffolding — never present them as
+two HUDs.
 
 ## Why it is built the way it is
 

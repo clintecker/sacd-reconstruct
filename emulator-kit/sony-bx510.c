@@ -112,6 +112,7 @@ struct Bx510State {
     BlockBackend *sata_blk;
     char *sata_disc_path;
     bool sata_present;          /* media present */
+    bool sata_cipher;           /* frames carry LSN + ciphertext-at-rest flag */
     /* taskfile storage: [0]=feature [1]=nsect [2]=lbal [3]=lbam
        [4]=lbah [5]=device; command register separate */
     uint8_t tf[6], sata_cmd;
@@ -559,6 +560,16 @@ static void bx510_fe_read(Bx510State *s)
             uint8_t *fr = buf + (size_t)i * CD_SACD;
 
             memset(fr, 0, 12);
+            if (s->sata_cipher) {
+                /* Level 1 (evidence/bx510-guest/bdpdrv/decode/level1-cipher-spec.md
+                 * §1.4): the frame's header names the sector so the guest's
+                 * CPSA stand-in can key its per-sector transform; the driver
+                 * discards out[0..11] (sacdread-cpsa.md §3.2), so this is
+                 * wire-invisible. With the flag off the header is the Level-0
+                 * all-zero one byte for byte — the regression invariant. */
+                stl_be_p(fr, lba + i);          /* hdr[0..3] = LSN, BE */
+                fr[4] = 0x01;                   /* ciphertext at rest */
+            }
             memcpy(fr + 12, payload + (size_t)i * CD_PAYLOAD, CD_PAYLOAD);
             memset(fr + 12 + CD_PAYLOAD, 0, CD_SACD - 12 - CD_PAYLOAD);
         }
@@ -1704,6 +1715,16 @@ static void bx510_set_sata_disc(Object *obj, const char *value, Error **errp)
     s->sata_disc_path = g_strdup(value);
 }
 
+static bool bx510_get_sata_cipher(Object *obj, Error **errp)
+{
+    return BX510_MACHINE(obj)->sata_cipher;
+}
+
+static void bx510_set_sata_cipher(Object *obj, bool value, Error **errp)
+{
+    BX510_MACHINE(obj)->sata_cipher = value;
+}
+
 static char *bx510_get_hdhost(Object *obj, Error **errp)
 {
     return g_strdup(BX510_MACHINE(obj)->hdhost_path);
@@ -1730,6 +1751,13 @@ static void bx510_class_init(ObjectClass *klass, void *data)
     object_class_property_set_description(klass, "sata-disc",
         "optical disc image for the emulated SATA ATAPI drive "
         "(raw 2048-byte sectors)");
+    object_class_property_add_bool(klass, "sacd-cipher",
+                                   bx510_get_sata_cipher,
+                                   bx510_set_sata_cipher);
+    object_class_property_set_description(klass, "sacd-cipher",
+        "SACD 2064-byte frames carry hdr[0..3]=LSN (BE) and hdr[4]=1 "
+        "(payload is ciphertext at rest) — Level 1 synthetic cipher, "
+        "evidence/bx510-guest/bdpdrv/decode/level1-cipher-spec.md");
     mc->init = bx510_init;
     mc->default_cpu_type = ARM_CPU_TYPE_NAME("arm1176");
     mc->default_ram_id = "bx510.ram";

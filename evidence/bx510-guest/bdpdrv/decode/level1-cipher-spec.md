@@ -482,7 +482,6 @@ the oracle JSON). Nobody edits another's file.
 | **1** | `tools/bx510_osal_stub.c` | §1.2–§1.5: the cipher + `l1_frame` + the per-block census line, replacing the identity loop at `:325-341` | the build's `strings` carries `l1 block:`; the staged source's sha256 == the repo copy's |
 | **2** | `tools/bx510_disc_cipher.py` (new), `tools/bx510_cipher_check.py` (new), `evidence/…/decode/level1-cipher-oracles.json` (new) | §3.2 generator + `selftest`/`kat`, §3.3 oracle JSON, §5.3 checker | `selftest` PASS and `kat` == §2.2 **before** generating; plain column reproduces |
 | **3** | `emulator-kit/sony-bx510.c`, `tools/bx510-fire.sh` (+ verify `emulator-kit/run.py`) | §4.2 header LSN + `sacd-cipher` machine property; §4.3 `BX510_DISC` / `BX510_CIPHER` fire knobs | `qemu-system-arm -M sony-bx510,help` lists `sacd-cipher`; a `DRYRUN=1` fire renders the derived disc path |
-
 ### 4.1 Rebuild order (do not reorder)
 
 ```
@@ -570,8 +569,27 @@ Replace the single hard-coded line with two knobs, default untouched:
 # CIPHER=1 arms the model's sacd-cipher property AND therefore the guest
 # stub's transform: only ever pair it with an encrypted-at-rest derived disc
 # (evidence/bx510-guest/bdpdrv/decode/level1-cipher-spec.md §3).
-export BX510_MACHINE_OPTS="sata-disc=${BX510_DISC:-/home/aftermath/sacd-verify/firebird.iso}${BX510_CIPHER:+,sacd-cipher=1}"
+DISC="${BX510_DISC:-${DISC:-/home/aftermath/sacd-verify/firebird.iso}}"
+CIPHER_OPT=",sacd-cipher=1"
+CIPHER_STATE=on
+case "${BX510_CIPHER:-${CIPHER:-0}}" in
+1) ;;
+*) CIPHER_OPT=""; CIPHER_STATE=off ;;
+esac
+export BX510_MACHINE_OPTS="sata-disc=$DISC$CIPHER_OPT"
+# fire start, so the transcript self-documents what the run ran with
+echo "bx510-fire: run $R — disc=$DISC cipher=$CIPHER_STATE machine-opts: $BX510_MACHINE_OPTS"
 ```
+
+**IMPLEMENTER CORRECTION (§4.3, 2026-11-16 supervisor ruling).** The snippet as
+first written above was `${BX510_CIPHER:+,sacd-cipher=1}`, which arms the
+property for *any* non-empty value — `CIPHER=0` included, which would have
+transformed the derived disc in **c135** (cipher OFF) and read as a cipher bug.
+The flag is therefore gated on `= "1"` (`case … in 1)`), and the disc knob
+accepts both its long and short spellings (`${BX510_DISC:-${DISC:-…}}`,
+mirrored for CIPHER) because §5.1's call sites pass `DISC=`/`CIPHER=` while this
+section names `BX510_DISC`/`BX510_CIPHER`; non-empty wins, `DISC` defaults to
+the real ISO, `CIPHER` to `0`. Implemented in `tools/bx510-fire.sh`.
 
 Call sites pass `DISC=…`/`CIPHER=1` through bx510-fire.sh's own env names; the
 Makefile needs no change (variables that arrive from the environment are
@@ -601,6 +619,27 @@ Both `strings` checks must hit (the second proves the handler is still the same
 function; `decrypt-hang.md` §1.2 is the stale-stub incident that makes the
 source-sha256 check non-optional). Pre-existing warnings are only the two C90
 `x_snprintf`/`x_sscanf` ones at `tools/bx510_osal_stub.c:156`/`:160`.
+
+> **IMPLEMENTER CORRECTION (implementer 1, supervisor ruling 2026-11-16, run
+> 8f9c57e0) — the second `strings` check above is UNSATISFIABLE BY
+> CONSTRUCTION; the gate is satisfied in intent by evidence (a)+(b)+(c) below.**
+> §1.5 says the new per-block `l1 block:` line *replaces* the `identity transform
+> done` line, so that string cannot survive in the built object (grep over the
+> repo tree: zero occurrences after the change) — §4.4's `grep "identity
+> transform done"` and §1.5's "replaces" cannot both hold. **Ruling: option A —
+> §1.5 stands, the identity line stays removed, no code change.** The
+> same-handler/not-a-stale-stub intent of the second check is instead proven by:
+> **(a)** staged-source sha256 == `sha256sum tools/bx510_osal_stub.c` (the
+> non-optional anti-stale check); **(b)** `strings /tmp/osal_b/bx510_osal_stub.ko`
+> carries `l1 block:` (both format strings — the new code is in the box);
+> **(c)** the three surviving handler strings, `svc 0x1e: no request block`,
+> `svc 0x1e: opcode=%#lx src=%#lx dst=%#lx count=%lu len=%lu`, `svc 0x1e: NOT
+> transforming (src/dst/count/len shape)` — the handler is still `tz_set_misc`
+> with the same shape gate. Checker gate 2 in §5.3 (`l1 block:` present in the
+> cipher-on UART) remains the runtime form of the same anti-stale gate.
+> Implementer 1's build (2026-11-16): staged sha256 `b9d0b6af…`, all four `.ko`
+> built, `buildB.log` warnings = only the two pre-existing C90 ones, (b) and (c)
+> confirmed.
 
 Then the cheap payload-budget gate (the stub rides in fe_test_data, C2) — no
 boot, no fire lock contention beyond its own:

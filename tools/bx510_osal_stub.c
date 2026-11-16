@@ -272,7 +272,10 @@ EXPORT_SYMBOL(BIM_GetResetIrKey);
  * params+0x34 = 0x67000000 and reads it back after the call (§3.4), so a
  * do-nothing stub already yields a positive HAL result. What the stub must
  * actually DO is only the data leg of service 0x1e: fill dst from src per
- * 2064-byte block (Level-0 identity — the fixture carries plaintext frames).
+ * 2064-byte block, applying the Level-1 synthetic per-sector transform
+ * (decode/level1-cipher-spec.md §1) to the payload of each frame the model
+ * arms. With the machine property off the frame header is all zeros and the
+ * path is the Level-0 identity copy.
  */
 #define TZ_LOG(fmt, ...) printk(KERN_INFO "[OSAL_STUB] tz: " fmt, ##__VA_ARGS__)
 
@@ -300,12 +303,114 @@ static void *tz_ns(unsigned long p)
 	return (void *)p;
 }
 
+/* ==== LEVEL-1 SYNTHETIC CIPHER (issue #10) ============================
+ * Normative source: evidence/bx510-guest/bdpdrv/decode/level1-cipher-spec.md
+ * §1.2 (the cipher), §1.3 (the range table), §1.4 (where the LSN comes from),
+ * §1.5 (this handler). One spelling per concept; the fixture generator carries
+ * the same seven constants and proves them against the published KAT.
+ */
+
+/* Level-1 synthetic cipher (issue #10). NOT a cryptographic scheme and not a
+ * model of AACS/SACD keying: it demonstrates that the decrypt path carries
+ * real per-sector work (keyed, area-selective, invertible), nothing more. */
+#define L1_KEY0    0xC0FFEE11u   /* sector key, stage 1 */
+#define L1_KEY1    0x1BADB002u   /* sector key, stage 2 */
+#define L1_MUL0    0x9E3779B1u   /* LSN mixer (golden-ratio odd) */
+#define L1_SALT0   0x00424C31u
+#define L1_SALT1   0x5ACD5ACDu   /* the fixture family's salt (fixture_gen.py:174) */
+#define L1_WORDS   512u          /* 2048 bytes / 4 */
+#define L1_PAYLOAD 2048u
+#define L1_HDR     12u
+#define L1_FRAME   2064u
+
+static inline uint32_t l1_step(uint32_t x)      /* xorshift32 */
+{
+	x ^= x << 13; x ^= x >> 17; x ^= x << 5;    /* uint32_t: wrap is defined */
+	return x;
+}
+
+/* The keystream state for one sector: LSN is mixed through two keyed stages,
+ * then stepped once per 32-bit payload word. */
+static uint32_t l1_seed(uint32_t lsn)
+{
+	uint32_t v = (lsn * L1_MUL0) ^ L1_KEY0 ^ L1_SALT0;
+	v = l1_step(v);                 /* stage 1 */
+	v ^= L1_KEY1 ^ L1_SALT1;
+	return l1_step(v);              /* stage 2 */
+}
+
+/* The frame header names the sector: hdr[0..3] = LSN, big-endian (the disc's
+ * own byte order), written by the model only when sacd-cipher=1 (§1.4). The
+ * driver discards out[0..11] (sacdread-cpsa.md §3.2), so this never reaches
+ * the wire; with the property off the header stays all zeros = Level 0. */
+static uint32_t l1_lsn(const unsigned char *frame)
+{
+	return ((uint32_t)frame[0] << 24) | ((uint32_t)frame[1] << 16) |
+	       ((uint32_t)frame[2] << 8) | (uint32_t)frame[3];
+}
+
+/* F: XOR the 2048-byte payload with the sector's keystream, in place.
+ * Words are assembled little-endian from payload bytes (payload[4j] is the
+ * low byte) so the ARM stub and the Python fixture tool agree with no
+ * alignment or endianness question. F(F(p)) == p. */
+static void l1_xform(uint32_t lsn, unsigned char *p)
+{
+	uint32_t v = l1_seed(lsn), j;
+	for (j = 0; j < L1_WORDS; j++) {
+		uint32_t w;
+		v = l1_step(v);
+		w = (uint32_t)p[4*j] | ((uint32_t)p[4*j+1] << 8) |
+		    ((uint32_t)p[4*j+2] << 16) | ((uint32_t)p[4*j+3] << 24);
+		w ^= v;
+		p[4*j]   = (unsigned char)w;
+		p[4*j+1] = (unsigned char)(w >> 8);
+		p[4*j+2] = (unsigned char)(w >> 16);
+		p[4*j+3] = (unsigned char)(w >> 24);
+	}
+}
+
+/* The two encrypted-at-rest areas, from the disc's OWN area TOCs, which are
+ * also the daemon's own block_size branch boundaries (daemon-socket-protocol.md:322-336, the same
+ * four numbers the daemon reads from TWOCHTOC@544 and MULCHTOC@353804). */
+#define L1_ENC_START1 584u
+#define L1_ENC_END1   353763u
+#define L1_ENC_START2 353844u
+#define L1_ENC_END2   1064126u
+
+static int l1_in_area(uint32_t lsn)
+{
+	return (lsn >= L1_ENC_START1 && lsn <= L1_ENC_END1) ||
+	       (lsn >= L1_ENC_START2 && lsn <= L1_ENC_END2);
+}
+
+/* One 2064-byte frame: header + 4-byte trailer verbatim, payload transformed
+ * when the frame is (a) armed (hdr[4]&1) and (b) inside an encrypted-at-rest
+ * area. Returns 1 if the payload was transformed, 0 if passed through. */
+static int l1_frame(unsigned char *src, unsigned char *dst)
+{
+	uint32_t lsn = l1_lsn(src);
+	unsigned j;
+	int xf = 0;
+
+	memcpy(dst, src, L1_HDR);
+	for (j = 0; j < L1_PAYLOAD; j++)
+		dst[L1_HDR + j] = src[L1_HDR + j];
+	if ((src[4] & 1u) && l1_in_area(lsn)) {
+		l1_xform(lsn, dst + L1_HDR);
+		xf = 1;
+	}
+	memcpy(dst + L1_HDR + L1_PAYLOAD, src + L1_HDR + L1_PAYLOAD,
+	       L1_FRAME - L1_HDR - L1_PAYLOAD);
+	return xf;
+}
+
 /* Service 0x1e (§3.3, VERIFIED block layout):
  *   params+0x18 = request block | NS
  *   blk+0x04 = 0x80 (opcode), +0x08 src|NS, +0x0c dst|NS,
  *   +0x10 = block count (len/2064), +0x14 = len (bytes)
- * Handler: per 2064-byte block copy dst<-src (Level-0 identity), then leave
- * a non-negative code at params+0x34. */
+ * Handler: per 2064-byte frame, the Level-1 transform (§1.5; Level-0 identity
+ * when the frame is unarmed or out of area), one census line per block, then
+ * leave a non-negative code at params+0x34. */
 static void tz_set_misc(void *params)
 {
 	unsigned long *blk = tz_ns(*(unsigned long *)((char *)params + 0x18));
@@ -325,15 +430,24 @@ static void tz_set_misc(void *params)
 	TZ_LOG("svc 0x1e: opcode=%#lx src=%#lx dst=%#lx count=%lu len=%lu\n",
 	       blk[1], src_raw, dst_raw, count, len);
 	if (len && src && dst && count && count * 2064ul == len) {
-		unsigned long j;
+		uint32_t lsn0 = l1_lsn(src);
+		uint32_t lsn1 = l1_lsn(src + (count - 1) * L1_FRAME);
+		unsigned long xf = 0, unarmed = 0;
 		for (i = 0; i < count; i++) {
-			unsigned char *s = (unsigned char *)(src + i * 2064);
-			unsigned char *d = (unsigned char *)(dst + i * 2064);
-			for (j = 0; j < 2064; j++) {
-				d[j] = s[j];
-			}
+			unsigned char *s = src + i * L1_FRAME;
+			xf += l1_frame(s, dst + i * L1_FRAME);
+			/* belt-and-braces: an encrypted-at-rest sector the model
+			 * did not arm would go out as ciphertext — say so, and
+			 * pass it through (identity), never corrupt silently. */
+			if (!(s[4] & 1u) && l1_in_area(l1_lsn(s)))
+				unarmed++;
 		}
-		TZ_LOG("svc 0x1e: identity transform done (%lu bytes)\n", len);
+		TZ_LOG("l1 block: count=%lu lsn=%u..%u xform=%lu pass=%lu armed=%u ks0=%08x\n",
+		       count, lsn0, lsn1, xf, count - xf, src[4] & 1u,
+		       l1_seed(lsn0));
+		if (unarmed)
+			TZ_LOG("l1 block: %lu in-area frame(s) NOT armed (hdr[4]=0) — left as identity\n",
+			       unarmed);
 	} else {
 		TZ_LOG("svc 0x1e: NOT transforming (src/dst/count/len shape)\n");
 	}

@@ -25,6 +25,23 @@ DRYRUN=${DRYRUN:-0}
 PROBE_EXTRA=""
 [ "$DRYRUN" = "1" ] && PROBE_EXTRA=" --print-commands"
 
+# DISC: the disc image the emulated drive serves. Default is the real Firebird
+# ISO — the Level-0 oracle ground truth, which every fire MUST leave untouched
+# (read-only: blk_new_open(..., 0, ...), emulator-kit/sony-bx510.c:1667-1670).
+# CIPHER=1 arms the model's sacd-cipher property AND therefore the guest stub's
+# transform: only ever pair it with an encrypted-at-rest derived disc
+# (evidence/bx510-guest/bdpdrv/decode/level1-cipher-spec.md §3).
+# Both spellings work: BX510_DISC/BX510_CIPHER (the spec's names) and the short
+# DISC/CIPHER the battery call sites pass. Non-empty wins; DISC falls back to
+# the real ISO and CIPHER to 0 (property off, the Level-0 behaviour).
+DISC="${BX510_DISC:-${DISC:-/home/aftermath/sacd-verify/firebird.iso}}"
+CIPHER_OPT=",sacd-cipher=1"
+CIPHER_STATE=on
+case "${BX510_CIPHER:-${CIPHER:-0}}" in
+1) ;;
+*) CIPHER_OPT=""; CIPHER_STATE=off ;;
+esac
+
 EVID=evidence/bx510-guest/bdpdrv
 VM=aftermath@10.20.0.18
 SSH="ssh -o BatchMode=yes -p 2222 $VM"
@@ -56,7 +73,8 @@ cat > "$VMFIRE" <<EOF
 #!/bin/sh
 R=$RUNID T=$TIMEOUT
 export BX510_TRACE=1
-export BX510_MACHINE_OPTS='sata-disc=/home/aftermath/sacd-verify/firebird.iso'
+export BX510_MACHINE_OPTS="sata-disc=$DISC$CIPHER_OPT"
+echo "bx510-fire: run \$R — disc=$DISC cipher=$CIPHER_STATE machine-opts: $BX510_MACHINE_OPTS"
 cd /home/aftermath || exit 1
 ls -t /tmp/bdpdrv-run*.mmio.log 2>/dev/null | grep -v "\$R" | tail -n +3 | xargs -r rm -f
 ls -t /tmp/bdpdrv-run*.uart.log 2>/dev/null | grep -v "\$R" | tail -n +5 | xargs -r rm -f

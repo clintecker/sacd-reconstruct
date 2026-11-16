@@ -6,9 +6,14 @@
 # 1. fn_diff over the 390 normalized functions. The only tolerable
 #    mismatches are the two documented startup residuals
 #    (_start, call_gmon_start — see DELTA.md); anything else fails.
-# 2. pool_audit: literal-pool content comparison at load sites
-#    (strings/scalars/pointer structures).
-# 3. The two literal regression tests (pointer swap + ninth character).
+# 2. pool_audit: literal-pool identity at load sites (string content,
+#    function-pointer symbols, section boundaries, scalar values) — see
+#    evidence/status-test/fn-diff-literal-policy.md.
+# 3. The embedded sacd_read.ko blob: byte identity. Neither tool sees the
+#    module as code (it is data the daemon writes to /tmp and insmods), so
+#    module parity IS blob parity — reported by pool_audit.
+# 4. The literal regression mutants (pointer swap, ninth character,
+#    function-pointer swap, module-boundary literal, blob byte).
 set -u
 
 ORIG=${1:?original elf}
@@ -42,11 +47,11 @@ done
 [ $rc -eq 0 ] || [ $rc -eq 1 ] || { echo "sacd-parity: FAIL — fn_diff error"; fail=1; }
 
 echo
-echo "=== pool_audit"
+echo "=== pool_audit (literal identity + embedded module blob)"
 python3 "$HERE/pool_audit.py" "$ORIG" "$CAND" --verbose || fail=1
 
 echo
-echo "=== literal regressions"
+echo "=== literal + module regression mutants"
 python3 "$HERE/test_pool_audit_regressions.py" "$ORIG" "$CAND" || fail=1
 
 echo

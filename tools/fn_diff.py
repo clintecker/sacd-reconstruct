@@ -2,7 +2,21 @@
 """fn_diff.py — per-function disassembly parity between two ARM ELF32 binaries.
 
 Normalizes away: addresses, register aliasing (fp==r11 etc), whitespace,
-comment syntax (llvm "@" vs GNU ";"), raw-byte columns, pool-load offsets.
+comment syntax (llvm "@" vs GNU ";"), raw-byte columns, pool-load offsets,
+and literal-pool word VALUES.
+
+What fn_diff compares about literals, and why it is only half the contract:
+  * instruction-encoded immediates (`mov r3, #128`, `cmp r1, #0x241`) are
+    source constants and are compared EXACTLY — they are identity-stable
+    across a legitimate rebuild;
+  * pool words are compared as SLOTS (a bare `.word` at a fixed position
+    relative to the instructions), never by value: at -O0/armv6z every
+    non-encodable constant and every address lives in the pool, so the value
+    is layout-dependent (addresses) or needs a type to interpret (scalars vs
+    pointers). Their identity — string content, function-pointer target,
+    section boundary, scalar value — is tools/pool_audit.py's contract.
+Policy, evidence and the mutants that pin it: evidence/status-test/
+fn-diff-literal-policy.md.
 
 Branch targets: both llvm-objdump and GNU objdump print the absolute target
 address. Targets inside the current function are rewritten to a function-
@@ -87,11 +101,15 @@ def normalize(insn, fn_start=None, fn_end=None):
             insn = "%s <%s>" % (mnem, sym)
         else:
             insn = "%s <?>" % mnem
-    # .word literal pool entries: keep only the symbolic form
-    insn = re.sub(r"\.word\s+0x[0-9a-f]+\s+<([^>+]+?)(\+0x[0-9a-f]+)?>",
-                  r".word <\1\2>", insn)
-    insn = re.sub(r"\.word\s+0x[0-9a-f]+", ".word", insn)
-    # raw-byte column printed for data-in-code lines: "f8 52 03 00  .word ..."
+    # .word literal-pool / jump-table entries -> bare ".word".
+    # The value is either a link-time address or a non-encodable scalar, and
+    # an objdump symbolic annotation is the nearest symbol plus a positional
+    # offset — every one of them layout-dependent, so none belongs in an
+    # instruction-identity compare. The identity of the pointed-to object
+    # (function pointer, string, section boundary, scalar value) is
+    # pool_audit's contract; fn_diff compares the SLOT.
+    insn = re.sub(r"\.word\s+0x[0-9a-f]+(?:\s+<[^>]*>)?", ".word", insn)
+    # raw-byte column printed for data-in-code lines: "f8 52 03 00  .word"
     insn = re.sub(r"^[0-9a-f]{2}( [0-9a-f]{2}){1,3}\s+\.word$", ".word", insn)
     # strip trailing comment (llvm: "@" annotations; GNU ARM: ";")
     insn = insn.split("@")[0].split(";")[0].strip()

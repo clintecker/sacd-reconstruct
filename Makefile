@@ -370,7 +370,9 @@ evidence-pull:
 # reconstruct -> ~/reconstruct). VM check-python: ~/sacdtest-venv
 # (pyelftools + unicorn installed from Mac-staged wheels).
 
-SACD      := experiments/sacd_reconstruct
+# Layout: the SACD lane is a subdirectory of the aftermath tree and the
+# repo root of this standalone checkout. Keep both working.
+SACD      := $(if $(wildcard experiments/sacd_reconstruct),experiments/sacd_reconstruct,.)
 SACD_ORIG := $(SACD)/original/sacd_extract_160
 SACD_CAND ?= $(SACD)/reconstruct/release/sacd_extract_160_release
 SACD_VM   := sacd-verify

@@ -998,7 +998,7 @@ evidence/bx510-guest/graphics/font-hud-after.mp4	649386	19c0de3e6e6251d565fbad5a
 evidence/bx510-guest/graphics/font-hud-after.png	125293	c2d3a8c7bc7ca22fc2be36086f9322dbc0500c5f83c6d9d602cfb5b963e5f0dc	convert	image -> PNG (metadata stripped)
 evidence/bx510-guest/graphics/font-hud-before.png	91276	aefd466125e2b56844d067e503b9602e1ae9ad987099217cb39edbffaedbc059	convert	image -> PNG (metadata stripped)
 evidence/bx510-guest/graphics/font-hud-run.md	5785	d586f8f8418164034844ad908d35590987bbc663dca95d0b004c9d09b610e6f5	scrub	evidence (logs filtered by size below)
-evidence/bx510-guest/graphics/gallery/hud-anim.gif	1136765	c602a8411fca3e400ca3b9a90a9965e7b7c92ae5fa00628fae6aba1f3b020d99	exclude	regenerable blob >1 MiB
+evidence/bx510-guest/graphics/gallery/hud-anim.gif	1136765	c602a8411fca3e400ca3b9a90a9965e7b7c92ae5fa00628fae6aba1f3b020d99	include	the HUD animation, embedded by docs/GRAPHICS-GALLERY.md
 evidence/bx510-guest/graphics/gallery/hud-guest-render.png	141906	cfaa79217dca044ad95f26eb7e51bd06aa834397951812699451ca38eb320c15	convert	image -> PNG (metadata stripped)
 evidence/bx510-guest/graphics/gallery/hud-sim.png	53758	c689a015e55e5a0580794fc7cf442b8a96b338c3530f5c81fac0badd47c6eaec	convert	image -> PNG (metadata stripped)
 evidence/bx510-guest/graphics/gallery/ui-guest-c132-watch.png	267459	83a38728f6d19fe434ae9005a196d88fdfad223d3525f52c81169955df70d63a	convert	image -> PNG (metadata stripped)
@@ -1370,7 +1370,7 @@ evidence/runtime-differential/print.orig2.rc	2	9a271f2a916b0b6ee6cecb2426f0b3206
 evidence/runtime-differential/run2.sh	391	bc2cafeafd4a93722d7bc2112d51251aef898845672a263809d5278dee1f205f	scrub	evidence (logs filtered by size below)
 evidence/runtime-differential/run3.sh	397	5fbf3860171d386d39a2043c014fd5c074764b3a48ea46272258c56cb3eff82a	scrub	evidence (logs filtered by size below)
 evidence/status-test/RESULTS.txt	596	1ba7804c4bb52fae68cdfeef5c8f1d4c1b2f388b39deb18074c8cb28da92c252	scrub	evidence (logs filtered by size below)
-evidence/status-test/fn-diff-literal-policy.md	14246	196608fd0880c1b914b56a4a6af9bccabd83c1ad983993eae786191b6b85a1bb	scrub	evidence (logs filtered by size below)
+evidence/status-test/fn-diff-literal-policy.md	14423	a0e167e44e424efbac4b616ffa1c98ae7182f53dc9b3e6b88fea14ac704a3bf9	scrub	evidence (logs filtered by size below)
 gccbuild/RC	11	4419c0d274647b5e63b13b98eec0b8aac8977dc9f7de96a42d0c22c2a474c5af	scrub	ours
 gccbuild/build.sh	868	31f881ca134596564a88741e25c6aaaecd520541362fb9eeccbf23ff5b10bffe	scrub	ours
 gccbuild/configure.log	2238	4eb833242513a1be6adf102c0bb85b2a31f7f467a4ce4308ae337b42edfb70e7	scrub	ours
@@ -1629,7 +1629,7 @@ tools/hud_scenarios.py	2635	76368747912e58dcd6b34ff72a9a6069c03510f15667d7128845
 tools/kcheck.sh	5932	afe9236a2c466feb61f12b2ebe5a19510eda07728efbc7645f40792ad0d9bf4e	scrub	ours
 tools/pool_audit.py	18359	4d8f359d8fa02c717781c680b4928b397f71f1cc65a3c6c1c3e82cdb256aca7f	scrub	ours
 tools/public_publish.sh	1356	07243b270464ecd054715d1fc8ca13d5fbc01271395d6f73227b1a204395b345	scrub	ours
-tools/public_tree.py	7842	75b507b3d7f5ae9c6fdb77d20c376c1a3b0647cf3585b0d79e0ec338a45b84cc	scrub	ours
+tools/public_tree.py	7985	31fcdf672c99717b69b171f77bb244c4cbc4ede3dd6db3b369470499f36e389b	scrub	ours
 tools/qemu_rig.c	12404	c621f26c4158bc005b7dcba5e2325e7c3cbd4fa70ccca3bda926170f1161970c	scrub	ours
 tools/release_build.py	11371	0495b79e5b1165393435d096cb3f7fe926fcae98e77c7a9f4b0a77699ba14acf	scrub	ours
 tools/release_verify.sh	3693	5f2690bae330f527fd88f4259bfefab608c232ae8cdf4b4644f27c8d03422ea0	scrub	ours

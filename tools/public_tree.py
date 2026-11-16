@@ -55,6 +55,8 @@ RULES = [
     (r"^Makefile$", "scrub", "build targets, identifiers scrubbed"),
     (r"^evidence/bx510/display-payload/hud-anim\.gif$", "include-big",
      "hero image referenced by the public README"),
+    (r"^evidence/bx510-guest/graphics/gallery/hud-anim\.gif$", "include-big",
+     "the HUD animation, embedded by docs/GRAPHICS-GALLERY.md"),
     (r"^evidence/.+", "include", "evidence (logs filtered by size below)"),
 ]
 

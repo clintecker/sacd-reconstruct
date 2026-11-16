@@ -210,6 +210,8 @@ ISO-backed fixture, inside Sony's kernel and libc:
 
     original  0fdcefdb84ae818b...  -> transcript-orig.txt
     release   e91720fbbbd59250...  -> transcript-rel.txt
+    (historical values from the phase-0 lane; the current release candidate
+    hashes differently — see DELTA.md's current-parity headline)
     diff -> TRANSCRIPTS: IDENTICAL (17 steps each, payload hashes equal)
 
 Steps covered: OPEN=0, SIZE=86200, 1-sector reads (byte-verified logical
@@ -220,7 +222,7 @@ beyond-EOF (graceful result=0), CLOSE=0, post-close EOF, reconnect after
 1s (OPEN#2/READ#2/CLOSE#2 all clean).
 
 This is the fourth verification dimension for the release decision:
-  1. the verification tree: clean build + 388/390 fn + interface + pool audit
+  1. the verification tree: clean build + 388/390 fn (then-current count) + interface + pool audit
   2. sacd-rig: qemu-user protocol replay, both replays IDENTICAL
   3. sacd-emu-*: guest execution (--help identical) + THIS differential
   4. pending: hardware baseline + pair capture (the only ground truth

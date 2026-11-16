@@ -25,7 +25,7 @@ claim (#6)
    into identity classes (string content, function-pointer symbol, section
    boundary, scalar value, bss-zero).
 3. Three literal classes were **silently uncompared**, proven by mutants that
-   passed BOTH tools before this session: function-pointer targets (58 sites),
+   passed BOTH tools before this review: function-pointer targets (58 sites),
    image-range values with no section behind them (153 sites — this is where
    `install_modules`' module-end literal lives), and the embedded
    `sacd_read.ko` blob itself (zero coverage).
@@ -37,7 +37,8 @@ claim (#6)
    `fn_diff` at its then-documented 388/390 · 385/390 counts — no accepted
    residual moved, no new one appeared. (History: since 2026-11-16 the
    accepted list is three — `_start`, `call_gmon_start`, and the deliberate
-   `recursive_mkdir` EPERM divergence; current count 387/390.)
+   `recursive_mkdir` EPERM divergence; current count 387/390. The counts
+   quoted elsewhere in this document are from the same historical record.)
 
 ## 1. What the harness compares today (code paths, not prose)
 
@@ -93,11 +94,11 @@ Correct policy, in one line each:
   `__libc_csu_init` on the `_fsf` build, whose pool literals are per-build
   csu constants.
 
-## 3. The three blind spots this session proved
+## 3. The three blind spots this review proved
 
 All three mutants were applied to the **release image** and run through
 `fn_diff` + `pool_audit` as they stood at `HEAD` (`a74c14f`): every one
-returned `388/390` + `384/384 clean`, i.e. a full PASS.
+returned `388/390` (then-current count) + `384/384 clean`, i.e. a full PASS.
 
 | mutant | what it changes at runtime | old verdict | new verdict |
 |---|---|---|---|
@@ -147,7 +148,7 @@ address".
   annotation *with its offset* — the one layout-dependent literal value
   `fn_diff` compared. Pool words are now normalized to a bare `.word`
   (slot-only); identity is `pool_audit`'s contract. Verdict-neutral on every
-  ELF in the tree (`388/390` release, `385/390` `_fsf`, unchanged) and immune
+  ELF in the tree (`388/390` release then-current, `385/390` `_fsf`, unchanged) and immune
   to a GNU-objdump backend that annotates where llvm does not.
 * Docstring states the partition so the next reader does not re-derive it.
 
@@ -156,7 +157,7 @@ address".
 
 ## 5. The sacd_read module's scope — the answer
 
-**Coverage today: excluded, and correctly so — but until this session,
+**Coverage today: excluded, and correctly so — but until this review,
 unchecked.**
 
 * `fn_diff` walks the host ELF's *function symbols*: 390 normalized functions
@@ -244,7 +245,7 @@ python3 tools/pool_audit.py original/sacd_extract_160 \
 python3 tools/pool_audit.py --module original/sacd_extract_160 \
     reconstruct/release/sacd_extract_160_release
 
-# the five mutants (A/B old-audit classes, C/D/E this session's classes)
+# the five mutants (A/B old-audit classes, C/D/E this review's classes)
 python3 tools/test_pool_audit_regressions.py original/sacd_extract_160 \
     reconstruct/release/sacd_extract_160_release
 

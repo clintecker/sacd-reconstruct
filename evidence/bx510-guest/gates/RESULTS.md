@@ -99,7 +99,7 @@ parse-fail | ok`.
 - Daemon restart remains separate: no SO_REUSEADDR in the original daemon
   (kept as-is), restart TIME_WAIT ~60 s, documented previously.
 
-## Run counts (this session)
+## Run counts (this gate block)
 
 - Positive gate (both binaries, full boot each): 5 runs — all POSITIVE-PASS
   after the client offset fix; 2 earlier runs failed on the client hash bug

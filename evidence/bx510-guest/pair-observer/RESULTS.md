@@ -75,7 +75,7 @@ hardware-side candidates, in order of plausibility:
 - **The observer was never armed in the daemon process on hardware** —
   LD_PRELOAD load failure or env loss through the player's AutoScript →
   `trace-launch.sh` chain is SILENT by design: an unloaded preload and a
-  transparent preload both yield identical wire service, so last night's
+  transparent preload both yield identical wire service, so the earlier
   "served perfectly through the preload" observation does NOT prove the
   preload was active. Discriminating evidence that may already exist:
   the hardware session's captured console (teed into `~/bx510-session`)

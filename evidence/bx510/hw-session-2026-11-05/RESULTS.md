@@ -9,7 +9,8 @@ below is hardware-observed, with the artifact named.
 
 ## 1. THE CANDIDATE ACCEPTANCE — PASS
 
-The reconstructed release binary `e91720fb…` served the real disc on the
+The reconstructed release binary then current (`e91720fb…`; the current
+release candidate is `b0848b73…`) served the real disc on the
 player, byte-identically to the original `0fdcefdb…`:
 
 ```
@@ -103,7 +104,9 @@ from `GetSize`) drew correctly — operator-observed "perfectly framed" — but 
 log was lost to H7 (zero-byte write on a full ramfs), so the recorded log is
 the first run's (`display-payload/2026-11-04-displaylaunch-hardware.log`).
 
-## Findings this session produced (for the ledger)
+## Findings of the 2026-11-05 session, for the ledger
+
+All hardware-observed on 2026-11-05 (a dated session record).
 
 | # | Finding | Evidence |
 |---|---|---|

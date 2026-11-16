@@ -128,7 +128,7 @@ reconstruction are resolved. The 11 remaining mismatches:
    - pthread_create argument-evaluation order (listener_thread, main)
    - memcpy/sprintf constant-arg temp dance (install_modules)
 
-### Source-level discoveries this session (vs the v0.3.7 reference)
+### Source-level discoveries of the session that produced this delta (vs the v0.3.7 reference)
 - Build flags: `-D_GNU_SOURCE` (transparent-union sockaddr args), 
   `-D_FILE_OFFSET_BITS=64` (fopen->fopen64 rename, stat64)
 - scarletbook_output buffer = MAX_PROCESSING_BLOCK_SIZE * 2064 (raw sector)
@@ -195,7 +195,7 @@ New tooling: tools/pool_audit.py — audits every PC-relative pool load in
 every function by *content* (strings compared exactly, scalars by value,
 pointer-bearing structures with address words masked). Catches literal
 bugs fn_diff cannot see (it was the L"c"/L"none" class + __FILE__ paths
-that motivated it). Current: 369/390 clean; 15 residual flags,
+that motivated it). (Session-log value: 369/390 clean; 15 residual flags,
 all accounted for (7+4+3+1):
 - 7 = .data object ORDER (benign, layout only): original links
   yarn.c -> dst_fram.c -> dst_data.c -> id3_frame.c -> id3.c -> dsdiff.c

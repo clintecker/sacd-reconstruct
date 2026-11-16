@@ -1,7 +1,7 @@
 # PUBLIC-MANIFEST: path	bytes	sha256	action	reason
 .gitignore	48	0925bdedeaafdc90b43fe02830c8a98274fe2e5feec2e5f4e9ad1487e8826428	exclude	not matched by any include rule
 AGENTS.md	33855	5f52c6aa7d8b436d0345387187e3583a1b45824bae1fe33e6df663997b10650f	exclude	internal process/policy doc
-DELTA.md	20009	eeba1e8f46ff705c4898c28c2f1a7f3532c58e60678e1720b41cecfa465d2e6f	scrub	reconstruction delta, identifiers scrubbed
+DELTA.md	20046	5d7d1d99f35c75c601056ffb66539080837c8312d533db9baa778f92682c2852	scrub	reconstruction delta, identifiers scrubbed
 Makefile	52671	6f7ac86071d746646791cf6534b7498603fc48a124c04425ed76332785e658b2	scrub	build targets, identifiers scrubbed
 NOTES.md	6247	c25913d402163d5909528c6c369f0d616b3140b6d3db619b1ee5b9bfdf6e83a8	exclude	internal session notes
 README.md	6986	d95a91c2e662cea222ebe0b5dc3ec475800c6df8a0238516cef373010ec655bc	exclude	not matched by any include rule
@@ -421,7 +421,7 @@ docs/DAEMON-MAP.md	9406	500160943558c0c61fd3f9fb8bc49376f41b069dc9bf75e0277661b7
 docs/EVIDENCE.md	3035	b1a0e7f9682348e2c29e429213c185f3b0084b4cb09af19209061aed22689fe6	scrub	ours
 docs/FONT-FORMAT.md	8522	b6237d49ff7feaf849e8849b709d68164c4c9cbf2e97ad6e0688d71a4bb12985	scrub	ours
 docs/GRAPHICS-GALLERY.md	6471	f713dd0fa0ca19610cc04638a37505481b007137e15a1019a96c08eded84dc3f	scrub	ours
-docs/HUD-DESIGN.md	10592	777c9fe1c8e59c3126c36bf4f5c71b0dc903c3e03c48e7f8488898f4b43e63b8	scrub	ours
+docs/HUD-DESIGN.md	10619	dd5a20e2e6af78a058d11cf375322edf5aee06e0206410cd429e2bc6f67dee0c	scrub	ours
 docs/HUD.md	8627	a900c5e7a87207b590b487e66407b44fae02eac3e5ad34b9c315a1b4d3af3e29	scrub	ours
 docs/LIFECYCLE.md	14805	1239ef16dbd1b540d6c2b2e00fd9cfab890e335c120b035c54dbb97a634da6eb	scrub	ours
 docs/PROVENANCE.md	2297	52e7e234e148bff0d84c5b9af3241d6339d4f28f78f09e6f2213a6eef42bba62	scrub	ours
@@ -433,10 +433,10 @@ docs/ui-loop.md	9743	0c65abaff49c6634baad9b094e0ccede05a46a4622d28d2e044ed939056
 docs/ui-reactive.md	14546	540ae775a26b77c422455602644f8610dffddc043ecf84b73e4c23292940bb70	scrub	ours
 docs/ui-regress.md	15114	f7514f94cd99dac2d0f1b7d9db3ae7bcf456157d0683242aa521e40ae908dbf3	scrub	ours
 emulator-handoff/.DS_Store	6148	d20d7c7e13e03b8b4cbb4532d5403bea1ffb20c19ff4a37eb5f7f276162ae387	include	ours
-emulator-handoff/AT-HOME.md	7488	5346248e34f1ba8655b4e3d1b2a6c5d2be50dd939dddeee0f548b6dd12f5cc38	scrub	ours
+emulator-handoff/AT-HOME.md	7488	149cf20519150c5a39fade3d7f018cb99e357bc84efe02967c03f5fea69769ca	exclude	session workspace doc
 emulator-handoff/BX510-HANDOFF-SHA256SUMS	4071	3c37ece055eecf091ed7dd385ad4cc330f017bcdafe22e3dc161ee920dc3ef70	scrub	ours
 emulator-handoff/COPYING	18092	8177f97513213526df2cf6184d8ff986c675afb514d4e68a404010521b880643	scrub	ours
-emulator-handoff/HANDOFF-README.md	18779	e15dbfb0a74673258d5a9a28f96dc0dcaa0c7fbd2c37c0615d8c7f4a0b4c39c2	scrub	ours
+emulator-handoff/HANDOFF-README.md	18779	6a2a16d7e9df9a66166df4a6a6d585dcb2a660392d1a6aa8fc2d1ccd9cf31fd8	exclude	session workspace doc
 emulator-handoff/README.md	12100	f001b6238471acb50608de7018c30da2a239a9e9df943d1b58b9a9594cec2f13	scrub	ours
 emulator-handoff/build.sh	1819	6c6861f69449ff85d2942c4d6946ccb9c3a65909936c92686a51a221911c7342	scrub	ours
 emulator-handoff/evidence/daemons-uart.txt	12403	ac92d1150cbbb49b26b054e57563bb96e5cd13fa2598b492f3cb5666ba05613a	scrub	ours
@@ -465,7 +465,7 @@ emulator-handoff/optical/trace-launch.sh	998	686abf017a04437af963fd38494b4d17f8b
 emulator-handoff/qemu-integration.patch	1493	86dc341ff6e544598505fecf47a0b2bdf90d2e04283046b7f3ad965125af8551	scrub	ours
 emulator-handoff/ramdisk_control.py	3219	47f2c822349bde847326ea1744dffbbe012f41884de0f309a779e7906c08e3ba	scrub	ours
 emulator-handoff/run.py	2258	2b3ffcfe7c1ff45fbeac4d06b35b58dfb062bb76312241573c910331e3f80bc9	scrub	ours
-emulator-handoff/screen/README.md	6632	ce9c374561cd4981eced1491d4335fafaea646fcbfa41dceee4bbdd27d3d206e	scrub	ours
+emulator-handoff/screen/README.md	6632	ce9c374561cd4981eced1491d4335fafaea646fcbfa41dceee4bbdd27d3d206e	exclude	session workspace doc
 emulator-handoff/screen/awake-screen.sh	398	38471ea8bd7c1e15e12648b58b5985e3e3371eb984d0e006f55006ac11b854a2	scrub	ours
 emulator-handoff/screen/build_screen.sh	1225	574d6ae5ad406c15450d23fe0bbdf59423ecb5bbc67b16ee06b04a3cccac30de	scrub	ours
 emulator-handoff/screen/bx510-screen	9000	af5f2aade7c5c0fc751699bf578c1ef8f06e74a388db88f1045423a7fba489c4	include	ours
@@ -487,7 +487,7 @@ emulator-kit/qemu-integration.patch	1512	90bc25a66700419407262b9dcd5c6f8d0f0294f
 emulator-kit/run.py	2416	f13ff721b8875ba225a645e1e5a92d33c5778133c63173f9f7962d826390a601	scrub	ours
 emulator-kit/smoke.py	4605	a503de540a754f77e42fab49b8b65347461f283ddcce2d956106fc6b5fd29da4	scrub	ours
 emulator-kit/sony-bx510.c	83193	d2d5e2b0d89a4d981e5bdbb6648794d902abfc73c62a10efbfa7858ff49bbc8f	scrub	ours
-evidence/archive/PHASE0-RESULTS.md	12095	8db50e0345339e364bf741ab4781566d286fdd0d3c5b58766248f50d6a20da3a	scrub	evidence (logs filtered by size below)
+evidence/archive/PHASE0-RESULTS.md	12259	a67cefe8494096c34e22dabfd5366513ebfacf1df92d2e9a3bdcc96073066ab7	scrub	evidence (logs filtered by size below)
 evidence/archive/README.md	354	22c7e68d1381930bc7b7ba5c9950325f882688cb7b7638962e16b8547ae34d78	scrub	evidence (logs filtered by size below)
 evidence/bx510-baseline/capture.log	2738	2fe9b9c7eae21aea1298ecc56202bf660c1ada294f7db54ec343fb588b9f7139	scrub	evidence (logs filtered by size below)
 evidence/bx510-baseline/manifest.json	5834	70360e99859089db78c9619054be66e0a47960764819d38aecec67d981bd890d	scrub	evidence (logs filtered by size below)
@@ -758,7 +758,7 @@ evidence/bx510-guest/bdpdrv/decode/daemon-wiring.md	31189	abaf136790ac9acddd6f0b
 evidence/bx510-guest/bdpdrv/decode/daemon_gate.sh	24092	a6ddb5c47961d0ed505ae3cc11cbece1cec9ee6fb2b914d79fa61161c09054a4	scrub	evidence (logs filtered by size below)
 evidence/bx510-guest/bdpdrv/decode/dd-eio-loop.md	34095	03b24b8b323d34d8ceb6853245d017f61f24196bfb1c50e958b877204381bd8a	scrub	evidence (logs filtered by size below)
 evidence/bx510-guest/bdpdrv/decode/decrypt-hang.md	32833	b191a5188f9670e08e77542a03de59b7f5bd539abd8fdb4f0bf9b12ed84699c0	scrub	evidence (logs filtered by size below)
-evidence/bx510-guest/bdpdrv/decode/drvcli-surface.md	32327	a848b59f29e42f8acfaa7443c246457060924555859949257e55641a91635ff4	scrub	evidence (logs filtered by size below)
+evidence/bx510-guest/bdpdrv/decode/drvcli-surface.md	32333	564a1611dc42e39c7315ff8e8f5104b107204e115fb0ca0233a6dc4847e37226	scrub	evidence (logs filtered by size below)
 evidence/bx510-guest/bdpdrv/decode/dump-id-patch.md	16700	1deaaeac3cee361f450ee4409c41949517b150e5cecae0121d2c31405ebb3275	scrub	evidence (logs filtered by size below)
 evidence/bx510-guest/bdpdrv/decode/eh-recovery-map.md	29490	5eff1691cc1460f6fa5df5970ae3d2485c80eb168ea2d57683c7bb60df2a61b0	scrub	evidence (logs filtered by size below)
 evidence/bx510-guest/bdpdrv/decode/extract_consts.py	7337	56c9f39b7bdc48c58c792da9cb8c0855864aedec9583e63960099f5ca4aa8623	scrub	evidence (logs filtered by size below)
@@ -819,7 +819,7 @@ evidence/bx510-guest/bdpdrv/decode/model-c96-diff.md	10308	31caafede626fdc91b2c5
 evidence/bx510-guest/bdpdrv/decode/model-spec.md	24291	42e8400fff4e1494f62358968c9283d1522ca3beb87a7146e912664c47f2a643	scrub	evidence (logs filtered by size below)
 evidence/bx510-guest/bdpdrv/decode/mt85xx-ioctl.md	34242	b5a8f66dedd9cef2507a2cf6c8f85d1eb1a1994a0d07c0027bb426021dc95600	scrub	evidence (logs filtered by size below)
 evidence/bx510-guest/bdpdrv/decode/nfi-logging.md	15855	45aa9eb439645ea61e7753aa6e84b4dd1a524ead2173180660efa783009d5cb6	scrub	evidence (logs filtered by size below)
-evidence/bx510-guest/bdpdrv/decode/odd-cb-agent.md	34948	7d91d5522460006d0177a3defc54af47ce17f0afad71811eaa801c073ef9fcfb	scrub	evidence (logs filtered by size below)
+evidence/bx510-guest/bdpdrv/decode/odd-cb-agent.md	34934	7cf5a7453bb65c077ca1bce4a611b74ac16afa68ecc5f8e94f95ac62374f306a	scrub	evidence (logs filtered by size below)
 evidence/bx510-guest/bdpdrv/decode/p0-scan-decode.md	24450	2fc15bfcd61fce8f785937684ab90096dbbe4c0ecc8240b55e638419dd7117d1	scrub	evidence (logs filtered by size below)
 evidence/bx510-guest/bdpdrv/decode/post-aacs-state.md	29107	b3fed79e6221236098a369b766a601720086fee00fecaf754bb732a5ee1a8e2f	scrub	evidence (logs filtered by size below)
 evidence/bx510-guest/bdpdrv/decode/post_aacs_static.py	12134	5a72504dc5ac23f8e61333ffb47c12ecd15f9677b63f079189c21360a37c4351	scrub	evidence (logs filtered by size below)
@@ -834,13 +834,13 @@ evidence/bx510-guest/bdpdrv/decode/resolve_addrs.py	11069	5e86c827fedd4c902a540b
 evidence/bx510-guest/bdpdrv/decode/review-c96-a.md	2562	856be492768a8de4eb68d4b7616fa112ee61ff37ae6e46676fbb4f90d31945d7	scrub	evidence (logs filtered by size below)
 evidence/bx510-guest/bdpdrv/decode/review-c96-b.md	1912	ef4428c2566dbc56aa83d516eab64d5c5dc3d92449e68d1e943d8441282c4640	scrub	evidence (logs filtered by size below)
 evidence/bx510-guest/bdpdrv/decode/run-c102.md	15628	bdb264785c836e2b2a529042946b802e7c868e8d8ab3336db5ae9f5d785f6967	scrub	evidence (logs filtered by size below)
-evidence/bx510-guest/bdpdrv/decode/run-c103.md	24358	280cc7f0014d88e80584c4fa9f4857751f2598aead1dcee729a689f23f11e3e7	scrub	evidence (logs filtered by size below)
-evidence/bx510-guest/bdpdrv/decode/run-c104.md	10416	d23ff2fcb4e112edbc661d77d372accfb895d0566aba9c579bdf53a23c5f6105	scrub	evidence (logs filtered by size below)
+evidence/bx510-guest/bdpdrv/decode/run-c103.md	24364	0eff97a8a5d5ed415458cb7f594bee4cd873d18ba23fc646c7b0a81e9dd0f69d	scrub	evidence (logs filtered by size below)
+evidence/bx510-guest/bdpdrv/decode/run-c104.md	10415	7c56627ff5df87eb69833b18fbce399b5644097c95d743aec42caa0860c00b91	scrub	evidence (logs filtered by size below)
 evidence/bx510-guest/bdpdrv/decode/run-c105.md	4169	fc793f8c908006d6070aac2ac93e12134c2e743f95b0258a74456a4025dd4ba9	scrub	evidence (logs filtered by size below)
 evidence/bx510-guest/bdpdrv/decode/run-c106-c108.md	5521	3e5664629f55409ccabc0762f899f177bd807a443f0207e49d986c06bfb56327	scrub	evidence (logs filtered by size below)
 evidence/bx510-guest/bdpdrv/decode/run-c109.md	3820	567907fe1f7d1ab9814f74f28fd25f98a82da64da4fad6aed37fdebae3d6b2c4	scrub	evidence (logs filtered by size below)
 evidence/bx510-guest/bdpdrv/decode/run-c113-c121.md	5570	c8f7ba8fc9e24c76ddfafc1580f7dbb8547e17ea1b0fe462cd3c52f4947c5a98	scrub	evidence (logs filtered by size below)
-evidence/bx510-guest/bdpdrv/decode/run-c130-c134.md	9058	bfda81f921154566df531341b28a58c1050f3667cb8a7c97d1d9e84e84f1f4de	scrub	evidence (logs filtered by size below)
+evidence/bx510-guest/bdpdrv/decode/run-c130-c134.md	9070	f0e5451289b5bbac0f74ffa9bb6eb703527ef09fcf300c6bd992386c7fc10d65	scrub	evidence (logs filtered by size below)
 evidence/bx510-guest/bdpdrv/decode/run-p5.md	21172	b9250affe6aa06db1fa2002f58462c20e66a81934d110a94c2e6b4de3a1f8f6f	scrub	evidence (logs filtered by size below)
 evidence/bx510-guest/bdpdrv/decode/sacd_gate_ioctl.c	3740	7aff08965ec7f2f6e999ea5c92d519e3e9724e705ed0350cbd7a12d6e832ef5e	scrub	evidence (logs filtered by size below)
 evidence/bx510-guest/bdpdrv/decode/sacdread-cpsa.md	33578	aa973ca7b08a78407d24b51d096afeea7d86a4fe88171caf268be7183817d8d5	scrub	evidence (logs filtered by size below)
@@ -882,7 +882,7 @@ evidence/bx510-guest/differential/m-orig-uart.log	29925	4898cc29d63b6cdf42154f32
 evidence/bx510-guest/differential/m-rel-uart.log	29925	295cab6f547042a9aa3af7d3864200601144137825f53aea52a20be3454c4d87	scrub	evidence (logs filtered by size below)
 evidence/bx510-guest/differential/transcript-orig.txt	963	e36b88e7f760b19be237d086f5c83270b386ac9b9ea2d9f4a996bf67d2af867b	scrub	evidence (logs filtered by size below)
 evidence/bx510-guest/differential/transcript-rel.txt	963	e36b88e7f760b19be237d086f5c83270b386ac9b9ea2d9f4a996bf67d2af867b	scrub	evidence (logs filtered by size below)
-evidence/bx510-guest/gates/RESULTS.md	16285	b04930f152baa306a20ad42640214e29969c70dc25c2e085bdc366965a35e4dd	scrub	evidence (logs filtered by size below)
+evidence/bx510-guest/gates/RESULTS.md	16288	56e39881efe51ff5da54160011c6a192a82ea724560782c5a9c42ffb68e98c19	scrub	evidence (logs filtered by size below)
 evidence/bx510-guest/gates/gatev-20261103-211756/bx510_gate2.sh	5073	1597a799b892fb14b5fab5c5b28e354be3fe58437d3e99f1dd99de09c44fb81b	scrub	evidence (logs filtered by size below)
 evidence/bx510-guest/gates/gatev-20261103-211756/g-orig-frames.txt	1408	0318f940faafd2e39ae7f17b4f18aa0dc4e1f8f5d052fd6c9a35177d2085f694	scrub	evidence (logs filtered by size below)
 evidence/bx510-guest/gates/gatev-20261103-211756/g-orig-neg-frames.txt	1356	9ed4f75f9144feacf53cf1ce045e80389946a5c8ee9276c696b979a961e112f7	scrub	evidence (logs filtered by size below)
@@ -1001,7 +1001,7 @@ evidence/bx510-guest/gates3/gate3v-20261103-215148/g-rel.log.txt	2588	7505f76d06
 evidence/bx510-guest/gates3/gate3v-20261103-215148/g-rel2.log	46463	cd148772b54bed9bd3e37685fbe440d8667d53807f82b73eaff30008e5dad69c	scrub	evidence (logs filtered by size below)
 evidence/bx510-guest/gates3/gate3v-20261103-215148/g-rel2.log.probe.out	7392	76a8609f0a26e07e374fe9a141af3805ed1b8bcf4d576eb089472de71d52dc63	scrub	evidence (logs filtered by size below)
 evidence/bx510-guest/gates3/gate3v-20261103-215148/g-rel2.log.txt	2579	50009c9c429772930cf293d48203fe1350a3c2d1763b75bafdd21ddab32b9269	scrub	evidence (logs filtered by size below)
-evidence/bx510-guest/graphics/MT85-RESULTS.md	16021	85983e3fdb238b79a8c61fa61f4ca47f187879da4476642db6b44e86153d6094	scrub	evidence (logs filtered by size below)
+evidence/bx510-guest/graphics/MT85-RESULTS.md	16023	6c99a0bd1a87fbf7867eb8838334f9be8c5ad5bcc4b5d00aedc2b9d3ca4541cf	scrub	evidence (logs filtered by size below)
 evidence/bx510-guest/graphics/MT85-SEARCHPOOL-DECODE.md	4384	7561e65fca76608491ff464677c4acd3279aa2077453fe0c74a38191d84aa718	scrub	evidence (logs filtered by size below)
 evidence/bx510-guest/graphics/RESULTS.md	4613	e031db0fdecaa036472735454a4e603d61e79a153e30cb789a17b7446fc0f230	scrub	evidence (logs filtered by size below)
 evidence/bx510-guest/graphics/blit-maps-run.md	2723	a72776612ef44eb2b489e6d5d191e2ff9787de9bb3cd3351ffd604c30fe4df4a	scrub	evidence (logs filtered by size below)
@@ -1044,7 +1044,7 @@ evidence/bx510-guest/graphics/mt85-contract-run-ioctl-sites-mt85.txt	4661	9a5a22
 evidence/bx510-guest/graphics/mt85-contract-run-ioctl-sites-mtk.txt	26137	578384ca0eae83daa5b2be530d8102f73ae2de738eb153949e027ba88af45f1d	scrub	evidence (logs filtered by size below)
 evidence/bx510-guest/graphics/mt85-contract-run-string-xrefs-mt85.txt	36091	dfa4d4d1bfd37a8781ed14837d25ca8e2a7ccb8033b70ab7f07214683ce76e2d	scrub	evidence (logs filtered by size below)
 evidence/bx510-guest/graphics/mt85-contract-run-string-xrefs-mtk.txt	20903	c058aeb62cd5a5873f07eb6675648546cf1272b5c38e6140aa297296db382539	scrub	evidence (logs filtered by size below)
-evidence/bx510-guest/graphics/mt85-contract-run.md	27819	d1a3b5cd68a4d9294926c4060c0865ecb289331f8d85801960076911f3f24166	scrub	evidence (logs filtered by size below)
+evidence/bx510-guest/graphics/mt85-contract-run.md	27825	e5a4b1dd761138892860e98409a0ecd5b4677095619e0d15420a3ae34cdc2116	scrub	evidence (logs filtered by size below)
 evidence/bx510-guest/graphics/mt85-extraction/mt85.strx	36056	3ae9f789faf239531e7863c365d4d99f833db5808bc2382dc2249b75ce6239ba	scrub	evidence (logs filtered by size below)
 evidence/bx510-guest/graphics/mt85-extraction/mt85_annotate.py	6065	0a7c904c2efd7b8e0ce92bf39b6b1a89479c6464a427bb05c01900a956bbe3f5	scrub	evidence (logs filtered by size below)
 evidence/bx510-guest/graphics/mt85-extraction/mt85_ioctl.txt	4469	db88d205ead7ec9d91232aefa42912254cb7f5256789ef0f9770e612cf43f135	scrub	evidence (logs filtered by size below)
@@ -1196,7 +1196,7 @@ evidence/bx510-guest/hdhost/hdsmoke-20261103-213750/expect.txt	245	74a480c20ea68
 evidence/bx510-guest/hdhost/hdsmoke-20261103-213750/img.bin	16777216	14d52cc55995348485eccaddb8ff612f340e024c8440f8d5f290e06a04132283	exclude	regenerable binary fixture
 evidence/bx510-guest/hdhost/hdsmoke-20261103-213750/probe.out	7392	983a93ea2f9d88a107bcfa87d0f07d1c891482a89521242e12d69425a7d978b7	scrub	evidence (logs filtered by size below)
 evidence/bx510-guest/hdhost/hdsmoke-20261103-213750/uart.log	45515	5c7de2bf06f97805404009a6e91242ed8fd1a1b743b0177a9c65616f477ecdbd	scrub	evidence (logs filtered by size below)
-evidence/bx510-guest/pair-observer/RESULTS.md	8721	b84c8bc0c829328cf9fb05cc547a81bf91206bfde4d7475812c779fb50fc72d7	scrub	evidence (logs filtered by size below)
+evidence/bx510-guest/pair-observer/RESULTS.md	8720	b40dcf84548f4c97bb2bdcfb8f5afd20eb2cf1458f0dcf96080f7c9d06369a7c	scrub	evidence (logs filtered by size below)
 evidence/bx510-guest/pair-observer/bx510_pair_dbg.so	8893	e23c482ddcad4e62945af3cb722a1609479e70e58f89dffc6d37ee36a2e4938c	include	evidence (logs filtered by size below)
 evidence/bx510-guest/pair-observer/runA.log	14862	0e163618d3ff05c4ee49673b7bb11c25bd148a13b1840772702673b0788a43f8	scrub	evidence (logs filtered by size below)
 evidence/bx510-guest/pair-observer/runA.probe.out	8001	57a311b9a1deb34fcf7b784c0601ceaa864eb609fe679ac5e408fc25a5fc4497	scrub	evidence (logs filtered by size below)
@@ -1280,7 +1280,7 @@ evidence/bx510-guest/u4-initrd/u-boot.strings.rootfs.txt	0	e3b0c44298fc1c149afbf
 evidence/bx510-guest/u4-initrd/u-boot.strings.upg.txt	12704	ccb4d49c9c1df9fa0d626e6b86d738346b20df2df37da92d10a1dfa769b0e9ca	scrub	evidence (logs filtered by size below)
 evidence/bx510-guest/u4-initrd/u4-run.md	3045	b043e90b67d5bd7b48ac6c6d9dc07dc1fced40e60672b8007f0a6ca32b5f717b	scrub	evidence (logs filtered by size below)
 evidence/bx510/BASELINE-RUNBOOK.md	3149	de774746a903f3016e3406a0d28e132da3f1218b6e8b3832dd0fbdf19038d0d7	scrub	evidence (logs filtered by size below)
-evidence/bx510/PLAYER-SESSION-RUNBOOK.md	10641	6fef967583abe929430c0f93efe9496511b3233cf48f6e3b937bc0fcb4e26024	scrub	evidence (logs filtered by size below)
+evidence/bx510/PLAYER-SESSION-RUNBOOK.md	10636	7b3ab8fca478d50649083a17908e8210cb5d5aeb9d485662d3cd52eb0df9898a	scrub	evidence (logs filtered by size below)
 evidence/bx510/display-payload/2026-11-04-displaylaunch-hardware.log	8110	1f5e70f9aa794607261861facff022cd5fda7b1627c43417ad121ac40ab05e53	scrub	evidence (logs filtered by size below)
 evidence/bx510/display-payload/DISPLAY-SPEC.md	7875	75f5861edd4c87f5913cb9d0807df15e0a9aabb26520022eab72fe0adb2d6a2c	scrub	evidence (logs filtered by size below)
 evidence/bx510/display-payload/cyberdraw	28504	17d0c2cb7ba7fd4ae43fa499124d099a7ec4b42c1ac7290d2f6cbcf0856fde13	include	evidence (logs filtered by size below)
@@ -1308,7 +1308,7 @@ evidence/bx510/display-payload/sacd_hud	103164	a5d93775635365af1873cabef5ec020ef
 evidence/bx510/display-payload/sacd_ui	81240	f64a93e7407f396da6d61530ca08537431d2628e50fb3a0158a85ea867e4a069	include	evidence (logs filtered by size below)
 evidence/bx510/display-payload/sony-font.bin	62572	cd5fa82a1044bc486e6ac2347209ac721709f26f87caa31805950e65b0a16827	exclude	regenerable binary fixture
 evidence/bx510/display-payload/sony-font.ttf	62560	98121878fc7fc85205aa6b62bd40d9fb478b3629e62ec4f947c80ec9830d7fd9	include	evidence (logs filtered by size below)
-evidence/bx510/hw-session-2026-11-05/RESULTS.md	7359	3ed2fe1989e041f9cbb6a283118388eb6fb5ca19c338731f2979b377993858bf	scrub	evidence (logs filtered by size below)
+evidence/bx510/hw-session-2026-11-05/RESULTS.md	7488	b16c9ec42a203b4991b2bcb5a08b9ac3cb3319faa65ff4d05968b7948b3c8ed4	scrub	evidence (logs filtered by size below)
 evidence/bx510/hw-session-2026-11-05/hwmon-boot.txt	108011	4f141e81716fc5280f9e69864b0368696e8e4d43b2a989506081c7ffb3b9ec6c	scrub	evidence (logs filtered by size below)
 evidence/bx510/hwmon-payload/INVENTORY-SAMPLE-arm-qemu-vm.txt	15205	c0a36ef2bb441351871d4010d59b8611fa8dba3789ac7ace089333952c0aefca	scrub	evidence (logs filtered by size below)
 evidence/bx510/hwmon-payload/INVENTORY-SAMPLE-x86-vm.txt	22740	3e2dd92e8914cfc3e1fe5953e45d9b50ba86900c01d8b42b19b070adabfd7dd1	scrub	evidence (logs filtered by size below)
@@ -1357,7 +1357,7 @@ evidence/qemu-rig/manual/overlap-cand/manifest.json	4709	6bcb2de0628242836fd9c43
 evidence/qemu-rig/manual/overlap-cand/overlap.log	1271	131b13daa1250c87b403ed80d21ed44cc0bb5ed553c2d53e346b2a28536f3991	scrub	evidence (logs filtered by size below)
 evidence/qemu-rig/manual/overlap-orig/manifest.json	4610	d33a210a1b3f2d8a026b66510eb64b634085e2f708b5f4cb75686021b6719438	scrub	evidence (logs filtered by size below)
 evidence/qemu-rig/manual/overlap-orig/overlap.log	1238	c1eb82ffc016321facdd799b1f8523082baf31d7c4e14b0f177b182076aa6f49	scrub	evidence (logs filtered by size below)
-evidence/runtime-differential/RESULTS.md	3495	dee7d0878904b728dd8bfe78626893af3c898b322a35842b0e45d8de3328ea1f	scrub	evidence (logs filtered by size below)
+evidence/runtime-differential/RESULTS.md	3501	7c7628e3fba2c7efc4edd28ac17d7cb06cf1acb2220fbc11fd92fe0cca3342f8	scrub	evidence (logs filtered by size below)
 evidence/runtime-differential/badopt.new.err	65	dbe0eb665253b9367cd7e854103bc7b2aadb30287610d5ef18041fefb6bb6b51	scrub	evidence (logs filtered by size below)
 evidence/runtime-differential/badopt.new.out	1059	48da2304681eaa4eac09c0c888104ad17d0e006a795d595ef875a7abb48d16cb	scrub	evidence (logs filtered by size below)
 evidence/runtime-differential/badopt.new.rc	2	9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa	scrub	evidence (logs filtered by size below)
@@ -1397,7 +1397,7 @@ evidence/runtime-differential/print.orig2.rc	2	9a271f2a916b0b6ee6cecb2426f0b3206
 evidence/runtime-differential/run2.sh	391	bc2cafeafd4a93722d7bc2112d51251aef898845672a263809d5278dee1f205f	scrub	evidence (logs filtered by size below)
 evidence/runtime-differential/run3.sh	397	5fbf3860171d386d39a2043c014fd5c074764b3a48ea46272258c56cb3eff82a	scrub	evidence (logs filtered by size below)
 evidence/status-test/RESULTS.txt	596	1ba7804c4bb52fae68cdfeef5c8f1d4c1b2f388b39deb18074c8cb28da92c252	scrub	evidence (logs filtered by size below)
-evidence/status-test/fn-diff-literal-policy.md	14423	a0e167e44e424efbac4b616ffa1c98ae7182f53dc9b3e6b88fea14ac704a3bf9	scrub	evidence (logs filtered by size below)
+evidence/status-test/fn-diff-literal-policy.md	14538	23106dbc9f4fcac5406ee4c686d7f91e112e419db4ed4d944f213c9904a9e993	scrub	evidence (logs filtered by size below)
 gccbuild/RC	11	4419c0d274647b5e63b13b98eec0b8aac8977dc9f7de96a42d0c22c2a474c5af	scrub	ours
 gccbuild/build.sh	868	31f881ca134596564a88741e25c6aaaecd520541362fb9eeccbf23ff5b10bffe	scrub	ours
 gccbuild/configure.log	2238	4eb833242513a1be6adf102c0bb85b2a31f7f467a4ce4308ae337b42edfb70e7	scrub	ours
@@ -1409,7 +1409,7 @@ incoming/mt85-analyst/libdirectfb_mt85.so	35360	298fa8f3352c853b901b4145fd75fa73
 incoming/mt85-analyst/libdirectfb_mtk.so	31048	eca7a3e3d9c4d64e4e92096e88e8165cc11baa5eb37a528362f7edcf7cdc2a42	exclude	third-party team package
 incoming/sacd-installer-and-status/sacd-installer-and-status/README.md	8032	6eaf4e6c391bcfeee221baa86146990e9c2891931a70bbebb74731a8be7629da	exclude	third-party team package
 incoming/sacd-installer-and-status/sacd-installer-and-status/RESULTS.txt	2136	46e33bb298e56caddc4d1e2eecc8c1332aefd52f4e284e77344933c484d40e8f	exclude	third-party team package
-incoming/sacd-installer-and-status/sacd-installer-and-status/__pycache__/test_status.cpython-312-pytest-8.3.3.pyc	6649	9cd271902ec11dab54abb51230222716c1ea08f8a63cad01ca5a3395a14bfe78	exclude	third-party team package
+incoming/sacd-installer-and-status/sacd-installer-and-status/__pycache__/test_status.cpython-312-pytest-8.3.3.pyc	6649	4dc9dcf44d5a0b34ac438ffb335994473ce38179cbe1524fc2a54bec20ee82f6	exclude	third-party team package
 incoming/sacd-installer-and-status/sacd-installer-and-status/build_installer.sh	848	abd090a69beef44742e2cbf55e7687a33aa49a35ad55911f93f4054b9e5ff4a9	exclude	third-party team package
 incoming/sacd-installer-and-status/sacd-installer-and-status/build_status_shim.sh	840	0b510f114fa4927e85170525a7040ee9775bb6b0c2a1fc28bb23de2768e2f95e	exclude	third-party team package
 incoming/sacd-installer-and-status/sacd-installer-and-status/check_installer.py	3346	f44c061c4dcaf9f328f87e41aef496a40e1f4e1a9285cfc1e5ebc471bcdfd047	exclude	third-party team package
@@ -1576,7 +1576,7 @@ reconstruct/tool/win32/sys/atomic.h	1874	bf23f0a16212a52edba4eaf3fcd26de28a6f193
 reconstruct/tool/win32/unistd.h	2007	a2c38ae1b55ec8a39776c437f13169ce1a6e93ab0e135544c07558ef9de9d7a7	scrub	ours
 tools/PUBLIC-SCAN-REPORT.md	2002	3aec395ab71fbd70201c5f580660f8b50c521ec51339e17d0db7aaeaa4c12dd6	scrub	ours
 tools/README.md	6019	59ceb4c85d0ea11c2e24de078d39287b98303817a2368775682176ce317a47f1	scrub	ours
-tools/__pycache__/bx510_gate_check.cpython-312.pyc	22117	0cb853a38a08a78c93fe226b71d21e96f75e953bb6261650572dd3d83fc34bd3	include	ours
+tools/__pycache__/bx510_gate_check.cpython-312.pyc	22117	921a1b13b35262d3e47d58cdf7a64d16f184485850ed55427940ce3f1e7ceeba	include	ours
 tools/archive/README.md	1388	1eb9bdd6bea924a1ee8237bfa76f423c3e2a2c5803be07b8a2e758cf09241fdd	scrub	ours
 tools/archive/bx510_dfbhello.c	9915	47f8db3a394253f370303dace3199cfc1f19983b07e916596c66ef1b1e934a22	scrub	ours
 tools/archive/bx510_inventory.c	29294	cbeb6a5c6917a15ed1b5e6abca7b214e522efe5633fadcf0edcc3fac74b653a6	scrub	ours
@@ -1649,6 +1649,7 @@ tools/bx510_ui_stage.sh	2419	feb97c011a682f2266906272271e7d1b71846252efd9424ee48
 tools/bx510_vermagic_patch.py	1525	21a4fc0b6e0dc6ba158972c8e9b7de232f472120817419958be277f05bac9ba1	scrub	ours
 tools/daemon_map.py	13515	c1e8007192817825b6b0961f05f2b251a876568e6d37357b0a7c12afc79902bb	scrub	ours
 tools/decode_errno.py	5246	ef3ecd5df2999620eb682cc61d5e366b6a4c95c5a2b1e0500fa8ea8fdb5042f4	scrub	ours
+tools/docs_audit.py	9047	f6b029e115d58bae838c1bc306bed43af83cbc103ffefbd7ffd8a51f36f22699	scrub	ours
 tools/fakesacd_test_server.py	2416	42044d7a8de7b2fd241c29fd4c9885fe2d27cf2f4124c78e8c7b5d7d29397e52	scrub	ours
 tools/fixture_gen.py	8227	5254f0c8877a1516ef79992db33157623ca9ba766d029f57a3cec9ee368c9b53	scrub	ours
 tools/fn_diff.py	7900	cdf512c50feb1a1ebffd54b6f4db75372ff0f1873ed277ec59996e614cd0633c	scrub	ours
@@ -1661,7 +1662,7 @@ tools/hud_scenarios.py	2635	76368747912e58dcd6b34ff72a9a6069c03510f15667d7128845
 tools/kcheck.sh	5932	afe9236a2c466feb61f12b2ebe5a19510eda07728efbc7645f40792ad0d9bf4e	scrub	ours
 tools/pool_audit.py	18359	4d8f359d8fa02c717781c680b4928b397f71f1cc65a3c6c1c3e82cdb256aca7f	scrub	ours
 tools/public_publish.sh	1356	07243b270464ecd054715d1fc8ca13d5fbc01271395d6f73227b1a204395b345	scrub	ours
-tools/public_tree.py	7985	31fcdf672c99717b69b171f77bb244c4cbc4ede3dd6db3b369470499f36e389b	scrub	ours
+tools/public_tree.py	8364	42b56f2393eb8dc3aaec0c0a534eac87289201504c409ec04ec5edae145461c2	scrub	ours
 tools/qemu_rig.c	12404	c621f26c4158bc005b7dcba5e2325e7c3cbd4fa70ccca3bda926170f1161970c	scrub	ours
 tools/release_build.py	11371	0495b79e5b1165393435d096cb3f7fe926fcae98e77c7a9f4b0a77699ba14acf	scrub	ours
 tools/release_verify.sh	3693	5f2690bae330f527fd88f4259bfefab608c232ae8cdf4b4644f27c8d03422ea0	scrub	ours

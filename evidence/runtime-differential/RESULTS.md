@@ -53,7 +53,7 @@ Both binaries byte-identically executed:
   decoded flag semantics), `write()`, `system("mknod -m0666 /dev/sacd_read
   c 10 201")`, `system("insmod %s minor=201")`
 - the LOG subsystem (`log_print` formatting with module/level tags, the
-  `mknod/insmod filed` message decoded from disassembly this session)
+  `mknod/insmod filed` message decoded from disassembly during this decode)
 - `remove_modules()` (`rmmod` + `/dev/sacd_read` cleanup)
 - `main()`'s failure branch and exit path
 - option parsing incl. the recovered `2mepsSIcCi:t:P?` getopt string and the

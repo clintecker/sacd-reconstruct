@@ -68,7 +68,7 @@ an inference from a symbol name.
 ### 1.1 Where it comes from (recap, now with the request named)
 
 `_IDECLI_SendOddCmd` (`bdpdrv.ko 0xa92dc`, local `_IDECLI_SendOddCmd.clone.0`) is
-the only producer of `0x8530`. Re-read this session with the request named:
+the only producer of `0x8530`. Re-read with the request named:
 
 ```
 a92e4  add  r7, sp, #108            ; r7 = &cgc     (packet_command, 44 B)
@@ -608,7 +608,7 @@ llvm-nm -u /tmp/bdpdrv/bdpdrv.ko | wc -l                 # 260, and: no scsi_*/b
    / `SR_LOG_Level` bodies were located but not decoded; they only matter to the
    `0x8600..0x8a31` diagnostic chain, not to reads.
 4. **`ciphsv.ko`'s device major (255) and whether it is loaded on a real player** —
-   the C9x dir listing shows the file; nothing in this session shows it being
+   the C9x dir listing shows the file; nothing in this record shows it being
    insmodded.
 5. **Whether the vendor log ioctls are reachable in the C9x guest** — the
    `/dev/sr0` node does not exist there until someone `mknod`s it, so §3.4 is a

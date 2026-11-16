@@ -40,6 +40,11 @@ RULES = [
     (r"^original/", "exclude", "Sony binary (sha recorded in PROVENANCE.md)"),
     (r"/sacd_read\.ko$", "exclude", "Sony kernel module"),
     (r"^incoming/", "exclude", "third-party team package"),
+    # session-workspace instruction docs (operator coaching, ephemeral
+    # workspace links) — process artifacts, not documentation
+    (r"^emulator-handoff/AT-HOME\.md$", "exclude", "session workspace doc"),
+    (r"^emulator-handoff/HANDOFF-README\.md$", "exclude", "session workspace doc"),
+    (r"^emulator-handoff/screen/README\.md$", "exclude", "session workspace doc"),
     (r"^reconstruct/sacd_extract_160(_fsf)?$", "exclude",
      "prebuilt artefact (build it: make -C reconstruct CROSS=... verify)"),
     (r"^analysis/", "exclude", "regenerable disassembly dumps"),

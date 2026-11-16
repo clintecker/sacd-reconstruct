@@ -396,12 +396,7 @@ sacd-verify:
 sacd-rig:
 	@test -n "$(call if-defined,DISC)" || true
 	$(VM_SSH) 'cd ~/$(SACD_VM) && rm -rf $(SACD_VM_RIG_OUT) && sh tools/rig_run.sh original/sacd_extract_160 reconstruct/release/sacd_extract_160_release $(SACD_VM_RIG_OUT) $(if $(DISC),$(DISC),$$HOME/sacd-verify/firebird.iso)'
-	@RIGDIR=$(SACD)/evidence/qemu-rig/$$(date -u +%Y%m%d-%H%M%S)
-	@for d in capture-orig capture-cand overlap-orig overlap-cand; do mkdir -p $$RIGDIR/$$d; $(VM_SCP) -r "$(VM_USER)@$(VM_HOST):$(SACD_VM_RIG_OUT)/$$d/." $$RIGDIR/$$d/; done
-	@for l in daemon-orig.log daemon-cand.log daemon-orig2.log daemon-cand2.log; do $(VM_SCP) "$(VM_USER)@$(VM_HOST):$(SACD_VM_RIG_OUT)/$$l" "$$RIGDIR/" 2>/dev/null || true; done
-	@echo "evidence: $$RIGDIR"
-	@python3 $(SACD)/tools/sacd_client.py compare $$RIGDIR/capture-orig/manifest.json $$RIGDIR/capture-cand/manifest.json
-	@python3 $(SACD)/tools/sacd_client.py compare $$RIGDIR/overlap-orig/manifest.json $$RIGDIR/overlap-cand/manifest.json
+	@sh $(SACD)/tools/rig_pull.sh $(SACD_VM_RIG_OUT)
 
 ## SACD :: sacd-parity [ELF=$(SACD_CAND)] :: Mac-side parity harness against one ELF :: fn_diff (390 normalized functions; only the accepted _start + call_gmon_start residuals may remain) + pool_audit (literal content, load-site positional) + both literal regression tests — the tool chain that caught the L"c" and __FILE__ misreads
 .PHONY: sacd-parity

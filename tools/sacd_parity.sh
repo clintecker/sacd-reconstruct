@@ -3,9 +3,14 @@
 #
 # Usage: tools/sacd_parity.sh <original.elf> <candidate.elf>
 #
-# 1. fn_diff over the 390 normalized functions. The only tolerable
-#    mismatches are the two documented startup residuals
-#    (_start, call_gmon_start — see DELTA.md); anything else fails.
+# 1. fn_diff over the 390 normalized functions. Tolerable mismatches:
+#    the two documented startup residuals (_start, call_gmon_start — see
+#    DELTA.md) and recursive_mkdir — a DELIBERATE divergence: our build
+#    tolerates EPERM in recursive_mkdir's errno set (the original ran as
+#    root on the player and never saw it; our client runs as a normal user
+#    under the qemu rig and died on it — see reconstruct/libcommon/
+#    fileutils.c and decode/daemon-install-erofs.md's environment notes).
+#    Anything else fails.
 # 2. pool_audit: literal-pool identity at load sites (string content,
 #    function-pointer symbols, section boundaries, scalar values) — see
 #    evidence/status-test/fn-diff-literal-policy.md.
@@ -19,7 +24,7 @@ set -u
 ORIG=${1:?original elf}
 CAND=${2:?candidate elf}
 HERE=$(cd "$(dirname "$0")" && pwd)
-ACCEPTED=" _start call_gmon_start "
+ACCEPTED=" _start call_gmon_start recursive_mkdir "
 fail=0
 
 echo "=== fn_diff"

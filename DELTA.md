@@ -4,6 +4,12 @@ Everything here is **verified from disassembly** unless marked inferred.
 This is the exact change-set the closed-source "sacd_extract_160" applies to
 the public v0.3.7 tree.
 
+> **Current parity: 387/390 functions instruction-identical**
+> (accepted residuals: `_start`, `call_gmon_start`, and the deliberate
+> `recursive_mkdir` EPERM divergence). The parity-session sections below are
+> a chronological log; their numbers were current when written and are kept
+> as history.
+
 ## Build recipe (recovered)
 
 - Vanilla FSF GCC 4.4.1 (crosstool-style build, `/usr/local/mtk-toolchain/gnuarm-4.4.1`), NOT CodeSourcery (proven by libgcc byte differences)
@@ -240,6 +246,12 @@ Checks against that exact file — all green:
   crtbegin call_gmon: startup code built from the CS sysroot objects,
   not source; behavior-neutral per the eager-binding, status and CLI
   differentials that all pass on this image).
+  **Superseded 2026-11-16:** the current release candidate is 387/390 with
+  THREE accepted residuals — `_start`, `call_gmon_start`, and a deliberate
+  divergence: `recursive_mkdir` tolerates `EPERM` (the original ran as root
+  on the player and never met it; non-root reproducers do). See
+  `tools/sacd_parity.sh` ACCEPTED and the patch-site comment in
+  `reconstruct/libcommon/fileutils.c`.
 - Link interface: DT_NEEDED order (libpthread.so.0, libgcc_s.so.1,
   libc.so.6), 270 defined exports, 131 undefined imports with binding/
   type/DSO/version, 5 .ARM.exidx function+descriptor pairs — all MATCH

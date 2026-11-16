@@ -3,6 +3,12 @@
 Each bundle is self-contained: probe/tool versions, raw captures, and a results
 document that separates **demonstrated** from **inferred**.
 
+Current parity headline (the one number to trust): **387/390 functions
+instruction-identical** — accepted residuals `_start`, `call_gmon_start`, and
+the deliberate `recursive_mkdir` EPERM divergence. Historical session logs
+elsewhere (DELTA.md, evidence docs) carry older counts as history; this is
+the live number.
+
 | Bundle | What it proves |
 |---|---|
 | `evidence/runtime-differential/` | the reconstruction and the original produce identical stdout and option handling for a matrix of invocations |

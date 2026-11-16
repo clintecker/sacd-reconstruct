@@ -5,7 +5,19 @@ goldens are the reference frames; the guest captures are what Sony's real
 guest OS painted; the parities tie the two together. Files live in
 `evidence/bx510-guest/graphics/gallery/` (same names as below).
 
-## The daemon UI
+Two separate programs render on the player's display, and the names are
+easy to confuse:
+
+- **`sacd_ui` — the daemon UI**: a disc console (TOC, tracks, disc map).
+  It is itself a daemon CLIENT: everything it shows is bytes it read off
+  port 2002.
+- **`sacd_hud` — the HUD**: a cyberpunk telemetry console (event matrix,
+  wireframe cube, throughput panels). It never opens a client session; it
+  watches the daemon from /proc and a host UDP push.
+
+Both are proven to run inside Sony's real guest OS.
+
+## The daemon UI (`sacd_ui`)
 
 ![The UI golden frame — disc TOC, both areas, track list, ASCII disc map](../evidence/bx510-guest/graphics/gallery/ui-sim-golden-s1.png)
 
@@ -26,7 +38,7 @@ same run. Captured at 320x180 over the UART (3x upscaled here).*
 CONNECT (1 live)`, `RIP WATCH file=/tmp/ripA.bin`, `RIP DONE 128 sectors` —
 the UI observed a second client working, live.*
 
-## The HUD
+## The HUD (`sacd_hud`)
 
 ![The cyberpunk HUD, Mac render](../evidence/bx510-guest/graphics/gallery/hud-sim.png)
 

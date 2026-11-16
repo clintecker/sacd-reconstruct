@@ -508,7 +508,7 @@ symbols have **empty** names (use `sh[sym.shndx].name`), and an ARM `LDR
 rX,[pc,#imm]` literal-pool entry needs `(word>>16)&0xF == 0xF`, not
 `(word>>12)&0xF`.
 
-Decoder helpers used this session (Mac-side, `/tmp/drvcli.d/`, regenerate from §7
+Decoder helpers used during this decode (Mac-side, `/tmp/drvcli.d/`, regenerate from §7
 in <5 min if the /tmp tree is gone): `decode_drvcli.py` (all `.data` cli_ent
 tables), `decode_bdp_cli.py` (getter → dir table → sub table for all 48 bdpdrv
 lanes), `decode_table_at.py` (one table at an address), `func_strings.py`

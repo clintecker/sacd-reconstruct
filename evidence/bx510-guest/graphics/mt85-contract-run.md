@@ -29,7 +29,7 @@ Everything below was derived with tools, in this order:
    a literal-pool load (`ldr r1, [pc, #imm] @ 0xADDR`), and the word at that
    address was read **out of the file bytes** with pyelftools — the number is
    never hand-derived (scripts: `/tmp/mt85_ioctl_extract.py`,
-   `/tmp/mt85_strxref.py` this session; extraction outputs saved next to this
+   `/tmp/mt85_strxref.py` during this decode; extraction outputs saved next to this
    file as `mt85-contract-run-ioctl-sites-mtk.txt` / `…-mt85.txt`).
 4. Each ioctl's identity was confirmed by pairing its failure branch with the
    literal-pool string reference resolved through the same tracker

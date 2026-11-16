@@ -241,7 +241,7 @@ end-to-end in the guest: the retail libdirectfb initializes,
 creates a live 1280x720 ARGB primary surface, renders a filled
 rectangle through its own software path, and the pixels read back
 match. Next graphics step is the hardware leg: the fusion
-adjudicator (inventory v2, on tonight's stick) decides join-vs-
+adjudicator (inventory v2, on the session stick) decides join-vs-
 native; the vendor-layer scratch-surface probe follows.
 
 ## HARDWARE LEG (2026-11-05): the vendor path draws on the real panel

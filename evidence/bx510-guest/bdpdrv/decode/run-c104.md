@@ -144,7 +144,7 @@ sh /tmp/read10_verdict.sh /tmp/bdpdrv-runC104.uart.log \
 | 5 | REQUEST SENSE semantic row (real sense bytes) | model | guest records the FE's sense, not a synthesised one |
 
 **Provenance:** everything above is from the pushed evidence bundle and the
-two tracked scripts; the ISO-side oracle re-derivation is in this session's
+two tracked scripts; the ISO-side oracle re-derivation is in this record's
 transcript (`dd if=firebird.iso bs=2048 skip=N count=1 | md5sum` for each
 oracle LBA, plus the batch). Fire at 16:29:11Z, uart 104 476 B, trace
 ~112 MB VM-side, `terminal_marker true`.

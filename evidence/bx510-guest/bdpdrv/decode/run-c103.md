@@ -339,7 +339,7 @@ Ordered by what breaks first, each with its own observable:
 **Post-run state of items 3 and 4 (applied after this run's fire, NOT exercised by it):** the
 `tail` replacement (`dd bs=1 skip= count=`) is in `decode/sr_read_ladder.sh` and check H's
 `1020`/`980002` rows are `want_ge 1` in `decode/read10_verdict.sh` — both are committed edits
-this session made on the strength of the findings above; C104 is their first exercise. The
+the following runs made on the strength of the findings above; C104 is their first exercise. The
 probe's prime gate was also hardened after a review pass: the 0x40105305 release now skips on
 an EMPTY result string too (exec/loader failure case the clean negative did not cover).
 

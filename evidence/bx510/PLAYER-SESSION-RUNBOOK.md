@@ -20,7 +20,7 @@ The detailed steps below remain the authoritative reference for what each
 target does and what to check manually.
 
 Conventions:
-- `REPO` = your Mac checkout of this project (e.g. ~/code/aftermath-sacd)
+- `REPO` = a checkout of this project on the operator machine
 - `USB`  = the USB stick's mount point on the Mac (e.g. /Volumes/SONYUSB)
 - The player mounts the stick at /mnt/sda1 (if your earlier ripping USB used a
   different path, your old AutoScript shows the truth — keep the pattern).
@@ -48,7 +48,7 @@ Conventions:
 1.1  Plug the USB into the Mac. Identify its device (BE CAREFUL — wrong disk
      = wiped disk):
        diskutil list external
-     Find the line for your stick, e.g. "/dev/disk4". Note the SIZE matches.
+     Find the line for the session stick, e.g. "/dev/disk4". Note the SIZE matches.
 
 1.2  Erase as FAT32 (Sony players of this era do not read exFAT):
        diskutil eraseDisk FAT32 SONYUSB MBRFormat /dev/diskN

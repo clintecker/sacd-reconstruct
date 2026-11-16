@@ -12,7 +12,7 @@ an emulated player.
 list over the daemon's own port-2002 protocol and paints them. This exact
 frame is proven to render inside Sony's real guest OS
 ([gallery](docs/GRAPHICS-GALLERY.md)). It is a milestone artifact from the
-client-leg proof — the product HUD is `sacd_hud` below.*
+client-leg proof; the product HUD is below.*
 
 ## The story
 
@@ -46,11 +46,11 @@ daemon and the client are the same program, the DSF files are deterministic
 reconstructed protocol stack.
 
 The **HUD** — one program, one product — is built **into the daemon**:
-`sacd_extract_160 -S --hud=console` serves the rip and renders live
+`sacd_extract_160 -S --hud=console|panel` serves the rip and renders live
 telemetry from its own internal state (clients, ripping progress, disc
-stats). The panel renderer is the next rung; the images below show it in
-its two proven render paths (host simulator, and the same code inside
-Sony's real guest OS).
+stats), and the panel mode paints the retro console from inside the daemon
+process — proven in the guest. The images below show the renderer core in
+its standalone forms (host simulator, guest render).
 
 ## How it's proven
 

@@ -24,10 +24,12 @@ python3 tools/fn_diff.py sacd_extract_160 reconstruct/release/sacd_extract_160_r
 python3 tools/pool_audit.py sacd_extract_160 reconstruct/release/sacd_extract_160_release
 ```
 
-`fn_diff` normalises and compares 390 functions; only the `_start` and
-`call_gmon_start` residuals are expected to differ. `pool_audit` compares the
-literal pools by content and at their load sites (it caught two real misreads:
-`L"c"` and `__FILE__`).
+`fn_diff` normalises and compares 390 functions; the current accepted
+residuals are `_start`, `call_gmon_start`, and the deliberate
+`recursive_mkdir` EPERM divergence (see the banner in `DELTA.md`). If your
+count differs, trust `tools/sacd_parity.sh` — it encodes the accepted list.
+`pool_audit` compares the literal pools by content and at their load sites
+(it caught two real misreads: `L"c"` and `__FILE__`).
 
 ## 2. Wire behaviour without hardware
 

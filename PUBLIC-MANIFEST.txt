@@ -1,10 +1,10 @@
 # PUBLIC-MANIFEST: path	bytes	sha256	action	reason
 .gitignore	48	0925bdedeaafdc90b43fe02830c8a98274fe2e5feec2e5f4e9ad1487e8826428	exclude	not matched by any include rule
-AGENTS.md	33280	0c27335426d9ed34dce6a5b466c5cd1580f56c10b2670873fc416fea3b3d948d	exclude	internal process/policy doc
-DELTA.md	19654	91ff363aa2384b3507b42c54072c9d637f035090f2bbedede1f302eb3e01d415	scrub	reconstruction delta, identifiers scrubbed
-Makefile	52591	aae70ae22db8b57f52059aec86414aa110b894c4ceb4bcf358a6116d8fc53ba0	scrub	build targets, identifiers scrubbed
+AGENTS.md	33360	14bcd25734bb5557710227243f039efcf5c59da636a94c1ecc54f3502c9a648b	exclude	internal process/policy doc
+DELTA.md	20009	eeba1e8f46ff705c4898c28c2f1a7f3532c58e60678e1720b41cecfa465d2e6f	scrub	reconstruction delta, identifiers scrubbed
+Makefile	52671	6f7ac86071d746646791cf6534b7498603fc48a124c04425ed76332785e658b2	scrub	build targets, identifiers scrubbed
 NOTES.md	6247	c25913d402163d5909528c6c369f0d616b3140b6d3db619b1ee5b9bfdf6e83a8	exclude	internal session notes
-README.md	6163	3314c80a56ceb241ca31ba022f895900b47051b7b158a6405d065b7c5c834ce6	exclude	not matched by any include rule
+README.md	6470	52e686e8815acf5a9e6c8923e6de715003b5743892841484bd62ff6c5e14ab5e	exclude	not matched by any include rule
 RESEARCH-BRIEF.md	6687	3bcd6e4e5c07808740ab2d295e9d80a58b97e2e0e61d5cde06930e361876639c	exclude	internal brief
 analysis/disasm.txt	1787934	31ca0f443214682644b33ed89533f9baef8df5fd09a3e0368f3d19bfde55004a	exclude	regenerable disassembly dumps
 analysis/dwarf-line.txt	116691	8a4089164985ca37eb461286e1b51cd67653049ab13f3d2f823578303aa4e715	exclude	regenerable disassembly dumps
@@ -420,12 +420,12 @@ docs/ARCHITECTURE.md	3569	34dda34b32ae0386f265c9764954e5abee54af278603780c37340a
 docs/DAEMON-MAP.md	9406	500160943558c0c61fd3f9fb8bc49376f41b069dc9bf75e0277661b71055bb20	scrub	ours
 docs/EVIDENCE.md	2888	f630a87ee69cebbfae048b4387f74bda6f19d6c4bc5550c40b27d2c645092ff7	scrub	ours
 docs/FONT-FORMAT.md	8522	b6237d49ff7feaf849e8849b709d68164c4c9cbf2e97ad6e0688d71a4bb12985	scrub	ours
-docs/GRAPHICS-GALLERY.md	5227	53d6292546a0b2ded7eb4818f3f990f9a314a9ef15f69156d6f0d3e847721026	scrub	ours
+docs/GRAPHICS-GALLERY.md	5245	af4523a19457e962f6d1a3da72ff6d8bdb386da23360e727a2c6503299938201	scrub	ours
 docs/HUD-DESIGN.md	10462	3c2263e52b04f271649d088138460e9b9c12665f612b10af66153b47c59c4fdd	scrub	ours
 docs/HUD.md	5179	01856f89ff7f3a94f6a4f7549611fd5763f6dbc7eb336cbf037449d97d444ad1	scrub	ours
 docs/LIFECYCLE.md	14805	1239ef16dbd1b540d6c2b2e00fd9cfab890e335c120b035c54dbb97a634da6eb	scrub	ours
 docs/PROVENANCE.md	2297	52e7e234e148bff0d84c5b9af3241d6339d4f28f78f09e6f2213a6eef42bba62	scrub	ours
-docs/REPRODUCE.md	5047	9da23bb0c20529402090a6f412855e45d0b5a5af831d10d459c0c5ec854e0416	scrub	ours
+docs/REPRODUCE.md	5209	741a6b679345983f79eeea9281f3790fba5ad54c4f1c5e4158748e46767a91f1	scrub	ours
 docs/RIG-ARCHITECTURE.md	6059	f3ed828b571c17127d04aeab8f7752376d6b42b1149046d061c28c1dddc2641a	scrub	ours
 docs/U4-INITRD.md	7015	d2a0c7cb22238438f9606eaadb3d64f0f5f158d2245f341c48eb3465b0f3fda9	scrub	ours
 docs/mt85xx-fbdev-graphics-contract.md	33792	e641339ff77c97f8f037ee06436b098e5d73f044b1e412f05859a2222c7794dd	scrub	ours
@@ -436,8 +436,8 @@ emulator-handoff/.DS_Store	6148	d20d7c7e13e03b8b4cbb4532d5403bea1ffb20c19ff4a37e
 emulator-handoff/AT-HOME.md	7488	5346248e34f1ba8655b4e3d1b2a6c5d2be50dd939dddeee0f548b6dd12f5cc38	scrub	ours
 emulator-handoff/BX510-HANDOFF-SHA256SUMS	4071	3c37ece055eecf091ed7dd385ad4cc330f017bcdafe22e3dc161ee920dc3ef70	scrub	ours
 emulator-handoff/COPYING	18092	8177f97513213526df2cf6184d8ff986c675afb514d4e68a404010521b880643	scrub	ours
-emulator-handoff/HANDOFF-README.md	18700	8f7c5637d7eb292f2225dec9394b2f337df708b33ecefbf8c2b63e7653955faa	scrub	ours
-emulator-handoff/README.md	11938	3c32e9ce214c01b557bcd4aa439a16f15a1e174acf941bbdff8ff992acc3af31	scrub	ours
+emulator-handoff/HANDOFF-README.md	18779	e15dbfb0a74673258d5a9a28f96dc0dcaa0c7fbd2c37c0615d8c7f4a0b4c39c2	scrub	ours
+emulator-handoff/README.md	12100	f001b6238471acb50608de7018c30da2a239a9e9df943d1b58b9a9594cec2f13	scrub	ours
 emulator-handoff/build.sh	1819	6c6861f69449ff85d2942c4d6946ccb9c3a65909936c92686a51a221911c7342	scrub	ours
 emulator-handoff/evidence/daemons-uart.txt	12403	ac92d1150cbbb49b26b054e57563bb96e5cd13fa2598b492f3cb5666ba05613a	scrub	ours
 emulator-handoff/evidence/fastboot-uart.txt	900	f854d451477dde398f771244c7cac75eacbe5a81b5f7f5b19aeda506751dd9dd	scrub	ours
@@ -1253,7 +1253,7 @@ evidence/bx510-guest/u4-initrd/u-boot.strings.rootfs.txt	0	e3b0c44298fc1c149afbf
 evidence/bx510-guest/u4-initrd/u-boot.strings.upg.txt	12704	ccb4d49c9c1df9fa0d626e6b86d738346b20df2df37da92d10a1dfa769b0e9ca	scrub	evidence (logs filtered by size below)
 evidence/bx510-guest/u4-initrd/u4-run.md	3045	b043e90b67d5bd7b48ac6c6d9dc07dc1fced40e60672b8007f0a6ca32b5f717b	scrub	evidence (logs filtered by size below)
 evidence/bx510/BASELINE-RUNBOOK.md	3149	de774746a903f3016e3406a0d28e132da3f1218b6e8b3832dd0fbdf19038d0d7	scrub	evidence (logs filtered by size below)
-evidence/bx510/PLAYER-SESSION-RUNBOOK.md	10497	45b721bdfcaa072bdbd9132f52cfb11b074dd2098005bf318424bc4bf0ad6c4e	scrub	evidence (logs filtered by size below)
+evidence/bx510/PLAYER-SESSION-RUNBOOK.md	10641	6fef967583abe929430c0f93efe9496511b3233cf48f6e3b937bc0fcb4e26024	scrub	evidence (logs filtered by size below)
 evidence/bx510/display-payload/2026-11-04-displaylaunch-hardware.log	8110	1f5e70f9aa794607261861facff022cd5fda7b1627c43417ad121ac40ab05e53	scrub	evidence (logs filtered by size below)
 evidence/bx510/display-payload/DISPLAY-SPEC.md	7875	75f5861edd4c87f5913cb9d0807df15e0a9aabb26520022eab72fe0adb2d6a2c	scrub	evidence (logs filtered by size below)
 evidence/bx510/display-payload/cyberdraw	28504	17d0c2cb7ba7fd4ae43fa499124d099a7ec4b42c1ac7290d2f6cbcf0856fde13	include	evidence (logs filtered by size below)
@@ -1382,7 +1382,7 @@ incoming/mt85-analyst/libdirectfb_mt85.so	35360	298fa8f3352c853b901b4145fd75fa73
 incoming/mt85-analyst/libdirectfb_mtk.so	31048	eca7a3e3d9c4d64e4e92096e88e8165cc11baa5eb37a528362f7edcf7cdc2a42	exclude	third-party team package
 incoming/sacd-installer-and-status/sacd-installer-and-status/README.md	8032	6eaf4e6c391bcfeee221baa86146990e9c2891931a70bbebb74731a8be7629da	exclude	third-party team package
 incoming/sacd-installer-and-status/sacd-installer-and-status/RESULTS.txt	2136	46e33bb298e56caddc4d1e2eecc8c1332aefd52f4e284e77344933c484d40e8f	exclude	third-party team package
-incoming/sacd-installer-and-status/sacd-installer-and-status/__pycache__/test_status.cpython-312-pytest-8.3.3.pyc	6649	d78c03d14200c2c8ecb05fa6cb95ffa4d24cd1df6f18c4fbc2f4812426c31f04	exclude	third-party team package
+incoming/sacd-installer-and-status/sacd-installer-and-status/__pycache__/test_status.cpython-312-pytest-8.3.3.pyc	6649	d1564271a1c358ab3e4d50def65c0cd353a85960d5af9a8d25629350ff38dc95	exclude	third-party team package
 incoming/sacd-installer-and-status/sacd-installer-and-status/build_installer.sh	848	abd090a69beef44742e2cbf55e7687a33aa49a35ad55911f93f4054b9e5ff4a9	exclude	third-party team package
 incoming/sacd-installer-and-status/sacd-installer-and-status/build_status_shim.sh	840	0b510f114fa4927e85170525a7040ee9775bb6b0c2a1fc28bb23de2768e2f95e	exclude	third-party team package
 incoming/sacd-installer-and-status/sacd-installer-and-status/check_installer.py	3346	f44c061c4dcaf9f328f87e41aef496a40e1f4e1a9285cfc1e5ebc471bcdfd047	exclude	third-party team package
@@ -1409,7 +1409,7 @@ original/sacd_extract_160	350830	0fdcefdb84ae818be7385657eaf0960053f6e4452a82f19
 original/sacd_read.ko	97805	b3d7a383e45d3bbe1a987a4a2e15ab7a68dd55e88d0319f7a0fd2e9cf0246dfa	exclude	Sony binary (sha recorded in PROVENANCE.md)
 .gitignore	213	194e613d683d2f04d343a0e83965bc06be2630a20840183c961bbaa239eae445	scrub	public root docs
 LICENSE	1291	37cde8b20ef4a8be918ea9373f30dedf54dd3021e6b9b68cc9bbb52888fe2280	scrub	public root docs
-README.md	6357	f8cedce5e78aeb31f3725aae8104843c7315a8ba2872d8ac5be5478f08bece84	scrub	public root docs
+README.md	6508	76508dd76370d4c871f96c1145d0e15a472d93a7781197efd0745492979996d1	scrub	public root docs
 THIRD_PARTY.md	1237	82f3d61218221fd420d91286b66c2c861d718de15b05cb900c774102eb16e72d	scrub	public root docs
 reconstruct/Makefile	4044	4a6bda0fc9c5625d7e201501d9bf163d4ac2075be2cbdee6ddbaf8afef6327ff	scrub	ours
 reconstruct/fsflibgcc/bpabi.S	2163	ea68fd1d3ca487a40ab21f659264c70306ac927db78ca3077c0849e508a0a2e9	scrub	ours
@@ -1545,7 +1545,7 @@ reconstruct/tool/win32/sys/atomic.h	1874	bf23f0a16212a52edba4eaf3fcd26de28a6f193
 reconstruct/tool/win32/unistd.h	2007	a2c38ae1b55ec8a39776c437f13169ce1a6e93ab0e135544c07558ef9de9d7a7	scrub	ours
 tools/PUBLIC-SCAN-REPORT.md	2002	3aec395ab71fbd70201c5f580660f8b50c521ec51339e17d0db7aaeaa4c12dd6	scrub	ours
 tools/README.md	5913	b56f75ee3b144d630969ab3cc14c58267598964c35dfb4d6ae0c928ef9e2b814	scrub	ours
-tools/__pycache__/bx510_gate_check.cpython-312.pyc	22117	a1fedec30ff63264de362fbe7854fead7e843cded8e13fe0bfed5a532a2d781b	include	ours
+tools/__pycache__/bx510_gate_check.cpython-312.pyc	22117	355df7932de6f4b99edc81cc84c147775d631d75ea188919a5b08e6bb44d3c2b	include	ours
 tools/audit_public.py	6901	9acb5190512968154501a71ce482c481e156350f8a4576bf083fe4254b45f3a3	scrub	ours
 tools/bx510-fire.sh	6170	f62cb07f75b162c5d0f653bc34a2b09ddad3693f86b04f8547b21966fedb2dd4	scrub	ours
 tools/bx510_bdpdrv_stub_probe.py	34822	ebb2a1f63e4e1cbb612c9c7c14d3e51793c50dd84db9cb1640c88ffb56047574	scrub	ours

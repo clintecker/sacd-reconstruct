@@ -133,7 +133,7 @@ python3 verify_daemons.py --qemu work/build/qemu-system-arm --images images \
   --release /path/to/sacd-reconstruct/reconstruct/release/sacd_extract_160_release
 ```
 
-The expected ELF SHA-256 values are `0fdcefdb84ae818be7385657eaf0960053f6e4452a82f19cbe6777f9c8cddb45` and `e91720fbbbd592505bde6630843b0495ff82a93e40c0e427aaa70a081ff9ae22`. Both `--help` runs exited 0 and produced 1,059 identical stdout bytes with SHA-256 `139e40a3f95c22b1d3d4d6d172739be93d0618c39f4b8c06ef6eae9210664e18`. This exercises loader and libc compatibility for that invocation. The original module was not thereby proven to initialize or read a disc in QEMU.
+(2026-11 run values) The reference ELF SHA-256 is `0fdcefdb84ae818be7385657eaf0960053f6e4452a82f19cbe6777f9c8cddb45`; the release candidate changes whenever the source does (b0848b73… as of 2026-11-16) — take its hash from your build, not this list. Both `--help` runs exited 0 and produced 1,059 identical stdout bytes with SHA-256 `139e40a3f95c22b1d3d4d6d172739be93d0618c39f4b8c06ef6eae9210664e18`. This exercises loader and libc compatibility for that invocation. The original module was not thereby proven to initialize or read a disc in QEMU.
 
 The distributed Linux executable and preparer were also unpacked into a fresh directory and used to repeat shell, control-ramdisk and daemon tests.
 

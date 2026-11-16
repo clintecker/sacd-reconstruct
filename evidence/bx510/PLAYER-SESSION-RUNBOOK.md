@@ -200,7 +200,9 @@ baseline analyses against the ISO, cross-check the on-player logical bytes
 against the ISO rip AND against the emulator's fixture methodology, commit
 everything under evidence/bx510-hardware/, push, and post the #6 update.
 If the baseline succeeded, the FOLLOWING session is the candidate trial:
-same USB with the release ELF (e91720fb…), same disc, same capture, diff.
+same USB with the release ELF (hash whatever `reconstruct/release/
+sacd_extract_160_release` is at run time — b0848b73… as of 2026-11-16;
+the runbook's Nov-5 session used e91720fb…), same disc, same capture, diff.
 
 --------------------------------------------------------------------------------
 ## Failure cheat-sheet

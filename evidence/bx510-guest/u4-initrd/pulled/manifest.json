@@ -1,0 +1,327 @@
+{
+  "uboot_sha256": "40f19951773da0b180c4719c6d12dd2cea222b29f777f6c69d559fb85d9ac03b",
+  "arm2_sha256": "2e84f931415dde0c9e85fc2c9f11c1cde64af8097acbbc117a3d2bff259f66af",
+  "nand_sha256": "592b2920c2044f90ba91d85f8e58b8d52282355dd25c6ed6c0c88c0c548ceb30",
+  "firmware": "M15.R.0257",
+  "archive_sha256": "7209013baa51d9d011c928c76f96c7dec883c271b99097b91a376b930add151c",
+  "kernel_sha256": "10bb0fba4eb26c5b1ebf798f4d4669dc8b5899d520be294d333c318a360be2d7",
+  "load": "0xda00000",
+  "entry": "0xda00000",
+  "nand_size": 268435456,
+  "adaptive_pit_at": 2097152,
+  "partitions": [
+    {
+      "name": "boot_1",
+      "offset": 0,
+      "size": 2097152,
+      "flags": 24,
+      "records": [
+        {
+          "offset": 512,
+          "size": 24064,
+          "sha256": "78009edda7500ebf331eaa0796a8fe6a5c29b97bf25fd0b28931218c62f6ae4c",
+          "flags": 0
+        },
+        {
+          "offset": 25600,
+          "size": 4096,
+          "sha256": "05be7fc7abdd552edd1f80c1f413f0bd2719acf552073fc4a9f461eec33287c2",
+          "flags": 0
+        },
+        {
+          "offset": 29696,
+          "size": 48,
+          "sha256": "48b65ed4a1a31ed5cc78a3e5bad2872bb8673c180fd4f56583c708e698275336",
+          "flags": 0
+        },
+        {
+          "offset": 33792,
+          "size": 44468,
+          "sha256": "9d417d52b5b6808be3e6b35237db8a43ade405d28a0e787763dabe49b4611295",
+          "flags": 0
+        },
+        {
+          "offset": 95232,
+          "size": 62684,
+          "sha256": "2e84f931415dde0c9e85fc2c9f11c1cde64af8097acbbc117a3d2bff259f66af",
+          "flags": 0
+        },
+        {
+          "offset": 172032,
+          "size": 291196,
+          "sha256": "40f19951773da0b180c4719c6d12dd2cea222b29f777f6c69d559fb85d9ac03b",
+          "flags": 0
+        },
+        {
+          "offset": 573440,
+          "size": 36,
+          "sha256": "0967f934268501f20341b161e9d1a0f40da987f588e845013327ea77bcb4d5e2",
+          "flags": 0
+        },
+        {
+          "offset": 589824,
+          "size": 8192,
+          "sha256": "900a5728711ef07b7705da511b1c966d74e9468e7bb5eadf518c019255342fb1",
+          "flags": 0
+        },
+        {
+          "offset": 598016,
+          "size": 9917,
+          "sha256": "2d79e18924a95cd0e8f1952907b818a01a85f765d536db077de740210696c686",
+          "flags": 0
+        }
+      ]
+    },
+    {
+      "name": "part_info_1",
+      "offset": 2097152,
+      "size": 2097152,
+      "flags": 56,
+      "records": [
+        {
+          "offset": 262144,
+          "size": 4096,
+          "sha256": "cd7b9dfc0ed791070d3e30776e578daf72eb049ab5a1a9a0f5d74fd3cf677a49",
+          "flags": 0
+        },
+        {
+          "offset": 524288,
+          "size": 4096,
+          "sha256": "cd7b9dfc0ed791070d3e30776e578daf72eb049ab5a1a9a0f5d74fd3cf677a49",
+          "flags": 1
+        }
+      ]
+    },
+    {
+      "name": "part_info_2",
+      "offset": 4194304,
+      "size": 2097152,
+      "flags": 32,
+      "records": []
+    },
+    {
+      "name": "mac_addr_1",
+      "offset": 6291456,
+      "size": 1048576,
+      "flags": 72,
+      "records": []
+    },
+    {
+      "name": "mac_addr_2",
+      "offset": 7340032,
+      "size": 1048576,
+      "flags": 88,
+      "records": []
+    },
+    {
+      "name": "key_block_1",
+      "offset": 8388608,
+      "size": 1048576,
+      "flags": 104,
+      "records": []
+    },
+    {
+      "name": "key_block_2",
+      "offset": 9437184,
+      "size": 1048576,
+      "flags": 120,
+      "records": []
+    },
+    {
+      "name": "fe_bin_1",
+      "offset": 10485760,
+      "size": 2097152,
+      "flags": 136,
+      "records": []
+    },
+    {
+      "name": "fe_bin_2",
+      "offset": 12582912,
+      "size": 2097152,
+      "flags": 152,
+      "records": []
+    },
+    {
+      "name": "fe_test_data",
+      "offset": 14680064,
+      "size": 1048576,
+      "flags": 168,
+      "records": []
+    },
+    {
+      "name": "fe_parameters",
+      "offset": 15728640,
+      "size": 1048576,
+      "flags": 184,
+      "records": []
+    },
+    {
+      "name": "fe_power_curve",
+      "offset": 16777216,
+      "size": 1048576,
+      "flags": 200,
+      "records": []
+    },
+    {
+      "name": "ifcon_fw_backup",
+      "offset": 17825792,
+      "size": 3145728,
+      "flags": 216,
+      "records": []
+    },
+    {
+      "name": "kernel_1",
+      "offset": 20971520,
+      "size": 3145728,
+      "flags": 248,
+      "records": [
+        {
+          "offset": 0,
+          "size": 2285632,
+          "sha256": "10bb0fba4eb26c5b1ebf798f4d4669dc8b5899d520be294d333c318a360be2d7",
+          "flags": 0
+        }
+      ]
+    },
+    {
+      "name": "kernel_2",
+      "offset": 24117248,
+      "size": 3145728,
+      "flags": 224,
+      "records": []
+    },
+    {
+      "name": "initrd_1",
+      "offset": 27262976,
+      "size": 5242880,
+      "flags": 312,
+      "records": [
+        {
+          "offset": 0,
+          "size": 532976,
+          "sha256": "737ebf52971947ad5742f2e7356d20546ae35f51ac0d9deecd6393a4a5503dc5",
+          "flags": 0
+        }
+      ]
+    },
+    {
+      "name": "rootfs_normal_1",
+      "offset": 32505856,
+      "size": 112197632,
+      "flags": 8520,
+      "records": [
+        {
+          "offset": 0,
+          "size": 72282112,
+          "sha256": "42178010e104681200161df7aea6a657c9addc554fead13f066e958f4991bcdb",
+          "flags": 0
+        }
+      ]
+    },
+    {
+      "name": "rootfs_enc_it_1",
+      "offset": 144703488,
+      "size": 4194304,
+      "flags": 16785752,
+      "records": [
+        {
+          "offset": 0,
+          "size": 131072,
+          "sha256": "42ad7847c9d5e26d326d958206db274a21d3d32afbb629413d47120354fb5255",
+          "flags": 0
+        }
+      ]
+    },
+    {
+      "name": "initrd_2",
+      "offset": 148897792,
+      "size": 4194304,
+      "flags": 256,
+      "records": []
+    },
+    {
+      "name": "rootfs_normal_2",
+      "offset": 153092096,
+      "size": 50331648,
+      "flags": 8464,
+      "records": []
+    },
+    {
+      "name": "rootfs_enc_it_2",
+      "offset": 203423744,
+      "size": 5242880,
+      "flags": 16785696,
+      "records": []
+    },
+    {
+      "name": "upg_status",
+      "offset": 208666624,
+      "size": 1048576,
+      "flags": 360,
+      "records": []
+    },
+    {
+      "name": "init_wall_paper",
+      "offset": 209715200,
+      "size": 1048576,
+      "flags": 376,
+      "records": [
+        {
+          "offset": 0,
+          "size": 26006,
+          "sha256": "ae1eb9f901fd14553884146bdbfdbe10a455649bd1e6e21d54b4630036caaed6",
+          "flags": 0
+        }
+      ]
+    },
+    {
+      "name": "fast_init_param",
+      "offset": 210763776,
+      "size": 2097152,
+      "flags": 392,
+      "records": [
+        {
+          "offset": 1048576,
+          "size": 16353,
+          "sha256": "4f434f4de7576fa520dfb00e6f980aae61410cee52edad100957027a59f31fcc",
+          "flags": 0
+        }
+      ]
+    },
+    {
+      "name": "ubi0",
+      "offset": 212860928,
+      "size": 46137344,
+      "flags": 12696,
+      "records": []
+    },
+    {
+      "name": "ubi_boot",
+      "offset": 212860928,
+      "size": 7340032,
+      "flags": 5849512,
+      "records": []
+    },
+    {
+      "name": "custom_app_data",
+      "offset": 220200960,
+      "size": 20971520,
+      "flags": 5849528,
+      "records": []
+    },
+    {
+      "name": "log_data",
+      "offset": 241172480,
+      "size": 2097152,
+      "flags": 5849544,
+      "records": []
+    },
+    {
+      "name": "3rd_data",
+      "offset": 243269632,
+      "size": 7340032,
+      "flags": 5849560,
+      "records": []
+    }
+  ]
+}

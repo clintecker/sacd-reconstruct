@@ -1,0 +1,133 @@
+# bx510_client_c_overlap.sh.in — issue #7 item 3: OVERLAPPING CLIENTS.
+#
+# The F-1 accept-aliasing experiment, now watched LIVE by the reactive UI.
+# The daemon's listener passes &conn_s — ONE stack slot in the listener's own
+# frame — to every client thread (daemon-socket-protocol.md §5). A second
+# accept overwrites the slot while client #1 is still running, so:
+#
+#   P1  client #1's next send/recv operates on client #2's fd → client #1
+#       receives client #2's responses (sacdclient prints FAIL DISC_READ
+#       type=1 when it gets an OPEN reply where a READ reply was due);
+#   P2  whichever thread finishes first closes the shared fd → the other gets
+#       EOF mid-message (sacdclient: "die varint read / short reply");
+#   P3  both threads write the single client_connected word → the daemon's
+#       status line can read "Client none." while a client is live.
+#
+# This fire is the DECISIVE experiment for those predictions. Scenario:
+#
+#   pre-flight  one clean session (510x10, oracle 45ccd7df…) — the control
+#   UI          starts, runs its own session, writes /res/ui-session.done
+#   client A    waits for the marker, then rips LBA 532104 x1600 (13 chunks)
+#               — the UI's SACD_UI_WATCH_FILE, so the rip progress is live
+#   client B    waits for /tmp/ripA.bin to EXIST (A created it after its own
+#               DISC_OPEN, i.e. mid-rip by construction), then OPENs+reads
+#               510x10 — the second client
+#
+# Expected verdict shape — AMENDED by the run this template produced (c132,
+# evidence/bx510-guest/bdpdrv/decode/run-c130-c134.md §C132): the aliasing did
+# NOT become crossed traffic. The observed behaviour of two concurrent clients
+# is (E-1) the SECOND client is REFUSED at the session layer —
+# `FAIL DISC_OPEN type=1 result=-1`, no fd-aliasing symptom on the wire — and
+# (E-2) the FIRST client WEDGES mid-transfer with its connection still
+# ESTABLISHED (c132: A froze after exactly one 128-sector chunk, `RIP DONE 128
+# sectors` was the UI's last event, and A's 262144 B outfile was later proven
+# to be stale buffer bytes — §C133). So accept: B_RC=1 + a
+# `FAIL DISC_OPEN ... result=-1` line, A wedged mid-rip (no `CLIENT GONE` for
+# A), the daemon still up (the post-overlap control read matches its oracle),
+# and the UI event log carrying the second client's CONNECT/GONE churn.
+# P1/P2/P3 above stay the C-side reading of §5 — they are NOT what this rig
+# demonstrated. md5 equality is not the acceptance either: the transcripts are
+# the artifact.
+# Oracles: decode/client-leg-oracles.md; run doc: the §C132 amendment.
+#
+# Placeholders: @SCALE@ @DAEMON_WAIT@ @UI_ARGS@ @POOL_ARGS@ (renderer-gated), and
+# @UI_WAIT_MAX@ — the bound on the UI-kill marker wait, which must exceed the
+# UI's MEASURED session (~25 s: a 22 s DISC_OPEN plus the TOC reads — c126/c132)
+# or the kill lands before the observation window even opens.
+
+# 1. the VFS skeleton an init=/bin/sh guest does not have
+mkdir -p /tmp /res/tmp
+mount -t tmpfs tmpfs /tmp
+# 2. loopback, so the client legs reach the daemon at 127.0.0.1:2002
+ifconfig lo 127.0.0.1 netmask 255.0.0.0 up
+# 3. the payload tgz: daemon + sacd_read.ko + sacdgate + client + UI + FB kit
+tar -xzf /res/shim/daemon_payload.tgz -C /res
+# 4. the SACD session — c122g's proven Connect/Release pair
+insmod /res/shim/bx510_cpsa_peer.ko
+insmod /res/shim/sacd_read.ko minor=201 compid=0
+rm -f /dev/sacd_read
+mknod /dev/sacd_read c 10 201
+/res/shim/sacdgate 0x40105301 /dev/sacd_read
+/res/shim/sacdgate 0x40105305 /dev/sacd_read
+# 5. THE FA-LATCH CLEAR (mandatory — c122f served zero FE traffic without it)
+/res/shim/sr_fa_mode /dev/sr0 clear
+/res/shim/sr_fa_mode /dev/sr0
+grep sr0 /res/proc/partitions
+# 6. the display: fbvirt is the fbdev this rig can read back
+insmod /res/shim/bx510_fbvirt.ko
+cat /res/proc/fb
+set -- $(grep fbvirt /res/proc/fb); mknod /dev/fb0 c 29 $1
+insmod /lib/modules/2.6.35/BDP/fusion.ko
+set -- $(grep fusion /res/proc/devices); mknod /dev/fusion0 c $1 0
+# 7. the daemon
+cd /res/shim
+./sacd_extract_160 -S </dev/null >/res/daemon.out 2>&1 &
+echo DAEMON_PID=$!
+sleep @DAEMON_WAIT@
+cat /res/daemon.out; echo DAEMON_OUT_END
+# 8. pre-flight CONTROL: one clean session before anything overlaps
+./sacdclient 127.0.0.1 510 10 /tmp/preflight.bin
+echo PREFLIGHT_RC=$?
+md5sum /tmp/preflight.bin; echo PREFLIGHT_MD5_END
+# 9. TWO OVERLAPPING CLIENTS (the experiment). A rips 1600 sectors from the
+#    multichannel audio zone; B connects the moment A's outfile exists —
+#    A created it after its own DISC_OPEN, so B lands mid-rip by construction.
+#    Both waits are BOUNDED (60 x sleep 1): an unbounded marker wait is a wedge
+#    waiting to happen — if the UI never writes the marker the whole fire sits
+#    there until the probe timeout and the transcript says nothing about WHY.
+#    A_WAIT_TIMEOUT / B_WAIT_TIMEOUT in the console are the honest signal that
+#    the wait expired instead of the client having run.
+#    rc=$? is captured ONCE: `echo A_RC=$? >/res/a.rc; echo A_RC=$?` prints the
+#    first echo's status (always 0) on the console, which is how c132's receipt
+#    read `B_RC=0` while cat /res/b.rc said B_RC=1.
+rm -f /res/ui-session.done /res/ui-frame.done /res/a.rc /res/b.rc /tmp/ripA.bin /tmp/ripB.bin
+( i=0; while [ ! -f /res/ui-session.done ] && [ $i -lt 60 ]; do sleep 1; i=$((i+1)); done; [ -f /res/ui-session.done ] || echo A_WAIT_TIMEOUT=$i; ./sacdclient 127.0.0.1 532104 1600 /tmp/ripA.bin; rc=$?; echo A_RC=$rc >/res/a.rc; echo A_RC=$rc ) &
+echo CLIENT_A=$!
+( i=0; while [ ! -f /tmp/ripA.bin ] && [ $i -lt 60 ]; do sleep 1; i=$((i+1)); done; [ -f /tmp/ripA.bin ] || echo B_WAIT_TIMEOUT=$i; ./sacdclient 127.0.0.1 510 10 /tmp/ripB.bin; rc=$?; echo B_RC=$rc >/res/b.rc; echo B_RC=$rc ) &
+echo CLIENT_B=$!
+# 10. the UI: its own session first (writes the marker), then OBSERVES with
+#     the rip file as its progress source; killed before its log is read
+#     (a live UI keeps appending UI-EV lines — run uiloop2). The kill waits on
+#     the UI's first-frame marker (/res/ui-frame.done) AND both clients' rc
+#     markers, bounded by @UI_WAIT_MAX@ (issue #13 — never a fixed sleep: the
+#     overlap window this experiment measures only exists while both clients
+#     run, so killing on the frame alone would end the experiment before it
+#     bites).
+SACD_UI_WATCH_FILE=/tmp/ripA.bin ./sacd_ui @UI_ARGS@ >/res/ui.out 2>&1 &
+U=$!
+echo UI_PID=$U
+i=0; while { [ ! -f /res/ui-frame.done ] || [ ! -f /res/a.rc ] || [ ! -f /res/b.rc ]; } && [ $i -lt @UI_WAIT_MAX@ ]; do sleep 1; i=$((i+1)); done
+echo UI_WAIT_ITERS=$i
+kill $U 2>/dev/null
+sleep 1
+cat /res/ui.out; echo UI_OUT_END
+# 11. the overlap observables
+cat /res/a.rc; echo A_RC_END
+cat /res/b.rc; echo B_RC_END
+ls -l /tmp/ripA.bin /tmp/ripB.bin 2>/dev/null
+md5sum /tmp/ripA.bin /tmp/ripB.bin 2>/dev/null; echo RIP_MD5_END
+cat /res/daemon.out; echo DAEMON_END_END
+cat /res/proc/net/dev; echo WIRE_DEV_END
+# 12. post-overlap CONTROL: one more clean session — the daemon must recover
+./sacdclient 127.0.0.1 532104 1 /tmp/post.bin
+echo POST_RC=$?
+md5sum /tmp/post.bin; echo POST_MD5_END
+# 13. frame egress
+echo UI_SCALE=@SCALE@
+./fbdump --rows /dev/fb0 @SCALE@ >/res/fb-fbdev.txt 2>&1
+echo UI_DUMP_FBDEV=$?
+cat /res/fb-fbdev.txt; echo UI_FBDEV_END
+./fbdump --rows --pool /dev/fb0 @SCALE@ @POOL_ARGS@ >/res/fb-pool.txt 2>&1
+echo UI_DUMP_POOL=$?
+cat /res/fb-pool.txt; echo UI_POOL_END
+echo UI_SHOT_DONE

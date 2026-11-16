@@ -1,6 +1,7 @@
 /*
  * bx510_sacd_hud.c — SACD HUD: a cyberpunk console showing what the daemon is
- * doing. PHASE H2-lite.
+ * doing. PHASE H2-lite + H3 host push (tools/hud_push.py -> UDP 20023 ->
+ * host_push_parse(): RANGE/RATE/VERIFY/ETA rendered in the telemetry panels).
  *
  * H1 measured **2 FPS**: it drew into the 1920x1080 primary with one DirectFB
  * FillRectangle per glyph pixel — hundreds of driver calls per text line.
@@ -106,22 +107,92 @@ static unsigned char *g_ttf;
 static int g_font_ok;
 static float g_fsc;            /* scale for the current size */
 
+static unsigned be32(const unsigned char *p)
+{
+    return ((unsigned)p[0] << 24) | ((unsigned)p[1] << 16) | ((unsigned)p[2] << 8) | (unsigned)p[3];
+}
+
+static void font_reset(void)
+{
+    if (g_ttf) free(g_ttf);
+    g_ttf = NULL;
+    memset(&g_font, 0, sizeof g_font);
+    g_font_ok = 0;
+}
+
+/* Load a TrueType/OpenType sfnt with stb_truetype.
+   Accepts either a carved sfnt (ttf/otf) or Sony's /res/font.bin wrapper
+   (12-byte prefix + embedded sfnt; docs/FONT-FORMAT.md). */
 static int font_load(const char *path)
 {
-    FILE *f = fopen(path, "rb");
-    long n;
+    FILE *f;
+    unsigned char *raw = NULL;
+    unsigned char *sf = NULL;
+    size_t n = 0, sf_n = 0;
+
+    if (!path || !path[0]) return 0;
+
+    f = fopen(path, "rb");
     if (!f) return 0;
-    fseek(f, 0, SEEK_END); n = ftell(f); fseek(f, 0, SEEK_SET);
-    if (n <= 0) { fclose(f); return 0; }
-    g_ttf = malloc((size_t)n);
-    if (!g_ttf) { fclose(f); return 0; }
-    if (fread(g_ttf, 1, (size_t)n, f) != (size_t)n) { fclose(f); free(g_ttf); g_ttf = NULL; return 0; }
+    if (fseek(f, 0, SEEK_END) != 0) { fclose(f); return 0; }
+    n = (size_t)ftell(f);
+    if (fseek(f, 0, SEEK_SET) != 0) { fclose(f); return 0; }
+    if (n < 16) { fclose(f); return 0; }
+
+    raw = (unsigned char *)malloc(n);
+    if (!raw) { fclose(f); return 0; }
+    if (fread(raw, 1, n, f) != n) { fclose(f); free(raw); return 0; }
     fclose(f);
+
+    /* Sony wrapper: 12-byte prefix, then sfntVersion 0x00010000. The wrapper
+       carries a big-endian length at +8; trust it only if it fits. */
+    if (n >= 16 && memcmp(raw + 12, "\x00\x01\x00\x00", 4) == 0) {
+        unsigned decl = (n >= 12) ? be32(raw + 8) : 0;
+        sf = raw + 12;
+        sf_n = (decl && 12u + (size_t)decl <= n) ? (size_t)decl : (n - 12);
+    }
+    else {
+        sf = raw;
+        sf_n = n;
+    }
+
+    font_reset();
+    g_ttf = (unsigned char *)malloc(sf_n);
+    if (!g_ttf) { free(raw); return 0; }
+    memcpy(g_ttf, sf, sf_n);
+    free(raw);
+
     if (!stbtt_InitFont(&g_font, g_ttf, stbtt_GetFontOffsetForIndex(g_ttf, 0))) {
-        free(g_ttf); g_ttf = NULL; return 0;
+        font_reset();
+        return 0;
     }
     g_font_ok = 1;
     return 1;
+}
+
+static int font_load_chain(const char *preferred, const char **loaded)
+{
+    const char *cands[8];
+    int n = 0, i;
+
+    if (loaded) *loaded = NULL;
+    if (preferred && preferred[0]) cands[n++] = preferred;
+#ifndef HUD_SIM
+    /* On-device canonical source: Sony's shipped wrapper. */
+    cands[n++] = "/res/font.bin";
+    /* Back-compat for older launchers that staged a carved copy. */
+    cands[n++] = "/tmp/sony-font.ttf";
+#else
+    /* Host sim default: repo fixture (Makefile sets HUD_FONT but this keeps
+       ad-hoc runs working too). */
+    cands[n++] = "evidence/bx510/display-payload/sony-font.ttf";
+    cands[n++] = "sony-font.ttf";
+#endif
+
+    for (i = 0; i < n; i++) {
+        if (font_load(cands[i])) { if (loaded) *loaded = cands[i]; return 1; }
+    }
+    return 0;
 }
 static int ttf_width(const char *str, int px)
 {
@@ -537,6 +608,82 @@ static void udp_open(void)
     fl = fcntl(udp_fd, F_GETFL, 0);
     fcntl(udp_fd, F_SETFL, fl | O_NONBLOCK);
 }
+
+/* ---- H3 host push: the Mac's capture controller tells us job state ------
+   Grammar (tools/hud_push.py is the reference sender, one datagram per
+   line, ASCII; see its header for the full contract):
+     RANGE done=<n> total=<n>      sectors ripped so far / disc total
+     RATE  mbs=<x.x>               measured throughput, MB/s
+     VERIFY status=ok|fail|run     verify result
+     ETA   s=<n>                   seconds remaining
+   Unknown lines keep the legacy "READ lsn=.." handling below. */
+static unsigned long long hpush_done, hpush_total, hpush_eta_s;
+static double hpush_mbps;
+static char hpush_verify[12];
+static int hpush_have;          /* any host-push field seen at all */
+
+static int host_push_parse(const char *b)
+{
+    if (!strncmp(b, "RANGE ", 6)) {
+        unsigned long long d = 0, t = 0;
+        if (sscanf(b + 6, "done=%llu total=%llu", &d, &t) == 2) {
+            hpush_done = d; hpush_total = t; hpush_have = 1;
+            return 1;
+        }
+        return 0;
+    }
+    if (!strncmp(b, "RATE ", 5)) {
+        double m = 0;
+        if (sscanf(b + 5, "mbs=%lf", &m) == 1) { hpush_mbps = m; hpush_have = 1; return 1; }
+        return 0;
+    }
+    if (!strncmp(b, "VERIFY ", 7)) {
+        char st[12] = "";
+        if (sscanf(b + 7, "status=%11s", st) == 1) {
+            snprintf(hpush_verify, sizeof hpush_verify, "%s", st);
+            hpush_have = 1;
+            return 1;
+        }
+        return 0;
+    }
+    if (!strncmp(b, "ETA ", 4)) {
+        unsigned long long s = 0;
+        if (sscanf(b + 4, "s=%llu", &s) == 1) { hpush_eta_s = s; hpush_have = 1; return 1; }
+        return 0;
+    }
+    return 0;
+}
+
+/* legacy client-report line handling (READ lsn=/OPEN/CLOSE): shared by
+   udp_poll() and the HUD_SIM per-frame scenario feed so sim captures show
+   the same event-matrix behavior as the live UDP path. */
+static void legacy_line_handle(char *b)
+{
+    unsigned lsn = 0, cnt = 0;
+    const char *pl = strstr(b, "lsn=");
+    const char *pc = strstr(b, "n=");
+    if (pl && sscanf(pl, "lsn=%u", &lsn) == 1) {
+        if (pc && sscanf(pc, "n=%u", &cnt) == 1 && cnt > 0) {
+            ev_requests++;
+            ev_sectors += cnt;
+            ev_last_lsn = lsn;
+            ev_bytes += (unsigned long long)cnt * SECTOR_BYTES;
+        }
+    }
+    if (b[0]) {
+        unsigned l2 = 0, c2 = 0;
+        const char *pl2 = strstr(b, "lsn="), *pc2 = strstr(b, "n=");
+        if (pl2 && pc2 && sscanf(pl2, "lsn=%u", &l2) == 1
+            && sscanf(pc2, "n=%u", &c2) == 1) {
+            char ev2[40];
+            snprintf(ev2, sizeof ev2, "RD %u+%u", l2, c2);
+            tick_push(ev2);
+        } else {
+            tick_push(b);
+        }
+    }
+}
+
 static void udp_poll(void)
 {
     char b[512];
@@ -546,31 +693,14 @@ static void udp_poll(void)
         n = recv(udp_fd, b, sizeof b - 1, 0);
         if (n <= 0) return;
         b[n] = 0;
-        {   /* "READ lsn=532104 n=128 got=128" / "OPEN ok" / "CLOSE" */
-            unsigned lsn = 0, cnt = 0;
-            const char *pl = strstr(b, "lsn=");
-            const char *pc = strstr(b, "n=");
-            if (pl && sscanf(pl, "lsn=%u", &lsn) == 1) {
-                if (pc && sscanf(pc, "n=%u", &cnt) == 1 && cnt > 0) {
-                    ev_requests++;
-                    ev_sectors += cnt;
-                    ev_last_lsn = lsn;
-                    ev_bytes += (unsigned long long)cnt * SECTOR_BYTES;
-                }
-            }
-            if (b[0]) {   /* "READ lsn=532104 n=128 got=128" -> "RD 532104+128" */
-                unsigned l2 = 0, c2 = 0;
-                const char *pl2 = strstr(b, "lsn="), *pc2 = strstr(b, "n=");
-                if (pl2 && pc2 && sscanf(pl2, "lsn=%u", &l2) == 1
-                    && sscanf(pc2, "n=%u", &c2) == 1) {
-                    char ev2[40];
-                    snprintf(ev2, sizeof ev2, "RD %u+%u", l2, c2);
-                    tick_push(ev2);
-                } else {
-                    tick_push(b);
-                }
-            }
+        if (host_push_parse(b)) {
+            /* RANGE and VERIFY belong in the event stream (a verify FAIL is
+               an event); RATE/ETA only update the panels — RATE repeats
+               every second and would flood the ticker. */
+            if (strncmp(b, "RATE ", 5) && strncmp(b, "ETA ", 4)) tick_push(b);
+            continue;
         }
+        legacy_line_handle(b);
     }
 }
 
@@ -641,6 +771,7 @@ static int ev_head;
 static void ev_classify(const char *ln, int *kind, int *mag)
 {
     *mag = 1;
+    if (strstr(ln, "VERIFY") && strstr(ln, "status=fail")) { *kind = EVK_ERR; *mag = 9; return; }
     if (strstr(ln, "ERR") || strstr(ln, "FAIL") || strstr(ln, "ALERT")) { *kind = EVK_ERR; *mag = 9; return; }
     if (strstr(ln, "RD ") || strstr(ln, "READ")) {
         unsigned v = 1;
@@ -1524,6 +1655,24 @@ static void scene_retro(const hud_t *h, double t, double fps, int frame)
             snprintf(l, sizeof l, "TMP %u%%", h->tmp_pct);
             rtext(l, x + 3, yy, h->tmp_pct > 90 ? 12 : 2); yy += 9;
             rtext(h->note[0] ? h->note : "NOMINAL", x + 3, yy, h->note[0] ? 12 : 2);
+            if (hpush_have) {   /* H3 host push: two compact rows, 13-col panel */
+                int pct = hpush_total ? (int)((double)hpush_done * 100.0
+                                              / (double)hpush_total + 0.5) : 0;
+                char hl[16];
+                int vc = 10;
+                if (!strcmp(hpush_verify, "ok")) vc = 2;
+                else if (!strcmp(hpush_verify, "fail")) vc = 12;
+                else if (!strcmp(hpush_verify, "run")) vc = 4;
+                yy += 9;
+                snprintf(hl, sizeof hl, "H%d%%", pct);
+                rtext(hl, x + 3, yy, 2);
+                snprintf(hl, sizeof hl, "E%llus", hpush_eta_s);
+                rtext_r(hl, x + w - 3, yy, 3);
+                yy += 9;
+                snprintf(hl, sizeof hl, "VFY %s",
+                         hpush_verify[0] ? hpush_verify : "--");
+                rtext(hl, x + 3, yy, vc);
+            }
         }
     }
 
@@ -1707,7 +1856,17 @@ static void scene(const hud_t *h, double t, double fps, int frame)
         text_top(l, x0, y, small, C_PHOS);
         snprintf(l, sizeof l, "TMP %u%%", h->tmp_pct);
         text_top_r(l, CW - pad * 2, y, small, h->tmp_pct > 90 ? C_RED : C_PHOSD);
-        y += lhS + pad;
+        y += lhS;
+        if (hpush_have) {   /* H3: what the HOST controller says, not the daemon */
+            snprintf(l, sizeof l, "HOST %llu/%llu %.0f%% %.1fMB/s E%llus VFY %s",
+                     hpush_done, hpush_total,
+                     hpush_total ? 100.0 * (double)hpush_done / (double)hpush_total : 0.0,
+                     hpush_mbps, hpush_eta_s,
+                     hpush_verify[0] ? hpush_verify : "--");
+            text_top(l, x0, y, small, C_CYAN);
+            y += lhS;
+        }
+        y += pad;
 
         {
             int ah = lhS + lhS / 2 + pad;
@@ -1778,14 +1937,14 @@ int main(int argc, char **argv)
     int frames = (argc > 2) ? atoi(argv[2]) : 1;
     int i;
     FILE *f;
-    const char *fp = getenv("HUD_FONT");
-    if (!fp || !fp[0]) fp = "sony-font.ttf";
+    const char *want = getenv("HUD_FONT");
+    const char *loaded = NULL;
     SCAL = 2;
     pitch_px = CW * SCAL;
     fb = calloc((size_t)pitch_px * CH * SCAL, sizeof(unsigned int));
     if (!fb) return 1;
-    if (font_load(fp)) printf("SIM: font %s\n", fp);
-    else printf("SIM: no font at %s (5x7 fallback)\n", fp);
+    if (font_load_chain(want, &loaded)) printf("SIM: font %s\n", loaded);
+    else printf("SIM: no font (5x7 fallback)\n");
 
     memset(&h, 0, sizeof h);
     h.module_loaded = 1; h.misc_201 = 1; h.listen_2002 = 1; h.clients_2002 = 1;
@@ -1799,6 +1958,25 @@ int main(int argc, char **argv)
     tick_push("READ lsn=0 n=128 (256K)");
     tick_push("CLOSE rc=0");
 
+    {   /* H3 selftest hook: feed host-push lines from a file through the SAME
+           host_push_parse() that udp_poll() uses, then print the resulting
+           state so tools/test_hud_push.py can assert the round trip. */
+        const char *ing = getenv("HUD_INGEST");
+        if (ing && ing[0]) {
+            FILE *fi = fopen(ing, "r");
+            char ib[512];
+            if (!fi) {
+                printf("HOSTPUSH: ingest file %s unreadable\n", ing);
+                return 1;
+            }
+            while (fgets(ib, sizeof ib, fi)) host_push_parse(ib);
+            fclose(fi);
+        }
+        printf("HOSTPUSH: have=%d done=%llu total=%llu mbps=%.2f eta=%llu verify=%s\n",
+               hpush_have, hpush_done, hpush_total, hpush_mbps, hpush_eta_s,
+               hpush_verify[0] ? hpush_verify : "--");
+    }
+
     g_visible_w = CW * SCAL; g_visible_h = CH * SCAL;
     typography_set(g_visible_h);
     printf("SIM: type head=%d body=%d (visible_h=%d)\n", g_head_px, g_body_px, g_visible_h);
@@ -1807,6 +1985,25 @@ int main(int argc, char **argv)
     else g_fx = 0x17;
     g_rx = g_visible_w / RW; if (g_rx < 1) g_rx = 1;
     for (i = 0; i < frames; i++) {
+        {   /* HUD_INGEST_DIR: per-frame scenario feed (animated captures).
+               Frame i ingests <dir>/ev-<i> through the SAME host_push_parse()
+               the UDP path uses; missing files are skipped. State is
+               cumulative by design (RANGE done= grows, events append). */
+            const char *dir = getenv("HUD_INGEST_DIR");
+            if (dir && dir[0]) {
+                char p[512];
+                FILE *fi;
+                char ib[512];
+                snprintf(p, sizeof p, "%s/ev-%03d", dir, i);
+                fi = fopen(p, "r");
+                if (fi) {
+                    while (fgets(ib, sizeof ib, fi)) {
+                        if (!host_push_parse(ib)) legacy_line_handle(ib);
+                    }
+                    fclose(fi);
+                }
+            }
+        }
         if (getenv("HUD_RETRO")) {
             g_fx = 0;
             scene_retro(&h, 1.7 + i * 0.2, 13.0, i * 4);
@@ -1815,8 +2012,6 @@ int main(int argc, char **argv)
             retro_present(i * 4, 1.7 + i * 0.2);
         }
         else scene(&h, 1.7 + i * 0.2, 13.0, i * 4);
-        fx_apply(i * 4 + 8);
-        amiga_apply(i * 4 + 8, 1.7 + i * 0.2);
         if (getenv("HUD_SIM_ANIM")) {
             char path[256];
             FILE *ff;
@@ -1904,16 +2099,35 @@ static int pool_open(const char *dev)
         if (SCAL < 1) SCAL = 1;
         g_visible_w = vi.xres;
         g_visible_h = vi.yres;
-        len = fi.smem_len ? fi.smem_len : (size_t)fi.line_length * vi.yres;
+        size_t hdr = 0;
+        size_t fb_bytes = (size_t)fi.line_length * (size_t)vi.yres;
+        size_t pool_len = fb_bytes + 0x1000u;   /* MT85 pool0: header page + pixels */
+
+        /* Prefer mapping the vendor pool slice (length-dispatched in fbvirt and
+           the retail provider). Fall back to the plain fbdev smem mapping if
+           the device does not honor the pool length class. */
+        len = pool_len;
         m = mmap(NULL, len, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
-        if (m == MAP_FAILED) { printf("HUD: fbdev mmap %zu failed\n", len); close(fd); return 0; }
-        fb = m;
+        if (m != MAP_FAILED) {
+            hdr = 0x1000u;
+            printf("HUD: vendor pool mapped len=%zu (pixels=%zu +0x1000)\n",
+                   len, fb_bytes);
+        } else {
+            len = fi.smem_len ? fi.smem_len : fb_bytes;
+            m = mmap(NULL, len, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+        }
+        if (m == MAP_FAILED) {
+            printf("HUD: fbdev mmap %zu failed\n", len);
+            close(fd);
+            return 0;
+        }
+        fb = (unsigned int *)((unsigned char *)m + hdr);
         pitch_px = fi.line_length / (vi.bits_per_pixel / 8);
         close(fd);
         typography_set(g_visible_h);
         g_rx = g_visible_w / RW; if (g_rx < 1) g_rx = 1;
-        printf("HUD: geom %ux%u scale=%d retro_x%d pitch=%d type head=%d body=%d\n",
-               g_visible_w, g_visible_h, SCAL, g_rx, pitch_px, g_head_px, g_body_px);
+        printf("HUD: geom %ux%u scale=%d retro_x%d pitch=%d type head=%d body=%d (hdr=0x%zx)\n",
+               g_visible_w, g_visible_h, SCAL, g_rx, pitch_px, g_head_px, g_body_px, hdr);
         return 1;
     }
     printf("HUD: fbdev geometry read failed, falling back to pool length\n");
@@ -1921,7 +2135,7 @@ static int pool_open(const char *dev)
     m = mmap(NULL, len, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
     close(fd);
     if (m == MAP_FAILED) { printf("HUD: pool mmap %zu failed\n", len); return 0; }
-    fb = m;
+    fb = (unsigned int *)((unsigned char *)m + 0x1000u);
     pitch_px = CW * SCAL;
     if (getenv("HUD_VISIBLE_H")) typography_set(atoi(getenv("HUD_VISIBLE_H")));
     g_visible_w = g_visible_w ? g_visible_w : CW * SCAL;
@@ -1957,13 +2171,14 @@ int main(int argc, char **argv)
 
     setvbuf(stdout, NULL, _IOLBF, 0);
     if (getenv("HUD_POOL")) {
-        const char *fp2 = getenv("HUD_FONT");
+        const char *want = getenv("HUD_FONT");
+        const char *loaded = NULL;
         int i;
         hud_t hp;
         if (!pool_open(getenv("HUD_POOL")[0] == '1' ? "/dev/fb0" : getenv("HUD_POOL")))
             return 1;
-        if (!fp2 || !fp2[0]) fp2 = "/tmp/sony-font.ttf";
-        if (font_load(fp2)) printf("HUD: font %s\n", fp2);
+        if (font_load_chain(want, &loaded)) printf("HUD: font %s\n", loaded);
+        else printf("HUD: no font loaded — falling back to the 5x7 face\n");
         memset(&hp, 0, sizeof hp);
         hp.module_loaded = 1; hp.misc_201 = 1; hp.listen_2002 = 1; hp.clients_2002 = 1;
         hp.daemon_pid = 4682; hp.uptime_s = 872; hp.memfree_kb = 155 * 1024;
@@ -2033,10 +2248,12 @@ int main(int argc, char **argv)
     udp_open();
     printf("HUD: host channel udp/%d %s\n", HUD_UDP_PORT, udp_fd >= 0 ? "OPEN" : "unavailable");
     {
-        const char *fp = getenv("HUD_FONT");
-        if (!fp || !fp[0]) fp = "/tmp/sony-font.ttf";
-        if (font_load(fp)) printf("HUD: font %s loaded (TiresiasScreenfont)\n", fp);
-        else printf("HUD: font %s NOT loaded — falling back to the 5x7 face\n", fp);
+        const char *want = getenv("HUD_FONT");
+        const char *loaded = NULL;
+        if (font_load_chain(want, &loaded))
+            printf("HUD: font %s loaded (TiresiasScreenfont)\n", loaded);
+        else
+            printf("HUD: no font loaded — falling back to the 5x7 face\n");
     }
     sample(&h, 1);
     ticker_poll(ticker);

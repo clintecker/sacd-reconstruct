@@ -2,6 +2,7 @@
 """Exercise the Sony system through its UART. Requires the full-system QEMU build."""
 import argparse
 import os
+import signal
 from pathlib import Path
 import selectors
 import subprocess
@@ -26,6 +27,10 @@ def observe(argv, lines, wanted, timeout, log):
                             stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     data = bytearray()
     pos = 0
+    # incremental journal (C75 lesson): append each chunk to the log AS IT
+    # ARRIVES. A killed/ENOSPC run still leaves the storm transcript, and
+    # the final write_bytes becomes a no-op Safety net, not the only copy.
+    _journal = open(log, 'wb') if log else None
     pending = iter(lines)
     try:
         with selectors.DefaultSelector() as sel:
@@ -40,6 +45,14 @@ def observe(argv, lines, wanted, timeout, log):
                 if not chunk:
                     break
                 data.extend(chunk)
+                # storm guard (C74): a level-IRQ printk flood can produce
+                # GBs; cap the in-RAM buffer and drop the middle, keeping
+                # the head (boot) and tail (current state).
+                if _journal:
+                    _journal.write(chunk)
+                    _journal.flush()
+                if len(data) > (256 << 20):
+                    data = data[:8 << 20] + b'\n[[TRUNCATED storm]]\n' + data[-(64 << 20):]
                 prompt = data.find(b"/ # ", pos)
                 if prompt >= 0:
                     pos = prompt + 4
@@ -51,14 +64,17 @@ def observe(argv, lines, wanted, timeout, log):
                     break
     finally:
         if proc.poll() is None:
-            proc.terminate()
+            # SIGINT, not SIGTERM (C81 lesson): QEMU flushes its -D log on a
+            # clean interrupt exit; SIGTERM kills without flushing and the
+            # whole trace is lost (0-byte mmio artifacts).
+            proc.send_signal(signal.SIGINT)
             try:
                 proc.wait(timeout=4)
             except subprocess.TimeoutExpired:
                 proc.kill()
                 proc.wait()
-        if log:
-            log.write_bytes(data)
+        if _journal:
+            _journal.close()
         proc.stdin.close()
         proc.stdout.close()
     missing = [s.decode() for s in wanted if s not in data]

@@ -1,0 +1,497 @@
+# ioctl@plt call sites: 45
+
+== 0x1d30 in mt85AdapterCmdBufInit
+   r1 <- literal@0x1e14 = 0x464f
+   0x1d18: strb     r3, [r5, #0x4]                     
+   0x1d1c: mov      r3, #10                            
+   0x1d20: str      r3, [r5, #0xc]                     
+   0x1d24: mov      r0, r7                             
+   0x1d28: ldr      r1, [pc, #0xe4]                    @ 0x1e14 <mt85AdapterCmdBufInit+0x128>
+   0x1d2c: ldr      r2, [r4, r6]                       
+   0x1d30: bl       0x1834 <ioctl@plt>                 @ imm = #-0x504
+   0x1d34: cmp      r0, #0                             
+
+== 0x1f14 in mt85AdapterCmdBufInit
+   r1 <- literal@0x22a4 = 0x4602
+   0x1efc: str      r0, [r5, #0x8]                     
+   0x1f00: ldr      r0, [r2, #0x8]                     
+   0x1f04: cmp      r0, #0                             
+   0x1f08: blt      0x2024 <mt85AdapterCmdBufInit+0x338> @ imm = #0x114
+   0x1f0c: ldr      r1, [pc, #0x390]                   @ 0x22a4 <mt85AdapterCmdBufInit+0x5b8>
+   0x1f10: add      r2, r2, #12                        
+   0x1f14: bl       0x1834 <ioctl@plt>                 @ imm = #-0x6e8
+   0x1f18: cmp      r0, #0                             
+
+== 0x1f30 in mt85AdapterCmdBufInit
+   r1 <- literal@0x22a8 = 0x4629
+   0x1f18: cmp      r0, #0                             
+   0x1f1c: blt      0x211c <mt85AdapterCmdBufInit+0x430> @ imm = #0x1f8
+   0x1f20: ldr      r2, [r7]                           
+   0x1f24: ldr      r1, [pc, #0x37c]                   @ 0x22a8 <mt85AdapterCmdBufInit+0x5bc>
+   0x1f28: ldr      r0, [r2, #0x8]                     
+   0x1f2c: add      r2, r2, #84                        
+   0x1f30: bl       0x1834 <ioctl@plt>                 @ imm = #-0x704
+   0x1f34: cmp      r0, #0                             
+
+== 0x1f58 in mt85AdapterCmdBufInit
+   r1 <- literal@0x22b0 = 0x4652
+   0x1f40: ldr      r3, [r7]                           
+   0x1f44: ldr      r12, [r4, r5]                      
+   0x1f48: ldr      r0, [r3, #0x8]                     
+   0x1f4c: mov      r2, r12                            
+   0x1f50: ldr      r1, [pc, #0x358]                   @ 0x22b0 <mt85AdapterCmdBufInit+0x5c4>
+   0x1f54: str      r12, [sp, #0xc]                    
+   0x1f58: bl       0x1834 <ioctl@plt>                 @ imm = #-0x72c
+   0x1f5c: cmp      r0, #0                             
+
+== 0x2510 in mt85AdapterCmdBufInit
+   r1 <- literal@0x2954 = 0x4630
+   0x24f8: mov      r3, #12                            
+   0x24fc: add      r2, sp, #32                        
+   0x2500: str      r12, [sp, #0x24]                   
+   0x2504: str      r11, [sp, #0x30]                   
+   0x2508: str      r11, [sp, #0x34]                   
+   0x250c: str      r3, [sp, #0xa4]                    
+   0x2510: bl       0x1834 <ioctl@plt>                 @ imm = #-0xce4
+   0x2514: cmp      r0, r11                            
+
+== 0x252c in mt85AdapterCmdBufInit
+   r1 <- literal@0x2958 = 0x4602
+   0x2514: cmp      r0, r11                            
+   0x2518: blt      0x269c <mt85AdapterCmdBufInit+0x9b0> @ imm = #0x17c
+   0x251c: ldr      r2, [r9]                           
+   0x2520: ldr      r1, [pc, #0x430]                   @ 0x2958 <mt85AdapterCmdBufInit+0xc6c>
+   0x2524: ldr      r0, [r2, #0x8]                     
+   0x2528: add      r2, r2, #12                        
+   0x252c: bl       0x1834 <ioctl@plt>                 @ imm = #-0xd00
+   0x2530: cmp      r0, #0                             
+
+== 0x2548 in mt85AdapterCmdBufInit
+   r1 <- literal@0x295c = 0x4629
+   0x2530: cmp      r0, #0                             
+   0x2534: blt      0x26fc <mt85AdapterCmdBufInit+0xa10> @ imm = #0x1c0
+   0x2538: ldr      r2, [r9]                           
+   0x253c: ldr      r1, [pc, #0x418]                   @ 0x295c <mt85AdapterCmdBufInit+0xc70>
+   0x2540: ldr      r0, [r2, #0x8]                     
+   0x2544: add      r2, r2, #84                        
+   0x2548: bl       0x1834 <ioctl@plt>                 @ imm = #-0xd1c
+   0x254c: cmp      r0, #0                             
+
+== 0x257c in mt85AdapterCmdBufInit
+   r1 <- literal@0x2964 = 0x4652
+   0x2564: ldr      r12, [r4, r5]                      
+   0x2568: ldr      r3, [r9]                           
+   0x256c: mov      r2, r12                            
+   0x2570: ldr      r0, [r3, #0x8]                     
+   0x2574: ldr      r1, [pc, #0x3e8]                   @ 0x2964 <mt85AdapterCmdBufInit+0xc78>
+   0x2578: str      r12, [sp, #0x8]                    
+   0x257c: bl       0x1834 <ioctl@plt>                 @ imm = #-0xd50
+   0x2580: cmp      r0, #0                             
+
+== 0x29f4 in mt85AdapterCmdBufUninit
+   r1 <- literal@0x2a84 = 0x4650
+   0x29dc: cmp      r0, #0                             
+   0x29e0: streq    r0, [r6]                           
+   0x29e4: bne      0x2a40 <mt85AdapterCmdBufUninit+0xa8> @ imm = #0x54
+   0x29e8: mov      r0, r7                             
+   0x29ec: ldr      r1, [pc, #0x90]                    @ 0x2a84 <mt85AdapterCmdBufUninit+0xec>
+   0x29f0: ldr      r2, [r5, #0x10]                    
+   0x29f4: bl       0x1834 <ioctl@plt>                 @ imm = #-0x11c8
+   0x29f8: cmp      r0, #0                             
+
+== 0x2eac in mt85_debuginfo
+   r1 <- literal@0x2f24 = 0x4627
+   0x2e94: ldr      r0, [r2, #0x8]                     
+   0x2e98: str      r3, [sp, #0x40]                    
+   0x2e9c: ldr      r3, [pc, #0x84]                    @ 0x2f28 <mt85_debuginfo+0xf4>
+   0x2ea0: add      r2, sp, #4                         
+   0x2ea4: str      r5, [sp, #0x24]                    
+   0x2ea8: str      r3, [sp, #0x44]                    
+   0x2eac: bl       0x1834 <ioctl@plt>                 @ imm = #-0x1680
+   0x2eb0: cmp      r0, r5                             
+
+== 0x2f80 in mt85_debuginfo
+   r1 <- literal@0x3058 = 0x4642
+   0x2f68: ldr      r3, [pc, #0xe4]                    @ 0x3054 <mt85_debuginfo+0x220>
+   0x2f6c: ldr      r1, [pc, #0xe4]                    @ 0x3058 <mt85_debuginfo+0x224>
+   0x2f70: ldr      r3, [r4, r3]                       
+   0x2f74: add      r2, sp, #4                         
+   0x2f78: ldr      r3, [r3]                           
+   0x2f7c: ldr      r0, [r3, #0x8]                     
+   0x2f80: bl       0x1834 <ioctl@plt>                 @ imm = #-0x1754
+   0x2f84: cmp      r0, #0                             
+
+== 0x30b8 in mt85_debuginfo
+   r1 <- literal@0x3124 = 0x4645
+   0x30a0: str      r3, [sp, #0x8]                     
+   0x30a4: ldr      r1, [pc, #0x78]                    @ 0x3124 <mt85_debuginfo+0x2f0>
+   0x30a8: add      r3, sp, #16                        
+   0x30ac: add      r2, sp, #4                         
+   0x30b0: str      r5, [sp, #0x4]                     
+   0x30b4: str      r3, [sp, #0xc]                     
+   0x30b8: bl       0x1834 <ioctl@plt>                 @ imm = #-0x188c
+   0x30bc: cmp      r0, r5                             
+
+== 0x316c in mt85xx_check_wait_vsync
+   r1 <- literal@0x31c4 = 0x4627
+   0x3154: ldr      r0, [r2, #0x8]                     
+   0x3158: ldr      r1, [pc, #0x64]                    @ 0x31c4 <mt85xx_check_wait_vsync+0x94>
+   0x315c: str      r3, [sp, #0x40]                    
+   0x3160: add      r2, sp, #4                         
+   0x3164: mov      r3, #1048576                       
+   0x3168: str      r3, [sp, #0x44]                    
+   0x316c: bl       0x1834 <ioctl@plt>                 @ imm = #-0x1940
+   0x3170: cmp      r0, #0                             
+
+== 0x321c in mt85xx_check_wait_vsync
+   r1 <- literal@0x32a4 = 0x4627
+   0x3204: ldr      r0, [r2, #0x8]                     
+   0x3208: str      r3, [sp, #0x40]                    
+   0x320c: ldr      r3, [pc, #0x98]                    @ 0x32ac <mt85xx_check_wait_vsync+0x17c>
+   0x3210: add      r2, sp, #4                         
+   0x3214: str      r12, [sp, #0x28]                   
+   0x3218: str      r3, [sp, #0x44]                    
+   0x321c: bl       0x1834 <ioctl@plt>                 @ imm = #-0x19f0
+   0x3220: cmp      r0, #0                             
+
+== 0x3438 in mt85xx_check_wait_vsync
+   r1 <- literal@0x35c4 = 0x4642
+   0x3420: add      r6, sp, #4                         
+   0x3424: ldr      r3, [r4, r7]                       
+   0x3428: ldr      r1, [pc, #0x194]                   @ 0x35c4 <mt85xx_check_wait_vsync+0x494>
+   0x342c: ldr      r3, [r3]                           
+   0x3430: mov      r2, r6                             
+   0x3434: ldr      r0, [r3, #0x8]                     
+   0x3438: bl       0x1834 <ioctl@plt>                 @ imm = #-0x1c0c
+   0x343c: cmp      r0, #0                             
+
+== 0x34d4 in mt85xx_check_wait_vsync
+   r1 <- literal@0x35c8 = 0x4643
+   0x34bc: add      r8, r2, r8                         
+   0x34c0: ldr      r3, [r3]                           
+   0x34c4: str      r5, [r8, #-0x14]                   
+   0x34c8: ldr      r0, [r3, #0x8]                     
+   0x34cc: ldr      r1, [pc, #0xf4]                    @ 0x35c8 <mt85xx_check_wait_vsync+0x498>
+   0x34d0: mov      r2, r6                             
+   0x34d4: bl       0x1834 <ioctl@plt>                 @ imm = #-0x1ca8
+   0x34d8: cmp      r0, #0                             
+
+== 0x37dc in _mapColorFormat
+   r1 <- literal@0x39fc = 0x4628
+   0x37c4: ldr      r3, [pc, #0x22c]                   @ 0x39f8 <_mapColorFormat+0x354>
+   0x37c8: ldr      r1, [pc, #0x22c]                   @ 0x39fc <_mapColorFormat+0x358>
+   0x37cc: ldr      r3, [r4, r3]                       
+   0x37d0: mov      r2, sp                             
+   0x37d4: ldr      r3, [r3]                           
+   0x37d8: ldr      r0, [r3, #0x8]                     
+   0x37dc: bl       0x1834 <ioctl@plt>                 @ imm = #-0x1fb0
+   0x37e0: mov      r0, #0                             
+
+== 0x3948 in _mapColorFormat
+   r1 <- literal@0x3a14 = 0x4627
+   0x3930: add      r2, sp, #1024                      
+   0x3934: ldr      r3, [r4, r3]                       
+   0x3938: ldr      r1, [pc, #0xd4]                    @ 0x3a14 <_mapColorFormat+0x370>
+   0x393c: ldr      r3, [r3]                           
+   0x3940: add      r2, r2, #4                         
+   0x3944: ldr      r0, [r3, #0x8]                     
+   0x3948: bl       0x1834 <ioctl@plt>                 @ imm = #-0x211c
+   0x394c: cmp      r0, #0                             
+
+== 0x4ac0 in dfb_surfacemanager_deallocate
+   r1 <- literal@0x4bd4 = 0x5605
+   0x4aa8: cmp      r0, #0                             
+   0x4aac: bne      0x4a84 <dfb_surfacemanager_deallocate+0x2a4> @ imm = #-0x30
+   0x4ab0: ldr      r3, [r4]                           
+   0x4ab4: ldr      r1, [pc, #0x118]                   @ 0x4bd4 <dfb_surfacemanager_deallocate+0x3f4>
+   0x4ab8: ldr      r0, [r3, #0x4]                     
+   0x4abc: mov      r2, #2                             
+   0x4ac0: bl       0x1834 <ioctl@plt>                 @ imm = #-0x3294
+   0x4ac4: cmp      r0, #0                             
+
+== 0x4af0 in dfb_surfacemanager_deallocate
+   r1 <- literal@0x4bd8 = 0x4b3a
+   0x4ad8: cmp      r3, #0                             
+   0x4adc: beq      0x4a84 <dfb_surfacemanager_deallocate+0x2a4> @ imm = #-0x60
+   0x4ae0: ldr      r3, [r4]                           
+   0x4ae4: ldr      r1, [pc, #0xec]                    @ 0x4bd8 <dfb_surfacemanager_deallocate+0x3f8>
+   0x4ae8: ldr      r0, [r3, #0x4]                     
+   0x4aec: mov      r2, #1                             
+   0x4af0: bl       0x1834 <ioctl@plt>                 @ imm = #-0x32c4
+   0x4af4: cmp      r0, #0                             
+
+== 0x4b50 in dfb_surfacemanager_deallocate
+   r1 <- literal@0x4bd4 = 0x5605
+   0x4b38: ldr      r1, [r4]                           
+   0x4b3c: b        0x4a48 <dfb_surfacemanager_deallocate+0x268> @ imm = #-0xfc
+   0x4b40: ldr      r3, [r4]                           
+   0x4b44: ldr      r1, [pc, #0x88]                    @ 0x4bd4 <dfb_surfacemanager_deallocate+0x3f4>
+   0x4b48: ldr      r0, [r3, #0x4]                     
+   0x4b4c: mov      r2, #2                             
+   0x4b50: bl       0x1834 <ioctl@plt>                 @ imm = #-0x3324
+   0x4b54: cmp      r0, #0                             
+
+== 0x4cb0 in dfb_vt_initialize
+   r1 <- literal@0x55c4 = 0x5603
+   0x4c98: ldr      r0, [r6]                           
+   0x4c9c: add      r7, r4, r5                         
+   0x4ca0: cmp      r0, #0                             
+   0x4ca4: blt      0x4f50 <dfb_vt_initialize+0x2fc>   @ imm = #0x2a4
+   0x4ca8: ldr      r1, [pc, #0x914]                   @ 0x55c4 <dfb_vt_initialize+0x970>
+   0x4cac: add      r2, sp, #272                       
+   0x4cb0: bl       0x1834 <ioctl@plt>                 @ imm = #-0x3484
+   0x4cb4: cmp      r0, #0                             
+
+== 0x4d1c in dfb_vt_initialize
+   r1 <- literal@0x55d0 = 0x460f
+   0x4d04: strne    r3, [r10, #0x8]                    
+   0x4d08: str      r3, [r6, #-0x10]!                  
+   0x4d0c: ldr      r3, [r2]                           
+   0x4d10: ldr      r1, [pc, #0x8b8]                   @ 0x55d0 <dfb_vt_initialize+0x97c>
+   0x4d14: ldr      r0, [r3, #0x8]                     
+   0x4d18: mov      r2, r6                             
+   0x4d1c: bl       0x1834 <ioctl@plt>                 @ imm = #-0x34f0
+   0x4d20: cmp      r0, #0                             
+
+== 0x4e18 in dfb_vt_initialize
+   r1 <- literal@0x55e8 = 0x540e
+   0x4e00: add      r2, r4, r5                         
+   0x4e04: cmp      r0, #0                             
+   0x4e08: str      r2, [sp, #0x4]                     
+   0x4e0c: blt      0x5114 <dfb_vt_initialize+0x4c0>   @ imm = #0x300
+   0x4e10: ldr      r1, [pc, #0x7d0]                   @ 0x55e8 <dfb_vt_initialize+0x994>
+   0x4e14: mov      r2, #0                             
+   0x4e18: bl       0x1834 <ioctl@plt>                 @ imm = #-0x35ec
+   0x4e1c: ldr      r3, [r4, r5]                       
+
+== 0x4fd4 in dfb_vt_initialize
+   r1 <- literal@0x55d0 = 0x460f
+   0x4fbc: ldr      r2, [r4, r7]                       
+   0x4fc0: str      r3, [r6, #-0x10]!                  
+   0x4fc4: ldr      r3, [r2]                           
+   0x4fc8: ldr      r1, [pc, #0x600]                   @ 0x55d0 <dfb_vt_initialize+0x97c>
+   0x4fcc: ldr      r0, [r3, #0x8]                     
+   0x4fd0: mov      r2, r6                             
+   0x4fd4: bl       0x1834 <ioctl@plt>                 @ imm = #-0x37a8
+   0x4fd8: cmp      r0, #0                             
+
+== 0x505c in dfb_vt_initialize
+   r1 <- literal@0x55f8 = 0x5606
+   0x5044: beq      0x5274 <dfb_vt_initialize+0x620>   @ imm = #0x228
+   0x5048: add      r10, r4, r5                        
+   0x504c: ldr      r3, [r10]                          
+   0x5050: ldr      r1, [pc, #0x5a0]                   @ 0x55f8 <dfb_vt_initialize+0x9a4>
+   0x5054: ldr      r2, [r3, #0x8]                     
+   0x5058: ldr      r0, [r3]                           
+   0x505c: bl       0x1834 <ioctl@plt>                 @ imm = #-0x3830
+   0x5060: cmp      r0, #0                             
+
+== 0x50d8 in dfb_vt_initialize
+   r1 <- literal@0x5604 = 0x4610
+   0x50c0: lsr      r3, r3, #5                         
+   0x50c4: str      r3, [sp, #0x10c]                   
+   0x50c8: str      r10, [sp, #0x108]                  
+   0x50cc: ldr      r0, [r2, #0x8]                     
+   0x50d0: ldr      r1, [pc, #0x52c]                   @ 0x5604 <dfb_vt_initialize+0x9b0>
+   0x50d4: mov      r2, r6                             
+   0x50d8: bl       0x1834 <ioctl@plt>                 @ imm = #-0x38ac
+   0x50dc: cmp      r0, #0                             
+
+== 0x5190 in dfb_vt_initialize
+   r1 <- literal@0x5604 = 0x4610
+   0x5178: lsr      r3, r3, #5                         
+   0x517c: str      r3, [sp, #0x10c]                   
+   0x5180: str      r10, [sp, #0x108]                  
+   0x5184: ldr      r0, [r2, #0x8]                     
+   0x5188: ldr      r1, [pc, #0x474]                   @ 0x5604 <dfb_vt_initialize+0x9b0>
+   0x518c: mov      r2, r6                             
+   0x5190: bl       0x1834 <ioctl@plt>                 @ imm = #-0x3964
+   0x5194: cmp      r0, #0                             
+
+== 0x51dc in dfb_vt_initialize
+   r1 <- literal@0x560c = 0x4b3a
+   0x51c4: bl       0x1888 <direct_messages_perror@plt> @ imm = #-0x3944
+   0x51c8: b        0x5048 <dfb_vt_initialize+0x3f4>   @ imm = #-0x188
+   0x51cc: ldr      r3, [r4, r5]                       
+   0x51d0: ldr      r1, [pc, #0x434]                   @ 0x560c <dfb_vt_initialize+0x9b8>
+   0x51d4: ldr      r0, [r3, #0x4]                     
+   0x51d8: mov      r2, #1                             
+   0x51dc: bl       0x1834 <ioctl@plt>                 @ imm = #-0x39b0
+   0x51e0: cmp      r0, #0                             
+
+== 0x5228 in dfb_vt_initialize
+   r1 <- literal@0x55f8 = 0x5606
+   0x5210: bl       0x1888 <direct_messages_perror@plt> @ imm = #-0x3990
+   0x5214: b        0x4ee0 <dfb_vt_initialize+0x28c>   @ imm = #-0x33c
+   0x5218: ldr      r3, [r4, r5]                       
+   0x521c: ldr      r1, [pc, #0x3d4]                   @ 0x55f8 <dfb_vt_initialize+0x9a4>
+   0x5220: ldr      r2, [r3, #0xc]                     
+   0x5224: ldr      r0, [r3]                           
+   0x5228: bl       0x1834 <ioctl@plt>                 @ imm = #-0x39fc
+   0x522c: ldr      r3, [r4, r5]                       
+
+== 0x523c in dfb_vt_initialize
+   r1 <- literal@0x5614 = 0x5607
+   0x5224: ldr      r0, [r3]                           
+   0x5228: bl       0x1834 <ioctl@plt>                 @ imm = #-0x39fc
+   0x522c: ldr      r3, [r4, r5]                       
+   0x5230: ldr      r1, [pc, #0x3dc]                   @ 0x5614 <dfb_vt_initialize+0x9c0>
+   0x5234: ldr      r2, [r3, #0xc]                     
+   0x5238: ldr      r0, [r3]                           
+   0x523c: bl       0x1834 <ioctl@plt>                 @ imm = #-0x3a10
+   0x5240: ldr      r3, [r4, r5]                       
+
+== 0x5250 in dfb_vt_initialize
+   r1 <- literal@0x5618 = 0x5608
+   0x5238: ldr      r0, [r3]                           
+   0x523c: bl       0x1834 <ioctl@plt>                 @ imm = #-0x3a10
+   0x5240: ldr      r3, [r4, r5]                       
+   0x5244: ldr      r1, [pc, #0x3cc]                   @ 0x5618 <dfb_vt_initialize+0x9c4>
+   0x5248: ldr      r0, [r3]                           
+   0x524c: ldr      r2, [r3, #0x8]                     
+   0x5250: bl       0x1834 <ioctl@plt>                 @ imm = #-0x3a24
+   0x5254: ldr      r3, [r4, r5]                       
+
+== 0x533c in dfb_vt_initialize
+   r1 <- immediate = 0x5600
+   0x5324: bl       0x1888 <direct_messages_perror@plt> @ imm = #-0x3aa4
+   0x5328: mov      r1, r8                             
+   0x532c: b        0x4d48 <dfb_vt_initialize+0xf4>    @ imm = #-0x5ec
+   0x5330: mov      r2, r10                            
+   0x5334: ldr      r0, [r2], #8                       
+   0x5338: mov      r1, #22016                         
+   0x533c: bl       0x1834 <ioctl@plt>                 @ imm = #-0x3b10
+   0x5340: cmp      r0, #0                             
+
+== 0x5444 in dfb_vt_initialize
+   r1 <- literal@0x5614 = 0x5607
+   0x542c: b        0x5148 <dfb_vt_initialize+0x4f4>   @ imm = #-0x2ec
+   0x5430: add      r10, r4, r5                        
+   0x5434: ldr      r3, [r10]                          
+   0x5438: ldr      r1, [pc, #0x1d4]                   @ 0x5614 <dfb_vt_initialize+0x9c0>
+   0x543c: ldr      r2, [r3, #0x8]                     
+   0x5440: ldr      r0, [r3]                           
+   0x5444: bl       0x1834 <ioctl@plt>                 @ imm = #-0x3c18
+   0x5448: cmp      r0, #0                             
+
+== 0x54d0 in dfb_vt_initialize
+   r1 <- literal@0x5640 = 0x5602
+   0x54b8: add      r2, sp, #256                       
+   0x54bc: mov      r3, #41                            
+   0x54c0: mov      r12, #42                           
+   0x54c4: ldr      r1, [pc, #0x174]                   @ 0x5640 <dfb_vt_initialize+0x9ec>
+   0x54c8: strh     r3, [r2, #2]                       
+   0x54cc: strh     r12, [r2, #4]                      
+   0x54d0: bl       0x1834 <ioctl@plt>                 @ imm = #-0x3ca4
+   0x54d4: cmp      r0, #0                             
+
+== 0x5714 in dfb_vt_shutdown
+   r1 <- literal@0x5b8c = 0x5606
+   0x56fc: cmp      r3, #0                             
+   0x5700: beq      0x5840 <dfb_vt_shutdown+0x1e8>     @ imm = #0x138
+   0x5704: ldr      r3, [r4, r5]                       
+   0x5708: ldr      r1, [pc, #0x47c]                   @ 0x5b8c <dfb_vt_shutdown+0x534>
+   0x570c: ldr      r0, [r3]                           
+   0x5710: ldr      r2, [r3, #0xc]                     
+   0x5714: bl       0x1834 <ioctl@plt>                 @ imm = #-0x3ee8
+   0x5718: cmp      r0, #0                             
+
+== 0x5730 in dfb_vt_shutdown
+   r1 <- literal@0x5b90 = 0x5607
+   0x5718: cmp      r0, #0                             
+   0x571c: blt      0x5b48 <dfb_vt_shutdown+0x4f0>     @ imm = #0x424
+   0x5720: ldr      r3, [r4, r5]                       
+   0x5724: ldr      r1, [pc, #0x464]                   @ 0x5b90 <dfb_vt_shutdown+0x538>
+   0x5728: ldr      r0, [r3]                           
+   0x572c: ldr      r2, [r3, #0xc]                     
+   0x5730: bl       0x1834 <ioctl@plt>                 @ imm = #-0x3f04
+   0x5734: cmp      r0, #0                             
+
+== 0x57b0 in dfb_vt_shutdown
+   r1 <- literal@0x5ba0 = 0x5608
+   0x5798: cmp      r0, #0                             
+   0x579c: blt      0x5ae8 <dfb_vt_shutdown+0x490>     @ imm = #0x344
+   0x57a0: ldr      r3, [r4, r5]                       
+   0x57a4: ldr      r1, [pc, #0x3f4]                   @ 0x5ba0 <dfb_vt_shutdown+0x548>
+   0x57a8: ldr      r0, [r3]                           
+   0x57ac: ldr      r2, [r3, #0x8]                     
+   0x57b0: bl       0x1834 <ioctl@plt>                 @ imm = #-0x3f84
+   0x57b4: cmp      r0, #0                             
+
+== 0x5804 in dfb_vt_shutdown
+   r1 <- literal@0x5ba4 = 0x4b3a
+   0x57ec: mov      r0, #0                             
+   0x57f0: add      sp, sp, #120                       
+   0x57f4: pop      {r4, r5, r6, r7, r8, pc}           
+   0x57f8: ldr      r0, [r3, #0x4]                     
+   0x57fc: ldr      r1, [pc, #0x3a0]                   @ 0x5ba4 <dfb_vt_shutdown+0x54c>
+   0x5800: mov      r2, #0                             
+   0x5804: bl       0x1834 <ioctl@plt>                 @ imm = #-0x3fd8
+   0x5808: cmp      r0, #0                             
+
+== 0x58d8 in dfb_vt_shutdown
+   r1 <- literal@0x5bb0 = 0x5602
+   0x58c0: add      r1, r4, r1                         
+   0x58c4: bl       0x1888 <direct_messages_perror@plt> @ imm = #-0x4044
+   0x58c8: b        0x57bc <dfb_vt_shutdown+0x164>     @ imm = #-0x114
+   0x58cc: ldr      r0, [r3, #0x4]                     
+   0x58d0: ldr      r1, [pc, #0x2d8]                   @ 0x5bb0 <dfb_vt_shutdown+0x558>
+   0x58d4: add      r2, r3, #300                       
+   0x58d8: bl       0x1834 <ioctl@plt>                 @ imm = #-0x40ac
+   0x58dc: cmp      r0, #0                             
+
+== 0x59b4 in dfb_vt_shutdown
+   r1 <- literal@0x5bb8 = 0x4610
+   0x599c: ldr      r3, [r4, r6]                       
+   0x59a0: strge    r7, [sp, #0x6c]                    
+   0x59a4: ldr      r3, [r3]                           
+   0x59a8: str      r8, [r2, #-0x10]!                  
+   0x59ac: ldr      r0, [r3, #0x8]                     
+   0x59b0: ldr      r1, [pc, #0x200]                   @ 0x5bb8 <dfb_vt_shutdown+0x560>
+   0x59b4: bl       0x1834 <ioctl@plt>                 @ imm = #-0x4188
+   0x59b8: cmp      r0, #0                             
+
+== 0x5a1c in dfb_vt_shutdown
+   r1 <- literal@0x5bb8 = 0x4610
+   0x5a04: ldr      r3, [r4, r6]                       
+   0x5a08: strge    r7, [sp, #0x6c]                    
+   0x5a0c: ldr      r3, [r3]                           
+   0x5a10: str      r8, [r2, #-0x10]!                  
+   0x5a14: ldr      r0, [r3, #0x8]                     
+   0x5a18: ldr      r1, [pc, #0x198]                   @ 0x5bb8 <dfb_vt_shutdown+0x560>
+   0x5a1c: bl       0x1834 <ioctl@plt>                 @ imm = #-0x41f0
+   0x5a20: cmp      r0, #0                             
+
+== 0x5c30 in dfb_vt_detach
+   r1 <- literal@0x5d18 = 0x5603
+   0x5c18: add      r0, r4, r0                         
+   0x5c1c: bl       0x16f0 <open@plt>                  @ imm = #-0x4534
+   0x5c20: subs     r5, r0, #0                         
+   0x5c24: blt      0x5c88 <dfb_vt_detach+0xa8>        @ imm = #0x5c
+   0x5c28: ldr      r1, [pc, #0xe8]                    @ 0x5d18 <dfb_vt_detach+0x138>
+   0x5c2c: mov      r2, sp                             
+   0x5c30: bl       0x1834 <ioctl@plt>                 @ imm = #-0x4404
+   0x5c34: cmp      r0, #0                             
+
+== 0x5c44 in dfb_vt_detach
+   r1 <- literal@0x5d1c = 0x5422
+   0x5c2c: mov      r2, sp                             
+   0x5c30: bl       0x1834 <ioctl@plt>                 @ imm = #-0x4404
+   0x5c34: cmp      r0, #0                             
+   0x5c38: bne      0x5ce0 <dfb_vt_detach+0x100>       @ imm = #0xa0
+   0x5c3c: mov      r0, r5                             
+   0x5c40: ldr      r1, [pc, #0xd4]                    @ 0x5d1c <dfb_vt_detach+0x13c>
+   0x5c44: bl       0x1834 <ioctl@plt>                 @ imm = #-0x4418
+   0x5c48: subs     r6, r0, #0                         
+
+== 0x5d7c in dfb_vt_switch
+   r1 <- literal@0x5dd4 = 0x5606
+   0x5d64: popeq    {r4, pc}                           
+   0x5d68: ldr      r3, [pc, #0x60]                    @ 0x5dd0 <dfb_vt_switch+0x90>
+   0x5d6c: mov      r2, r0                             
+   0x5d70: ldr      r3, [r4, r3]                       
+   0x5d74: ldr      r1, [pc, #0x58]                    @ 0x5dd4 <dfb_vt_switch+0x94>
+   0x5d78: ldr      r0, [r3]                           
+   0x5d7c: bl       0x1834 <ioctl@plt>                 @ imm = #-0x4550
+   0x5d80: cmp      r0, #0                             
+

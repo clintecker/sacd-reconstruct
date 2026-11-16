@@ -1,0 +1,30 @@
+3821091:bx510: FE READ packet — no FE-DMA implementation, completion carries no data
+3821132:bx510: MMIO W 05c40c sz4 = 0
+3825381:bx510: MMIO W 05c40c sz4 = 1
+3825383:bx510: MMIO W 05c404 sz4 = 800
+3825386:bx510: MMIO R 05c40c sz4
+3825387:bx510: MMIO W 05c40c sz4 = 601
+3825394:bx510: FE PACKET w1=10000028 w2=00000f3d w3=00000001 nbytes=40 -> read
+3825395:bx510: FE READ packet — no FE-DMA implementation, completion carries no data
+3825436:bx510: MMIO W 05c40c sz4 = 0
+3831446:bx510: MMIO W 05c40c sz4 = 1
+3831448:bx510: MMIO W 05c404 sz4 = 800
+3831451:bx510: MMIO R 05c40c sz4
+3831452:bx510: MMIO W 05c40c sz4 = 601
+3831459:bx510: FE PACKET w1=10000028 w2=0000103d w3=00000001 nbytes=40 -> read
+3831460:bx510: FE READ packet — no FE-DMA implementation, completion carries no data
+3831485:bx510: MMIO W 05c40c sz4 = 0
+3879438:bx510: MMIO W 05c40c sz4 = 1
+3879440:bx510: MMIO W 05c404 sz4 = 1020
+3879443:bx510: MMIO R 05c40c sz4
+3879444:bx510: MMIO W 05c40c sz4 = 601
+3879451:bx510: FE PACKET w1=00000028 w2=0000fe01 w3=00980002 nbytes=40 -> read
+3879452:bx510: FE READ packet — no FE-DMA implementation, completion carries no data
+3879477:bx510: MMIO W 05c40c sz4 = 0
+3910077:bx510: MMIO W 05c40c sz4 = 1
+3910079:bx510: MMIO W 05c404 sz4 = 1020
+3910082:bx510: MMIO R 05c40c sz4
+3910083:bx510: MMIO W 05c40c sz4 = 601
+3910090:bx510: FE PACKET w1=00000028 w2=0000fe01 w3=00980002 nbytes=40 -> read
+3910091:bx510: FE READ packet — no FE-DMA implementation, completion carries no data
+3910126:bx510: MMIO W 05c40c sz4 = 0

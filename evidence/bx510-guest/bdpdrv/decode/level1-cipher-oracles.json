@@ -1,0 +1,279 @@
+{
+  "spec": "evidence/bx510-guest/bdpdrv/decode/level1-cipher-spec.md \u00a73.3",
+  "generated": "2026-11-15T22:28:07Z",
+  "generated_where": "build host (ISO resident)",
+  "generator": {
+    "path": "tools/bx510_disc_cipher.py",
+    "sha256": "99c307a7e30bb66fa0d7adab8ff493d155db7204bf586f5f609e121837768c8b"
+  },
+  "geometry": {
+    "sectors": 1064208,
+    "sector_bytes": 2048,
+    "ranges": [
+      [
+        584,
+        353763
+      ],
+      [
+        353844,
+        1064126
+      ]
+    ]
+  },
+  "source": {
+    "path": "/home/you/the verification tree/firebird.iso",
+    "sha256": "1d8f0697389ea2a95cf971a4526ffba421cbcc029d529032ea0a155b6b6f68d3",
+    "sectors": 1064208
+  },
+  "derived": {
+    "path": "/home/you/the verification tree/firebird-cipher.iso",
+    "sha256": "a3c99f3a1ad4ad9edebe6fae9e49b9916856379fbbe1f9a331ca6ec8423b859c",
+    "sectors": 1064208
+  },
+  "kat": [
+    {
+      "lsn": 845,
+      "seed": "ca7c8729",
+      "first8_bytes": [
+        "c5c6a809",
+        "dda17d3f",
+        "becb8ee3",
+        "82cedb65",
+        "67907b9d",
+        "5cfc9701",
+        "12699c3d",
+        "ed5870a7"
+      ],
+      "first8_words": [
+        "09a8c6c5",
+        "3f7da1dd",
+        "e38ecbbe",
+        "65dbce82",
+        "9d7b9067",
+        "0197fc5c",
+        "3d9c6912",
+        "a77058ed"
+      ],
+      "md5_f_zeros": "095ce3226c3b770bbd58c04f46d8ed5e"
+    },
+    {
+      "lsn": 745,
+      "seed": "63c3ab72",
+      "first8_bytes": [
+        "a4e411c3",
+        "a677260f",
+        "af3e88fb",
+        "a1b0e977",
+        "bfbb4b7e",
+        "01bbb72e",
+        "aa0a29e3",
+        "1459f98d"
+      ],
+      "first8_words": [
+        "c311e4a4",
+        "0f2677a6",
+        "fb883eaf",
+        "77e9b0a1",
+        "7e4bbbbf",
+        "2eb7bb01",
+        "e3290aaa",
+        "8df95914"
+      ],
+      "md5_f_zeros": "17bf4fa3b4cc68a699c1dbffca52ee31"
+    },
+    {
+      "lsn": 600,
+      "seed": "c27eeaea",
+      "first8_bytes": [
+        "1b0a57fb",
+        "31859858",
+        "eea4ee4f",
+        "b70316f5",
+        "e7d97f99",
+        "0610222a",
+        "f7667e6c",
+        "4702bab4"
+      ],
+      "first8_words": [
+        "fb570a1b",
+        "58988531",
+        "4feea4ee",
+        "f51603b7",
+        "997fd9e7",
+        "2a221006",
+        "6c7e66f7",
+        "b4ba0247"
+      ],
+      "md5_f_zeros": "1ca401e57cb9a85b7d243fff48a6e195"
+    },
+    {
+      "lsn": 510,
+      "seed": "d0b6560f",
+      "first8_bytes": [
+        "b4dd8054",
+        "cf3ff9a9",
+        "2f81134e",
+        "b4b8f9f8",
+        "23b70432",
+        "332ff038",
+        "b866dc9f",
+        "9d886672"
+      ],
+      "first8_words": [
+        "5480ddb4",
+        "a9f93fcf",
+        "4e13812f",
+        "f8f9b8b4",
+        "3204b723",
+        "38f02f33",
+        "9fdc66b8",
+        "7266889d"
+      ],
+      "md5_f_zeros": "db18cac5f808df3155b058207f68d99f"
+    },
+    {
+      "lsn": 353750,
+      "seed": "52c16efd",
+      "first8_bytes": [
+        "32dfc09c",
+        "8148fd63",
+        "17b34c97",
+        "8023e424",
+        "8a0a1ab2",
+        "cf562d9a",
+        "1578612e",
+        "24cc182d"
+      ],
+      "first8_words": [
+        "9cc0df32",
+        "63fd4881",
+        "974cb317",
+        "24e42380",
+        "b21a0a8a",
+        "9a2d56cf",
+        "2e617815",
+        "2d18cc24"
+      ],
+      "md5_f_zeros": "e0fc7486c1a5c5868f277868f75c6bdd"
+    },
+    {
+      "lsn": 353764,
+      "seed": "e74fd37e",
+      "first8_bytes": [
+        "2ea023b9",
+        "1dd1e669",
+        "1f3760cb",
+        "1e8af57d",
+        "e5a4735a",
+        "d2610df3",
+        "69c7d6b9",
+        "74294146"
+      ],
+      "first8_words": [
+        "b923a02e",
+        "69e6d11d",
+        "cb60371f",
+        "7df58a1e",
+        "5a73a4e5",
+        "f30d61d2",
+        "b9d6c769",
+        "46412974"
+      ],
+      "md5_f_zeros": "f44c15569374f257d0302cf9a18b3f3c"
+    }
+  ],
+  "columns": {
+    "plain_md5": "what the wire MUST carry with cipher ON (== the ISO's own bytes; decode/client-leg-oracles.md, unchanged)",
+    "cipher_md5": "what the wire carries with cipher OFF (the derived disc at rest) \u2014 the negative control"
+  },
+  "rows": [
+    {
+      "id": "A1",
+      "marker": "A1",
+      "template": "client_d_arearead",
+      "lba": 845,
+      "cnt": 1,
+      "bytes": 2048,
+      "encrypted": true,
+      "plain_md5": "9079e1fce610663d9f0e50bbd3463e0c",
+      "cipher_md5": "d04beb0c9154fa8badd57dd922667c19"
+    },
+    {
+      "id": "A32",
+      "marker": "A32",
+      "template": "client_d_arearead",
+      "lba": 845,
+      "cnt": 32,
+      "bytes": 65536,
+      "encrypted": true,
+      "plain_md5": "1df16354392e34456e8a11e174140ba5",
+      "cipher_md5": "def4bfe353d50ab5c2d6328089a788ae"
+    },
+    {
+      "id": "TRK",
+      "marker": "TRK",
+      "template": "client_d_arearead",
+      "lba": 745,
+      "cnt": 128,
+      "bytes": 262144,
+      "encrypted": true,
+      "plain_md5": "5b5c4f4e411155d46885b5848cefd48d",
+      "cipher_md5": "82ccdfbf7b4199da780fe08b46234653"
+    },
+    {
+      "id": "EDGE",
+      "marker": "EDGE",
+      "template": "client_d_arearead",
+      "lba": 353750,
+      "cnt": 40,
+      "bytes": 81920,
+      "encrypted": true,
+      "plain_md5": "dffda49fa00fffdaac8c5fddf38a959e",
+      "cipher_md5": "9894c45702c31189a44722f7d374f272"
+    },
+    {
+      "id": "RIP",
+      "marker": "RIP",
+      "template": "client_d_arearead",
+      "lba": 600,
+      "cnt": 1600,
+      "bytes": 3276800,
+      "encrypted": true,
+      "plain_md5": "2609c51af8831e3e3c9f1eaaf2ce5449",
+      "cipher_md5": "2bf4342e8e76942a8a38b795592b03dd"
+    },
+    {
+      "id": "S1",
+      "marker": "S1",
+      "template": "client_a_reconnect",
+      "lba": 510,
+      "cnt": 10,
+      "bytes": 20480,
+      "encrypted": false,
+      "plain_md5": "45ccd7dfbf433a79d28e877d7441677c",
+      "cipher_md5": "45ccd7dfbf433a79d28e877d7441677c"
+    },
+    {
+      "id": "S2",
+      "marker": "S2",
+      "template": "client_a_reconnect",
+      "lba": 532104,
+      "cnt": 1,
+      "bytes": 2048,
+      "encrypted": true,
+      "plain_md5": "9ed18b47f67232ea972515df65cb6ac5",
+      "cipher_md5": "f7b4db885280a4a5e1dd6fa54a88589a"
+    },
+    {
+      "id": "S3",
+      "marker": "S3",
+      "template": "client_a_reconnect",
+      "lba": 510,
+      "cnt": 10,
+      "bytes": 20480,
+      "encrypted": false,
+      "plain_md5": "45ccd7dfbf433a79d28e877d7441677c",
+      "cipher_md5": "45ccd7dfbf433a79d28e877d7441677c"
+    }
+  ]
+}

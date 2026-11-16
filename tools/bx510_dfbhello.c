@@ -30,10 +30,114 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+
+#include <errno.h>
+
 #include <directfb.h>
 
 static IDirectFB *dfb = NULL;
 static IDirectFBSurface *primary = NULL;
+
+static const char *arg_str(int *argc, char ***argv, const char *key)
+{
+    int i;
+    for (i = 1; i < *argc; i++) {
+        if (!strcmp((*argv)[i], key) && i + 1 < *argc) {
+            const char *v = (*argv)[i + 1];
+            memmove(&(*argv)[i], &(*argv)[i + 2], (size_t)(*argc - (i + 2)) * sizeof(char *));
+            *argc -= 2;
+            return v;
+        }
+        if (!strncmp((*argv)[i], key, strlen(key)) && (*argv)[i][strlen(key)] == '=') {
+            const char *v = (*argv)[i] + strlen(key) + 1;
+            memmove(&(*argv)[i], &(*argv)[i + 1], (size_t)(*argc - (i + 1)) * sizeof(char *));
+            *argc -= 1;
+            return v;
+        }
+    }
+    return NULL;
+}
+
+static int arg_int_opt(int *argc, char ***argv, const char *key, int *out)
+{
+    const char *v = arg_str(argc, argv, key);
+    if (!v)
+        return 0;
+    *out = atoi(v);
+    return 1;
+}
+
+static int bpp_for_fmt(DFBSurfacePixelFormat fmt)
+{
+    switch (fmt) {
+    case DSPF_RGB16:
+    case DSPF_ARGB1555:
+    case DSPF_ARGB4444:
+    case DSPF_RGB555:
+    case DSPF_BGR555:
+        return 2;
+    case DSPF_RGB24:
+        return 3;
+    case DSPF_RGB32:
+    case DSPF_ARGB:
+        return 4;
+    default:
+        return 4;
+    }
+}
+
+static int dump_surface_raw(IDirectFBSurface *s, const char *path)
+{
+    void *ptr = NULL;
+    int pitch = 0;
+    int w = 0, h = 0;
+    DFBSurfacePixelFormat fmt = DSPF_UNKNOWN;
+    DFBResult r;
+    FILE *f;
+    int bpp;
+    int y;
+
+    if (!path || !*path)
+        return 0;
+
+    r = s->GetSize(s, &w, &h);
+    if (r != DFB_OK) {
+        fprintf(stderr, "DFBHELLO: dump: GetSize rc=%d (%s)\n", r, DirectFBErrorString(r));
+        return 1;
+    }
+    s->GetPixelFormat(s, &fmt);
+    bpp = bpp_for_fmt(fmt);
+
+    r = s->Lock(s, DSLF_READ, &ptr, &pitch);
+    if (r != DFB_OK) {
+        fprintf(stderr, "DFBHELLO: dump: Lock rc=%d (%s)\n", r, DirectFBErrorString(r));
+        return 2;
+    }
+
+    f = fopen(path, "wb");
+    if (!f) {
+        fprintf(stderr, "DFBHELLO: dump: fopen %s: %s\n", path, strerror(errno));
+        s->Unlock(s);
+        return 3;
+    }
+
+    for (y = 0; y < h; y++) {
+        size_t want = (size_t)w * (size_t)bpp;
+        unsigned char *row = (unsigned char *)ptr + (size_t)y * (size_t)pitch;
+        if (fwrite(row, 1, want, f) != want) {
+            fprintf(stderr, "DFBHELLO: dump: fwrite: short write\n");
+            break;
+        }
+    }
+
+    fclose(f);
+    s->Unlock(s);
+
+    printf("DFBHELLO: dump wrote %s (%dx%d fmt=0x%x pitch=%d)\n",
+           path, w, h, (unsigned)fmt, pitch);
+    fflush(stdout);
+    return 0;
+}
 
 static void logi(const char *what, int v) { printf("DFBHELLO: %s: %d\n", what, v); }
 static void logr(const char *what, DFBResult r) { printf("DFBHELLO: %s: rc=%d (%s)\n", what, r, DirectFBErrorString(r)); }
@@ -46,11 +150,22 @@ int main(int argc, char **argv)
     int hold = 25;
     int i;
 
+    const char *dump1 = NULL;
+    const char *dump2 = NULL;
+    int dump1_delay = 1;
+    int dump2_delay = 12;
+
     if (argc > 1) width = atoi(argv[1]);
     if (argc > 2) height = atoi(argv[2]);
     if (argc > 3) hold = atoi(argv[3]);
     if (hold < 1) hold = 1;
     if (hold > 100) hold = 100;
+
+    /* optional dumps (must be stripped before DirectFBInit parses args) */
+    dump1 = arg_str(&argc, &argv, "--dump1");
+    dump2 = arg_str(&argc, &argv, "--dump2");
+    arg_int_opt(&argc, &argv, "--dump1-delay", &dump1_delay);
+    arg_int_opt(&argc, &argv, "--dump2-delay", &dump2_delay);
 
     fflush(stdout);
     ret = DirectFBInit(&argc, &argv);
@@ -130,7 +245,38 @@ int main(int argc, char **argv)
 
     printf("DFBHELLO: HOLDING %ds — pattern should be on the panel now\n", hold);
     fflush(stdout);
-    sleep((unsigned)hold);
+
+    {
+        int elapsed = 0;
+        char cmd[512];
+
+        if (dump1 && dump1_delay > 0 && dump1_delay <= hold) {
+            sleep((unsigned)dump1_delay);
+            elapsed = dump1_delay;
+            printf("DFBHELLO: DUMP1 path=%s t=%d\n", dump1, elapsed);
+            fflush(stdout);
+            dump_surface_raw(primary, dump1);
+            snprintf(cmd, sizeof(cmd), "/usr/bin/md5sum %s", dump1);
+            printf("DFBHELLO: DUMP1_MD5SUM cmd=%s\n", cmd);
+            fflush(stdout);
+            system(cmd);
+        }
+
+        if (dump2 && dump2_delay > elapsed && dump2_delay <= hold) {
+            sleep((unsigned)(dump2_delay - elapsed));
+            elapsed = dump2_delay;
+            printf("DFBHELLO: DUMP2 path=%s t=%d\n", dump2, elapsed);
+            fflush(stdout);
+            dump_surface_raw(primary, dump2);
+            snprintf(cmd, sizeof(cmd), "/usr/bin/md5sum %s", dump2);
+            printf("DFBHELLO: DUMP2_MD5SUM cmd=%s\n", cmd);
+            fflush(stdout);
+            system(cmd);
+        }
+
+        if (hold > elapsed)
+            sleep((unsigned)(hold - elapsed));
+    }
 
     /* second flip: catches "first flip latched, panel needs a re-flip" */
     primary->SetColor(primary, 0x00, 0x00, 0x00, 0xff);

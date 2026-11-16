@@ -1,0 +1,92 @@
+# libdirectfb_mt85.so (gfxdriver) ioctl call sites — r1 back-trace + literal values
+# extractor: /tmp/mt85_ioctl_extract.py over llvm-objdump -d of incoming/mt85-analyst/libdirectfb_mt85.so
+# ioctl@plt call sites: 8
+
+== 0x1000 in .text
+   r1 <- immediate = 0x4900
+   0x0fe8: add      r3, r12, r3                        
+   0x0fec: str      r3, [sp, #0x14]                    
+   0x0ff0: ldr      r2, [sp, #0x48]                    
+   0x0ff4: mov      r1, #18688                         
+   0x0ff8: ldr      r0, [r2]                           
+   0x0ffc: ldr      r2, [r4, #0x10]                    
+   0x1000: bl       0xe28 <ioctl@plt>                  @ imm = #-0x1e0
+   0x1004: ldr      r7, [r4, #0x10]                    
+
+== 0x10f0 in .text
+   r1 <- literal@0x146c = 0x4651
+   0x10d8: str      r8, [r6, #0x40]                    
+   0x10dc: beq      0x11cc <.text+0x314>               @ imm = #0xe8
+   0x10e0: ldr      r3, [sp, #0x48]                    
+   0x10e4: ldr      r1, [pc, #0x380]                   @ 0x146c <.text+0x5b4>
+   0x10e8: ldr      r0, [r3]                           
+   0x10ec: mov      r2, r7                             
+   0x10f0: bl       0xe28 <ioctl@plt>                  @ imm = #-0x2d0
+   0x10f4: cmp      r0, #0                             
+
+== 0x1120 in .text
+   r1 <- literal@0x146c = 0x4651
+   0x1108: cmp      r3, #3                             
+   0x110c: beq      0x1130 <.text+0x278>               @ imm = #0x1c
+   0x1110: ldr      r2, [sp, #0x48]                    
+   0x1114: ldr      r1, [pc, #0x350]                   @ 0x146c <.text+0x5b4>
+   0x1118: ldr      r0, [r2]                           
+   0x111c: mov      r2, r7                             
+   0x1120: bl       0xe28 <ioctl@plt>                  @ imm = #-0x300
+   0x1124: cmp      r0, #0                             
+
+== 0x1140 in .text
+   r1 <- literal@0x1470 = 0x4901
+   0x1128: ldrge    r6, [r4, #0x10]                    
+   0x112c: blt      0x1384 <.text+0x4cc>               @ imm = #0x250
+   0x1130: ldr      r12, [sp, #0x48]                   
+   0x1134: ldr      r1, [pc, #0x334]                   @ 0x1470 <.text+0x5b8>
+   0x1138: ldr      r0, [r12]                          
+   0x113c: mov      r2, r6                             
+   0x1140: bl       0xe28 <ioctl@plt>                  @ imm = #-0x320
+   0x1144: mov      r0, #1                             
+
+== 0x11f4 in .text
+   r1 <- literal@0x1470 = 0x4901
+   0x11dc: mov      r2, r7                             
+   0x11e0: cmp      r3, #1                             
+   0x11e4: beq      0x136c <.text+0x4b4>               @ imm = #0x180
+   0x11e8: ldr      r3, [sp, #0x48]                    
+   0x11ec: ldr      r1, [pc, #0x27c]                   @ 0x1470 <.text+0x5b8>
+   0x11f0: ldr      r0, [r3]                           
+   0x11f4: bl       0xe28 <ioctl@plt>                  @ imm = #-0x3d4
+   0x11f8: mov      r0, #1                             
+
+== 0x1378 in .text
+   r1 <- literal@0x146c = 0x4651
+   0x1360: ldr      r8, [r6, #0x40]                    
+   0x1364: ldr      r10, [r6, #0x4]                    
+   0x1368: b        0x11b0 <.text+0x2f8>               @ imm = #-0x1c0
+   0x136c: ldr      r12, [sp, #0x48]                   
+   0x1370: ldr      r1, [pc, #0xf4]                    @ 0x146c <.text+0x5b4>
+   0x1374: ldr      r0, [r12]                          
+   0x1378: bl       0xe28 <ioctl@plt>                  @ imm = #-0x558
+   0x137c: cmp      r0, #0                             
+
+== 0x555c in mt85EngineSync
+   r1 <- literal@0x55e8 = 0x464d
+   0x5544: bl       0xf74 <.text+0xbc>                 @ imm = #-0x45d8
+   0x5548: cmn      r0, #2                             
+   0x554c: beq      0x5568 <mt85EngineSync+0x84>       @ imm = #0x14
+   0x5550: ldr      r0, [r7]                           
+   0x5554: ldr      r1, [pc, #0x8c]                    @ 0x55e8 <mt85EngineSync+0x104>
+   0x5558: ldr      r2, [r5, #0x10]                    
+   0x555c: bl       0xe28 <ioctl@plt>                  @ imm = #-0x473c
+   0x5560: cmp      r0, #0                             
+
+== 0x5748 in mt85CheckState
+   r1 <- literal@0x5c64 = 0x464d
+   0x5730: bl       0xf74 <.text+0xbc>                 @ imm = #-0x47c4
+   0x5734: cmn      r0, #2                             
+   0x5738: beq      0x5754 <mt85CheckState+0x124>      @ imm = #0x14
+   0x573c: ldr      r0, [r7]                           
+   0x5740: ldr      r1, [pc, #0x51c]                   @ 0x5c64 <mt85CheckState+0x634>
+   0x5744: ldr      r2, [r5, #0x10]                    
+   0x5748: bl       0xe28 <ioctl@plt>                  @ imm = #-0x4928
+   0x574c: cmp      r0, #0                             
+

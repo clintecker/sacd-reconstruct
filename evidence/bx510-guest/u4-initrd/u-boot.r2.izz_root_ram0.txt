@@ -1,0 +1,3 @@
+[35mWARN:[0m using oba to load the syminfo from different mapaddress
+1350 0x000414a5 0x000414a5 36  37           ascii   root=/dev/ram0 rw initrd=0x%08x,%dM
+1351 0x000414ca 0x000414ca 39  40           ascii   root=/dev/ram0 rw initrd=0x%08x,0x%08x

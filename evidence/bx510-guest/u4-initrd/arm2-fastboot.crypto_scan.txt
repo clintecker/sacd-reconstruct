@@ -1,0 +1,10 @@
+file: evidence/bx510-guest/u4-initrd/pulled/arm2-fastboot.bin
+size_bytes: 62684
+
+AES_SBOX_256: matches=0
+
+AES_INV_SBOX_256: matches=0
+
+TEA_DELTA_LE: matches=0
+
+TEA_DELTA_BE: matches=0

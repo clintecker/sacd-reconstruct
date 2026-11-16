@@ -1,0 +1,57 @@
+file: evidence/bx510-guest/u4-initrd/pulled/rootfs_enc_it_1.bin
+size_bytes: 131072
+
+overall_entropy_bits_per_byte: 7.998515
+overall_chi2_uniform_256: 270.18 (df=255)
+
+block_entropy_bits_per_byte: block_size=4096
+  blocks: 32
+  min: 7.946971
+  max: 7.960958
+  mean: 7.953651
+  stdev: 0.003597
+
+duplicate_blocks:
+  bs=8     blocks=16384    unique=16384    dupes=0        top_dupe_count=1
+  bs=16    blocks=8192     unique=8192     dupes=0        top_dupe_count=1
+  bs=32    blocks=4096     unique=4096     dupes=0        top_dupe_count=1
+  bs=64    blocks=2048     unique=2048     dupes=0        top_dupe_count=1
+  bs=256   blocks=512      unique=512      dupes=0        top_dupe_count=1
+  bs=4096  blocks=32       unique=32       dupes=0        top_dupe_count=1
+
+period_match_ratio: (expected ~0.00390625 for random)
+  period=1  ratio=0.003906
+  period=2  ratio=0.004089
+  period=3  ratio=0.003975
+  period=4  ratio=0.004120
+  period=8  ratio=0.003960
+  period=16 ratio=0.003907
+  period=32 ratio=0.004106
+
+tail_u32:
+  tail_le: 0x5c5c080f
+  tail_be: 0x0f085c5c
+
+checksum_hypotheses_over_data_excluding_last4:
+  xor32_le(body): 0x58ac2823 match_tail_le=False match_tail_be=False
+  crc32(body):    0xc0c123d4 match_tail_le=False match_tail_be=False
+
+xor_known_plaintext_offset0_guesses:
+  NOTE: Only reports repeating-key lengths k where k < len(magic) (to avoid the trivial k==len(magic) always-fit case).
+  magic=cpio_newc_070701 len=6
+    (no consistent repeating-key length found)
+  magic=cpio_newc_070702 len=6
+    (no consistent repeating-key length found)
+  magic=gzip len=3
+    (no consistent repeating-key length found)
+  magic=xz len=6
+    (no consistent repeating-key length found)
+  magic=lz4_frame len=4
+    (no consistent repeating-key length found)
+  magic=zstd_frame len=4
+    (no consistent repeating-key length found)
+  magic=lzop len=9
+    (no consistent repeating-key length found)
+
+fixed_offset_fs_tells:
+  ext_superblock_magic_at_0x438: 0x4f57 (expected 0xef53)

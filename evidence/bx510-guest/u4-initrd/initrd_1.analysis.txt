@@ -1,0 +1,57 @@
+file: evidence/bx510-guest/u4-initrd/pulled/initrd_1.bin
+size_bytes: 532976
+
+overall_entropy_bits_per_byte: 7.999685
+overall_chi2_uniform_256: 233.12 (df=255)
+
+block_entropy_bits_per_byte: block_size=4096
+  blocks: 131
+  min: 7.564039
+  max: 7.963961
+  mean: 7.951360
+  stdev: 0.034183
+
+duplicate_blocks:
+  bs=8     blocks=66622    unique=66622    dupes=0        top_dupe_count=1
+  bs=16    blocks=33311    unique=33311    dupes=0        top_dupe_count=1
+  bs=32    blocks=16655    unique=16655    dupes=0        top_dupe_count=1
+  bs=64    blocks=8327     unique=8327     dupes=0        top_dupe_count=1
+  bs=256   blocks=2081     unique=2081     dupes=0        top_dupe_count=1
+  bs=4096  blocks=130      unique=130      dupes=0        top_dupe_count=1
+
+period_match_ratio: (expected ~0.00390625 for random)
+  period=1  ratio=0.003893
+  period=2  ratio=0.003995
+  period=3  ratio=0.003863
+  period=4  ratio=0.003891
+  period=8  ratio=0.003970
+  period=16 ratio=0.003880
+  period=32 ratio=0.003826
+
+tail_u32:
+  tail_le: 0x1158e224
+  tail_be: 0x24e25811
+
+checksum_hypotheses_over_data_excluding_last4:
+  xor32_le(body): 0xb19cdaa3 match_tail_le=False match_tail_be=False
+  crc32(body):    0xc05c266b match_tail_le=False match_tail_be=False
+
+xor_known_plaintext_offset0_guesses:
+  NOTE: Only reports repeating-key lengths k where k < len(magic) (to avoid the trivial k==len(magic) always-fit case).
+  magic=cpio_newc_070701 len=6
+    (no consistent repeating-key length found)
+  magic=cpio_newc_070702 len=6
+    (no consistent repeating-key length found)
+  magic=gzip len=3
+    (no consistent repeating-key length found)
+  magic=xz len=6
+    (no consistent repeating-key length found)
+  magic=lz4_frame len=4
+    (no consistent repeating-key length found)
+  magic=zstd_frame len=4
+    (no consistent repeating-key length found)
+  magic=lzop len=9
+    (no consistent repeating-key length found)
+
+fixed_offset_fs_tells:
+  ext_superblock_magic_at_0x438: 0x8262 (expected 0xef53)

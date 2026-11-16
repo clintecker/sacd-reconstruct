@@ -1,0 +1,14 @@
+file: evidence/bx510-guest/u4-initrd/pulled/initrd_1.bin
+size_bytes: 532976
+
+zlib_wbits+15: FAIL error: Error -3 while decompressing data: incorrect header check
+
+zlib_raw_wbits-15: FAIL error: Error -3 while decompressing data: invalid block type
+
+gzip_wrapper: FAIL BadGzipFile: Not a gzipped file (b'\xb6z')
+
+bz2: FAIL OSError: Invalid data stream
+
+lzma_auto: FAIL LZMAError: Input format not supported by decoder
+
+zstd_frame: FAIL ZstdError: error determining content size from frame header

@@ -1,0 +1,46 @@
+/tmp/bx510_bdpdrv_stub_probe.py:570: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  "ts_utc": __import__("datetime").datetime.utcnow().isoformat() + "Z",
+E]cache_avail_cnt = 2, cache_fs_cnt = 0
+[OSAL_STUB] x_thread_delay #132864 arg=100 caller=VFD_CmdProcThread
+[IDE]cache_avail_cnt = 2, cache_fs_cnt = 0
+[IDE]cache_avail_cnt = 2, cache_fs_cnt = 0
+[OSAL_STUB] x_thread_delay #133120 arg=100 caller=VFD_CmdProcThread
+[IDE]cache_avail_cnt = 2, cache_fs_cnt = 0
+[IDE]cache_avail_cnt = 2, cache_fs_cnt = 0
+[OSAL_STUB] x_thread_delay #133376 arg=100 caller=VFD_CmdProcThread
+[IDE]cache_avail_cnt = 2, cache_fs_cnt = 0
+[IDE]cache_avail_cnt = 2, cache_fs_cnt = 0
+[OSAL_STUB] x_thread_delay #133632 arg=100 caller=VFD_CmdProcThread
+[IDE]cache_avail_cnt = 2, cache_fs_cnt = 0
+[IDE]cache_avail_cnt = 2, cache_fs_cnt = 0
+[OSAL_STUB] x_thread_delay #133888 arg=10 caller=IRRC_DataProcessingThread
+[IDE]cache_avail_cnt = 2, cache_fs_cnt = 0
+[IDE]cache_avail_cnt = 2, cache_fs_cnt = 0
+[OSAL_STUB] Assert x647168 total (last: custom/sony/src/driver/ir/irrx_if.c:2093)
+[OSAL_STUB] x_thread_delay #134144 arg=10 caller=IRRC_DataProcessingThread
+[IDE]cache_avail_cnt = 2, cache_fs_cnt = 0
+[IDE]cache_avail_cnt = 2, cache_fs_cnt = 0
+[IDE]cache_avail_cnt = 2, cache_fs_cnt = 0
+[OSAL_STUB] x_thread_delay #134400 arg=10 caller=IRRC_DataProcessingThread
+[IDE]cache_avail_cnt = 2, cache_fs_cnt = 0
+[IDE]cache_avail_cnt = 2, cache_fs_cnt = 0
+[OSAL_STUB] x_thread_delay #134656 arg=10 caller=IRRC_DataProcessingThread
+[IDE]cache_avail_cnt = 2, cache_fs_cnt = 0
+[IDE]cache_avail_cnt = 2, cache_fs_cnt = 0
+[OSAL_STUB] x_thread_delay #134912 arg=10 caller=IRRC_DataProcessingThread
+[IDE]cache_avail_cnt = 2, cache_fs_cnt = 0
+[IDE]cache_avail_cnt = 2, cache_fs_cnt = 0
+[OSAL_STUB] x_thread_delay #135168 arg=10 caller=IRRC_DataProcessingThread
+[IDE]cache_avail_cnt = 2, cache_fs_cnt = 0
+[IDE]cache_avail_cnt = 2, cache_fs_cnt = 0
+[OSAL_STUB] x_thread_delay #135424 arg=10 caller=IRRC_DataProcessingThread
+[IDE]cache_avail_cnt = 2, cache_fs_cnt = 0
+[IDE]cache_avail_cnt = 2, cache_fs_cnt = 0
+[OSAL_STUB] x_sema_lock called #10752
+[OSAL_STUB] x_thread_delay #135680 arg=10 caller=IRRC_DataProcessingThread
+[IDE]cache_avail_cnt = 2, cache_fs_cnt = 0
+[IDE]cache_avail_cnt = 2, cache_fs_cnt = 0
+[OSAL_STUB] x_thread_delay #135936 arg=10 caller=IRRC_DataProcessingThread
+[IDE]cache_avail_c
+probe incomplete: STUB_DONE marker never appeared (artifacts written)
+FIRE_RC=1

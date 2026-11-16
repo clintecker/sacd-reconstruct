@@ -1,24 +1,43 @@
 #!/usr/bin/env python3
-"""pool_audit.py — audit every PC-relative literal-pool load in every function.
+"""pool_audit.py — literal-pool parity, load-site by load-site.
 
 For each function, resolve each `ldr rX, [pc, #imm]` to its pool word, then
-classify the word:
-  * points into a mapped section with string-like content -> dump bytes
-  * points at a known symbol -> symbol name + offset
-  * plain scalar -> value
-Compares the ORIGINAL and REBUILD function-by-function so a wrong literal
-(like L"c" vs L"connected", issue #1) shows up as a value/string diff even
-when instruction sequences are identical.
+classify the word and compare the ORIGINAL and REBUILD at that same load
+site. fn_diff drops pool words to a bare `.word` (their value is either a
+link-time address or a non-encodable scalar), so this tool owns the whole
+pool-literal contract — including the two misreads that motivated it
+(L"c" vs L"connected", issue #1; __FILE__ assert paths):
+
+  * string object (narrow/wide/empty) -> decoded content, exact
+  * function entry address            -> symbol identity, layout-free
+  * one-past-a-section-end value      -> section identity (`_edata`)
+  * other mapped object               -> masked content (structural)
+  * value with no section behind it    -> scalar VALUE, exact
+
+The identity classes matter: two functions with byte-identical bodies are
+different objects, so a function-pointer swap must fail even though both
+sides address "some .text address".
+
+The embedded sacd_read.ko blob is not code to either tool (install_modules
+writes it to /tmp and insmods it), so module parity is byte identity of the
+blob — checked here as well: `module blob: identical|DIFFERS|absent`.
+
+Full policy + the mutants that pin it: evidence/status-test/
+fn-diff-literal-policy.md.
 
 Usage: python3 tools/pool_audit.py original.elf rebuilt.elf [--only FN]
+       python3 tools/pool_audit.py --module original.elf rebuilt.elf
 """
 import argparse
+import hashlib
+import os
 import re
 import struct
 import subprocess
 import sys
 
-OBJDUMP = "/opt/homebrew/opt/llvm@22/bin/llvm-objdump"
+OBJDUMP = os.environ.get(
+    "OBJDUMP", "/opt/homebrew/opt/llvm@22/bin/llvm-objdump")
 
 
 class ELF:
@@ -51,18 +70,28 @@ class ELF:
             capture_output=True, text=True).stdout
         self.symbols = {}
         self.symbol_sizes = {}  # (addr, size) -> name
+        self.sym_by_name = {}   # name -> addr (first definition wins)
+        self.func_starts = {}   # addr -> name, FUNC entry points
+        self.section_ends = {}  # addr -> section name (one-past-end words)
         for line in out.splitlines():
             m = re.match(
-                r"\s*\d+:\s+([0-9a-f]+)\s+(\d+)\s+\S+\s+\S+\s+\S+\s+\S+\s+(\S+)", line)
+                r"\s*\d+:\s+([0-9a-f]+)\s+(\d+)\s+(\S+)\s+(\S+)\s+\S+\s+\S+\s+(\S+)",
+                line)
             if m:
                 addr = int(m.group(1), 16)
                 size = int(m.group(2))
-                name = m.group(3)
+                typ, name = m.group(3), m.group(5)
                 if addr and name:
                     if addr not in self.symbols:
                         self.symbols[addr] = name
                     if size:
                         self.symbol_sizes[(addr, size)] = name
+                    self.sym_by_name.setdefault(name, addr)
+                    if typ == "FUNC" and size and not name.startswith("$"):
+                        self.func_starts.setdefault(addr, name)
+        for name, addr, _, size in self.sections:
+            if addr and size:
+                self.section_ends.setdefault(addr + size, name)
 
     def image_end(self):
         return max((a + s for _, a, _, s in self.sections), default=0)
@@ -100,14 +129,49 @@ class ELF:
         return best[1] + ("+0x%x" % (va - best[0]) if va != best[0] else "")
 
     def describe_word(self, word):
-        """classify a resolved pool word -> short comparable description"""
+        """classify a resolved pool word -> layout-free comparable key
+
+        Order is the policy (evidence/status-test/fn-diff-literal-policy.md):
+        string content first (content is what a string literal IS), then
+        identity (a function entry, a section boundary), then structural
+        content, then the raw value for words that address nothing in this
+        image.
+        """
         if word is None:
             return "<unmapped>"
         k = self.content_key(word)
-        if k is not None:
+        # 1. string objects: the decoded content is authoritative
+        if k is not None and (k == "empty-string" or k.startswith("ascii:")
+                              or k.startswith("wide:")):
             return k
-        # unmapped or out-of-range: raw scalar value, layout-independent
+        # 2. code addresses: symbol identity, never "some address in .text".
+        #    Only an exact function entry counts — a taken function address
+        #    is always one, while a scalar constant can land inside .text by
+        #    coincidence (0xffff, 0xfeff, 0xdfff do) and must not be read as
+        #    an identity.
+        if k == "code-ptr":
+            return "code:%s" % self.func_starts[word] \
+                if word in self.func_starts else "code-ptr"
+        # 3. one-past-the-end values (`_edata`, `_binary_sacd_read_ko_end`):
+        #    the address moves with the layout, the relation to the section
+        #    end does not. Section-end identity is name- and order-free.
+        if word in self.section_ends:
+            return "secend:%s" % self.section_ends[word]
+        if k is not None and k != "layout-ptr":
+            return k
+        # 4. inside the image range but behind no section: not a valid
+        #    pointer in THIS image, so it is a scalar constant -> its value
+        #    is the identity (catches a mutated module end/size literal that
+        #    fn_diff drops with the rest of the pool)
         return "scalar:%#x" % word
+
+    def embedded_module(self):
+        """bytes of the module blob the daemon ships (ld -b binary / .incbin)."""
+        start = self.sym_by_name.get("_binary_sacd_read_ko_start")
+        end = self.sym_by_name.get("_binary_sacd_read_ko_end")
+        if start is None or end is None or end < start:
+            return None
+        return self.read_bytes(start, end - start)
 
     def content_key(self, word):
         """Content-based comparison key for a pool word's target.
@@ -132,6 +196,11 @@ class ELF:
         b = self.read_bytes(word, 256)
         if b is None:
             return None
+        if sec and (sec == ".bss" or sec.startswith(".bss")):
+            # NOBITS: content is zeros by definition. Keep it apart from the
+            # shared "" literal so a global-buffer pointer never aliases a
+            # zero-length string constant (identity is unrecoverable here).
+            return "bss-zero"
         if b[:4] == b"\x00\x00\x00\x00":
             return "empty-string"  # the shared "" literal (full word of NULs)
         # narrow (char) string: through the NUL terminator
@@ -245,16 +314,82 @@ def normalize_desc(desc):
     return desc
 
 
+# Descriptions whose equality means "the same literal" regardless of where the
+# linker put it: decoded string content, a function entry, a section boundary,
+# a zero-initialised global. Everything else (`content:`, `symcontent:`,
+# `scalar:`) is a layout-dependent reading of one raw VALUE.
+IDENTITY_CLASSES = ("ascii:", "wide:", "empty-string", "bss-zero",
+                    "code:", "secend:")
+
+
+def site_failures(o, r, o_pools, r_pools):
+    """Load sites whose literals are not the same literal.
+
+    Returns (i, orig_word, orig_desc, rebuild_word, rebuild_desc) per failing
+    site. Shared by the audit and by the regression mutants so the tests
+    exercise the real comparison, not a copy of it.
+    """
+    fails = []
+    for i, ((_, _, oword), (_, _, rword)) in enumerate(zip(o_pools, r_pools)):
+        odesc = o.describe_word(oword)
+        rdesc = r.describe_word(rword)
+        if odesc == rdesc:
+            continue
+        if oword == rword:
+            # Same raw value: only identity classes can contradict each other.
+            # A data window that reads into link-order-dependent neighbours
+            # (the documented benign .data-order class, DELTA.md), a scalar
+            # constant that coincides with a .data address, and a value that is
+            # inside a section in one layout but not the other are all one
+            # value seen through two layouts.
+            if odesc.startswith(IDENTITY_CLASSES) \
+                    and rdesc.startswith(IDENTITY_CLASSES):
+                fails.append((i, oword, odesc, rword, rdesc))
+            continue
+        fails.append((i, oword, odesc, rword, rdesc))
+    return fails
+
+
+def check_module_blob(o, r):
+    """Byte identity of the embedded sacd_read.ko blob.
+
+    Neither tool sees the module as code: the daemon embeds it as data
+    (`ld -b binary` / `.incbin`) and install_modules writes the blob to /tmp
+    and insmods it, so module parity IS blob parity. Returns (ok, line).
+    """
+    ob, rb = o.embedded_module(), r.embedded_module()
+    if ob is None and rb is None:
+        return True, "module blob: absent in both ELFs (not checked)"
+    if ob is None or rb is None:
+        return False, "module blob: DIFFERS — present in only one ELF"
+    digest = hashlib.sha256(ob).hexdigest()
+    if ob == rb:
+        return True, "module blob: identical (%d B, sha256 %s)" % (
+            len(ob), digest)
+    diff = next((i for i, (x, y) in enumerate(zip(ob, rb)) if x != y), 0)
+    return False, (
+        "module blob: DIFFERS — orig %d B sha256 %s, rebuild %d B sha256 %s,"
+        " first differing byte at blob offset %#x" %
+        (len(ob), digest, len(rb), hashlib.sha256(rb).hexdigest(), diff))
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("original")
     ap.add_argument("rebuilt")
     ap.add_argument("--only")
     ap.add_argument("--verbose", action="store_true")
+    ap.add_argument("--module", action="store_true",
+                    help="only check the embedded module blob")
     args = ap.parse_args()
 
     o = ELF(args.original)
     r = ELF(args.rebuilt)
+
+    ok, line = check_module_blob(o, r)
+    if args.module:
+        print(line)
+        return 0 if ok else 1
 
     o_funcs = dict(o.disasm_functions())
     r_funcs = dict(r.disasm_functions())
@@ -277,25 +412,7 @@ def main():
             continue
         # Compare literals AT THEIR LOAD SITES (per review): a swapped
         # pointer pair must fail even though the multiset is unchanged.
-        # Equal raw values pass a site outright (covers size constants
-        # like 0x40400/0x40800, TLS refs, BOMs and code-range values).
-        if len(o_pools) != len(r_pools):
-            mismatch += 1
-            mismatches.append(name)
-            if args.verbose:
-                print("  %s: pool count %d vs %d" %
-                      (name, len(o_pools), len(r_pools)))
-            continue
-        site_fail = []
-        for i, ((ova, _, oword), (rva, _, rword)) in enumerate(
-                zip(o_pools, r_pools)):
-            if oword == rword:
-                continue
-            odesc = o.describe_word(oword)
-            rdesc = r.describe_word(rword)
-            if odesc == rdesc:
-                continue
-            site_fail.append((i, oword, odesc, rword, rdesc))
+        site_fail = site_failures(o, r, o_pools, r_pools)
         if not site_fail:
             match += 1
             continue
@@ -310,8 +427,12 @@ def main():
                       (name, kind, i, ow or 0, od, rw or 0, rd))
     print("pool audit: match %d  mismatch %d  missing %d" %
           (match, mismatch, missing))
+    print(line)
     if mismatches:
         print("MISMATCH:", " ".join(mismatches))
+    if mismatches or missing or not ok:
+        return 1
+    return 0
 
 
 if __name__ == "__main__":

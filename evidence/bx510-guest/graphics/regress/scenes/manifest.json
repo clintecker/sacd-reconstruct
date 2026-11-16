@@ -1,0 +1,1162 @@
+{
+  "schema": "sacd-ui-regress-scenes/1",
+  "generated": "2026-11-15T19:58:00-06:00",
+  "renderer": {
+    "path": "tools/sacd_ui.c",
+    "sha256": "8bf52cf15da68f0ebed8f77a35eb3aecb36a29ab133479bbec53d1e5e1328137",
+    "dump_enabled": true
+  },
+  "spec": {
+    "path": "/Users/you/code/sacd-reconstruct/tools/ui_layout_spec.json",
+    "sha256": "09f6c3f31f34b2f8a7cee8eeb2afd0baaf934e895b2b03656f35c7ef86fd7086"
+  },
+  "font": {
+    "path": "/Users/you/code/sacd-reconstruct/evidence/bx510/display-payload/sony-font.ttf",
+    "sha256": "98121878fc7fc85205aa6b62bd40d9fb478b3629e62ec4f947c80ec9830d7fd9"
+  },
+  "fixtures": {
+    "mtoc": {
+      "path": "/tmp/mtoc.bin",
+      "sha256": "cd90f21ce6ed0786acfe8eeca9d2177189e32f1c26bd9d143b718011a3b7494d"
+    },
+    "area1": {
+      "path": "/tmp/area1.bin",
+      "sha256": "add41ae42ea2f6979a8a35424caa01ca6c4cc621a2ccc2c800439bb840acd6c0"
+    },
+    "area2": {
+      "path": "/tmp/area2.bin",
+      "sha256": "a426d6833d0f67f6352c1cac5fd80272f0f3cbbb38f370c40a43c7bb68b496ff"
+    },
+    "area1_many_tracks": {
+      "path": "/Users/you/code/sacd-reconstruct/evidence/bx510-guest/graphics/regress/scenes/fixtures/area1-tracks9.bin",
+      "sha256": "87cc849e2073dba8c28f7713165c4724b904ab843b73df49cb53365536c9e2e6"
+    }
+  },
+  "scenes": [
+    {
+      "scene": "s1-full",
+      "about": "all three fixture TOC files \u2014 the default SIM scene",
+      "argv": [
+        "/tmp/mtoc.bin",
+        "/tmp/area1.bin",
+        "/tmp/area2.bin"
+      ],
+      "env": {},
+      "font": "/Users/you/code/sacd-reconstruct/evidence/bx510/display-payload/sony-font.ttf",
+      "geometry": [
+        1920,
+        1080
+      ],
+      "scale": 3,
+      "ppm_sha256": "9f24414161b865dc97a48642433604801f954a5d0d61697fffa2bc6b0e828dcc",
+      "determinism": {
+        "attempts": 2,
+        "plain_build_attempts": 2,
+        "control": "two consecutive renders must agree; the plain build must equal the dump build"
+      },
+      "cross_check_sha256": "9f24414161b865dc97a48642433604801f954a5d0d61697fffa2bc6b0e828dcc",
+      "source_sha256": "8bf52cf15da68f0ebed8f77a35eb3aecb36a29ab133479bbec53d1e5e1328137",
+      "spec_sha256": "09f6c3f31f34b2f8a7cee8eeb2afd0baaf934e895b2b03656f35c7ef86fd7086",
+      "spec_dump": {
+        "canvas": {
+          "w": 1920,
+          "h": 1080,
+          "scale": 3,
+          "logical": [
+            640,
+            360
+          ],
+          "pulse_hz": 2.0
+        },
+        "palette": {
+          "C_BG": 132612,
+          "C_PANELBG": 660496,
+          "C_FRAME": 45901,
+          "C_RULE": 18468,
+          "C_DIM": 686640,
+          "C_BODY": 5294200,
+          "C_PHOS": 2293606,
+          "C_BRIGHT": 14221280,
+          "C_CYAN": 3399935,
+          "C_MAGENTA": 16737996,
+          "C_AMBER": 16756736,
+          "C_RED": 16724804,
+          "C_GREY": 6322796
+        },
+        "regions": {
+          "frame": {
+            "name": "frame",
+            "colors": [
+              45901
+            ],
+            "sizes": [],
+            "x": 0,
+            "y": 0,
+            "w": 640,
+            "h": 360,
+            "draws": 4
+          },
+          "title": {
+            "name": "title",
+            "colors": [
+              2293606,
+              686640,
+              18468
+            ],
+            "sizes": [
+              17,
+              10
+            ],
+            "x": 12,
+            "y": 11,
+            "w": 616,
+            "h": 20,
+            "draws": 5875
+          },
+          "status": {
+            "name": "status",
+            "colors": [
+              14221280,
+              2293606,
+              5294200,
+              18468
+            ],
+            "sizes": [
+              11
+            ],
+            "x": 12,
+            "y": 38,
+            "w": 616,
+            "h": 43,
+            "draws": 13441
+          },
+          "panel_2ch": {
+            "name": "panel_2ch",
+            "colors": [
+              660496,
+              18468,
+              3399935,
+              686640,
+              14221280,
+              5294200
+            ],
+            "sizes": [
+              11,
+              9,
+              10
+            ],
+            "x": 12,
+            "y": 88,
+            "w": 304,
+            "h": 104,
+            "draws": 16037
+          },
+          "panel_multi": {
+            "name": "panel_multi",
+            "colors": [
+              660496,
+              18468,
+              16737996,
+              686640,
+              14221280,
+              5294200
+            ],
+            "sizes": [
+              11,
+              9,
+              10
+            ],
+            "x": 324,
+            "y": 88,
+            "w": 304,
+            "h": 104,
+            "draws": 17389
+          },
+          "rule_panels_end": {
+            "name": "rule_panels_end",
+            "colors": [
+              18468
+            ],
+            "sizes": [],
+            "x": 12,
+            "y": 196,
+            "w": 616,
+            "h": 1,
+            "draws": 1
+          },
+          "log": {
+            "name": "log",
+            "colors": [
+              686640,
+              5294200,
+              16756736
+            ],
+            "sizes": [
+              10
+            ],
+            "x": 12,
+            "y": 201,
+            "w": 163,
+            "h": 92,
+            "draws": 19530
+          },
+          "rule_log_end": {
+            "name": "rule_log_end",
+            "colors": [
+              18468
+            ],
+            "sizes": [],
+            "x": 12,
+            "y": 296,
+            "w": 616,
+            "h": 1,
+            "draws": 1
+          },
+          "summary": {
+            "name": "summary",
+            "colors": [
+              5294200,
+              6322796,
+              2293606
+            ],
+            "sizes": [
+              10,
+              9
+            ],
+            "x": 12,
+            "y": 302,
+            "w": 615,
+            "h": 46,
+            "draws": 17994
+          }
+        }
+      },
+      "ink": {
+        "frame": 0.021462,
+        "title": 0.01618,
+        "status": 0.034323,
+        "panel_2ch": 0.019579,
+        "panel_multi": 0.020591,
+        "rule_panels_end": 0.0,
+        "log": 0.019784,
+        "rule_log_end": 0.0,
+        "summary": 0.025331
+      },
+      "ink_px": {
+        "frame": 4902,
+        "title": 320,
+        "status": 1073,
+        "panel_2ch": 619,
+        "panel_multi": 651,
+        "rule_panels_end": 0,
+        "log": 1237,
+        "rule_log_end": 0,
+        "summary": 1002
+      },
+      "stdout_tail": [
+        "UI: font evidence/bx510/display-payload/sony-font.ttf",
+        "UI: wrote /Users/you/code/sacd-reconstruct/evidence/bx510-guest/graphics/regress/scenes/.cross-s1-full.ppm (1920x1080)"
+      ]
+    },
+    {
+      "scene": "s2-no-areas",
+      "about": "master TOC only: both panels take the 'no area TOC' path",
+      "argv": [
+        "/tmp/mtoc.bin",
+        "",
+        ""
+      ],
+      "env": {},
+      "font": "/Users/you/code/sacd-reconstruct/evidence/bx510/display-payload/sony-font.ttf",
+      "geometry": [
+        1920,
+        1080
+      ],
+      "scale": 3,
+      "ppm_sha256": "4ea9140b99b36d4a7944514385d85c2de44d723d0d8e30dd5ce89598510f04af",
+      "determinism": {
+        "attempts": 2,
+        "plain_build_attempts": 2,
+        "control": "two consecutive renders must agree; the plain build must equal the dump build"
+      },
+      "cross_check_sha256": "4ea9140b99b36d4a7944514385d85c2de44d723d0d8e30dd5ce89598510f04af",
+      "source_sha256": "8bf52cf15da68f0ebed8f77a35eb3aecb36a29ab133479bbec53d1e5e1328137",
+      "spec_sha256": "09f6c3f31f34b2f8a7cee8eeb2afd0baaf934e895b2b03656f35c7ef86fd7086",
+      "spec_dump": {
+        "canvas": {
+          "w": 1920,
+          "h": 1080,
+          "scale": 3,
+          "logical": [
+            640,
+            360
+          ],
+          "pulse_hz": 2.0
+        },
+        "palette": {
+          "C_BG": 132612,
+          "C_PANELBG": 660496,
+          "C_FRAME": 45901,
+          "C_RULE": 18468,
+          "C_DIM": 686640,
+          "C_BODY": 5294200,
+          "C_PHOS": 2293606,
+          "C_BRIGHT": 14221280,
+          "C_CYAN": 3399935,
+          "C_MAGENTA": 16737996,
+          "C_AMBER": 16756736,
+          "C_RED": 16724804,
+          "C_GREY": 6322796
+        },
+        "regions": {
+          "frame": {
+            "name": "frame",
+            "colors": [
+              45901
+            ],
+            "sizes": [],
+            "x": 0,
+            "y": 0,
+            "w": 640,
+            "h": 360,
+            "draws": 4
+          },
+          "title": {
+            "name": "title",
+            "colors": [
+              2293606,
+              686640,
+              18468
+            ],
+            "sizes": [
+              17,
+              10
+            ],
+            "x": 12,
+            "y": 11,
+            "w": 616,
+            "h": 20,
+            "draws": 5875
+          },
+          "status": {
+            "name": "status",
+            "colors": [
+              14221280,
+              2293606,
+              5294200,
+              18468
+            ],
+            "sizes": [
+              11
+            ],
+            "x": 12,
+            "y": 38,
+            "w": 616,
+            "h": 43,
+            "draws": 13441
+          },
+          "panel_2ch": {
+            "name": "panel_2ch",
+            "colors": [
+              660496,
+              18468,
+              6322796,
+              686640
+            ],
+            "sizes": [
+              11,
+              10
+            ],
+            "x": 12,
+            "y": 88,
+            "w": 304,
+            "h": 104,
+            "draws": 2255
+          },
+          "panel_multi": {
+            "name": "panel_multi",
+            "colors": [
+              660496,
+              18468,
+              6322796,
+              686640
+            ],
+            "sizes": [
+              11,
+              10
+            ],
+            "x": 324,
+            "y": 88,
+            "w": 304,
+            "h": 104,
+            "draws": 2690
+          },
+          "rule_panels_end": {
+            "name": "rule_panels_end",
+            "colors": [
+              18468
+            ],
+            "sizes": [],
+            "x": 12,
+            "y": 196,
+            "w": 616,
+            "h": 1,
+            "draws": 1
+          },
+          "log": {
+            "name": "log",
+            "colors": [
+              686640,
+              5294200,
+              16756736
+            ],
+            "sizes": [
+              10
+            ],
+            "x": 12,
+            "y": 201,
+            "w": 279,
+            "h": 80,
+            "draws": 20790
+          },
+          "rule_log_end": {
+            "name": "rule_log_end",
+            "colors": [
+              18468
+            ],
+            "sizes": [],
+            "x": 12,
+            "y": 296,
+            "w": 616,
+            "h": 1,
+            "draws": 1
+          },
+          "summary": {
+            "name": "summary",
+            "colors": [
+              5294200,
+              6322796,
+              2293606
+            ],
+            "sizes": [
+              10,
+              9
+            ],
+            "x": 12,
+            "y": 302,
+            "w": 615,
+            "h": 46,
+            "draws": 17327
+          }
+        }
+      },
+      "ink": {
+        "frame": 0.01665,
+        "title": 0.01618,
+        "status": 0.034323,
+        "panel_2ch": 0.00253,
+        "panel_multi": 0.003543,
+        "rule_panels_end": 0.0,
+        "log": 0.019832,
+        "rule_log_end": 0.0,
+        "summary": 0.024724
+      },
+      "ink_px": {
+        "frame": 3803,
+        "title": 320,
+        "status": 1073,
+        "panel_2ch": 80,
+        "panel_multi": 112,
+        "rule_panels_end": 0,
+        "log": 1240,
+        "rule_log_end": 0,
+        "summary": 978
+      },
+      "stdout_tail": [
+        "UI: font evidence/bx510/display-payload/sony-font.ttf",
+        "UI: wrote /Users/you/code/sacd-reconstruct/evidence/bx510-guest/graphics/regress/scenes/.cross-s2-no-areas.ppm (1920x1080)"
+      ]
+    },
+    {
+      "scene": "s3-session-fail",
+      "about": "the failed-session screen (red DISC line + red state chip)",
+      "argv": [
+        "/tmp/mtoc.bin",
+        "/tmp/area1.bin",
+        "/tmp/area2.bin"
+      ],
+      "env": {
+        "SACD_UI_SIM_FAIL": "1"
+      },
+      "font": "/Users/you/code/sacd-reconstruct/evidence/bx510/display-payload/sony-font.ttf",
+      "geometry": [
+        1920,
+        1080
+      ],
+      "scale": 3,
+      "ppm_sha256": "b43b1cc243bdab42b9fef1189e550922913bc490b30cc3fc5ed32a4151d0a9a5",
+      "determinism": {
+        "attempts": 2,
+        "plain_build_attempts": 2,
+        "control": "two consecutive renders must agree; the plain build must equal the dump build"
+      },
+      "cross_check_sha256": "b43b1cc243bdab42b9fef1189e550922913bc490b30cc3fc5ed32a4151d0a9a5",
+      "source_sha256": "8bf52cf15da68f0ebed8f77a35eb3aecb36a29ab133479bbec53d1e5e1328137",
+      "spec_sha256": "09f6c3f31f34b2f8a7cee8eeb2afd0baaf934e895b2b03656f35c7ef86fd7086",
+      "spec_dump": {
+        "canvas": {
+          "w": 1920,
+          "h": 1080,
+          "scale": 3,
+          "logical": [
+            640,
+            360
+          ],
+          "pulse_hz": 2.0
+        },
+        "palette": {
+          "C_BG": 132612,
+          "C_PANELBG": 660496,
+          "C_FRAME": 45901,
+          "C_RULE": 18468,
+          "C_DIM": 686640,
+          "C_BODY": 5294200,
+          "C_PHOS": 2293606,
+          "C_BRIGHT": 14221280,
+          "C_CYAN": 3399935,
+          "C_MAGENTA": 16737996,
+          "C_AMBER": 16756736,
+          "C_RED": 16724804,
+          "C_GREY": 6322796
+        },
+        "regions": {
+          "frame": {
+            "name": "frame",
+            "colors": [
+              45901
+            ],
+            "sizes": [],
+            "x": 0,
+            "y": 0,
+            "w": 640,
+            "h": 360,
+            "draws": 4
+          },
+          "title": {
+            "name": "title",
+            "colors": [
+              2293606,
+              686640,
+              18468
+            ],
+            "sizes": [
+              17,
+              10
+            ],
+            "x": 12,
+            "y": 11,
+            "w": 616,
+            "h": 20,
+            "draws": 5875
+          },
+          "status": {
+            "name": "status",
+            "colors": [
+              14221280,
+              2293606,
+              16724804,
+              6322796,
+              18468
+            ],
+            "sizes": [
+              11
+            ],
+            "x": 12,
+            "y": 38,
+            "w": 616,
+            "h": 43,
+            "draws": 10028
+          },
+          "panel_2ch": {
+            "name": "panel_2ch",
+            "colors": [
+              660496,
+              18468,
+              3399935,
+              686640,
+              14221280,
+              5294200
+            ],
+            "sizes": [
+              11,
+              9,
+              10
+            ],
+            "x": 12,
+            "y": 88,
+            "w": 304,
+            "h": 104,
+            "draws": 16037
+          },
+          "panel_multi": {
+            "name": "panel_multi",
+            "colors": [
+              660496,
+              18468,
+              16737996,
+              686640,
+              14221280,
+              5294200
+            ],
+            "sizes": [
+              11,
+              9,
+              10
+            ],
+            "x": 324,
+            "y": 88,
+            "w": 304,
+            "h": 104,
+            "draws": 17389
+          },
+          "rule_panels_end": {
+            "name": "rule_panels_end",
+            "colors": [
+              18468
+            ],
+            "sizes": [],
+            "x": 12,
+            "y": 196,
+            "w": 616,
+            "h": 1,
+            "draws": 1
+          },
+          "log": {
+            "name": "log",
+            "colors": [
+              686640,
+              5294200,
+              16756736
+            ],
+            "sizes": [
+              10
+            ],
+            "x": 12,
+            "y": 201,
+            "w": 163,
+            "h": 92,
+            "draws": 19530
+          },
+          "rule_log_end": {
+            "name": "rule_log_end",
+            "colors": [
+              18468
+            ],
+            "sizes": [],
+            "x": 12,
+            "y": 296,
+            "w": 616,
+            "h": 1,
+            "draws": 1
+          },
+          "summary": {
+            "name": "summary",
+            "colors": [
+              5294200,
+              6322796,
+              2293606,
+              16724804
+            ],
+            "sizes": [
+              10,
+              9
+            ],
+            "x": 12,
+            "y": 302,
+            "w": 615,
+            "h": 46,
+            "draws": 18047
+          }
+        }
+      },
+      "ink": {
+        "frame": 0.020284,
+        "title": 0.01618,
+        "status": 0.026006,
+        "panel_2ch": 0.019579,
+        "panel_multi": 0.020591,
+        "rule_panels_end": 0.0,
+        "log": 0.019784,
+        "rule_log_end": 0.0,
+        "summary": 0.025104
+      },
+      "ink_px": {
+        "frame": 4633,
+        "title": 320,
+        "status": 813,
+        "panel_2ch": 619,
+        "panel_multi": 651,
+        "rule_panels_end": 0,
+        "log": 1237,
+        "rule_log_end": 0,
+        "summary": 993
+      },
+      "stdout_tail": [
+        "UI: font evidence/bx510/display-payload/sony-font.ttf",
+        "UI: wrote /Users/you/code/sacd-reconstruct/evidence/bx510-guest/graphics/regress/scenes/.cross-s3-session-fail.ppm (1920x1080)"
+      ]
+    },
+    {
+      "scene": "s4-scale1",
+      "about": "640x360 (scale 1): scale independence",
+      "argv": [
+        "/tmp/mtoc.bin",
+        "/tmp/area1.bin",
+        "/tmp/area2.bin"
+      ],
+      "env": {
+        "SACD_UI_SCALE": "1"
+      },
+      "font": "/Users/you/code/sacd-reconstruct/evidence/bx510/display-payload/sony-font.ttf",
+      "geometry": [
+        640,
+        360
+      ],
+      "scale": 1,
+      "ppm_sha256": "1eaa3f78b518b6de15d105862001c9c199142faec7b07aa5f5b93245e01acc18",
+      "determinism": {
+        "attempts": 2,
+        "plain_build_attempts": 2,
+        "control": "two consecutive renders must agree; the plain build must equal the dump build"
+      },
+      "cross_check_sha256": "1eaa3f78b518b6de15d105862001c9c199142faec7b07aa5f5b93245e01acc18",
+      "source_sha256": "8bf52cf15da68f0ebed8f77a35eb3aecb36a29ab133479bbec53d1e5e1328137",
+      "spec_sha256": "09f6c3f31f34b2f8a7cee8eeb2afd0baaf934e895b2b03656f35c7ef86fd7086",
+      "spec_dump": {
+        "canvas": {
+          "w": 640,
+          "h": 360,
+          "scale": 1,
+          "logical": [
+            640,
+            360
+          ],
+          "pulse_hz": 2.0
+        },
+        "palette": {
+          "C_BG": 132612,
+          "C_PANELBG": 660496,
+          "C_FRAME": 45901,
+          "C_RULE": 18468,
+          "C_DIM": 686640,
+          "C_BODY": 5294200,
+          "C_PHOS": 2293606,
+          "C_BRIGHT": 14221280,
+          "C_CYAN": 3399935,
+          "C_MAGENTA": 16737996,
+          "C_AMBER": 16756736,
+          "C_RED": 16724804,
+          "C_GREY": 6322796
+        },
+        "regions": {
+          "frame": {
+            "name": "frame",
+            "colors": [
+              45901
+            ],
+            "sizes": [],
+            "x": 0,
+            "y": 0,
+            "w": 640,
+            "h": 360,
+            "draws": 4
+          },
+          "title": {
+            "name": "title",
+            "colors": [
+              2293606,
+              686640,
+              18468
+            ],
+            "sizes": [
+              17,
+              10
+            ],
+            "x": 12,
+            "y": 10,
+            "w": 617,
+            "h": 21,
+            "draws": 972
+          },
+          "status": {
+            "name": "status",
+            "colors": [
+              14221280,
+              2293606,
+              5294200,
+              18468
+            ],
+            "sizes": [
+              11
+            ],
+            "x": 12,
+            "y": 38,
+            "w": 616,
+            "h": 43,
+            "draws": 2452
+          },
+          "panel_2ch": {
+            "name": "panel_2ch",
+            "colors": [
+              660496,
+              18468,
+              3399935,
+              686640,
+              14221280,
+              5294200
+            ],
+            "sizes": [
+              11,
+              9,
+              10
+            ],
+            "x": 12,
+            "y": 88,
+            "w": 304,
+            "h": 104,
+            "draws": 2961
+          },
+          "panel_multi": {
+            "name": "panel_multi",
+            "colors": [
+              660496,
+              18468,
+              16737996,
+              686640,
+              14221280,
+              5294200
+            ],
+            "sizes": [
+              11,
+              9,
+              10
+            ],
+            "x": 324,
+            "y": 88,
+            "w": 304,
+            "h": 104,
+            "draws": 3220
+          },
+          "rule_panels_end": {
+            "name": "rule_panels_end",
+            "colors": [
+              18468
+            ],
+            "sizes": [],
+            "x": 12,
+            "y": 196,
+            "w": 616,
+            "h": 1,
+            "draws": 1
+          },
+          "log": {
+            "name": "log",
+            "colors": [
+              686640,
+              5294200,
+              16756736
+            ],
+            "sizes": [
+              10
+            ],
+            "x": 12,
+            "y": 201,
+            "w": 148,
+            "h": 92,
+            "draws": 3629
+          },
+          "rule_log_end": {
+            "name": "rule_log_end",
+            "colors": [
+              18468
+            ],
+            "sizes": [],
+            "x": 12,
+            "y": 296,
+            "w": 616,
+            "h": 1,
+            "draws": 1
+          },
+          "summary": {
+            "name": "summary",
+            "colors": [
+              5294200,
+              6322796,
+              2293606
+            ],
+            "sizes": [
+              10,
+              9
+            ],
+            "x": 12,
+            "y": 302,
+            "w": 615,
+            "h": 46,
+            "draws": 3403
+          }
+        }
+      },
+      "ink": {
+        "frame": 0.018494,
+        "title": 0.015623,
+        "status": 0.032052,
+        "panel_2ch": 0.021603,
+        "panel_multi": 0.021382,
+        "rule_panels_end": 0.0,
+        "log": 0.016138,
+        "rule_log_end": 0.0,
+        "summary": 0.013778
+      },
+      "ink_px": {
+        "frame": 4224,
+        "title": 309,
+        "status": 1002,
+        "panel_2ch": 683,
+        "panel_multi": 676,
+        "rule_panels_end": 0,
+        "log": 1009,
+        "rule_log_end": 0,
+        "summary": 545
+      },
+      "stdout_tail": [
+        "UI: font evidence/bx510/display-payload/sony-font.ttf",
+        "UI: wrote /Users/you/code/sacd-reconstruct/evidence/bx510-guest/graphics/regress/scenes/.cross-s4-scale1.ppm (640x360)"
+      ]
+    },
+    {
+      "scene": "s5-many-tracks",
+      "about": "area1 track_count forced to 9: six rows, the overflow row suppressed",
+      "argv": [
+        "/tmp/mtoc.bin",
+        "/Users/you/code/sacd-reconstruct/evidence/bx510-guest/graphics/regress/scenes/fixtures/area1-tracks9.bin",
+        "/tmp/area2.bin"
+      ],
+      "env": {},
+      "font": "/Users/you/code/sacd-reconstruct/evidence/bx510/display-payload/sony-font.ttf",
+      "geometry": [
+        1920,
+        1080
+      ],
+      "scale": 3,
+      "ppm_sha256": "8f6baec7a410cd3a9b249b13cc74d339f01cb831cb6d1c9c07f9cd8d6f2624d7",
+      "determinism": {
+        "attempts": 2,
+        "plain_build_attempts": 2,
+        "control": "two consecutive renders must agree; the plain build must equal the dump build"
+      },
+      "cross_check_sha256": "8f6baec7a410cd3a9b249b13cc74d339f01cb831cb6d1c9c07f9cd8d6f2624d7",
+      "source_sha256": "8bf52cf15da68f0ebed8f77a35eb3aecb36a29ab133479bbec53d1e5e1328137",
+      "spec_sha256": "09f6c3f31f34b2f8a7cee8eeb2afd0baaf934e895b2b03656f35c7ef86fd7086",
+      "spec_dump": {
+        "canvas": {
+          "w": 1920,
+          "h": 1080,
+          "scale": 3,
+          "logical": [
+            640,
+            360
+          ],
+          "pulse_hz": 2.0
+        },
+        "palette": {
+          "C_BG": 132612,
+          "C_PANELBG": 660496,
+          "C_FRAME": 45901,
+          "C_RULE": 18468,
+          "C_DIM": 686640,
+          "C_BODY": 5294200,
+          "C_PHOS": 2293606,
+          "C_BRIGHT": 14221280,
+          "C_CYAN": 3399935,
+          "C_MAGENTA": 16737996,
+          "C_AMBER": 16756736,
+          "C_RED": 16724804,
+          "C_GREY": 6322796
+        },
+        "regions": {
+          "frame": {
+            "name": "frame",
+            "colors": [
+              45901
+            ],
+            "sizes": [],
+            "x": 0,
+            "y": 0,
+            "w": 640,
+            "h": 360,
+            "draws": 4
+          },
+          "title": {
+            "name": "title",
+            "colors": [
+              2293606,
+              686640,
+              18468
+            ],
+            "sizes": [
+              17,
+              10
+            ],
+            "x": 12,
+            "y": 11,
+            "w": 616,
+            "h": 20,
+            "draws": 5875
+          },
+          "status": {
+            "name": "status",
+            "colors": [
+              14221280,
+              2293606,
+              5294200,
+              18468
+            ],
+            "sizes": [
+              11
+            ],
+            "x": 12,
+            "y": 38,
+            "w": 616,
+            "h": 43,
+            "draws": 13441
+          },
+          "panel_2ch": {
+            "name": "panel_2ch",
+            "colors": [
+              660496,
+              18468,
+              3399935,
+              686640,
+              14221280,
+              5294200
+            ],
+            "sizes": [
+              11,
+              9,
+              10
+            ],
+            "x": 12,
+            "y": 88,
+            "w": 304,
+            "h": 104,
+            "draws": 16034
+          },
+          "panel_multi": {
+            "name": "panel_multi",
+            "colors": [
+              660496,
+              18468,
+              16737996,
+              686640,
+              14221280,
+              5294200
+            ],
+            "sizes": [
+              11,
+              9,
+              10
+            ],
+            "x": 324,
+            "y": 88,
+            "w": 304,
+            "h": 104,
+            "draws": 17389
+          },
+          "rule_panels_end": {
+            "name": "rule_panels_end",
+            "colors": [
+              18468
+            ],
+            "sizes": [],
+            "x": 12,
+            "y": 196,
+            "w": 616,
+            "h": 1,
+            "draws": 1
+          },
+          "log": {
+            "name": "log",
+            "colors": [
+              686640,
+              5294200,
+              16756736
+            ],
+            "sizes": [
+              10
+            ],
+            "x": 12,
+            "y": 201,
+            "w": 163,
+            "h": 92,
+            "draws": 19527
+          },
+          "rule_log_end": {
+            "name": "rule_log_end",
+            "colors": [
+              18468
+            ],
+            "sizes": [],
+            "x": 12,
+            "y": 296,
+            "w": 616,
+            "h": 1,
+            "draws": 1
+          },
+          "summary": {
+            "name": "summary",
+            "colors": [
+              5294200,
+              6322796,
+              2293606
+            ],
+            "sizes": [
+              10,
+              9
+            ],
+            "x": 12,
+            "y": 302,
+            "w": 615,
+            "h": 46,
+            "draws": 17994
+          }
+        }
+      },
+      "ink": {
+        "frame": 0.021449,
+        "title": 0.01618,
+        "status": 0.034323,
+        "panel_2ch": 0.019579,
+        "panel_multi": 0.020591,
+        "rule_panels_end": 0.0,
+        "log": 0.019736,
+        "rule_log_end": 0.0,
+        "summary": 0.025331
+      },
+      "ink_px": {
+        "frame": 4899,
+        "title": 320,
+        "status": 1073,
+        "panel_2ch": 619,
+        "panel_multi": 651,
+        "rule_panels_end": 0,
+        "log": 1234,
+        "rule_log_end": 0,
+        "summary": 1002
+      },
+      "stdout_tail": [
+        "UI: font evidence/bx510/display-payload/sony-font.ttf",
+        "UI: wrote /Users/you/code/sacd-reconstruct/evidence/bx510-guest/graphics/regress/scenes/.cross-s5-many-tracks.ppm (1920x1080)"
+      ]
+    }
+  ]
+}

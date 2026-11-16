@@ -27,10 +27,14 @@ def main():
     ap.add_argument("--frames", type=int, default=40)
     ap.add_argument("--scale", type=int, default=640, help="output width for the GIF")
     ap.add_argument("--out", default="/tmp/hud_anim")
+    ap.add_argument("--ingest-dir", default=None,
+                    help="scenario dir of per-frame ev-NNN files (hud_scenarios.py)")
     a = ap.parse_args()
 
     tmp = tempfile.mkdtemp(prefix="hudanim-")
     env = dict(os.environ, HUD_RETRO="1", HUD_SIM_ANIM=tmp)
+    if a.ingest_dir:
+        env["HUD_INGEST_DIR"] = a.ingest_dir
     r = subprocess.run([a.sim, os.path.join(tmp, "last.ppm"), str(a.frames)],
                        capture_output=True, text=True, env=env)
     print(r.stdout.strip()[-200:] or r.stderr.strip()[-200:])

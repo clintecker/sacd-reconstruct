@@ -35,6 +35,19 @@ static uint8_t nfi_bus_read(Mt8560Nfi *n)
     return nand_getio(n->chip);
 }
 
+/* The machine model's own flag (BX510_TRACE=1) opens the NAND window too:
+ * without it this MemoryRegion logs nothing and no page can be named from a
+ * trace (decode/tagfix-mtd-trace.md §1 — 3.5 M lines, zero NFI accesses). */
+static bool nfi_traced(void)
+{
+    static int traced = -1;
+
+    if (traced < 0) {
+        traced = getenv("BX510_TRACE") != NULL;
+    }
+    return traced;
+}
+
 static void nfi_transfer(Mt8560Nfi *n, bool writing)
 {
     uint8_t data[NAND_PAGE + NAND_OOB];
@@ -53,6 +66,27 @@ static void nfi_transfer(Mt8560Nfi *n, bool writing)
     unsigned per_sector = NAND_OOB / sectors;
     unsigned metadata = MIN((n->page_fmt >> 6) & 31, MIN(per_sector, 16));
     MemTxResult tx;
+
+    /* row/col are the address registers case 0x30 pushes to the chip, and
+     * nand.c assembles them as addr = col | (row << 16) with
+     * PAGE(addr) = addr >> ADDR_SHIFT (ADDR_SHIFT = 16 for the 2048-byte page
+     * this board uses) — so the row register is the page the chip serves. The
+     * chip's own s->addr is not reachable from here. */
+    if (nfi_traced()) {
+        if (writing) {
+            qemu_log_mask(LOG_GUEST_ERROR,
+                          "nfi-xfer: wr cfg=%x ctrl=%x sectors=%u size=%u dma=%x"
+                          " aut=%u row=0x%x col=0x%x\n",
+                          n->cfg, n->control, sectors, size, n->dma, automatic,
+                          n->row, n->col);
+        } else {
+            qemu_log_mask(LOG_GUEST_ERROR,
+                          "nfi-xfer: rd cfg=%x ctrl=%x sectors=%u size=%u dma=%x"
+                          " aut=%u row=0x%x col=0x%x page=%u\n",
+                          n->cfg, n->control, sectors, size, n->dma, automatic,
+                          n->row, n->col, n->row);
+        }
+    }
 
     len = automatic ? size : size + NAND_OOB;
     if (writing) {
@@ -162,8 +196,18 @@ static void nfi_write(void *opaque, hwaddr off, uint64_t val, unsigned width)
             nfi_bus_write(n, false, true, n->row >> (8 * i));
         }
         break;
-    case 0x34: n->col = val; break;
-    case 0x38: n->row = val; break;
+    case 0x34:
+        n->col = val;
+        if (nfi_traced()) {
+            qemu_log_mask(LOG_GUEST_ERROR, "nfi: col=0x%x\n", (unsigned)val);
+        }
+        break;
+    case 0x38:
+        n->row = val;
+        if (nfi_traced()) {
+            qemu_log_mask(LOG_GUEST_ERROR, "nfi: row=0x%x\n", (unsigned)val);
+        }
+        break;
     case 0x50:
         for (i = 0; i < width; i++) {
             nfi_bus_write(n, false, false, val >> (8 * i));

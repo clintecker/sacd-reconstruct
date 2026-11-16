@@ -1,0 +1,6 @@
+cpio_070701: initrd_matches=0 offsets=[] rootfs_enc_matches=0 offsets=[]
+gzip_1f8b08: initrd_matches=0 offsets=[] rootfs_enc_matches=0 offsets=[]
+xz_fd377a585a00: initrd_matches=0 offsets=[] rootfs_enc_matches=0 offsets=[]
+zstd_28b52ffd: initrd_matches=0 offsets=[] rootfs_enc_matches=0 offsets=[]
+lz4_04224d18: initrd_matches=0 offsets=[] rootfs_enc_matches=0 offsets=[]
+squashfs_hsqs: initrd_matches=0 offsets=[] rootfs_enc_matches=0 offsets=[]

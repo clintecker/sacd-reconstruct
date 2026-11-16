@@ -1,0 +1,3 @@
+FIRE_RC=143
+Terminated
+/tmp/bx510-vm-fire.sh: 28: e: not found

@@ -1,0 +1,117 @@
+# bx510_ui_guest.sh.in — THE guest command of a UI fire, as a template.
+#
+# tools/bx510_ui_render.py renders this file into ONE line of guest shell:
+# tools/bx510-fire.sh's --guest-cmd channel takes exactly one command, so every
+# non-comment line below is joined with '; '. Keep the lines short and flat —
+# the C43 lesson (long one-liners get truncated by the guest shell) is what
+# shapes this file, and the whole thing must still fit one --guest-cmd arg.
+#
+# Placeholders (whitelist enforced by the renderer; an unknown @NAME@ is an
+# error, not a silent empty string):
+#   @SCALE@        fbdump pixel decimation (6 = 320x180 preview, 2 = 960x540)
+#   @DAEMON_WAIT@  seconds allowed for sacd_extract_160 to reach "active" (8)
+#   @UI_WAIT_MAX@  the BOUND on the first-frame marker wait, in seconds (90).
+#                  The wait itself is the marker: the UI writes
+#                  /res/ui-frame.done once its first frame is painted
+#                  (issue #13 — a fixed sleep was either shorter than the
+#                  UI's session, measured ~25 s with DISC_OPEN alone at 22 s
+#                  (c123/c126/c132), or wasted fire time).
+#                  This number is only the fallback: the loop gives up and
+#                  kills anyway after this many seconds, so a UI that never
+#                  paints cannot hang the fire.
+#   @CLIENT_LSN@   client read LBA (510 = the Master TOC)
+#   @CLIENT_CNT@   client read sector count (10)
+#   @UI_ARGS@      argv for ./sacd_ui (may be empty)
+#   @POOL_ARGS@    fbdump --pool geometry: "<byte-ofs> <w> <h>" (4096 1920 1080)
+#
+# MANDATORY INVARIANTS — the renderer REFUSES to emit a command that breaks
+# them, because a fire that breaks them still looks like a data problem:
+#   * the FA-latch clear (sr_fa_mode). c122f served ZERO FE traffic and died
+#     with "Not a ScarletBook disc!" purely because these two invocations were
+#     missing; the decode is dd-eio-loop.md §6.2 / daemon-read-despatch.md §3.
+#     Order matters: after sr_mod.ko is loaded (sr_probe re-arms sdev->changed)
+#     and before the daemon opens /dev/sr0 — a clear in the wrong place is
+#     thrown away.
+#   * the /tmp tmpfs: the daemon writes its embedded sacd_read.ko there and
+#     "Can not install modules" is the whole server startup (daemon-wiring §2).
+#   * a frame-egress step and the UI_SHOT_DONE marker: a fire whose capture
+#     step silently vanished would "pass" with nothing to look at.
+
+# 1. the VFS skeleton an init=/bin/sh guest does not have
+mkdir -p /tmp /res/tmp
+mount -t tmpfs tmpfs /tmp
+# 2. loopback, so the client leg reaches the daemon at 127.0.0.1:2002
+ifconfig lo 127.0.0.1 netmask 255.0.0.0 up
+# 3. the payload tgz: daemon + sacd_read.ko + sacdgate + client + UI + FB kit
+tar -xzf /res/shim/daemon_payload.tgz -C /res
+# 4. the SACD session — c122g's proven Connect/Release pair
+insmod /res/shim/bx510_cpsa_peer.ko
+insmod /res/shim/sacd_read.ko minor=201 compid=0
+rm -f /dev/sacd_read
+mknod /dev/sacd_read c 10 201
+/res/shim/sacdgate 0x40105301 /dev/sacd_read
+/res/shim/sacdgate 0x40105305 /dev/sacd_read
+# 5. THE FA-LATCH CLEAR (mandatory; see the header). The second invocation is
+#    the read-back AND the next /dev/sr0 open, which is what actually clears
+#    the driver latch (check_disk_change -> sr_media_change).
+/res/shim/sr_fa_mode /dev/sr0 clear
+/res/shim/sr_fa_mode /dev/sr0
+grep sr0 /res/proc/partitions
+# 6. the display: fbvirt is the fbdev this rig can read back (the player.local
+#    machine models no display controller; whatever registers fb0 first is the
+#    guest's own display driver). With the daemon stack resident fbvirt comes
+#    up as fb1, NOT fb0 (measured, run u1: "fbvirt: ... (fb1)"), so the node is
+#    bound to the index fbvirt actually got — a hard-coded minor 0 would dump
+#    the driver we cannot read. fusion.ko is what a DirectFB-drawing UI links
+#    against and is harmless for a raw-fbdev one.
+insmod /res/shim/bx510_fbvirt.ko
+cat /res/proc/fb
+set -- $(grep fbvirt /res/proc/fb); mknod /dev/fb0 c 29 $1
+insmod /lib/modules/2.6.35/BDP/fusion.ko
+set -- $(grep fusion /res/proc/devices); mknod /dev/fusion0 c $1 0
+# 7. the daemon: -S only, stdin NOT a tty or server_loop skips the poll
+cd /res/shim
+./sacd_extract_160 -S </dev/null >/res/daemon.out 2>&1 &
+echo DAEMON_PID=$!
+sleep @DAEMON_WAIT@
+cat /res/daemon.out; echo DAEMON_OUT_END
+# 8. the client leg — real disc data through the daemon's port-2002 protocol
+./sacdclient 127.0.0.1 @CLIENT_LSN@ @CLIENT_CNT@ /tmp/client-toc.bin
+echo CLIENT_RC=$?
+md5sum /tmp/client-toc.bin
+# 9. the UI under test, backgrounded so a render loop cannot wedge the fire,
+#    then KILLED before its log is read: a live UI keeps appending UI-EV lines,
+#    and `cat` of a file that never stops growing never returns (measured, run
+#    uiloop2: the whole fire sat in `cat /res/ui.out` until the probe timeout).
+#    The KILL is gated on the UI's OWN first-frame marker, not on a sleep: the
+#    UI writes /res/ui-frame.done after its first painted frame, and the
+#    session before that frame is a 22 s DISC_OPEN (c123/c132/c133), so a
+#    fixed sleep is either too short to find a frame (uiloop7's honest black
+#    verdict) or pure wasted fire time. @UI_WAIT_MAX@ bounds the wait so a UI
+#    that never paints still dies here instead of hanging the fire.
+rm -f /res/ui-frame.done
+./sacd_ui @UI_ARGS@ >/res/ui.out 2>&1 &
+U=$!
+echo UI_PID=$U
+i=0; while [ ! -f /res/ui-frame.done ] && [ $i -lt @UI_WAIT_MAX@ ]; do sleep 1; i=$((i+1)); done
+echo UI_WAIT_ITERS=$i
+kill $U 2>/dev/null
+sleep 1
+cat /res/ui.out; echo UI_OUT_END
+# 10. frame egress: both buffers as RGB888 hex over the UART. The fbdev smem
+#     is where a raw painter writes; the pool primary is where a DirectFB
+#     app's surface lands. Dumping both is what tells the UI author which one
+#     their frame reached — and the shot step's luminance verdict names it.
+#     --rows is mandatory in practice: on a busy guest the kernel's console
+#     writers interleave into one long FBPIX line and truncate it mid-hex
+#     (c123c: the dump died at 1016 of 230400 pixels). One line per sampled
+#     row confines the damage to a row, and the decoder counts what was lost.
+#     UI_SCALE tells the decoder the row step (no guessing from the deltas).
+echo UI_SCALE=@SCALE@
+./fbdump --rows /dev/fb0 @SCALE@ >/res/fb-fbdev.txt 2>&1
+echo UI_DUMP_FBDEV=$?
+cat /res/fb-fbdev.txt; echo UI_FBDEV_END
+./fbdump --rows --pool /dev/fb0 @SCALE@ @POOL_ARGS@ >/res/fb-pool.txt 2>&1
+echo UI_DUMP_POOL=$?
+cat /res/fb-pool.txt; echo UI_POOL_END
+echo UI_SHOT_DONE

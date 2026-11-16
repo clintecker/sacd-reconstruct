@@ -1,0 +1,75 @@
+# bx510_client_a_reconnect.sh.in — issue #7 item 1: reconnect + repeat read.
+#
+# The listener-reuse check: the SAME daemon (never restarted) must accept a
+# fresh client session after the first one closes, and serve the same read
+# identically. Three sessions in one fire, all against the live Firebird disc:
+#
+#   S1: LBA 510 x10  — the Master TOC bundle, oracle 45ccd7df… (c122's PASS)
+#   S2: LBA 532104 x1 — a fresh connection, mid mc-area, oracle 9ed18b47…
+#   S3: LBA 510 x10  — the repeat: same read as S1 on a third connection,
+#       md5 must equal S1's (the listener was reused, no state carried over)
+#
+# Between sessions the daemon's status line is captured: after DISC_CLOSE the
+# daemon must report "Client none." again (client_connected cleared) before
+# the next connect — that is the reuse precondition, not a guess.
+#
+# No UI in this fire (the client legs are the artifact); the fbvirt + fbdump
+# block stays because the renderer's invariants require the egress path and
+# the UI_SHOT_DONE marker in every fire of this lane.
+#
+# Placeholders: @SCALE@ @DAEMON_WAIT@ @POOL_ARGS@ (renderer whitelist; the read
+# geometry below is this template's own constant).
+# Oracles: decode/client-leg-oracles.md.
+
+# 1. the VFS skeleton an init=/bin/sh guest does not have
+mkdir -p /tmp /res/tmp
+mount -t tmpfs tmpfs /tmp
+# 2. loopback, so the client leg reaches the daemon at 127.0.0.1:2002
+ifconfig lo 127.0.0.1 netmask 255.0.0.0 up
+# 3. the payload tgz: daemon + sacd_read.ko + sacdgate + client + FB kit
+tar -xzf /res/shim/daemon_payload.tgz -C /res
+# 4. the SACD session — c122g's proven Connect/Release pair
+insmod /res/shim/bx510_cpsa_peer.ko
+insmod /res/shim/sacd_read.ko minor=201 compid=0
+rm -f /dev/sacd_read
+mknod /dev/sacd_read c 10 201
+/res/shim/sacdgate 0x40105301 /dev/sacd_read
+/res/shim/sacdgate 0x40105305 /dev/sacd_read
+# 5. THE FA-LATCH CLEAR (mandatory — c122f served zero FE traffic without it)
+/res/shim/sr_fa_mode /dev/sr0 clear
+/res/shim/sr_fa_mode /dev/sr0
+grep sr0 /res/proc/partitions
+# 6. fbvirt (invariant: node bound to fbvirt's own index)
+insmod /res/shim/bx510_fbvirt.ko
+cat /res/proc/fb
+set -- $(grep fbvirt /res/proc/fb); mknod /dev/fb0 c 29 $1
+# 7. the daemon
+cd /res/shim
+./sacd_extract_160 -S </dev/null >/res/daemon.out 2>&1 &
+echo DAEMON_PID=$!
+sleep @DAEMON_WAIT@
+cat /res/daemon.out; echo DAEMON_OUT_END
+# 8. SESSION 1 — Master TOC, oracle 45ccd7dfbf433a79d28e877d7441677c
+./sacdclient 127.0.0.1 510 10 /tmp/s1.bin
+echo S1_RC=$?
+md5sum /tmp/s1.bin; echo S1_MD5_END
+cat /res/daemon.out; echo DAEMON_MID_END
+# 9. SESSION 2 — fresh connection, mid mc-area single, oracle 9ed18b47f67232ea972515df65cb6ac5
+./sacdclient 127.0.0.1 532104 1 /tmp/s2.bin
+echo S2_RC=$?
+md5sum /tmp/s2.bin; echo S2_MD5_END
+cat /res/daemon.out; echo DAEMON_MID2_END
+# 10. SESSION 3 — the REPEAT: same read as session 1, third connection
+./sacdclient 127.0.0.1 510 10 /tmp/s3.bin
+echo S3_RC=$?
+md5sum /tmp/s3.bin; echo S3_MD5_END
+cat /res/daemon.out; echo DAEMON_END_END
+# 11. frame egress (invariants; no UI drew — a black frame is expected here)
+echo UI_SCALE=@SCALE@
+./fbdump --rows /dev/fb0 @SCALE@ >/res/fb-fbdev.txt 2>&1
+echo UI_DUMP_FBDEV=$?
+cat /res/fb-fbdev.txt; echo UI_FBDEV_END
+./fbdump --rows --pool /dev/fb0 @SCALE@ @POOL_ARGS@ >/res/fb-pool.txt 2>&1
+echo UI_DUMP_POOL=$?
+cat /res/fb-pool.txt; echo UI_POOL_END
+echo UI_SHOT_DONE

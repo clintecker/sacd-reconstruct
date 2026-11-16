@@ -1,0 +1,20 @@
+[35mWARN:[0m using oba to load the syminfo from different mapaddress
+[33mINFO:[0m Analyze all flags starting with sym. and entry0 (aa)
+[33mINFO:[0m Analyze imports (af@@@i)
+[33mINFO:[0m Analyze symbols (af@@@s)
+[33mINFO:[0m Analyze all functions arguments/locals (afva@@F)
+[33mINFO:[0m Analyze function calls (aac)
+[35mWARN:[0m Cannot find basic block case for jmptbl switch from 0x04f25158 bbdelta = 8. Try -e anal.jmptbl.split=true and let us know
+[33mINFO:[0m find and analyze function preludes (aap)
+[33mINFO:[0m Analyze len bytes of instructions for references (aar)
+[33mINFO:[0m Finding and parsing C++ vtables (avrr)
+[33mINFO:[0m Analyzing methods (af @@ method.*)
+[33mINFO:[0m Emulate functions to find computed references (aaef)
+[33mINFO:[0m Recovering local variables (afva@@@F)
+[33mINFO:[0m Type matching analysis for all functions (aaft)
+[33mINFO:[0m Propagate noreturn information (aanr)
+[33mINFO:[0m Use -AA or aaaa to perform additional experimental analysis
+[33mINFO:[0m Finding xrefs in noncode sections (e anal.in=io.maps.x; aav)
+[33mINFO:[0m aav: 0x04f00000-0x04f4717c in 0x4f00000-0x4f4717c
+fcn.04f1f748 0x4f1f760 [DATA:r--] ldr[38;2;204;204;204m r0[0m,[38;2;193;156;0m[38;2;193;156;0m str.initrd_1[0m
+fcn.04f1f748 0x4f1f76c [DATA:r--] mov[38;2;204;204;204m r6[0m,[38;2;204;204;204m r0[0m

@@ -1,0 +1,7 @@
+cpio_070701: matches=0 offsets=[]
+cpio_070702: matches=0 offsets=[]
+gzip_1f8b08: matches=1 offsets=[17365]
+xz_fd377a585a00: matches=0 offsets=[]
+zstd_28b52ffd: matches=0 offsets=[]
+lz4_04224d18: matches=0 offsets=[]
+squashfs_hsqs: matches=0 offsets=[]

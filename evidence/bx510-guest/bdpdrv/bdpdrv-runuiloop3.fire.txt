@@ -1,0 +1,47 @@
+/tmp/bx510_bdpdrv_stub_probe.py:570: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  "ts_utc": __import__("datetime").datetime.utcnow().isoformat() + "Z",
+275456 arg=5 caller=i4VFDIndirectSIFCmdRegMode
+[IDE]cache_avail_cnt = 2, cache_fs_cnt = 0
+[IDE]cache_avail_cnt = 2, cache_fs_cnt = 0
+[OSAL_STUB] x_thread_delay #275712 arg=10 caller=IRRC_DataProcessingThread
+[IDE]cache_avail_cnt = 2, cache_fs_cnt = 0
+[IDE]cache_avail_cnt = 2, cache_fs_cnt = 0
+[OSAL_STUB] x_thread_delay #275968 arg=10 caller=IRRC_DataProcessingThread
+[IDE]cache_avail_cnt = 2, cache_fs_cnt = 0
+[IDE]cache_avail_cnt = 2, cache_fs_cnt = 0
+[IDE]cache_avail_cnt = 2, cache_fs_cnt = 0
+[OSAL_STUB] x_thread_delay #276224 arg=100 caller=VFD_CmdProcThread
+[IDE]cache_avail_cnt = 2, cache_fs_cnt = 0
+[IDE]cache_avail_cnt = 2, cache_fs_cnt = 0
+[OSAL_STUB] x_thread_delay #276480 arg=100 caller=VFD_CmdProcThread
+[IDE]cache_avail_cnt = 2, cache_fs_cnt = 0
+[IDE]cache_avail_cnt = 2, cache_fs_cnt = 0
+[OSAL_STUB] x_sema_lock called #21504
+[OSAL_STUB] x_thread_delay #276736 arg=100 caller=VFD_CmdProcThread
+[IDE]cache_avail_cnt = 2, cache_fs_cnt = 0
+[IDE]cache_avail_cnt = 2, cache_fs_cnt = 0
+[OSAL_STUB] x_thread_delay #276992 arg=100 caller=VFD_CmdProcThread
+[IDE]cache_avail_cnt = 2, cache_fs_cnt = 0
+[IDE]cache_avail_cnt = 2, cache_fs_cnt = 0
+[OSAL_STUB] Assert x761856 total (last: custom/sony/src/driver/ir/irrx_if.c:2093)
+[OSAL_STUB] x_thread_delay #277248 arg=100 caller=VFD_CmdProcThread
+[IDE]cache_avail_cnt = 2, cache_fs_cnt = 0
+[IDE]cache_avail_cnt = 2, cache_fs_cnt = 0
+[OSAL_STUB] x_thread_delay #277504 arg=10 caller=IRRC_DataProcessingThread
+[IDE]cache_avail_cnt = 2, cache_fs_cnt = 0
+[IDE]cache_avail_cnt = 2, cache_fs_cnt = 0
+[OSAL_STUB] x_thread_delay #277760 arg=10 caller=IRRC_DataProcessingThread
+[IDE]cache_avail_cnt = 2, cache_fs_cnt = 0
+[IDE]cache_avail_cnt = 2, cache_fs_cnt = 0
+[OSAL_STUB] x_thread_delay #278016 arg=150 caller=_sircs_key_proc_thread
+[IDE]cache_avail_cnt = 2, cache_fs_cnt = 0
+[IDE]cache_avail_cnt = 2, cache_fs_cnt = 0
+[OSAL_STUB] x_thread_delay #278272 arg=10 caller=IRRC_DataProcessingThread
+[IDE]cache_avail_cnt = 2, cache_fs_cnt = 0
+[IDE]cache_avail_cnt = 2, cache_fs_cnt = 0
+[IDE]cache_avail_cnt = 2, cache_fs_cnt = 0
+[OSAL_STUB] x_thread_delay #278528 arg=10 caller=IRRC_DataProcessingThread
+[IDE]cache_avail_cnt = 2, cache_fs_cnt = 0
+[IDE]cach
+probe incomplete: STUB_DONE marker never appeared (artifacts written)
+FIRE_RC=1

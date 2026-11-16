@@ -141,3 +141,31 @@ one that makes it a *monitor*; H2 is the one that makes it *the product*.
    out of deep-blank).
 4. How much of the scene can be repainted from a dirty-rect list before the
    cost of tracking exceeds the savings.
+
+## H3 status (2026-11-06): host push — sender + parser + panel line SHIPPED
+
+The T2 sender and the HUD-side parser/render now exist and round-trip on the
+Mac (no VM needed):
+
+- **Sender**: `tools/hud_push.py` (stdlib-only). Wire grammar documented in
+  its header, one datagram per line to `<host>:20023`:
+  `RANGE done=<n> total=<n>`, `RATE mbs=<x.x>`, `VERIFY status=ok|fail|run`,
+  `ETA s=<n>`. `--demo` replays a plausible capture progression; `--selftest`
+  loopbacks the whole grammar over real UDP.
+- **HUD parser**: `host_push_parse()` in `tools/bx510_sacd_hud.c`, called
+  first in `udp_poll()`; unknown lines keep the legacy `READ lsn=...`
+  handling. RANGE/VERIFY are echoed into the event stream (a `status=fail`
+  verify lights the ERROR class in the event matrix); RATE/ETA only update
+  the panels.
+- **Render**: one `HOST ... VFY ...` line in the legacy scene's TELEMETRY
+  panel and two compact rows (`H<nn>%  E<nnns>` / `VFY <status>`) in the
+  LCARS retro scene's telemetry panel.
+- **Selftest**: `tools/test_hud_push.py` — three legs: formatter/parser
+  mirror, pusher loopback over real UDP, and a HUD_SIM build (`HUD_INGEST`
+  hook) that feeds the same lines through the REAL C parser and asserts the
+  rendered frame changes in C_CYAN. Passes `uv run pytest -m "not smoke"`.
+
+INFERRED, not yet VERIFIED on hardware: the guest UDP socket path
+(`udp_open`/`udp_poll` in the live DirectFB loop) and the panel photo of the
+host line — those need the next on-player session; the parse function itself
+is shared and machine-verified Mac-side.

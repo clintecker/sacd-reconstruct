@@ -1,0 +1,12 @@
+4949882:bx510: FE READ 28 lba=745 nsec=128: 0x5c404=264192 means 2064 bytes per sector, not 2048 — taking the descriptor length
+4949883:bx510: FE READ 28 lba=745 nsec=128 len=264192 frame=2064 -> phys 14880000 (descriptor DMA)
+6382304:bx510: FE READ 28 lba=600 nsec=128: 0x5c404=264192 means 2064 bytes per sector, not 2048 — taking the descriptor length
+6382305:bx510: FE READ 28 lba=600 nsec=128 len=264192 frame=2064 -> phys 14880000 (descriptor DMA)
+6729582:bx510: FE READ 28 lba=984 nsec=128: 0x5c404=264192 means 2064 bytes per sector, not 2048 — taking the descriptor length
+6729583:bx510: FE READ 28 lba=984 nsec=128 len=264192 frame=2064 -> phys 14880000 (descriptor DMA)
+7750606:bx510: FE READ 28 lba=2136 nsec=64: 0x5c404=132096 means 2064 bytes per sector, not 2048 — taking the descriptor length
+7750607:bx510: FE READ 28 lba=2136 nsec=64 len=132096 frame=2064 -> phys 14880000 (descriptor DMA)
+0
+72
+bx510: FE READ 28 lba=745 nsec=128: 0x5c404=264192 means 2064 bytes per sector, not 2048 — taking the descriptor length
+bx510: FE READ 28 lba=745 nsec=128 len=264192 frame=2064 -> phys 14880000 (descriptor DMA)

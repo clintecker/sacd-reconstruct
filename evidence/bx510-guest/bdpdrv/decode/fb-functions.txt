@@ -1,0 +1,70 @@
+# fb-functions.txt — owning function + instruction address per finding
+# bdpdrv.ko sha256 6604f6cd6c204c3399ac047f389f47162b06a3f6576159f21b4e8aaf3a72cf54
+# addresses are SECTION-RELATIVE (ET_REL); regenerate with fb_decode_functions.py
+# section     addr        owner                              finding
+  .text       0x01460b4  _mt8530fb_probe+0x14               ldr r0,[_fb_info] -> the argument to register_framebuffer
+  .text       0x01460b8  _mt8530fb_probe+0x18               register_framebuffer(&_fb_info): the ONLY registration site
+  .text       0x0147594  _mt8530fb_probe_uninit+0x8         unregister_framebuffer(&_fb_info), from _mt8530fb_probe_uninit
+  .text       0x0146118  _mt8530fb_init_fbinfo+0x0          _mt8530fb_init_fbinfo: builds var/fix/fbops on the single _fb_info
+  .text       0x0146140  _mt8530fb_init_fbinfo+0x28         str r7,[t_pal+0x720] -> fb_info+0x21c fbops = &_mt8530fb_ops
+  .text       0x0146160  _mt8530fb_init_fbinfo+0x48         str r3,[t_pal+0x738] -> fb_info+0x234 pseudo_palette = &pseudo_palette
+  .text       0x0146164  _mt8530fb_init_fbinfo+0x4c         fb_info.flags = 1
+  .text       0x014616c  _mt8530fb_init_fbinfo+0x54         memcpy(fb_info+0xc0 = fix.id, "mt8530", 7)
+  .text       0x01461a0  _mt8530fb_init_fbinfo+0x88         fix.type = 0 (FB_TYPE_PACKED_PIXELS), fix.type_aux = 0
+  .text       0x01461a8  _mt8530fb_init_fbinfo+0x90         fix.line_length zeroed (rewritten with the real value at 0x14621c)
+  .text       0x01461b4  _mt8530fb_init_fbinfo+0x9c         __memzero(var = fb_info+0x20, 160)
+  .text       0x01461c0  _mt8530fb_init_fbinfo+0xa8         xres/line_length/bpp derived from the private `fbinfo` struct
+  .text       0x01461fc  _mt8530fb_init_fbinfo+0xe4         var.yres_virtual = 2 * yres  (double buffered)
+  .text       0x0146204  _mt8530fb_init_fbinfo+0xec         bitfield setup: R8 G8 B8 A8 (lengths 8, offsets 0/8/16/24)
+  .text       0x014621c  _mt8530fb_init_fbinfo+0x104        fix.line_length = xres*bits/8
+  .text       0x014622c  _mt8530fb_init_fbinfo+0x114        var.bits_per_pixel = 8 * bytesperpixel
+  .text       0x0146254  _mt8530fb_init_fbinfo+0x13c        var.vmode = 0 (cleared by the memzero, never set here)
+  .text       0x01460a0  _mt8530fb_probe+0x0                _mt8530fb_probe
+  .text       0x01460f4  _mt8530fb_probe+0x54               log "_mt8530fb_probe() fail: cannot register mt53fb!"
+  .text       0x0145e88  _mt8530fb_init+0x0                 _mt8530fb_init(var): copies 160 B fb_var_screeninfo from USER space
+  .text       0x0145ecc  _mt8530fb_init+0x44                __copy_from_user(sp, arg, 160)
+  .text       0x0145f04  _mt8530fb_init+0x7c                _mt8530fb_check_var(var, _fb_info)
+  .text       0x0145f78  _mt8530fb_init+0xf0                vmode switch (var->vmode at sp+0x84) -> colormode
+  .text       0x0145fd8  _mt8530fb_init+0x150               _mt8530fb_getbytesperpixel(colormode)
+  .text       0x0145ff0  _mt8530fb_init+0x168               fbinfo.line_length = xres * bytesperpixel
+  .text       0x01459e8  _mt8530fb_open+0x0                 _mt8530fb_open: first-open allocates the whole surface
+  .text       0x0145a48  _mt8530fb_open+0x60                x_alloc_aligned_ch1_mem(0x400000*n, 4096) type 5
+  .text       0x0145af4  _mt8530fb_open+0x10c               x_alloc_aligned_ch2_mem(0x400000*n, 4096) type 6
+  .text       0x0145ba8  _mt8530fb_open+0x1c0               x_mem_aligned_alloc(0x400000*n, 4096) type 7
+  .text       0x0145c40  _mt8530fb_open+0x258               x_mem_valloc(0x1800000) type 8 = the 24 MiB general pool
+  .text       0x0145cc4  _mt8530fb_open+0x2dc               x_kmem_create_handle(buf, 0x1800000, 8)
+  .text       0x0145dd4  _mt8530fb_open+0x3ec               fix.smem_start = pool.addr[0] + 0x40000000
+  .text       0x0145de0  _mt8530fb_open+0x3f8               fix.smem_len = 0x1000000 (16 MiB)
+  .text       0x0145de4  _mt8530fb_open+0x3fc               fb_info.screen_base = pool.addr[0]
+  .text       0x01455d8  _mt8530fb_mmap+0x0                 _mt8530fb_mmap: class dispatch by vma LENGTH
+  .text       0x01455e8  _mt8530fb_mmap+0x10                length == gu4GfxCmdBufLen -> gfx command ring path
+  .text       0x0145634  _mt8530fb_mmap+0x5c                length == 4096 -> _pcDfbDebugInfo page path
+  .text       0x0145694  _mt8530fb_mmap+0xbc                idx = (length>>12)&0xF, valid 0..3
+  .text       0x01456a8  _mt8530fb_mmap+0xd0                vma->vm_end -= idx*0x1000
+  .text       0x0145758  _mt8530fb_mmap+0x180               remap_pfn_range(vma, vm_start, pool.addr[idx]>>12, pool.size[idx], prot)
+  .text       0x0145860  _mt8530fb_mmap+0x288               remap_pfn_range per-page loop (page-table walk path, fmt==8)
+  .text       0x0146a84  _mt8530fb_ioctl+0x0                _mt8530fb_ioctl: 17-command compare chain
+  .text       0x0146c7c  _mt8530fb_ioctl+0x1f8              0x4627 SET: __copy_from_user(68 B)
+  .text       0x0145e88  _mt8530fb_init+0x0                 0x4630 INIT -> _mt8530fb_init(arg)
+  .text       0x0147320  _mt8530fb_ioctl+0x89c              0x4652 GETMULTIPOOL: __copy_to_user(arg, sp, 88)
+  .text       0x014737c  _mt8530fb_ioctl+0x8f8              0x464f GETCMDBUFLEN -> mt8530fb_CmdBuf_GetLen
+  .text       0x0147388  _mt8530fb_ioctl+0x904              0x464d CHECKFLUSH -> mt8530fb_CmdBuf_WaitDone
+  .text       0x0147370  _mt8530fb_ioctl+0x8ec              0x4651 DISPATCHHW -> mt8530fb_CmdBuf_DispatchHw
+  .text       0x0146bf0  _mt8530fb_ioctl+0x16c              0x462d drawline_ioctl   (GX ioctl form)
+  .text       0x0146c04  _mt8530fb_ioctl+0x180              0x462f drawrect_ioctl
+  .text       0x0146c28  _mt8530fb_ioctl+0x1a4              0x4620 fillrect_ioctl
+  .text       0x0146c3c  _mt8530fb_ioctl+0x1b8              0x4621 copyarea_ioctl
+  .text       0x0146c50  _mt8530fb_ioctl+0x1cc              0x4622 imageblit_ioctl  (fb_imageblit is NULL - blit is ioctl-only)
+  .text       0x01473ac  _mt8530fb_ioctl+0x928              default: log + return 0 (unknown ioctl is NOT an error)
+  .text       0x014596c  _mt8530fb_set_par+0x0              _mt8530fb_set_par: fix.line_length = var.xres*var.bpp/8, bpp in {1,2,4,8,16,32}
+  .text       0x01458ec  _mt8530fb_pan_display+0x0          _mt8530fb_pan_display: OsdFlipPlaneInVsync(fbinfo.plane, 1, buf[yoffset?1:0])
+  .text       0x014679c  mt8530_OSD_init+0x0                mt8530_OSD_init (reached from the ioctl INIT path)
+  .text       0x02f7d00  chip_cap_kinit+0x10                chip_cap_kinit: cdev_init/cdev_add (chardev 1 of 5)
+  .text       0x02f8008  wa_kinit+0x10                      wa_kinit: cdev_init/cdev_add (chardev 2 of 5)
+  .text       0x02f8134  usr_static_mem_kinit+0x10          usr_static_mem_kinit: cdev_init/cdev_add (chardev 3 of 5)
+  .text       0x02f8328  tz_intf_kinit+0x10                 tz_intf_kinit: cdev_init/cdev_add (chardev 4 of 5)
+  .text       0x030eea8  MW_IRRX_Init+0x20                  MW_IRRX_Init: cdev_init/cdev_add (chardev 5 of 5)
+  .text       0x02f8578  vPmInit+0x8                        vPmInit: device_register_proprietary (the pm node)
+  .init.text  0x00006ec  SIF_SW_Init+0x124                  SIF_SW_Init: cdev_init/cdev_add (SIF chardev)
+  .text       0x030ec9c  IRRC_DataProcessingThread+0x0      IRRC_DataProcessingThread: the thread live after bootup
+  .text       0x030ef04  MW_IRRX_Init+0x7c                  MW_IRRX_Init: x_thread_create of the IR thread

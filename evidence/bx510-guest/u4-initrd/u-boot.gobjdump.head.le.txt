@@ -1,0 +1,40 @@
+
+evidence/bx510-guest/u4-initrd/pulled/u-boot.bin:     file format binary
+
+
+Disassembly of section .data:
+
+00000000 <.data>:
+       0:	ea000016 	b	0x60
+       4:	e59ff014 	ldr	pc, [pc, #20]	@ 0x20
+       8:	e59ff014 	ldr	pc, [pc, #20]	@ 0x24
+       c:	e59ff014 	ldr	pc, [pc, #20]	@ 0x28
+      10:	e59ff014 	ldr	pc, [pc, #20]	@ 0x2c
+      14:	e59ff014 	ldr	pc, [pc, #20]	@ 0x30
+      18:	e59ff014 	ldr	pc, [pc, #20]	@ 0x34
+      1c:	e59ff014 	ldr	pc, [pc, #20]	@ 0x38
+      20:	04f00100 	ldrbteq	r0, [r0], #256	@ 0x100
+      24:	04f00160 	ldrbteq	r0, [r0], #352	@ 0x160
+      28:	04f001c0 	ldrbteq	r0, [r0], #448	@ 0x1c0
+      2c:	04f00220 	ldrbteq	r0, [r0], #544	@ 0x220
+      30:	04f00340 	ldrbteq	r0, [r0], #832	@ 0x340
+      34:	04f003a0 	ldrbteq	r0, [r0], #928	@ 0x3a0
+      38:	04f003e0 	ldrbteq	r0, [r0], #992	@ 0x3e0
+      3c:	12345678 	eorsne	r5, r4, #120, 12	@ 0x7800000
+      40:	9b10ade4 	blls	0x42b7d8
+      44:	04f00000 	ldrbteq	r0, [r0], #0
+      48:	04f00000 	ldrbteq	r0, [r0], #0
+      4c:	04f4717c 	ldrbteq	r7, [r4], #380	@ 0x17c
+      50:	04f9352c 	ldrbteq	r3, [r9], #1324	@ 0x52c
+      54:	4eda01b9 	mrcmi	1, 6, r0, cr10, cr9, {5}
+      58:	0badc0de 	bleq	0xfeb703d8
+      5c:	0badc0de 	bleq	0xfeb703dc
+      60:	e10f0000 	mrs	r0, CPSR
+      64:	e3c0001f 	bic	r0, r0, #31
+      68:	e38000d3 	orr	r0, r0, #211	@ 0xd3
+      6c:	e129f000 	msr	CPSR_fc, r0
+      70:	e24f0078 	sub	r0, pc, #120	@ 0x78
+      74:	e2800004 	add	r0, r0, #4
+      78:	e3a02040 	mov	r2, #64	@ 0x40
+      7c:	e0802002 	add	r2, r0, r2
+      80:	e3a01000 	mov	r1, #0

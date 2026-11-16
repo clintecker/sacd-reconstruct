@@ -1,0 +1,1 @@
+evidence/bx510-guest/u4-initrd/kernel/kernel.data: Linux kernel ARM boot executable zImage (little-endian)

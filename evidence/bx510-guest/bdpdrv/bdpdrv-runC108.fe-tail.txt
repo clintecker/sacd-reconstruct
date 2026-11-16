@@ -1,0 +1,14 @@
+566817:bx510: FE PACKET w1=00000000 w2=00000000 w3=00000000 nbytes=0 -> no-data
+3770040:bx510: FE PACKET w1=0000014a w2=00000010 w3=00000008 nbytes=330 -> gesn
+3771976:bx510: FE READ 28 lba=16 nsec=1 len=2048 frame=2048 -> phys 1d8b8000 (descriptor DMA)
+3782594:bx510: FE READ 28 lba=510 nsec=1 len=2048 frame=2048 -> phys 1d8b8000 (descriptor DMA)
+3793507:bx510: FE READ 28 lba=532104 nsec=1 len=2048 frame=2048 -> phys 1d8b8000 (descriptor DMA)
+3804233:bx510: FE READ 28 lba=0 nsec=1 len=2048 frame=2048 -> phys 1d8b8000 (descriptor DMA)
+3814202:bx510: FE READ 28 lba=510 nsec=10 len=20480 frame=2048 -> phys 1d8b8000 (descriptor DMA)
+3863632:bx510: FE READ 28 lba=1064207 nsec=1 len=2048 frame=2048 -> phys 1d8b8000 (descriptor DMA)
+3874320:bx510: FE READ 28 past EOF: lba=1064208 nsec=1, disc has 1064208 sectors (last LBA 1064207) — answering drive error
+3874451:bx510: FE PACKET w1=00000003 w2=00000060 w3=00000000 nbytes=3 -> req-sense
+3923661:bx510: FE READ 28 lba=510 nsec=2: 0x5c404=4128 means 2064 bytes per sector, not 2048 — taking the descriptor length
+3923662:bx510: FE READ 28 lba=510 nsec=2 len=4128 frame=2064 -> phys 06374040 (descriptor DMA)
+4056497:bx510: FE READ 28 lba=510 nsec=2: 0x5c404=4128 means 2064 bytes per sector, not 2048 — taking the descriptor length
+4056498:bx510: FE READ 28 lba=510 nsec=2 len=4128 frame=2064 -> phys 1d8b8000 (descriptor DMA)

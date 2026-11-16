@@ -1,0 +1,3 @@
+ 4676960 evidence/bx510-guest/u4-initrd/kernel/kernel.gzip_member.out
+      61 evidence/bx510-guest/u4-initrd/kernel/kernel.gzip_member.unused_tail.bin
+ 4677021 total

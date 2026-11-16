@@ -1,0 +1,27 @@
+FAIL: region rule_log_end (s1-full): the renderer draws x=12 y=293 w=616 h=1 but the spec says x=12 y=296 w=616 h=1
+FAIL: rule y=296 (s1-full): only 0% of the row is inked — the structural rule is missing
+FAIL: region rule_log_end (s2-no-areas): the renderer draws x=12 y=293 w=616 h=1 but the spec says x=12 y=296 w=616 h=1
+FAIL: rule y=296 (s2-no-areas): only 0% of the row is inked — the structural rule is missing
+FAIL: region rule_log_end (s3-session-fail): the renderer draws x=12 y=293 w=616 h=1 but the spec says x=12 y=296 w=616 h=1
+FAIL: rule y=296 (s3-session-fail): only 0% of the row is inked — the structural rule is missing
+FAIL: region rule_log_end (s4-scale1): the renderer draws x=12 y=293 w=616 h=1 but the spec says x=12 y=296 w=616 h=1
+FAIL: rule y=296 (s4-scale1): only 0% of the row is inked — the structural rule is missing
+FAIL: region rule_log_end (s5-many-tracks): the renderer draws x=12 y=293 w=616 h=1 but the spec says x=12 y=296 w=616 h=1
+FAIL: rule y=296 (s5-many-tracks): only 0% of the row is inked — the structural rule is missing
+FAIL: GOLDEN MISMATCH s1-full: f75adfee1b0bfec4… != golden 9f24414161b865dc… — 11,088 px changed, worst region rule_log_end (616 changed px); diff: /Users/you/code/sacd-reconstruct/evidence/bx510-guest/graphics/regress/diff/s1-full.diff.png
+FAIL: GOLDEN MISMATCH s2-no-areas: b0466206e78f2949… != golden 4ea9140b99b36d4a… — 11,088 px changed, worst region rule_log_end (616 changed px); diff: /Users/you/code/sacd-reconstruct/evidence/bx510-guest/graphics/regress/diff/s2-no-areas.diff.png
+FAIL: GOLDEN MISMATCH s3-session-fail: c290f8141fa6d822… != golden b43b1cc243bdab42… — 11,088 px changed, worst region rule_log_end (616 changed px); diff: /Users/you/code/sacd-reconstruct/evidence/bx510-guest/graphics/regress/diff/s3-session-fail.diff.png
+FAIL: GOLDEN MISMATCH s4-scale1: b13c862bb9573f37… != golden 1eaa3f78b518b6de… — 1,232 px changed, worst region rule_log_end (616 changed px); diff: /Users/you/code/sacd-reconstruct/evidence/bx510-guest/graphics/regress/diff/s4-scale1.diff.png
+FAIL: GOLDEN MISMATCH s5-many-tracks: 2df733d8bd9265bc… != golden eed6f43152521e55… — 11,088 px changed, worst region rule_log_end (616 changed px); diff: /Users/you/code/sacd-reconstruct/evidence/bx510-guest/graphics/regress/diff/s5-many-tracks.diff.png
+scene s1-full          1920x1080 sha256 f75adfee1b0bfec4…
+scene s2-no-areas      1920x1080 sha256 b0466206e78f2949…
+scene s3-session-fail  1920x1080 sha256 c290f8141fa6d822…
+scene s4-scale1        640x360 sha256 b13c862bb9573f37…
+scene s5-many-tracks   1920x1080 sha256 2df733d8bd9265bc…
+note: FINDING region panel_2ch (s5-many-tracks): drawn x=12 y=88 w=304 h=111 != spec (12, 88, 304, 104) but inside a declared_overflow — see spec.declared_overflow
+note: rule y=196 (s5-many-tracks): 1px-locality probe skipped — row 198 is inside the declared overflow 'more_row'
+note: scale independence title: ink 0.0156 vs 0.0162, bbox drift 1px
+note: scale independence status: ink 0.0321 vs 0.0343, bbox drift 0px
+note: scale independence log: ink 0.0161 vs 0.0198, bbox drift 15px
+note: scale independence summary: ink 0.0138 vs 0.0253, bbox drift 0px
+verdict: FAIL (5 scenes, 15 problem(s)) -> /Users/you/code/sacd-reconstruct/evidence/bx510-guest/graphics/regress/report.md

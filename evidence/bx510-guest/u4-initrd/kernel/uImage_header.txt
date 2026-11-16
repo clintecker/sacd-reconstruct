@@ -1,0 +1,7 @@
+magic 0x27051956
+size 2285568
+load 0xda00000
+ep 0xda00000
+comp 0
+name b''
+header_crc_calc 0x6486887 stored 0x6486887

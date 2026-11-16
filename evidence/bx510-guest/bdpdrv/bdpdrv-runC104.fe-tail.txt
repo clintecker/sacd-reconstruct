@@ -1,0 +1,16 @@
+564150:bx510: FE PACKET w1=00000000 w2=00000000 w3=00000000 nbytes=0 -> no-data
+3760338:bx510: FE PACKET w1=0000014a w2=00000010 w3=00000008 nbytes=330 -> gesn
+3762467:bx510: FE READ 28 lba=16 nsec=1 len=2048 frame=2048 -> phys 1d8bc000 (descriptor DMA)
+3772778:bx510: FE READ 28 lba=510 nsec=1 len=2048 frame=2048 -> phys 1d8bc000 (descriptor DMA)
+3783073:bx510: FE READ 28 lba=532104 nsec=1 len=2048 frame=2048 -> phys 1d8bc000 (descriptor DMA)
+3795061:bx510: FE READ 28 lba=0 nsec=1 len=2048 frame=2048 -> phys 1d8bc000 (descriptor DMA)
+3806959:bx510: FE READ 28 lba=510 nsec=10 len=20480 frame=2048 -> phys 1d8bc000 (descriptor DMA)
+3861228:bx510: FE READ 28 lba=1064207 nsec=1 len=2048 frame=2048 -> phys 1d8bc000 (descriptor DMA)
+3870788:bx510: FE READ 28 past EOF: lba=1064208 nsec=1, disc has 1064208 sectors (last LBA 1064207) — answering drive error
+3870919:bx510: FE PACKET w1=00000003 w2=00000060 w3=00000000 nbytes=3 -> unknown
+3919556:bx510: FE READ 28 lba=510 nsec=2: 0x5c404=4128 means 2064 bytes per sector, not 2048 — taking the descriptor length
+3919557:bx510: FE READ 28 lba=510 nsec=2: 2064-byte sector framing is not modelled (2048 plain, 2352 raw CD) — answering drive error, no data
+3919624:bx510: FE PACKET w1=00000003 w2=00000060 w3=00000000 nbytes=3 -> unknown
+4006474:bx510: FE READ 28 lba=510 nsec=2: 0x5c404=4128 means 2064 bytes per sector, not 2048 — taking the descriptor length
+4006475:bx510: FE READ 28 lba=510 nsec=2: 2064-byte sector framing is not modelled (2048 plain, 2352 raw CD) — answering drive error, no data
+4006526:bx510: FE PACKET w1=00000003 w2=00000060 w3=00000000 nbytes=3 -> unknown

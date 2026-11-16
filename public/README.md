@@ -24,11 +24,14 @@ documented in [docs/HUD.md](docs/HUD.md).*
 
 | Claim | How it is established |
 |---|---|
-| Function-level parity (388/390 functions identical after normalisation) | [`tools/fn_diff.py`](tools/fn_diff.py) against the original binary; only `_start`/`call_gmon_start` residuals remain |
+| Function-level parity (387/390 functions identical after normalisation) | [`tools/fn_diff.py`](tools/fn_diff.py) against the original binary; three accepted residuals: the two startup stubs and one **deliberate divergence** (`recursive_mkdir` tolerates `EPERM` — the original ran as root on the player and never met it; a non-root reproducer does) |
 | Literal-pool parity (content + load-site position) | [`tools/pool_audit.py`](tools/pool_audit.py) — this caught two real reconstruction misreads (`L"c"` and `__FILE__`) |
 | Byte-identical wire behaviour | full-system differential: Sony's own kernel + rootfs in QEMU, both binaries, same disc, raw TX/RX captures compared byte-for-byte |
-| Byte-identical on the **real player** | on-device run: `DISC_OPEN`, `SIZE 1064208`, sector hashes matching the reference ISO, beyond-EOF refusal, clean reconnect |
+| Byte-identical on the **real player** | on-device run: `DISC_OPEN`, `SIZE 1064208`, sector hashes matching the reference ISO, beyond-EOF refusal, clean reconnect — and the reconstruction survives player standby |
 | Large-image boundary behaviour (in the QEMU guest) | multi-GiB battery through the HDHOST device, sentinels across the 2 GiB and 4 GiB byte-offset boundaries |
+| The decrypt leg, for real | Level-1 synthetic cipher: a derived disc image carries the audio areas encrypted at rest; the emulated CPSA decrypt runs on the real ioctl path; 7 acceptance gates incl. negative controls (`tools/bx510_cipher_check.py`) |
+| **A real rip out of the emulated player** | the same binary runs as the ripper client: `sacd_extract_160 -s -c` produced playable DSF files of the fixture disc's tracks through the reconstructed daemon (deterministic: two rips, one md5); DST->DSD decode exercised end to end |
+| The panel UI/HUD | layout regression with accepted frame goldens, guest renders gated on non-black, guest-vs-sim per-region parity >= 0.85; see [docs/GRAPHICS-GALLERY.md](docs/GRAPHICS-GALLERY.md) |
 
 Every bundle lives in [`evidence/`](evidence/) with a results document that
 separates **demonstrated** from **inferred**; see
@@ -82,9 +85,9 @@ python3 tools/sacd_client.py capture --host player.local --port 2002 --out out/
 |---|---|
 | `reconstruct/` | the reconstructed C source (daemon, libsacd, libdstdec, libcommon, libid3) |
 | `tools/` | verification + harness: parity diff, wire client, pool auditor, HUD, guest shims |
-| `emulator-kit/` | QEMU SoC model of the player (NAND, HDHOST block device, UART) — targets without hardware |
+| `emulator-kit/` | QEMU SoC model of the player (NAND, HDHOST block device, UART, sacd-cipher) — targets without hardware |
 | `docs/` | [architecture](docs/ARCHITECTURE.md) · [what's inside the binary](docs/DAEMON-MAP.md) · [evidence guide](docs/EVIDENCE.md) · [reproduction](docs/REPRODUCE.md) · [provenance](docs/PROVENANCE.md) |
-| `evidence/` | recorded proof: gate runs, differential captures, on-player sessions, HUD renders |
+| `evidence/` | recorded proof: gate runs, differential captures, on-player sessions, rip results, HUD/UI renders ([gallery](docs/GRAPHICS-GALLERY.md)) |
 | `DELTA.md` | the change-set the closed binary applies to the public v0.3.7 tree, verified from disassembly |
 
 The best entry point after this README is **[docs/DAEMON-MAP.md](docs/DAEMON-MAP.md)** —

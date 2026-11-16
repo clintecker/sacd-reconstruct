@@ -60,6 +60,13 @@ non-black (mean luminance 83.84), PASS 3x on 2026-11-16.*
 *`hud-anim.gif` — the wireframe cube, perspective grid, CRT sweep and the
 2 Hz blink; blink period asserted by `make ui-anim`.*
 
+![The in-daemon HUD's own frame, rendered inside the daemon process in the guest](../evidence/bx510-guest/graphics/ui-hudpan2/pool-3x.png)
+
+*`ui-hudpan2/pool-3x.png` — the panel mode of the in-daemon HUD: this frame
+was painted BY `sacd_extract_160` itself (the `--hud=panel` thread inside
+the daemon process), captured in the guest, pool mean luminance 50.49
+PASS. One binary serves the rip and draws the panel.*
+
 ## The daemon UI (`sacd_ui`) — client-driven disc console (milestone artifact,
 not the HUD)
 

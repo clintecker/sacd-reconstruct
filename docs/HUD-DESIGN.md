@@ -94,17 +94,18 @@ and arm "start capture". Fallback: read `/dev/lirc*` directly.
 
 ## Process model and lifecycle
 
-- `sacd_hud` is a **separate process** from the daemon. It never touches
-  `/dev/sacd_read`.
-- Launcher: `AutoScript/hudmode` flag file → `hwmon_restore.sh` starts the
-  preload-aware daemon, then the HUD (`nohup` in RAM, output to the stick log).
-- **Screen ownership**: the HUD is a takeover app. Tonight, after our DirectFB
-  session released, the appliance UI did not come back (panel stayed blank) —
-  so the contract is explicit: *while the HUD runs, it owns the panel; stopping
-  it leaves the panel blank and the appliance UI returns on the next
-  boot/launch of `bdpprog`.*
-- SaWMan coexistence (HUD as a second app under the appliance's WM) is a
-  **later experiment**, not a v1 requirement.
+- **The HUD is a thread inside the daemon** (`reconstruct/tool/hud.c`,
+  compiled under `-DENABLE_HUD`; see [HUD.md](HUD.md) §Architecture — the
+  in-daemon form is LANDED and proven in the guest). This section records
+  the earlier separate-process design and why it is no longer the model.
+- The separate-process launcher (`AutoScript/hudmode` flag file →
+  `hwmon_restore.sh`) is how the panel renderer was proven on hardware
+  before the merge existed; it stays as the panel-renderer stepping stone.
+- **Screen ownership** (hardware-measured 2026-11-05): the HUD is a takeover
+  app — while it runs it owns the panel; the appliance UI returns on the
+  next boot/launch of `bdpprog`. SaWMan coexistence is proven in the guest
+  (`evidence/bx510-guest/graphics/sawman-run.md`) and remains the path to a
+  non-takeover product.
 
 ## Phases
 

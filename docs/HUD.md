@@ -17,20 +17,44 @@ tree and neither is a HUD:
 
 ## Architecture: where the HUD lives
 
-Today the HUD is a **separate process** launched by the stick's supervisor
-alongside the daemon, watching it from the outside (`/proc` counters, the
-daemon's own stdout as a ticker file, and the host's UDP push on port 20023).
-That separation was deliberate at first — it kept the reconstructed daemon
-untouched while the display path was being proven.
+**The in-daemon HUD is LANDED (2026-11-16) — both modes.** One binary:
+`sacd_extract_160 -S --hud=console|panel` serves port 2002 AND renders the
+HUD from its own live state — clients, ripping progress, disc stats — no
+`/proc` scraping, no ticker file, no second process, no UDP hop. The panel
+mode runs the proven retro renderer core (pool-mmap surface, Sony font)
+inside the daemon process; guest run `hudpan2` captured its frame (pool
+mean luminance 50.49, gated PASS — `evidence/bx510-guest/graphics/ui-hudpan2/`).
 
-**The target architecture is one HUD built into the daemon**: a HUD thread
-inside `sacd_extract_160` that renders the panel from the daemon's own live
-state — no `/proc` scraping, no ticker file, no second process, no UDP
-channel. The separate-process form remains the stepping stone (it is what is
-proven in the guest today); the in-daemon merge is the roadmap item, gated
-by the same ladder: unit → SIM → guest → hardware. Until that merge lands,
-one binary is the product, the other is scaffolding — never present them as
-two HUDs.
+The seam (`reconstruct/tool/hud_state.h`): the daemon publishes a state
+snapshot at its existing 1 Hz `server_loop` heartbeat and inside the
+DISC_READ dispatch (reads served, sectors served, encrypted sectors, last
+LSN, high-water progress); the HUD thread (`reconstruct/tool/hud.c`) copies
+under a mutex and renders at its own pace. Compiled only under
+`-DENABLE_HUD` (`make ENABLE_HUD=1`): the parity/verify build is untouched —
+`the verification tree` still PASSes with the same release SHA, because the HUD layer
+does not exist in that configuration.
+
+Proven in the guest (run hudint5, UART transcript in
+`evidence/bx510-guest/bdpdrv/`): the daemon served a real client's TOC reads
+while the HUD printed
+`HUD disc=sacd 353844/1064208 sectors (33%) reads=4 last=353804+40` — the
+ripping progress is the DAEMON'S OWN counters, not an outside observer's.
+
+The two stdout-orientation traps this cost a day to find, both codified:
+stdout is WIDE-oriented (`fwide(stdout,1)` before the server loop), so the
+HUD prints through `fwprintf` — narrow `printf` silently fails; and a
+redirected stdout is fully buffered — every guest gate that reads the HUD's
+lines must re-read `daemon.out` AFTER the client session
+(`DAEMON_OUT_END2` in the fire template).
+
+## The separate-process HUD (the stepping stone, still in the tree)
+
+The standalone `tools/bx510_sacd_hud.c` binary remains as the panel-renderer
+stepping stone: it proved the render path (pool-mmap, Sony font, guest gate
+green) and carries the UDP-push + `/proc` telemetry that the in-daemon HUD
+will absorb when its panel mode integrates the renderer core
+(`--hud=panel` currently degrades to console, loudly). It is scaffolding,
+not a second HUD, and is never presented as one.
 
 ## Why it is built the way it is
 
@@ -66,15 +90,18 @@ The **event matrix** replaces a text log: one column per event, bar height =
 sectors, colour = class (read / decrypt / client / error / system), older columns
 fade. You read bursts, gaps and errors as a pattern.
 
-## Telemetry sources (no daemon changes)
+## Telemetry sources
 
-| Source | Gives |
-|---|---|
-| `/proc/net/tcp` | whether `:2002` listens, how many sessions |
-| `/proc/<pid>/io`, `/proc/<pid>/stat` | daemon liveness (note: the daemon reads via ioctl, so `read_bytes` stays 0) |
-| `/proc/modules`, `/proc/misc` | CPSA module / minor 201 state |
-| host push (UDP 20023) | per-request events from the client: `OPEN`, `READ lsn=… n=…`, `CLOSE` |
-| daemon stdout | startup, module install, heartbeats, errors |
+**In-daemon HUD (the product):** the daemon's own live state, published
+through `hud_state.h` at the 1 Hz heartbeat and in the DISC_READ dispatch —
+client connectivity, reads served, sectors served, encrypted sectors, last
+LSN, progress against `total_sectors`, disc presence/type. No scraping, no
+second channel.
+
+**Stepping-stone HUD (the separate-process renderer):** `/proc/net/tcp`
+(listener state), `/proc/<pid>/io` daemon liveness, `/proc/modules` CPSA
+state, the daemon's stdout ticker, and the host's UDP 20023 push. These
+inputs retire when the panel-mode renderer moves in-daemon.
 
 ## What Sony ships that we use (verified on the real rootfs)
 
@@ -96,6 +123,11 @@ Sony's font sizes are what the device ships.
 ## Build and run
 
 ```sh
+# the ONE HUD, in the daemon (product form):
+make -C reconstruct ENABLE_HUD=1 CROSS=<arm-gcc>   # sacd_extract_160 gains --hud=console|panel
+# in the guest fire: --daemon-launch="./sacd_extract_160 -S --hud=console"
+
+# the panel-renderer stepping stone (standalone, proven):
 make sacd-hud-build       # ARM build through the era toolchain
 make sacd-hud-sim         # host render (same scene code) -> PNG
 make sacd-hud-anim        # host render -> animated GIF + MP4

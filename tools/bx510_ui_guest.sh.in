@@ -71,7 +71,7 @@ insmod /lib/modules/2.6.35/BDP/fusion.ko
 set -- $(grep fusion /res/proc/devices); mknod /dev/fusion0 c $1 0
 # 7. the daemon: -S only, stdin NOT a tty or server_loop skips the poll
 cd /res/shim
-./sacd_extract_160 -S </dev/null >/res/daemon.out 2>&1 &
+@DAEMON_LAUNCH@ </dev/null >/res/daemon.out 2>&1 &
 echo DAEMON_PID=$!
 sleep @DAEMON_WAIT@
 cat /res/daemon.out; echo DAEMON_OUT_END
@@ -115,3 +115,6 @@ cat /res/fb-fbdev.txt; echo UI_FBDEV_END
 echo UI_DUMP_POOL=$?
 cat /res/fb-pool.txt; echo UI_POOL_END
 echo UI_SHOT_DONE
+# second read of the daemon's stdout: the client session runs AFTER the first
+# cat, so the in-daemon HUD's rip-progress lines only exist here
+cat /res/daemon.out; echo DAEMON_OUT_END2

@@ -141,6 +141,24 @@ UI-EV 0026  61.01 > RIP DONE 1600 sectors
 
 (the guest's own rip, fire `c126`: 1600 requested sectors, 1600 logged.)
 
+## The two markers a guest fire waits on
+
+Both marker files exist so a guest sequence never has to guess a duration:
+
+| Marker | Written by | Means |
+|---|---|---|
+| `/res/ui-session.done` (`SACD_UI_DONE_FILE`) | the UI, after `DISC_CLOSE` | the accept slot is free — a second client may start |
+| `/res/ui-frame.done` (`SACD_UI_FRAME_FILE`) | the UI, once, after its FIRST painted frame | there is a frame on the surface to dump — the UI may be killed |
+
+The frame marker is what replaced the fixed `UI_WAIT` sleep (issue #13: the
+session alone is a 22 s `DISC_OPEN`, so a sleep was too short in `uiloop7` and
+had to be 150 s in `c126`). In WATCH mode the guest wait is the frame marker
+**AND** the rip client's own rc marker (`/res/rip.rc`), so the UI stays alive
+while the rip it observes is in progress and dies as soon as both are done —
+bounded, in every template, by `--ui-wait-max` (default 90 s) so a UI that never
+paints still dies instead of hanging the fire. Full story: `docs/ui-loop.md`
+lesson 10.
+
 ## Replaying a scenario (the SIM script)
 
 The guest loop's own event stream is not reproducible (wall clock, real
@@ -243,7 +261,7 @@ gated). Render + stage + fire:
 python3 tools/bx510_ui_render.py --runid c126 \
     --template tools/bx510_ui_reactive_guest.sh.in \
     --script /tmp/bx510_ui_guest-c126.sh --out /tmp/g-c126.txt \
-    --scale 6 --ui-wait 150 --ui-args '127.0.0.1 90'
+    --scale 6 --ui-wait-max 150 --ui-args '127.0.0.1 90'
 sh tools/bx510_ui_stage.sh /tmp/bx510_ui_guest-c126.sh
 make bx510-fire RUNID=c126 GCMD_FILE=/tmp/g-c126.txt TIMEOUT=420
 make bx510-ui-shot RUNID=c126

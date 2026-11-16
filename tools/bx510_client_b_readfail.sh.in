@@ -17,6 +17,8 @@
 #                             (9ed18b47…), a wedged/killed daemon fails here
 #
 # Oracles: decode/client-leg-oracles.md. No UI in this fire.
+# Placeholders: @SCALE@ @DAEMON_WAIT@ @POOL_ARGS@ (renderer whitelist; the four
+# read geometries below are this template's own constants).
 
 # 1. the VFS skeleton an init=/bin/sh guest does not have
 mkdir -p /tmp /res/tmp
@@ -71,7 +73,7 @@ echo UI_SCALE=@SCALE@
 ./fbdump --rows /dev/fb0 @SCALE@ >/res/fb-fbdev.txt 2>&1
 echo UI_DUMP_FBDEV=$?
 cat /res/fb-fbdev.txt; echo UI_FBDEV_END
-./fbdump --rows --pool /dev/fb0 @SCALE@ 4096 1920 1080 >/res/fb-pool.txt 2>&1
+./fbdump --rows --pool /dev/fb0 @SCALE@ @POOL_ARGS@ >/res/fb-pool.txt 2>&1
 echo UI_DUMP_POOL=$?
 cat /res/fb-pool.txt; echo UI_POOL_END
 echo UI_SHOT_DONE

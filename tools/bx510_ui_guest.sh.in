@@ -10,7 +10,15 @@
 # error, not a silent empty string):
 #   @SCALE@        fbdump pixel decimation (6 = 320x180 preview, 2 = 960x540)
 #   @DAEMON_WAIT@  seconds allowed for sacd_extract_160 to reach "active" (8)
-#   @UI_WAIT@      seconds the UI gets to put a frame on the surface (3)
+#   @UI_WAIT_MAX@  the BOUND on the first-frame marker wait, in seconds (90).
+#                  The wait itself is the marker: the UI writes
+#                  /res/ui-frame.done once its first frame is painted
+#                  (issue #13 — a fixed sleep was either shorter than the
+#                  UI's session, measured ~25 s with DISC_OPEN alone at 22 s
+#                  (c123/c126/c132), or wasted fire time).
+#                  This number is only the fallback: the loop gives up and
+#                  kills anyway after this many seconds, so a UI that never
+#                  paints cannot hang the fire.
 #   @CLIENT_LSN@   client read LBA (510 = the Master TOC)
 #   @CLIENT_CNT@   client read sector count (10)
 #   @UI_ARGS@      argv for ./sacd_ui (may be empty)
@@ -71,16 +79,22 @@ cat /res/daemon.out; echo DAEMON_OUT_END
 ./sacdclient 127.0.0.1 @CLIENT_LSN@ @CLIENT_CNT@ /tmp/client-toc.bin
 echo CLIENT_RC=$?
 md5sum /tmp/client-toc.bin
-# 9. the UI under test, backgrounded so a render loop cannot wedge the fire
-#    (a one-shot renderer just exits early and the sleep is the cost of that),
+# 9. the UI under test, backgrounded so a render loop cannot wedge the fire,
 #    then KILLED before its log is read: a live UI keeps appending UI-EV lines,
 #    and `cat` of a file that never stops growing never returns (measured, run
 #    uiloop2: the whole fire sat in `cat /res/ui.out` until the probe timeout).
-#    The frame is already in the framebuffer by then, which is what we dump.
+#    The KILL is gated on the UI's OWN first-frame marker, not on a sleep: the
+#    UI writes /res/ui-frame.done after its first painted frame, and the
+#    session before that frame is a 22 s DISC_OPEN (c123/c132/c133), so a
+#    fixed sleep is either too short to find a frame (uiloop7's honest black
+#    verdict) or pure wasted fire time. @UI_WAIT_MAX@ bounds the wait so a UI
+#    that never paints still dies here instead of hanging the fire.
+rm -f /res/ui-frame.done
 ./sacd_ui @UI_ARGS@ >/res/ui.out 2>&1 &
 U=$!
 echo UI_PID=$U
-sleep @UI_WAIT@
+i=0; while [ ! -f /res/ui-frame.done ] && [ $i -lt @UI_WAIT_MAX@ ]; do sleep 1; i=$((i+1)); done
+echo UI_WAIT_ITERS=$i
 kill $U 2>/dev/null
 sleep 1
 cat /res/ui.out; echo UI_OUT_END

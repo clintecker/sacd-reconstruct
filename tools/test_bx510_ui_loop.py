@@ -14,9 +14,11 @@ asserted at the wiring level instead: the make target must chain build -> fire
 
 Run directly (python3 tools/test_bx510_ui_loop.py) or via pytest.
 """
+import re
 import struct
 import subprocess
 import sys
+import time
 import zlib
 from pathlib import Path
 
@@ -158,6 +160,196 @@ def test_render_refuses_an_unknown_placeholder(tmp_path):
     r = run(RENDER, "--runid", "c903", "--template", tmpl, "--print-only")
     assert r.returncode == 1
     assert "placeholder" in r.stderr
+
+
+# ── issue #13: the UI kill is MARKER-gated, never a fixed sleep ─────────────
+#
+# The UI's first frame includes its own client session (DISC_OPEN alone measured
+# 22 s in c123/c132/c133), so `sleep <n>` before `kill $U` is the wrong
+# mechanism on both sides: too short misses the frame entirely (uiloop7's honest
+# BLACK verdict at UI_WAIT=3 s) and too long wastes fire time (c126 needed 150 s
+# to cover a 35 s rip). The UI now writes /res/ui-frame.done once its first
+# frame is painted; the number is only the fallback bound.
+
+UI_TEMPLATES = ("bx510_ui_guest.sh.in", "bx510_ui_reactive_guest.sh.in",
+                "bx510_client_c_overlap.sh.in", "bx510_client_d_arearead.sh.in")
+CLIENT_TEMPLATES = ("bx510_client_a_reconnect.sh.in", "bx510_client_b_readfail.sh.in",
+                    "bx510_client_c_overlap.sh.in", "bx510_client_d_arearead.sh.in")
+ALL_TEMPLATES = UI_TEMPLATES + tuple(t for t in CLIENT_TEMPLATES if t not in UI_TEMPLATES)
+FRAME_MARKER = "/res/ui-frame.done"
+UNBOUNDED_WAIT = re.compile(r"while \[ ! -f [^\]]+ \]; do sleep 1; done")
+WAIT_LINE = re.compile(r"^i=0; while .*\[ ! -f %s \].*\[ \$i -lt \d+ \]; "
+                       r"do sleep 1; i=\$\(\(i\+1\)\); done$" % re.escape(FRAME_MARKER))
+
+
+def render_text(tmp_path, template, name, *extra):
+    script = tmp_path / f"{name}.sh"
+    r = run(RENDER, "--runid", name, "--template", TOOLS / template,
+            "--out", tmp_path / f"{name}.cmd", "--script", script,
+            "--ui-args", "127.0.0.1 90", *extra)
+    assert r.returncode == 0, r.stdout + r.stderr
+    return script.read_text()
+
+
+def code_lines(text):
+    return [ln.strip() for ln in text.splitlines()
+            if ln.strip() and not ln.strip().startswith("#")]
+
+
+def test_every_ui_template_kills_on_the_first_frame_marker(tmp_path):
+    """All four UI templates: marker wait + bounded fallback, no bare sleep."""
+    for template in UI_TEMPLATES:
+        code = code_lines(render_text(tmp_path, template, template.split(".")[0]))
+        wait = [ln for ln in code if WAIT_LINE.match(ln)]
+        assert wait, f"{template}: no bounded first-frame marker wait:\n" + "\n".join(code)
+        launch = next(i for i, ln in enumerate(code) if "./sacd_ui " in ln or ln.endswith("./sacd_ui"))
+        kill = next(i for i, ln in enumerate(code) if ln.startswith("kill $U"))
+        wait_at = code.index(wait[0])
+        assert launch < wait_at < kill, f"{template}: the wait must sit between launch and kill"
+        assert any(ln.startswith("rm -f ") and FRAME_MARKER in ln for ln in code[:launch]), \
+            f"{template}: a stale {FRAME_MARKER} from an earlier step must be removed first"
+        bare = [ln for ln in code[launch:kill] if re.fullmatch(r"sleep \d+", ln)]
+        assert not bare, f"{template}: a fixed sleep came back before the kill: {bare}"
+
+
+def test_watch_templates_hold_the_ui_until_the_scenario_marker_too(tmp_path):
+    """Watch mode waits on the frame marker AND the client's own rc marker.
+
+    Killing on the frame alone would end a reactive fire ~1 s after the UI's
+    session, before the watched rip moved — exactly the observation window
+    c126 verified (RIP 128 -> 1600 sectors, DAEMON CLIENT GONE).
+    """
+    expected = {
+        "bx510_ui_reactive_guest.sh.in": ("/res/rip.rc",),
+        "bx510_client_c_overlap.sh.in": ("/res/a.rc", "/res/b.rc"),
+        "bx510_client_d_arearead.sh.in": ("/res/rip.rc",),
+    }
+    for template, markers in expected.items():
+        code = code_lines(render_text(tmp_path, template, template.split(".")[0]))
+        wait = next(ln for ln in code if WAIT_LINE.match(ln))
+        assert "SACD_UI_WATCH_FILE=" in "\n".join(code), template
+        for marker in markers:
+            assert f"! -f {marker} ]" in wait, \
+                f"{template}: the kill wait ignores its scenario marker {marker}: {wait}"
+
+
+def test_marker_wait_requires_every_marker_and_ends_on_the_bound(tmp_path):
+    """Executed, not eyeballed: AND semantics, and the fallback really bounds it."""
+    code = code_lines(render_text(tmp_path, "bx510_ui_reactive_guest.sh.in", "beh",
+                                  "--ui-wait-max", "2"))
+    line = next(ln for ln in code if WAIT_LINE.match(ln))
+    # the guest paths are absolute; point them at this test's own directory
+    path = tmp_path / "wait.sh"
+    path.write_text(re.sub(r"/res/([A-Za-z0-9_.-]+)",
+                           lambda m: str(tmp_path / m.group(1)), line)
+                    + "\necho ITERS=$i\n")
+    frame, scenario = tmp_path / "ui-frame.done", tmp_path / "rip.rc"
+
+    def wait_case(*present):
+        for marker in (frame, scenario):
+            marker.unlink(missing_ok=True)
+        for marker in present:
+            marker.touch()
+        t0 = time.monotonic()
+        r = run_sh(path)
+        assert r.returncode == 0, r.stdout + r.stderr
+        return r.stdout.strip(), time.monotonic() - t0
+
+    out, elapsed = wait_case()
+    assert out == "ITERS=2", out
+    assert elapsed >= 2, "the bound is what ends a UI that never paints"
+    out, elapsed = wait_case(frame)
+    assert out == "ITERS=2", f"the frame marker alone must not end a watch-mode wait: {out}"
+    out, elapsed = wait_case(frame, scenario)
+    assert out == "ITERS=0", out
+    assert elapsed < 2, "both markers present must end the wait immediately"
+
+
+def test_render_refuses_a_fixed_sleep_before_the_ui_kill(tmp_path):
+    """The gate must fail the old shape, not just pass the new one."""
+    text = TEMPLATE.read_text()
+    wait = next(ln for ln in text.splitlines() if ln.strip().startswith("i=0; while"))
+    tmpl = tmp_path / "sleep-kill.sh.in"
+    tmpl.write_text(text.replace(wait, "sleep @UI_WAIT_MAX@"))
+    r = run(RENDER, "--runid", "c904", "--template", tmpl, "--print-only")
+    assert r.returncode == 1, "a fixed sleep before the UI kill must not render"
+    assert "first-frame marker" in r.stdout
+
+
+# ── the scenario waits around the UI: bounded, and rc captured ONCE ─────────
+#
+# Reviewer findings on the c132 receipts: an unbounded `while [ ! -f marker ]`
+# turns a UI that never opens into a silent probe timeout (nothing in the
+# transcript says which wait expired), and `echo RC=$? >f; echo RC=$?` prints
+# the FIRST echo's status — always 0 — so c132's console read `B_RC=0` while
+# `cat /res/b.rc` said `B_RC=1`.
+
+def test_every_marker_wait_in_every_template_is_bounded(tmp_path):
+    for template in ALL_TEMPLATES:
+        code = code_lines(render_text(tmp_path, template, template.split(".")[0]))
+        unbounded = [ln for ln in code if UNBOUNDED_WAIT.search(ln)]
+        assert not unbounded, f"{template}: unbounded marker wait: {unbounded}"
+        for line in (ln for ln in code if "do sleep 1; i=$((i+1)); done" in ln):
+            assert "[ $i -lt " in line, f"{template}: a wait with no bound: {line}"
+
+
+def test_scenario_waits_report_their_own_expiry(tmp_path):
+    """The three watch-mode templates: a wait that expires says so."""
+    for template, marker in (("bx510_ui_reactive_guest.sh.in", "RIP_WAIT_TIMEOUT"),
+                             ("bx510_client_c_overlap.sh.in", "A_WAIT_TIMEOUT"),
+                             ("bx510_client_d_arearead.sh.in", "RIP_WAIT_TIMEOUT")):
+        code = "\n".join(code_lines(render_text(tmp_path, template,
+                                                template.split(".")[0])))
+        assert f"echo {marker}=$i" in code, f"{template}: an expired wait is silent"
+
+
+def test_client_rc_is_captured_once_not_by_a_second_dollar_question(tmp_path):
+    for template in ("bx510_ui_reactive_guest.sh.in", "bx510_client_c_overlap.sh.in",
+                     "bx510_client_d_arearead.sh.in"):
+        code = "\n".join(code_lines(render_text(tmp_path, template,
+                                                template.split(".")[0])))
+        assert not re.search(r"echo \w+_RC=\$\? >", code), \
+            f"{template}: `echo RC=$? >f` then a second `echo RC=$?` reports the echo's status"
+        assert "rc=$?; echo " in code, f"{template}: the client rc must be captured once"
+
+
+def test_render_refuses_an_unbounded_marker_wait(tmp_path):
+    """The bound gate must fail the old shape, not just pass the new one."""
+    text = (TOOLS / "bx510_client_d_arearead.sh.in").read_text()
+    bounded = "i=0; while [ ! -f /res/ui-session.done ] && [ $i -lt 60 ]; do sleep 1; i=$((i+1)); done"
+    assert bounded in text
+    tmpl = tmp_path / "unbounded.sh.in"
+    tmpl.write_text(text.replace(
+        bounded, "while [ ! -f /res/ui-session.done ]; do sleep 1; done"))
+    r = run(RENDER, "--runid", "c905", "--template", tmpl, "--print-only")
+    assert r.returncode == 1, "an unbounded marker wait must not render"
+    assert "unbounded" in r.stdout
+
+
+# ── the seam the reviewer caught in A/B: one pool geometry, one spelling ─────
+
+def test_pool_geometry_is_a_placeholder_in_every_client_template(tmp_path):
+    """A/B hardcoded `4096 1920 1080` while C/D took @POOL_ARGS@.
+
+    Same knob, two spellings: a fire that moves the pool offset would silently
+    decode A/B's frame from the wrong bytes. Render with a distinctive geometry
+    and require every template to carry it.
+    """
+    for template in ALL_TEMPLATES:
+        code = "\n".join(code_lines(render_text(tmp_path, template, template.split(".")[0],
+                                                "--pool-ofs", "8192", "--pool-w", "800",
+                                                "--pool-h", "600")))
+        assert "8192 800 600" in code, f"{template}: pool geometry is not @POOL_ARGS@"
+        assert "4096 1920 1080" not in code, f"{template}: a hardcoded pool geometry came back"
+
+
+def test_overlap_template_states_the_measured_expectation_not_the_refuted_one():
+    """c132 REFUTED the corruption prediction that this header used to assert."""
+    text = (TOOLS / "bx510_client_c_overlap.sh.in").read_text()
+    assert "run-c130-c134.md" in text, "the expectation must cite the run that measured it"
+    assert "result=-1" in text, "the second client is REFUSED at DISC_OPEN (c132)"
+    assert "WEDGES" in text, "the first client wedges mid-transfer (c132)"
+    assert "corruption is the" not in text, "the refuted prediction must not survive in the header"
 
 
 # ── the capture leg: fake framebuffer -> PNG + luminance verdict ────────────

@@ -15,8 +15,19 @@
 # Placeholders:
 #   @SCALE@        fbdump pixel decimation (6 = 320x180 preview)
 #   @DAEMON_WAIT@  seconds for sacd_extract_160 to reach "active"
-#   @UI_WAIT@      seconds the UI gets before it is killed (must exceed its
-#                  session + hold, or the log is cut mid-scenario)
+#   @UI_WAIT_MAX@  the BOUND, in seconds, on the UI-kill marker wait. The wait
+#                  is marker-based (issue #13), never a fixed sleep: TWO markers
+#                  are required before the kill — the UI's own first-frame
+#                  marker (/res/ui-frame.done, written after its first painted
+#                  frame) AND this scenario's completion marker (/res/rip.rc,
+#                  written by the watched client). The kill waits until BOTH
+#                  exist, or until @UI_WAIT_MAX@ elapses (the fallback that
+#                  keeps a wedged scenario from hanging the fire). It must
+#                  exceed the UI's MEASURED session — ~25 s, DISC_OPEN alone is
+#                  22 s (c126/c132) — plus the rip, and the rip is the point of
+#                  this template: a sleep guess has to cover both, which is
+#                  exactly the currency this bound spends only when something
+#                  is actually wrong.
 #   @CLIENT_LSN@ / @CLIENT_CNT@   the pre-flight client leg (step 8)
 #   @UI_ARGS@      argv for ./sacd_ui: "<host> <hold_seconds>" (may be empty)
 #
@@ -64,21 +75,28 @@ cat /res/daemon.out; echo DAEMON_OUT_END
 echo CLIENT_RC=$?
 md5sum /tmp/client-toc.bin
 # 9. THE WATCHED CLIENT. It waits for the UI's session-closed marker (never a
-#    sleep guess) and then rips 1600 sectors into /tmp/rip.bin. The UI is told
-#    the FILE, not the pid: the guest kernel has no /proc/<pid>/io
-#    (CONFIG_TASK_IO_ACCOUNTING off — fires pio1/pio2), and a file's size is
-#    the one progress number that cannot lie.
-rm -f /res/ui-session.done /res/rip.rc /tmp/rip.bin
-( while [ ! -f /res/ui-session.done ]; do sleep 1; done; ./sacdclient 127.0.0.1 600 1600 /tmp/rip.bin; echo RIP_RC=$? >/res/rip.rc ) &
+#    sleep guess) — BOUNDED at 60 x sleep 1, because an unbounded wait turns a
+#    UI that never opens into a silent probe timeout — and then rips 1600
+#    sectors into /tmp/rip.bin. The UI is told the FILE, not the pid: the guest
+#    kernel has no /proc/<pid>/io (CONFIG_TASK_IO_ACCOUNTING off — fires
+#    pio1/pio2), and a file's size is the one progress number that cannot lie.
+#    rc=$? is captured ONCE: `echo RC=$? >f; echo RC=$?` prints the first echo's
+#    status (always 0) on the console — the c132 receipt bug.
+rm -f /res/ui-session.done /res/ui-frame.done /res/rip.rc /tmp/rip.bin
+( i=0; while [ ! -f /res/ui-session.done ] && [ $i -lt 60 ]; do sleep 1; i=$((i+1)); done; [ -f /res/ui-session.done ] || echo RIP_WAIT_TIMEOUT=$i; ./sacdclient 127.0.0.1 600 1600 /tmp/rip.bin; rc=$?; echo RIP_RC=$rc >/res/rip.rc; echo RIP_RC=$rc ) &
 echo RIP_CLIENT=$!
 # 10. the UI under test: it runs its own short session first (DISC_OPEN .. CLOSE
 #     then writes the marker), then holds and OBSERVES. Backgrounded, and killed
 #     before its log is read — a live UI keeps appending UI-EV lines and `cat` of
-#     a growing file never returns (run uiloop2).
+#     a growing file never returns (run uiloop2). The kill waits on BOTH markers
+#     (frame + rip done), bounded by @UI_WAIT_MAX@: killing on the frame alone
+#     would cut the observation window before the rip makes progress, and a
+#     fixed sleep is what issue #13 is about.
 SACD_UI_WATCH_FILE=/tmp/rip.bin ./sacd_ui @UI_ARGS@ >/res/ui.out 2>&1 &
 U=$!
 echo UI_PID=$U
-sleep @UI_WAIT@
+i=0; while { [ ! -f /res/ui-frame.done ] || [ ! -f /res/rip.rc ]; } && [ $i -lt @UI_WAIT_MAX@ ]; do sleep 1; i=$((i+1)); done
+echo UI_WAIT_ITERS=$i
 kill $U 2>/dev/null
 sleep 1
 cat /res/ui.out; echo UI_OUT_END

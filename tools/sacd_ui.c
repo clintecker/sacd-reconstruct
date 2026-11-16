@@ -67,6 +67,8 @@
  *        SACD_UI_FONT       preferred font (chain falls back to the staged copy)
  *        SACD_UI_SCALE      logical->device scale override (default: panel_width/640)
  *        SACD_UI_DONE_FILE  session-closed marker (default /res/ui-session.done)
+ *        SACD_UI_FRAME_FILE first-frame marker (default /res/ui-frame.done): written
+ *                           ONCE, after the first painted frame of the render loop
  *        SACD_UI_WATCH_FILE a second client's OUTPUT FILE: its size becomes the
  *                           event log's RIP progress lines (opt-in; the UI never
  *                           opens a session for it)
@@ -137,6 +139,7 @@
 #define EVQ_N          16      /* fixed event ring (depth is <= 4 by construction) */
 #define PROGRESS_LOG_S 1.0     /* one RIP line per second of event time, not per sample */
 #define DAEMON_CMD     "sacd_extract_160"
+#define FRAME_MARKER   "/res/ui-frame.done"   /* written once, on the first painted frame */
 
 /* The canvas regions a STATE-IDENTICAL frame may differ in — the live-link
    lamp, the blinking cursor, and the RENDER line whose frame/fps/t counters
@@ -2056,6 +2059,25 @@ int main(int argc, char **argv)
             draw_frame(t, frames, fps);
             frames++;
             g_dirty = 0;
+            /* The FIRST-FRAME MARKER (issue #13): the guest sequence gates its
+               UI kill on this file, never on a fixed sleep — the session alone
+               is a 22 s DISC_OPEN (c123/c132/c133), so a sleep is either too
+               short to find a frame (uiloop7) or wasted fire time. One write on
+               the first paint; stdout, not ev_log(), because the event log is
+               RENDERED and a marker line there would be a different frame. */
+            if (frames == 1) {
+                const char *fm = getenv("SACD_UI_FRAME_FILE");
+                FILE *mf;
+                if (!fm || !fm[0]) fm = FRAME_MARKER;
+                mf = fopen(fm, "w");
+                if (mf) {
+                    fputs("frame=1\n", mf);
+                    fclose(mf);
+                    printf("UI: FRAME MARKER %s at %.2f s\n", fm, t);
+                } else {
+                    printf("UI: FRAME MARKER %s not writable\n", fm);
+                }
+            }
         }
         if (t > 0.5) fps = (double)frames / t;
         usleep(FRAME_SLEEP_US);

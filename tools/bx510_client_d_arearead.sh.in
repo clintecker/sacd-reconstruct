@@ -25,6 +25,11 @@
 # reactive UI watching /tmp/rip2.bin — the progress band on the panel frame
 # IS the live music-ripping evidence, and the frame is captured.
 # Oracles: decode/client-leg-oracles.md.
+#
+# Placeholders: @SCALE@ @DAEMON_WAIT@ @UI_ARGS@ @POOL_ARGS@ (renderer-gated), and
+# @UI_WAIT_MAX@ — the bound on the UI-kill marker wait. It must exceed the UI's
+# MEASURED session (~25 s: a 22 s DISC_OPEN plus the TOC reads — c126/c132) plus
+# the rip it watches, or the kill lands before the progress band can fill.
 
 # 1. the VFS skeleton an init=/bin/sh guest does not have
 mkdir -p /tmp /res/tmp
@@ -69,15 +74,25 @@ md5sum /tmp/atrack.bin; echo TRK_MD5_END
 ./sacdclient 127.0.0.1 353750 40 /tmp/aedge.bin
 echo EDGE_RC=$?
 md5sum /tmp/aedge.bin; echo EDGE_MD5_END
-# 9. THE WATCHED CLIENT: a 1600-sector 2ch rip the UI watches live
-rm -f /res/ui-session.done /res/rip.rc /tmp/rip2.bin
-( while [ ! -f /res/ui-session.done ]; do sleep 1; done; ./sacdclient 127.0.0.1 600 1600 /tmp/rip2.bin; echo RIP_RC=$? >/res/rip.rc; echo RIP_RC=$? ) &
+# 9. THE WATCHED CLIENT: a 1600-sector 2ch rip the UI watches live. The wait
+#    for the UI's session marker is BOUNDED (60 x sleep 1) so a UI that never
+#    opens still ends this fire with RIP_WAIT_TIMEOUT instead of a probe-timeout
+#    silence; rc=$? is captured ONCE (a second `echo $?` reports the first
+#    echo's status — always 0, the c132 receipt bug).
+rm -f /res/ui-session.done /res/ui-frame.done /res/rip.rc /tmp/rip2.bin
+( i=0; while [ ! -f /res/ui-session.done ] && [ $i -lt 60 ]; do sleep 1; i=$((i+1)); done; [ -f /res/ui-session.done ] || echo RIP_WAIT_TIMEOUT=$i; ./sacdclient 127.0.0.1 600 1600 /tmp/rip2.bin; rc=$?; echo RIP_RC=$rc >/res/rip.rc; echo RIP_RC=$rc ) &
 echo RIP_CLIENT=$!
-# 10. the UI: its own session first (writes the marker), then OBSERVES
+# 10. the UI: its own session first (writes the marker), then OBSERVES. The
+#     kill waits on the UI's first-frame marker (/res/ui-frame.done) AND the
+#     watched rip's rc marker, bounded by @UI_WAIT_MAX@ — never a fixed sleep
+#     (issue #13): the progress band on the captured frame only exists once the
+#     rip has actually moved, so the observation window ends on the rip, not on
+#     a guess.
 SACD_UI_WATCH_FILE=/tmp/rip2.bin ./sacd_ui @UI_ARGS@ >/res/ui.out 2>&1 &
 U=$!
 echo UI_PID=$U
-sleep @UI_WAIT@
+i=0; while { [ ! -f /res/ui-frame.done ] || [ ! -f /res/rip.rc ]; } && [ $i -lt @UI_WAIT_MAX@ ]; do sleep 1; i=$((i+1)); done
+echo UI_WAIT_ITERS=$i
 kill $U 2>/dev/null
 sleep 1
 cat /res/ui.out; echo UI_OUT_END

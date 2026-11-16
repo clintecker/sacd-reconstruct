@@ -32,6 +32,11 @@ Knobs on the fire: `SCALE` (fbdump decimation; 6 → 320×180 per buffer, 2 →
 960×540), `UI_ARGS` (argv for `./sacd_ui`), `TIMEOUT` (probe seconds).
 On the shot: `MIN_LUM` (black-frame threshold, default 4.0).
 
+The UI-kill wait is not a sleep knob any more (lesson 10): it is the UI's own
+first-frame marker plus a fallback bound, and that bound is the renderer's
+`--ui-wait-max` (default 90 s), which `bx510-ui-fire` does not override. Pass it
+to `tools/bx510_ui_render.py` directly when a scenario needs a different bound.
+
 ## The egress path, and why it is shaped this way
 
 The guest has no image tooling (no `base64`/`uudecode`/`od`), so the fastest
@@ -81,6 +86,38 @@ Measured lessons, each of which cost a fire:
    exits 2 unless the transcript carries the template's own `UI_SHOT_DONE`
    marker: another lane's trace can carry `FBGEOM` blocks and would otherwise
    "pass" as a frame from a build nobody asked about.
+10. **The UI kill waits on a MARKER, never on a sleep (issue #13).** The UI's
+   first frame includes its own client session — `DISC_OPEN` alone measured
+   22 s (c123/c132/c133) — so one number cannot be right on both sides:
+   `UI_WAIT=3 s` read both buffers BLACK (`uiloop7`: an honest verdict on a
+   UI that had not painted yet, not a harness failure) and c126 needed
+   `UI_WAIT=150 s` to cover a 35 s rip. `tools/sacd_ui.c` now writes
+   `/res/ui-frame.done` once, after its first painted frame (`SACD_UI_FRAME_FILE`
+   overrides the path); the template's wait is
+   `i=0; while [ ! -f /res/ui-frame.done ] && [ $i -lt N ]; do sleep 1; i=$((i+1)); done`
+   — the marker ends it in the good path, `N` (`--ui-wait-max`) only ends it when
+   the UI never paints (no hang, and the guest transcript prints
+   `UI_WAIT_ITERS=<n>` so the fire says which of the two happened). The plain UI
+   template waits on the frame marker **alone**. The three watch-mode templates
+   (`bx510_ui_reactive_guest`, `bx510_client_c_overlap`, `bx510_client_d_arearead`)
+   wait on the frame marker **AND** their own scenario marker (`/res/rip.rc`, or
+   `/res/a.rc` + `/res/b.rc`) — AND, not OR: killing on the frame alone would end
+   the observation window ~1 s after the UI's session, before the watched rip made
+   any progress, and the AND costs nothing in the good path (the frame marker
+   lands first). `tools/bx510_ui_render.py` refuses any UI-launching script that
+   has no such bounded marker wait or that puts a bare `sleep <n>` between the
+   launch and the kill; `tools/test_bx510_ui_loop.py` executes the wait itself
+   (marker-only → runs to the bound, every marker → returns immediately).
+   Two rules came out of the same review pass and apply to EVERY wait in these
+   templates: a marker wait is always bounded and reports its own expiry on the
+   console (`A_WAIT_TIMEOUT=60`, `RIP_WAIT_TIMEOUT=60`) — an unbounded
+   `while [ ! -f … ]; do sleep 1; done` turns a UI that never opens into a silent
+   probe timeout with nothing in the transcript saying which wait died (the
+   renderer now refuses one) — and a client's exit status is captured ONCE
+   (`rc=$?; echo A_RC=$rc >/res/a.rc; echo A_RC=$rc`). The old
+   `echo A_RC=$? >/res/a.rc; echo A_RC=$?` printed the FIRST echo's status, i.e.
+   always `0`: c132's console read `B_RC=0` while `cat /res/b.rc` said
+   `B_RC=1` — the exact shape of a receipt that lies.
 
 ## What the artifact is
 
@@ -102,7 +139,7 @@ Exit codes from `bx510-ui-shot`: 0 at least one buffer passed, 1 both black,
 | Run | UI built | Result |
 |---|---|---|
 | `uiloop6` | a throwaway raw-fbdev painter (validation stand-in) | `fbdev PASS (mean luminance 40.57)` / `pool BLACK` — the egress path produces a real, viewable frame through QEMU |
-| `uiloop7` | `tools/sacd_ui.c` (the UI lane's build) | both buffers `BLACK` within `UI_WAIT=3 s` — honest verdict for the UI as it stood, not a harness failure |
+| `uiloop7` | `tools/sacd_ui.c` (the UI lane's build) | both buffers `BLACK` at `UI_WAIT=3 s` — the fixed sleep that became issue #13 (shorter than the 22 s session, so no frame could exist); honest verdict for the UI as it stood, not a harness failure |
 
 `u1`/`u2`/`ui1` in `evidence/bx510-guest/bdpdrv/` are concurrency casualties
 from the RUNID collision described in lesson 8; their transcripts belong to a

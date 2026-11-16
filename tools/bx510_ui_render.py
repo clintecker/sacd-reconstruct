@@ -27,6 +27,10 @@ must carry, in order:
     stack is resident — run u1 — and /dev/fb0 as `c 29 0` is the MT8530 driver,
     which SIGBUSes the UI and the dump);
   * frame egress in row mode + the UI_SCALE hint + the UI_SHOT_DONE marker.
+  * and, in a script that starts the UI at all, a UI kill gated on the UI's own
+    first-frame marker (/res/ui-frame.done) with a bounded fallback — never a
+    fixed sleep (issue #13: DISC_OPEN alone is 22 s, so a sleep is either too
+    short to find a frame or wasted fire time).
 
 Usage:
   bx510_ui_render.py --runid c124 --out /tmp/g-c124.txt --script /tmp/bx510_ui_guest-c124.sh
@@ -34,6 +38,7 @@ Usage:
 Exit: 0 rendered, 1 invariant violation / bad template, 2 usage error.
 """
 import argparse
+import re
 import sys
 from pathlib import Path
 
@@ -45,12 +50,18 @@ DEFAULT_TEMPLATE = HERE / "bx510_ui_guest.sh.in"
 DAEMON_LAUNCH = "./sacd_extract_160 -S"
 STAGED_DIR = "/res/shim"
 
+# The UI's own first-frame marker and the shape of the bounded wait that reads
+# it. Both spellings live here so the templates, the gate and the tests cannot
+# drift apart (the wait is the mechanism issue #13 replaced a fixed sleep with).
+UI_LAUNCH = "./sacd_ui"
+UI_FRAME_MARKER = "/res/ui-frame.done"
+
 
 def placeholders(a):
     return {
         "SCALE": str(a.scale),
         "DAEMON_WAIT": str(a.daemon_wait),
-        "UI_WAIT": str(a.ui_wait),
+        "UI_WAIT_MAX": str(a.ui_wait_max),
         "CLIENT_LSN": str(a.client_lsn),
         "CLIENT_CNT": str(a.client_cnt),
         "UI_ARGS": a.ui_args,
@@ -123,6 +134,41 @@ def check_invariants(code):
         "FA-latch clear BEFORE the daemon's /dev/sr0 open "
         "(a clear after it is thrown away)",
         0 <= clear_at < launch_at, f"clear@{clear_at} launch@{launch_at}"))
+
+    # Issue #13: the UI is killed when it says a frame exists, not after a fixed
+    # sleep. The session before that frame is a 22 s DISC_OPEN (c123/c132/c133),
+    # so a short sleep captures nothing (uiloop7's honest black verdict) and a
+    # long one just spends fire time. A UI-launching script must therefore wait
+    # on /res/ui-frame.done inside a loop with a numeric bound, and must not put
+    # a fixed `sleep <n>` between the launch and the kill.
+    if UI_LAUNCH in code:
+        lines = code.splitlines()
+        launch_i = next((i for i, ln in enumerate(lines) if ln.startswith(UI_LAUNCH)
+                         or f" {UI_LAUNCH} " in ln), None)
+        kill_i = next((i for i, ln in enumerate(lines) if ln.strip().startswith("kill $U")),
+                      len(lines))
+        wait_lines = [ln for ln in lines[:kill_i]
+                      if ln.startswith("i=0; while") and UI_FRAME_MARKER in ln
+                      and "[ $i -lt " in ln and "do sleep 1" in ln]
+        checks.append((
+            "UI kill waits on the first-frame marker with a bounded fallback "
+            "(issue #13, never a fixed sleep)",
+            bool(wait_lines), f"{UI_FRAME_MARKER} wait lines x{len(wait_lines)}"))
+        bare = [ln.strip() for ln in lines[launch_i or 0:kill_i]
+                if re.fullmatch(r"sleep \d+", ln.strip())]
+        checks.append((
+            "no fixed `sleep <n>` between the UI launch and its kill",
+            not bare, f"bare sleeps x{len(bare)} {bare}"))
+
+    # An UNBOUNDED marker wait is a wedge waiting to happen: if the marker never
+    # lands, the fire sits there until the probe timeout and the transcript says
+    # nothing about why. Every wait in this lane carries its own bound and reports
+    # expiring (`*_WAIT_TIMEOUT`) instead of going silent.
+    unbounded = [ln.strip() for ln in code.splitlines()
+                 if re.search(r"while \[ ! -f [^\]]+ \]; do sleep 1; done", ln)]
+    checks.append((
+        "no unbounded marker wait (every wait carries its own bound)",
+        not unbounded, f"unbounded x{len(unbounded)} {unbounded}"))
     return checks
 
 
@@ -137,7 +183,13 @@ def main(argv=None):
     ap.add_argument("--scale", type=int, default=6,
                     help="fbdump decimation; 6 = 320x180 per dump (fast), 2 = 960x540")
     ap.add_argument("--daemon-wait", type=int, default=8)
-    ap.add_argument("--ui-wait", type=int, default=3)
+    ap.add_argument("--ui-wait-max", type=int, default=90,
+                    help="upper bound, in seconds, on the UI's first-frame "
+                         "marker wait (the marker normally ends it far sooner: "
+                         "the UI writes /res/ui-frame.done after its first "
+                         "painted frame). This is the fallback that kills a UI "
+                         "which never paints, so it must exceed the UI's own "
+                         "session (DISC_OPEN alone measured 22 s)")
     ap.add_argument("--client-lsn", type=int, default=510)
     ap.add_argument("--client-cnt", type=int, default=10)
     ap.add_argument("--ui-args", default="", help="argv for ./sacd_ui (guest shell text)")

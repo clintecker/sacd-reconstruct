@@ -5,14 +5,13 @@ working source, proven byte-for-byte, and now ripping real music files out of
 an emulated player.
 
 <p align="center">
-  <img src="evidence/bx510-guest/graphics/gallery/ui-sim-golden-s1.png" width="720" alt="The daemon UI: disc TOC, track list, ASCII disc map">
+  <img src="evidence/bx510-guest/graphics/gallery/hud-in-daemon-panel.png" width="720" alt="The daemon's UI — the HUD, painted by the daemon itself">
 </p>
 
-*The **daemon UI** (`sacd_ui`) — a disc console that reads the TOC and track
-list over the daemon's own port-2002 protocol and paints them. This exact
-frame is proven to render inside Sony's real guest OS
-([gallery](docs/GRAPHICS-GALLERY.md)). It is a milestone artifact from the
-client-leg proof; the product HUD is below.*
+*The daemon's UI is its HUD: `sacd_extract_160 -S --hud=panel` paints this
+panel from its own live state while it serves port 2002. This exact frame is
+proven to render inside Sony's real guest OS
+([gallery](docs/GRAPHICS-GALLERY.md)).*
 
 ## The story
 
@@ -45,11 +44,11 @@ daemon and the client are the same program, the DSF files are deterministic
 (two rips, one md5), and every byte the client received came through the
 reconstructed protocol stack.
 
-The **HUD** — one program, one product — is built **into the daemon**:
-`sacd_extract_160 -S --hud=console|panel` serves the rip and renders live
-telemetry from its own internal state (clients, ripping progress, disc
-stats). The image below is the daemon itself painting its panel in the
-guest, taken from the run's captured frame.
+The **HUD** — the daemon's UI, one program, one product — is built **into
+the daemon**: `sacd_extract_160 -S --hud=console|panel` serves the rip and
+renders live telemetry from its own internal state (clients, ripping
+progress, disc stats). The image at the top of this page is the daemon
+itself painting its panel in the guest, taken from the run's captured frame.
 
 ## How it's proven
 
@@ -62,16 +61,12 @@ altitudes, cheapest first, each with committed evidence:
 | **full-system guest** | Sony's own Linux 2.6.35 kernel + rootfs booting in our `sony-bx510` QEMU machine ([`emulator-kit/`](emulator-kit/README.md)) | same client sequence to both binaries, raw TX/RX compared byte-for-byte ([`evidence/bx510-guest/differential/`](evidence/bx510-guest/differential/transcript-orig.txt) — the transcript; captures alongside) |
 | **the real player** | a USB stick boots the daemon on actual hardware | sector hashes matching the reference ISO, beyond-EOF refusal, standby survival ([`evidence/bx510/hw-session-2026-11-05/`](evidence/bx510/hw-session-2026-11-05/RESULTS.md)) |
 
-<p align="center">
-  <img src="evidence/bx510-guest/graphics/gallery/hud-in-daemon-panel.png" width="640" alt="The in-daemon HUD: the daemon itself painting its panel">
-</p>
-
-*The **HUD** — painted by `sacd_extract_160` itself. This frame came out of
-the daemon process (`--hud=panel`) running inside Sony's real guest OS,
-captured during the same run in which a real client read the disc over
-port 2002. One binary: serves the rip, draws the panel. The decrypt leg is
-proven for real too: a derived disc image carries the audio areas encrypted
-at rest, and the emulated CPSA path decrypts under seven acceptance gates.*
+*The proof behind the top image: this frame came out of the daemon process
+(`--hud=panel`) running inside Sony's real guest OS, captured during the
+same run in which a real client read the disc over port 2002. One binary:
+serves the rip, draws the panel. The decrypt leg is proven for real too: a
+derived disc image carries the audio areas encrypted at rest, and the
+emulated CPSA path decrypts under seven acceptance gates.*
 
 ## The protocol
 

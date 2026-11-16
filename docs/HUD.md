@@ -47,6 +47,23 @@ fade. You read bursts, gaps and errors as a pattern.
 | host push (UDP 20023) | per-request events from the client: `OPEN`, `READ lsn=… n=…`, `CLOSE` |
 | daemon stdout | startup, module install, heartbeats, errors |
 
+## What Sony ships that we use (verified on the real rootfs)
+
+| Stock asset | Where | What it gives us |
+|---|---|---|
+| DirectFB 1.2.7 core | `/lib/libdirectfb-1.2.so.0.7.0` | surfaces, layers, windows, blits, font engine |
+| System provider | `lib/directfb-1.2-0/systems/libdirectfb_mtk.so` | MT85xx vendor init + pool + cmd ring (decoded: [mt85xx contract](mt85xx-fbdev-graphics-contract.md)) |
+| GFX driver | `lib/directfb-1.2-0/gfxdrivers/libdirectfb_mt85.so` | accelerated fill/blit |
+| Window managers | `wm/libdirectfbwm_sawman.so`, `wm/libdirectfbwm_default.so` | multi-app windowing — coexistence instead of takeover (S2 proven in guest: `evidence/bx510-guest/graphics/sawman-run.md`) |
+| Sony fonts/messages | `/res/font.bin` (62 KB), `/res/osdmsg.bin` (4.9 MB) | the device's own glyphs and OSD strings (format: [FONT-FORMAT.md](FONT-FORMAT.md)) |
+| Sony images | `/res/logo*.bin`, `logo_clrbar.bin` | boot logo, colour-bar art |
+| Appliance UI | `bdpprog` + `libX2.so` + `.rel` apps | draws via `x_gl_*`, references libdirectfb by name |
+| Kernel driver | `bdpdrv.ko` (8.1 MB) | the REAL display/CPSA stack — run in the rig, not reconstructed (`evidence/bx510-guest/bdpdrv/`) |
+
+Honest limits: QEMU FPS never predicts ARM926 FPS (timing stays a hardware
+measurement); `bdpprog`'s `x_gl_*` path stays opaque until `.rel`/X2 decode;
+Sony's font sizes are what the device ships.
+
 ## Build and run
 
 ```sh
@@ -56,6 +73,13 @@ make sacd-hud-anim        # host render -> animated GIF + MP4
 make sacd-hud-guest       # render inside the QEMU guest, gated on rc + non-black
 ```
 
+## What it looks like (screenshots)
+
+`docs/GRAPHICS-GALLERY.md` holds the current gallery: the Mac SIM render
+(`gallery/hud-sim.png`), the guest render decoded from the UART capture
+(`gallery/hud-guest-render.png`, gate PASS 3x 2026-11-16, mean luminance
+83.84), and the animation (`gallery/hud-anim.gif`).
+
 On the player the HUD is started by the session stick's supervisor, which
 preloads the CPSA module on a free compid, starts the daemon with its stdout
 captured, then draws into the pool slice.
@@ -63,6 +87,7 @@ captured, then draws into the pool slice.
 ## The game it plays with the appliance
 
 The appliance UI and the HUD are both clients of the same display; taking the
-primary surface over means the UI does not come back until a reboot. Coexistence
-(via the shipped SaWMan window manager) is the next step, described in
-`STOCK-LEVERAGE-PLAN.md`.
+primary surface over means the UI does not come back until a reboot.
+Coexistence via the shipped SaWMan window manager is PROVEN in the guest
+(second DirectFB client creates a window, draws, flips, destroys; the
+underlying app undisturbed — `evidence/bx510-guest/graphics/sawman-run.md`).

@@ -17,6 +17,13 @@ binary: `SACD_IOC_READ`, `SACD_IOC_DECRYPT`, `SACD_IOC_INIT`, `SACD_IOC_AUTH`,
 `SACD_IOC_DISC` on `/dev/sacd_read`, with a `compid` module parameter selecting
 one of four CPSA compute ids.
 
+The emulator models the decrypt as a keyed transform armed by a machine
+property (`sacd-cipher`): a derived disc image carries the two audio areas
+encrypted at rest, and the model decrypts on the same ioctl path the real
+module uses. With the property off the emulation is byte-identical to the
+Level-0 rig; with it on, the daemon's decrypt leg is exercised for real
+(spec: `evidence/bx510-guest/bdpdrv/decode/level1-cipher-spec.md`).
+
 ## 2. The daemon (what we reconstruct)
 
 For the binary's actual composition — byte budget per module, the largest
@@ -52,8 +59,11 @@ Source layout in `reconstruct/`:
   tools/fn_diff.py        per-function disassembly comparison against the original
   tools/pool_audit.py     literal-string pool content + load-site positional match
   tools/sacd_client.py    wire client: capture, sequences, self-test
-  emulator-kit/           QEMU SoC model (NAND, HDHOST block device, UART)
-  tools/bx510_*           guest shims: bdpvirt, hdvirt, fbvirt, tmpredir, probe
+  emulator-kit/           QEMU SoC model (NAND, HDHOST block device, UART, sacd-cipher)
+  tools/bx510_*           guest shims: bdpvirt, hdhost, fbvirt, tmpredir, probe
+  tools/rig_run.sh        qemu-user rig: daemon under sacd_rig.so vs a disc image
+  tools/bx510-fire.sh     full-system guest fire: boot, stage, run, capture
+  tools/ui_regress.py     UI layout regression + goldens + guest parity
 ```
 
 Three verification altitudes, cheapest first:

@@ -58,7 +58,46 @@ python3 emulator-kit/run.py --images <dir> shell <fixture.img>
 Regenerable fixtures that are **not** in this repo (they were 150 MB of NAND
 images) are produced by `tools/fixture_gen.py`.
 
-## 4. Hardware gate
+## 4. The rip (the user-visible product)
+
+With any of the rigs above serving port 2002, the same reconstructed binary
+runs as the ripper client (no `-S`):
+
+```sh
+sacd_extract_160 -s -c -t 1 -i 127.0.0.1:2002 /tmp/ripout
+# -> /tmp/ripout/01 - <album>.dsf   (DST -> DSD decode via -c)
+```
+
+This is proven end to end under the qemu-user rig; the recorded runs produced
+213,188,877 B and 301,154,576 B DSF files with md5s in
+`evidence/bx510-guest/rip/README.md`, deterministic across two rips. One
+reconstruction-side divergence was required (documented at the patch site):
+`recursive_mkdir` tolerates `EPERM` because the original ran as root on the
+player and never met it; a non-root reproducer does.
+
+## 5. Level-1 cipher (the decrypt leg, for real)
+
+`tools/bx510_disc_cipher.py` derives an encrypted-at-rest copy of a disc image
+(both audio areas; TOCs stay plaintext — the daemon reads TOCs via the plain
+lseek64 path and never the decrypt ioctl). Boot the emulator with the
+`sacd-cipher` machine property armed and the daemon's DECRYPT ioctl leg runs
+for real. `tools/bx510_cipher_check.py` gates the run against the oracle table
+(`level1-cipher-oracles.json`, 7 gates incl. negative controls); the spec,
+battery results and the decisive byte-level evidence are in
+`evidence/bx510-guest/bdpdrv/decode/level1-cipher-spec.md`.
+
+## 6. The UI/HUD on the emulated panel
+
+```sh
+make sacd-hud-sim                 # host render -> PNG (seconds)
+make sacd-hud-guest               # the HUD inside Sony's guest OS, gated
+make bx510-ui-loop RUNID=<id>     # UI edit -> guest frame -> verdict, one command
+make ui-regress-all               # layout + animation + guest-parity suite
+```
+
+Viewable results: `docs/GRAPHICS-GALLERY.md`.
+
+## 7. Hardware gate
 
 `docs/` ships the runbook (`evidence/bx510/PLAYER-SESSION-RUNBOOK.md`) and
 `tools/sacd_hardware.sh` drives it: build a FAT32 stick whose `AutoScript/`
@@ -70,7 +109,7 @@ non-obvious and cost several failed runs to learn:
 - the daemon needs the CPSA module preloaded on a **free compid**, or it dies in
   one second with `insmod … busy`.
 
-## 5. Gates
+## 8. Gates
 
 ```sh
 uv run pytest -m "not smoke"     # unit gates (parity, pool, alteration controls)

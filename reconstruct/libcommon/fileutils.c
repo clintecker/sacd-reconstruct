@@ -265,7 +265,18 @@ int recursive_mkdir(char* path_and_name, mode_t mode)
 #endif
             path_and_name[count + 1] = charReplaced;
 
-            if (rc != 0 && !(errno == EEXIST || errno == EISDIR || errno == EACCES || errno == EROFS))
+            /* EPERM tolerated alongside EEXIST/EISDIR/EACCES/EROFS: chmod()
+             * of a just-created component fails EPERM for a non-root caller,
+             * and the original aborts the whole path on it (cmp chain 17/21/
+             * 13/30 only — the daemon ran as root on the real player, so it
+             * never saw EPERM). Our client runs as a normal user under the
+             * qemu rig, where EPERM is the NORMAL case for every component
+             * below /tmp's parent... measured 2026-11-16: the rip client
+             * died "error creating ... errno 2" because recursive_mkdir
+             * returned after the FIRST mkdir("/") whose chmod hit EPERM.
+             * A deliberate, documented divergence from the original binary
+             * (fn_diff accepted residual recursive_mkdir). */
+            if (rc != 0 && !(errno == EEXIST || errno == EISDIR || errno == EACCES || errno == EROFS || errno == EPERM))
                 return rc;
         }
     }

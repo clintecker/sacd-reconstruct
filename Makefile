@@ -396,12 +396,7 @@ the verification tree:
 sacd-rig:
 	@test -n "$(call if-defined,DISC)" || true
 	$(VM_SSH) 'cd ~/$(SACD_VM) && rm -rf $(SACD_VM_RIG_OUT) && sh tools/rig_run.sh original/sacd_extract_160 reconstruct/release/sacd_extract_160_release $(SACD_VM_RIG_OUT) $(if $(DISC),$(DISC),$$HOME/the verification tree/firebird.iso)'
-	@RIGDIR=$(SACD)/evidence/qemu-rig/$$(date -u +%Y%m%d-%H%M%S)
-	@for d in capture-orig capture-cand overlap-orig overlap-cand; do mkdir -p $$RIGDIR/$$d; $(VM_SCP) -r "$(VM_USER)@$(VM_HOST):$(SACD_VM_RIG_OUT)/$$d/." $$RIGDIR/$$d/; done
-	@for l in daemon-orig.log daemon-cand.log daemon-orig2.log daemon-cand2.log; do $(VM_SCP) "$(VM_USER)@$(VM_HOST):$(SACD_VM_RIG_OUT)/$$l" "$$RIGDIR/" 2>/dev/null || true; done
-	@echo "evidence: $$RIGDIR"
-	@python3 $(SACD)/tools/sacd_client.py compare $$RIGDIR/capture-orig/manifest.json $$RIGDIR/capture-cand/manifest.json
-	@python3 $(SACD)/tools/sacd_client.py compare $$RIGDIR/overlap-orig/manifest.json $$RIGDIR/overlap-cand/manifest.json
+	@sh $(SACD)/tools/rig_pull.sh $(SACD_VM_RIG_OUT)
 
 ## SACD :: sacd-parity [ELF=$(SACD_CAND)] :: Mac-side parity harness against one ELF :: fn_diff (390 normalized functions; only the accepted _start + call_gmon_start residuals may remain) + pool_audit (literal content, load-site positional) + both literal regression tests — the tool chain that caught the L"c" and __FILE__ misreads
 .PHONY: sacd-parity
@@ -481,7 +476,7 @@ sacd-hud-build:
 ## SACD hardware :: sacd-hud-sim :: render the HUD scene on the Mac (no DirectFB, no device) :: real Sony font + fake telemetry -> PNG, for layout/text iteration in seconds
 .PHONY: sacd-hud-sim
 sacd-hud-sim:
-	cd experiments/sacd_reconstruct && cc -O2 -Wall -Wextra -Wno-pragmas -DHUD_SIM -I. -o /tmp/hudsim tools/bx510_sacd_hud.c && HUD_FONT=evidence/bx510/display-payload/sony-font.ttf /tmp/hudsim /tmp/hud_sim.ppm 1 && sips -s format png /tmp/hud_sim.ppm --out /tmp/hud_sim.png >/dev/null && echo "wrote /tmp/hud_sim.png"
+	cd $(SACD) && cc -O2 -Wall -Wextra -Wno-pragmas -DHUD_SIM -I. -o /tmp/hudsim tools/bx510_sacd_hud.c && HUD_FONT=$(CURDIR)/evidence/bx510/display-payload/sony-font.ttf /tmp/hudsim /tmp/hud_sim.ppm 1 && sips -s format png /tmp/hud_sim.ppm --out /tmp/hud_sim.png >/dev/null && echo "wrote /tmp/hud_sim.png"
 
 ## SACD hardware :: sacd-usb-calib :: arm the CALIBRATION pattern on the stick :: sets AutoScript/hudcalib then display mode, so the next player run photographs a known pattern (grid/bars/edges) instead of the HUD
 .PHONY: sacd-usb-calib
@@ -494,7 +489,7 @@ sacd-usb-calib:
 sacd-hud-diff:
 	python3 $(SACD)/tools/bx510_hud_diff.py "$(PHOTO)" "$(RENDER)" --min-ssim $${MIN_SSIM:-0.55}
 
-## SACD hardware :: sacd-hud-guest :: run the HUD in the real Sony guest and GATE it :: asserts rc=0 and a non-black framebuffer (a black screenshot fails instead of being eyeballed); currently red because fbvirt's FBIO_DISPATCHHW is a no-op
+## SACD hardware :: sacd-hud-guest :: run the HUD in the real Sony guest and GATE it :: asserts rc=0 and a non-black framebuffer (a black screenshot fails instead of being eyeballed); green since e9dbd8b (pool-mmap render path); 3x PASS re-run 2026-11-16 mean lum 83.84
 .PHONY: sacd-hud-guest
 sacd-hud-guest:
 	sh $(SACD)/tools/hud_guest_run.sh

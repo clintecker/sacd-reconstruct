@@ -92,3 +92,30 @@ two manifests.
 The rig proves protocol-behavior equivalence above the ioctl boundary.
 It does not prove kernel-module crypto, the player's loader/libc, or real
 module installation — that is the on-player baseline/replay (issue #6).
+
+## The full-system companion: HDHOST, the synthetic host-image device
+
+The qemu-user rig above runs the daemon alone. The full-system guest rig
+(Sony kernel + rootfs in QEMU, `emulator-kit/`) needed a way to serve a
+multi-GiB disc image to BOTH of the daemon's read paths without staging the
+image in guest RAM. That is `tools/bx510_hdhost.c` — a read-only synthetic
+block device:
+
+- QEMU opens the image read-only (`-drive file=...,readonly=on`); the device
+  model has no write command at all. Capacity comes from the image byte size;
+  a sparse file with sentinel writes is enough — no full-image materialization.
+- One shared backend, one truth: the guest sees exactly one block node,
+  `/dev/hdhost`. The daemon's plain path reaches it via `tmpredir`
+  (`/dev/sr0` -> `/dev/hdhost`); the module path via `bdpvirt`'s
+  `_IDECLI_OddRead` doing `filp_open("/dev/hdhost")` + `kernel_read`.
+- Guest transfer buffers are bounded by the request (<= MAX_PROCESSING_
+  BLOCK_SIZE x 2064 B); nothing larger is staged in guest RAM.
+- Validated by the boundary-sentinel batteries: `make sacd-gate3` (canonical
+  6-boot through the host-image interface) and `make sacd-gate4` (5 GiB
+  sentinels across the 2 GiB / 4 GiB byte-offset boundaries), plus the
+  HDHOST end-to-end smoke (`make sacd-hdhost-smoke`).
+
+Design provenance: this was first written up as the "synthetic read-only
+host-image interface" design sketch (2026-11-03) and has since been
+implemented and gated; the sketch's open questions are answered by the gate
+evidence in `evidence/bx510-guest/gates3/` and `gates4-check` outputs.

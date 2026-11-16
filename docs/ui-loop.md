@@ -140,6 +140,7 @@ Exit codes from `bx510-ui-shot`: 0 at least one buffer passed, 1 both black,
 |---|---|---|
 | `uiloop6` | a throwaway raw-fbdev painter (validation stand-in) | `fbdev PASS (mean luminance 40.57)` / `pool BLACK` — the egress path produces a real, viewable frame through QEMU |
 | `uiloop7` | `tools/sacd_ui.c` (the UI lane's build) | both buffers `BLACK` at `UI_WAIT=3 s` — the fixed sleep that became issue #13 (shorter than the 22 s session, so no frame could exist); honest verdict for the UI as it stood, not a harness failure |
+| `docshot1` (2026-11-16) | `tools/sacd_ui.c` | PASS — the UI held its own wire session (`UI-EV 0003–0012`: DISC_OPEN → SIZE → READ 510×10 → both area TOCs → DISC_CLOSE), decoded `cat=CDSML8558` off the socket, the rip client PASSED in the same run, pool mean luminance 13.12 with 3 damaged rows. Gallery: `docs/GRAPHICS-GALLERY.md` (`gallery/ui-guest-docshot1.png`) |
 
 `u1`/`u2`/`ui1` in `evidence/bx510-guest/bdpdrv/` are concurrency casualties
 from the RUNID collision described in lesson 8; their transcripts belong to a

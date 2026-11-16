@@ -24,7 +24,11 @@ MTK="$REPO/incoming/sacd-mtk-forensics"
 VERIFY_PY=${VERIFY_PY:-$HOME/sacdtest-venv/bin/python}
 QEMU=${QEMU:-qemu-arm-static}
 CSROOT=${CSROOT:-$HOME/arm-2009q3/arm-none-linux-gnueabi/libc}
-EXPECT_FNMATCH=${EXPECT_FNMATCH:-388}
+EXPECT_FNMATCH=${EXPECT_FNMATCH:-387}
+# fn_diff mismatches tolerated here (mirrors tools/sacd_parity.sh ACCEPTED):
+# the two startup residuals plus recursive_mkdir — the deliberate EPERM
+# divergence (see reconstruct/libcommon/fileutils.c and sacd_parity.sh).
+ACCEPTED_FNMATCH=${ACCEPTED_FNMATCH:-" _start call_gmon_start recursive_mkdir "}
 # fn_diff objdump backend: prefer $OBJDUMP, else the FSF arm objdump when
 # present (build host), else the script default (llvm-objdump).
 if [ "${OBJDUMP:-}" = "" ] && [ -x "$HOME/gnuarm/bin/arm-none-linux-gnueabi-objdump" ]; then
@@ -44,11 +48,17 @@ echo
 
 fail=0
 
-echo "--- [1/5] fn_diff (expect $EXPECT_FNMATCH/390 normalized functions) ---"
+echo "--- [1/5] fn_diff (expect $EXPECT_FNMATCH/390 normalized functions; accepted residuals:$ACCEPTED_FNMATCH) ---"
 "$VERIFY_PY" "$REPO/tools/fn_diff.py" "$ORIG" "$IMG" | tee /tmp/verify_fn_diff.txt
 got=$(sed -n 's/^match: \([0-9]*\).*/\1/p' /tmp/verify_fn_diff.txt)
 echo "fn_diff: $got functions match"
 [ "$got" -ge "$EXPECT_FNMATCH" ] || { echo "FAIL: fn_diff below $EXPECT_FNMATCH"; fail=1; }
+for m in $(sed -n 's/^MISMATCH: //p' /tmp/verify_fn_diff.txt); do
+    case " $ACCEPTED_FNMATCH " in
+    *" $m "*) echo "residual (accepted): $m" ;;
+    *) echo "FAIL: unexpected fn_diff mismatch: $m"; fail=1 ;;
+    esac
+done
 
 echo
 echo "--- [2/5] link interface (DT_NEEDED order, 270 exports, 131 imports, 5 unwind) ---"

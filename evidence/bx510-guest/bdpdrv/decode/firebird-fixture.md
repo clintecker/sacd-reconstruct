@@ -4,7 +4,7 @@ Status: verified against the live VM copy the rig uses
 Date: 2026-11-12
 Scope: the disc fixture only. No driver/model decode is re-derived here; the
 claims under test are `decode/c97-read-path.md` §4 (addressing + framing),
-`docs/DAEMON-MAP.md` §"2064 and 2048", and `docs/large-image-interface.md`
+`docs/DAEMON-MAP.md` §"2064 and 2048", and `docs/RIG-ARCHITECTURE.md` (HDHOST section)
 (fixture geometry). Read-only: nothing in `emulator-kit/`, `tools/` or another
 worker's files was modified.
 

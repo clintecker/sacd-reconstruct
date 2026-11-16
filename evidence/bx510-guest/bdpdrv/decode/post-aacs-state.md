@@ -65,7 +65,7 @@ is waiting for (`0x5c040..0x5c04c` all zero → `type 0`, `err 0` → `*out = 1`
 |---|---|
 | `bdpdrv.ko` | sha256 `6604f6cd6c204c3399ac047f389f47162b06a3f6576159f21b4e8aaf3a72cf54`, 8,122,068 B |
 | `sata_mt85xx_mod.ko` | sha256 `8a0253eb9bff19a3d3c0ac594a507235bad82348d8e80069024368d0f5456657`, 69,452 B |
-| MMIO trace | `bdpdrv-runC91.mmio.log`, 4,729,901 B, 119,045 lines → **34,961 MMIO events**, 1,918 distinct addresses |
+| MMIO trace | `bdpdrv-runC91.mmio.log.gz` (4,729,901 B before gzip), 119,045 lines → **34,961 MMIO events**, 1,918 distinct addresses |
 | UART | `bdpdrv-runC91.uart.log`, 91,770 B, 1,868 lines |
 | meta | `bdpdrv-runC91.meta.json` — `terminal_marker: true`, qemu `/home/you/bx510-emu/.../qemu-system-arm` |
 | model | `emulator-kit/player.local.c` (the `0x5c020` / `0x5c804` / `0x8118` cases) |
@@ -552,6 +552,6 @@ rather than re-deriving constant bases — `0x24188` is reached from a
 scanner in that file models.
 
 Inputs: `bdpdrv.ko` / `sata_mt85xx_mod.ko` under `/tmp/bdpdrv/` (sha-pinned in
-the script), `bdpdrv-runC91.{mmio,uart}.log`, `bdpdrv-runC91.meta.json`,
+the script), `bdpdrv-runC91.{mmio.gz,uart}.log`, `bdpdrv-runC91.meta.json`,
 `emulator-kit/player.local.c`, `emulator-kit/smoke.py`,
 `tools/bx510_bdpdrv_stub_probe.py`.

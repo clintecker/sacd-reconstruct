@@ -1,6 +1,7 @@
 # SaWMan coexistence experiment (S2 lane) — run report
 
-Spec: `docs/S2-SAWMAN-PLAN.md` (SaWMan coexistence: second app over the appliance UI).
+Spec: SaWMan coexistence — second app over the appliance UI (the plan doc
+itself has been retired; its acceptance conditions are restated below).
 
 This report is for the QEMU **Sony guest** rig (no hardware UI process). Evidence is the UART transcript logs pulled from the build host.
 

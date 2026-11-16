@@ -18,7 +18,7 @@ accept the writes" and §9's "2352-byte vs 2048 PIO path — not in scope").
 | `decode/fe-ata-cmd.md` | the mailbox/reply/status protocol this doc continues (§1.1, §1.2, §2.3 assumed) |
 | `decode/fe-status-handshake.md` | DRAM-window mechanism (`0x5c500`, `phys=(pgn<<22)+off`) |
 | `decode/sata-fw-load.md`, `decode/kernel-iomap.md` | page offset `0xc0000000`, physical offset 0 (VERIFIED) |
-| `docs/DAEMON-MAP.md`, `docs/large-image-interface.md` | fixture geometry: Firebird = 1,064,208 × 2048 B; SACD raw frame = 2064 B |
+| `docs/DAEMON-MAP.md`, `docs/RIG-ARCHITECTURE.md` (HDHOST section) | fixture geometry: Firebird = 1,064,208 × 2048 B; SACD raw frame = 2064 B |
 | `emulator-kit/player.local.c` | read-only: the model's current FE/mailbox state and its `sata_blk` backing |
 
 All instruction addresses are **section-relative** (`.text+0x…`). `priv` is the driver's
@@ -383,7 +383,7 @@ data-only image; the settling experiment is §6 check 4 (if the guest payload is
 |---|---|---|
 | Firebird logical sectors | `1,064,208` | `docs/DAEMON-MAP.md`, `tools/hud_scenarios.py` |
 | fixture byte length | `1,064,208 × 2048 = 2,179,497,984` | `docs/DAEMON-MAP.md` ("the TOC's total-sector count multiplied by 2048 equals the ISO's byte length exactly") |
-| SACD *raw* frame (module path) | `2064` = 12-byte header + 2048 logical + 4 trailing | `docs/large-image-interface.md`, `docs/DAEMON-MAP.md` |
+| SACD *raw* frame (module path) | `2064` = 12-byte header + 2048 logical + 4 trailing | `docs/RIG-ARCHITECTURE.md` (HDHOST section), `docs/DAEMON-MAP.md` |
 | ATAPI raw CD frame (this path) | `2352` = 12 + 4 + 2048 + EDC/ECC | `qc_issu_task` 0x6ef4, `data_xfer` 0x54f8 |
 
 So on **this** path:
@@ -547,7 +547,7 @@ C97 gate is one known LBA plus one past-EOF READ that must produce status `0x51`
    (`.bss+0x30`, `records=0`, `sata-fw-load.md` §"Partition binding"), not a disc data
    fixture. The only read-path fixture is the disc image.
 6. **C97 brief**: "2068-byte vs 2048-byte SACD sectors" — the documented raw SACD frame is
-   **2064** (`docs/large-image-interface.md`: 12-byte header + 2048 logical + 4 trailing;
+   **2064** (`docs/RIG-ARCHITECTURE.md` (HDHOST section): 12-byte header + 2048 logical + 4 trailing;
    `docs/DAEMON-MAP.md`: 2048 payload + 16-byte header), it belongs to the `_IDECLI_OddRead`
    channel, and it is **not** the frame this path carries (2352 here).
 
@@ -586,7 +586,7 @@ C97 gate is one known LBA plus one past-EOF READ that must produce status `0x51`
 | `0x5c400` never read | module-wide: only 0x5814/0x583c/0x5844/0x5848/0x5850/0x5870/0x5878 + 0x4428 |
 | page offset `0xc0000000`, physical 0 | `decode/kernel-iomap.md` §"`0xc0000000`, physical offset 0" (VERIFIED) |
 | RAM at phys 0, 512 MiB | `emulator-kit/player.local.c` 0x880 (`memory_region_init_ram(machine->ram, 0, …)`), 0x965 (`default_ram_size = 512 MiB`) |
-| fixture geometry | `docs/DAEMON-MAP.md` §"2064 and 2048"; `docs/large-image-interface.md` |
+| fixture geometry | `docs/DAEMON-MAP.md` §"2064 and 2048"; `docs/RIG-ARCHITECTURE.md` (HDHOST section) |
 | model: `sata_blk` opened, never read | `emulator-kit/player.local.c` (only `blk_getlength` at `bx510_sata_build_identify`) |
 
 ---

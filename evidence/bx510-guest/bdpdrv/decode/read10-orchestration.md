@@ -264,7 +264,7 @@ The guest reports 12 hashes for the 2-sector 5303 dump; the *verdict* decides:
 
 | measurement | layout | reading |
 |---|---|---|
-| b0@+12 and b1@+2076 | `payload_at_12_stride_2064` | the drive answers 2064-byte SACD frames, 12-byte header — matches `memcpy(buf + i*2048, out + 12, 2048)` in the decrypt leg and `large-image-interface.md`'s "12-byte header + 2048 logical + 4 trailing" |
+| b0@+12 and b1@+2076 | `payload_at_12_stride_2064` | the drive answers 2064-byte SACD frames, 12-byte header — matches `memcpy(buf + i*2048, out + 12, 2048)` in the decrypt leg and the RIG-ARCHITECTURE HDHOST section's "12-byte header + 2048 logical + 4 trailing" |
 | b0@+0 and b1@+2064 | `payload_at_0_stride_2064` | payload first, 16 trailing bytes/sector |
 | b0@+0 and b1@+2048 | `payload_at_0_stride_2048` | the kernel re-packed 2048-per-sector into a 2064-sized buffer; the tail 16 × n bytes are stale |
 | b0@+16 | `payload_at_16_stride_2064` | `DAEMON-MAP.md`'s "2048 payload + 16-byte header" phrasing — 4 bytes off from the code |

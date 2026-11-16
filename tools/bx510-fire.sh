@@ -35,11 +35,14 @@ PROBE_EXTRA=""
 # DISC/CIPHER the battery call sites pass. Non-empty wins; DISC falls back to
 # the real ISO and CIPHER to 0 (property off, the Level-0 behaviour).
 DISC="${BX510_DISC:-${DISC:-/home/aftermath/sacd-verify/firebird.iso}}"
-CIPHER_OPT=",sacd-cipher=1"
-CIPHER_STATE=on
+# QEMU bool properties parse 'on'/'off' (not '1'/'0') — measured, run c136:
+# 'sacd-cipher=1' died with "Parameter 'sacd-cipher' expects 'on' or 'off'".
+# The env contract stays 1/0 (the spec's and the battery call sites' spelling).
+CIPHER_OPT=""
+CIPHER_STATE=off
 case "${BX510_CIPHER:-${CIPHER:-0}}" in
-1) ;;
-*) CIPHER_OPT=""; CIPHER_STATE=off ;;
+1) CIPHER_OPT=",sacd-cipher=on"; CIPHER_STATE=on ;;
+*) : ;;
 esac
 
 EVID=evidence/bx510-guest/bdpdrv
@@ -74,7 +77,7 @@ cat > "$VMFIRE" <<EOF
 R=$RUNID T=$TIMEOUT
 export BX510_TRACE=1
 export BX510_MACHINE_OPTS="sata-disc=$DISC$CIPHER_OPT"
-echo "bx510-fire: run \$R — disc=$DISC cipher=$CIPHER_STATE machine-opts: $BX510_MACHINE_OPTS"
+echo "bx510-fire: run \$R — disc=$DISC cipher=$CIPHER_STATE"
 cd /home/aftermath || exit 1
 ls -t /tmp/bdpdrv-run*.mmio.log 2>/dev/null | grep -v "\$R" | tail -n +3 | xargs -r rm -f
 ls -t /tmp/bdpdrv-run*.uart.log 2>/dev/null | grep -v "\$R" | tail -n +5 | xargs -r rm -f

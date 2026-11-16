@@ -1,8 +1,8 @@
 # PUBLIC-MANIFEST: path	bytes	sha256	action	reason
 .gitignore	48	0925bdedeaafdc90b43fe02830c8a98274fe2e5feec2e5f4e9ad1487e8826428	exclude	not matched by any include rule
-AGENTS.md	33855	5f52c6aa7d8b436d0345387187e3583a1b45824bae1fe33e6df663997b10650f	exclude	internal process/policy doc
+AGENTS.md	34334	263cdf87983d06ef5784e13d86cddc89243e4ed8aa815fda2caaaf38f20d6934	exclude	internal process/policy doc
 DELTA.md	20046	5d7d1d99f35c75c601056ffb66539080837c8312d533db9baa778f92682c2852	scrub	reconstruction delta, identifiers scrubbed
-Makefile	52671	6f7ac86071d746646791cf6534b7498603fc48a124c04425ed76332785e658b2	scrub	build targets, identifiers scrubbed
+Makefile	53675	06e26f73c59735b97517455db2fa9a1054ef0dd4276c0da3e9307f3c6bc60f58	scrub	build targets, identifiers scrubbed
 NOTES.md	6247	c25913d402163d5909528c6c369f0d616b3140b6d3db619b1ee5b9bfdf6e83a8	exclude	internal session notes
 README.md	6967	e52baa254b33f9deaad9fca2d2ea39845cc1e9546dc00cc7d18bce88a485f294	exclude	not matched by any include rule
 RESEARCH-BRIEF.md	6687	3bcd6e4e5c07808740ab2d295e9d80a58b97e2e0e61d5cde06930e361876639c	exclude	internal brief
@@ -420,9 +420,9 @@ docs/ARCHITECTURE.md	3569	34dda34b32ae0386f265c9764954e5abee54af278603780c37340a
 docs/DAEMON-MAP.md	9532	28da8467247e2d9996095db18b81ad7af6b9e3cf0a8be56558141492a32566ff	scrub	ours
 docs/EVIDENCE.md	3032	f4ef661a78b429fef99e8f60509e688997c3fa08148fd142caae73d46d39b241	scrub	ours
 docs/FONT-FORMAT.md	8522	b6237d49ff7feaf849e8849b709d68164c4c9cbf2e97ad6e0688d71a4bb12985	scrub	ours
-docs/GRAPHICS-GALLERY.md	6680	f627d2021b2f45f99e3af1552fa9bb44fd3d5cf29db644204c867eb53eb8f266	scrub	ours
+docs/GRAPHICS-GALLERY.md	7992	b91f510ecb5fc2a92ef6abd1dd2525cba517141d69ce1d933022c093ae143ea0	scrub	ours
 docs/HUD-DESIGN.md	10671	8a6d1aec3b9cc98f02cc18391dc71dd10d29f31a45e0ac4fc42c6b0716d25ac7	scrub	ours
-docs/HUD.md	8915	c1ad1c368e686e577b49fc7318400246b962091f8a6bee6c8126428e47ae208a	scrub	ours
+docs/HUD.md	10801	e44e014b61d13cc5fd9d4f9b53d69227e14d8ab5e116eadc6eb407aabdab45e4	scrub	ours
 docs/LIFECYCLE.md	14993	f34825173e24461a1e2b31da258cde08e1a8e3ccfbffe2087e2ffe6262970516	scrub	ours
 docs/PROVENANCE.md	2297	52e7e234e148bff0d84c5b9af3241d6339d4f28f78f09e6f2213a6eef42bba62	scrub	ours
 docs/REPRODUCE.md	5206	0252ab0082442a1a8a2785237b80a2a54004c5dd99ad1f35a51935d6fd5531c2	scrub	ours
@@ -679,6 +679,21 @@ evidence/bx510-guest/bdpdrv/bdpdrv-runhudint4.uart.log	827705	2136a81cd7b3f29274
 evidence/bx510-guest/bdpdrv/bdpdrv-runhudint5.fire.txt	407	4108575188e866aaee2e48877dd2c3f54cfddfa926b270ec8ada02db8c2f8e64	scrub	evidence (logs filtered by size below)
 evidence/bx510-guest/bdpdrv/bdpdrv-runhudint5.meta.json	1028	6462dc9fe6f1d23bc03069facf631495b72ce810f3f9054170820ffa1d770aa7	scrub	evidence (logs filtered by size below)
 evidence/bx510-guest/bdpdrv/bdpdrv-runhudint5.uart.log	847836	2b560b4c821e4a91edd020c2ef666b76a144811855bc3685827f43ab800679fc	scrub	evidence (logs filtered by size below)
+evidence/bx510-guest/bdpdrv/bdpdrv-runhudisc1.fire.txt	407	63579cb15092a4c67cca7445d1c2f321c57a1b7d61670ce86b7d0e5e0cb6be61	scrub	evidence (logs filtered by size below)
+evidence/bx510-guest/bdpdrv/bdpdrv-runhudisc1.meta.json	1029	08aae304ba09c8973257fe87db804e6259ea1d25b2128785cbdd53f71e273a34	scrub	evidence (logs filtered by size below)
+evidence/bx510-guest/bdpdrv/bdpdrv-runhudisc1.uart.log	841616	67b417cdb60aea04947cffcb42c00ee4efd2a24d86fe1314581198ed202ee12e	scrub	evidence (logs filtered by size below)
+evidence/bx510-guest/bdpdrv/bdpdrv-runhudisc2.fire.txt	407	b5459aaf671703ab4ed2cfbf2419a270d53df7668f58708cb6538bb8bdd0f63b	scrub	evidence (logs filtered by size below)
+evidence/bx510-guest/bdpdrv/bdpdrv-runhudisc2.meta.json	1029	8c160a2dfeea2e18ff3aee1d8503180348f997b2060ac00921c4a0f32ec11795	scrub	evidence (logs filtered by size below)
+evidence/bx510-guest/bdpdrv/bdpdrv-runhudisc2.uart.log	1181659	e6a2577edc18eacf95627b084c737a13b8bea503e6af6a46895c5365d091c3c1	exclude	regenerable blob >1 MiB
+evidence/bx510-guest/bdpdrv/bdpdrv-runhudisc3.fire.txt	407	bc8f0bb4724c39812bd1eec4b86852a99fae79ca3c355a59c7aac5d9b1905178	scrub	evidence (logs filtered by size below)
+evidence/bx510-guest/bdpdrv/bdpdrv-runhudisc3.meta.json	1029	d2d8af8f0842ae006b985a2de7df0c554da89eda83f7b20ed909ab647e93bf37	scrub	evidence (logs filtered by size below)
+evidence/bx510-guest/bdpdrv/bdpdrv-runhudisc3.uart.log	1186187	48e72d2e06cda6cc908304ca3115cdfa69650a46693ec0f651d408ec90177892	exclude	regenerable blob >1 MiB
+evidence/bx510-guest/bdpdrv/bdpdrv-runhudisc4.fire.txt	407	df8899fc57ceacbb5fe2fe71a6338cd92c78516e17ca1ba6d0fe288599cbc3c8	scrub	evidence (logs filtered by size below)
+evidence/bx510-guest/bdpdrv/bdpdrv-runhudisc4.meta.json	1029	71aef74160ebbc3852ebda67af3062a07b6b896c1230fa0b2a4393594bb1b664	scrub	evidence (logs filtered by size below)
+evidence/bx510-guest/bdpdrv/bdpdrv-runhudisc4.uart.log	1185076	92fc710c191182aba356e324d739056431a013ef9fe7a7463bdd3c0820d3a6fe	exclude	regenerable blob >1 MiB
+evidence/bx510-guest/bdpdrv/bdpdrv-runhudisc5.fire.txt	407	75d704f37434188b918bdde766fb015794c1244d384ebdd9ce48c0dfbc40b054	scrub	evidence (logs filtered by size below)
+evidence/bx510-guest/bdpdrv/bdpdrv-runhudisc5.meta.json	1029	f4a76c7b42f18b007c942fbec56b02a41fe31f5011c931309dfbc08e878a5a46	scrub	evidence (logs filtered by size below)
+evidence/bx510-guest/bdpdrv/bdpdrv-runhudisc5.uart.log	1185124	3e51bcf048f4ea6645a353655c1a4bb18734c49ae2f8379cee352480882cb7f2	exclude	regenerable blob >1 MiB
 evidence/bx510-guest/bdpdrv/bdpdrv-runhudpan2.fire.txt	407	4132283918640fc8b447f406bde6e756c7c48ab44ae30c859368e771582f15f2	scrub	evidence (logs filtered by size below)
 evidence/bx510-guest/bdpdrv/bdpdrv-runhudpan2.meta.json	1029	63790f3fa1bbe41202a28a1aa1d29f7ea7a80dc0fb70cad171aec20d3692073c	scrub	evidence (logs filtered by size below)
 evidence/bx510-guest/bdpdrv/bdpdrv-runhudpan2.uart.log	841759	7d6462d61e7817675b48c44cd0c6db82817a9883b39c828a6a3c47e371af2a12	scrub	evidence (logs filtered by size below)
@@ -1018,6 +1033,8 @@ evidence/bx510-guest/graphics/font-hud-after.png	125293	c2d3a8c7bc7ca22fc2be3608
 evidence/bx510-guest/graphics/font-hud-before.png	91276	aefd466125e2b56844d067e503b9602e1ae9ad987099217cb39edbffaedbc059	convert	image -> PNG (metadata stripped)
 evidence/bx510-guest/graphics/font-hud-run.md	5785	d586f8f8418164034844ad908d35590987bbc663dca95d0b004c9d09b610e6f5	scrub	evidence (logs filtered by size below)
 evidence/bx510-guest/graphics/gallery/hud-anim.gif	1136765	c602a8411fca3e400ca3b9a90a9965e7b7c92ae5fa00628fae6aba1f3b020d99	include	the HUD animation, embedded by docs/GRAPHICS-GALLERY.md
+evidence/bx510-guest/graphics/gallery/hud-disc-guest.png	47563	75f630f9acfbc6a7f56d30e177229577ac2816082a0af42fe252f8a224774fbe	convert	image -> PNG (metadata stripped)
+evidence/bx510-guest/graphics/gallery/hud-disc-sim.png	334696	f455914e097480cfdfd357a9397b30adec8bef8e4a18a98259968fdeb8ca4ae4	convert	image -> PNG (metadata stripped)
 evidence/bx510-guest/graphics/gallery/hud-guest-render.png	141906	cfaa79217dca044ad95f26eb7e51bd06aa834397951812699451ca38eb320c15	convert	image -> PNG (metadata stripped)
 evidence/bx510-guest/graphics/gallery/hud-in-daemon-panel.png	319630	ca498bfaf5686680ab2edb77f749cb8ae1f5d87d1f7baf7c5bf8bb6d224ab9ff	convert	image -> PNG (metadata stripped)
 evidence/bx510-guest/graphics/gallery/hud-sim.png	53758	c689a015e55e5a0580794fc7cf442b8a96b338c3530f5c81fac0badd47c6eaec	convert	image -> PNG (metadata stripped)
@@ -1138,6 +1155,18 @@ evidence/bx510-guest/graphics/ui-docshot1/frames.gif	31505	0a690da3d376c90655904
 evidence/bx510-guest/graphics/ui-docshot1/pool-320x180.png	6709	38343dd135e5de097cb5944d223c180deb1e23e83d9eb37180e54d6ac4b6ad04	convert	image -> PNG (metadata stripped)
 evidence/bx510-guest/graphics/ui-docshot1/pool-320x180.ppm	172815	63e166f10a68fab8701000432dc7e7be001938b4a30f7c982d065b8849c729b3	exclude	regenerable raw capture (PNG is included)
 evidence/bx510-guest/graphics/ui-docshot1/shot.md	1016	b8d4ee30dd856db1439d1f2f0dbe4aa6d21530c844668b7d9d1d0c048ccf2f4d	scrub	evidence (logs filtered by size below)
+evidence/bx510-guest/graphics/ui-hudisc1/fbdev-320x180.png	247	686b412ef127822d0f9d992a9c452cfb31b5a0cd2a39d706981c40e07ba0c5ac	convert	image -> PNG (metadata stripped)
+evidence/bx510-guest/graphics/ui-hudisc1/fbdev-320x180.ppm	172815	8b329bbf0b37386cd7f8094766a953d89287b83a5a7b3aef400ff2dc364727a2	exclude	regenerable raw capture (PNG is included)
+evidence/bx510-guest/graphics/ui-hudisc1/frames.gif	22800	2d36a355e5018ba48349d63a0281db20b10aec1aedc5745fdc565063fefb9392	include	evidence (logs filtered by size below)
+evidence/bx510-guest/graphics/ui-hudisc1/pool-320x180.png	2108	524a6c7266592f883ce4083a90d7ac96e914a9d9a12cd9558458d930f53b47a3	convert	image -> PNG (metadata stripped)
+evidence/bx510-guest/graphics/ui-hudisc1/pool-320x180.ppm	172815	4f15851ba06b567f1079d636887929e4292d7ac6c9c925bade93c71d8d5961a8	exclude	regenerable raw capture (PNG is included)
+evidence/bx510-guest/graphics/ui-hudisc1/shot.md	1013	657be0f3e2b47967fc1062e4b327dd7cbea15967d07488725b6e628dff073bbb	scrub	evidence (logs filtered by size below)
+evidence/bx510-guest/graphics/ui-hudisc4/fbdev-320x180.png	247	686b412ef127822d0f9d992a9c452cfb31b5a0cd2a39d706981c40e07ba0c5ac	convert	image -> PNG (metadata stripped)
+evidence/bx510-guest/graphics/ui-hudisc4/fbdev-320x180.ppm	172815	8b329bbf0b37386cd7f8094766a953d89287b83a5a7b3aef400ff2dc364727a2	exclude	regenerable raw capture (PNG is included)
+evidence/bx510-guest/graphics/ui-hudisc4/frames.gif	25334	45af7a9b0ed94d277ef9a6cccbc383ef35c24f20e70569f67d325b4c10686764	include	evidence (logs filtered by size below)
+evidence/bx510-guest/graphics/ui-hudisc4/pool-320x180.png	3851	39c666105f9e6a08e33ecbf28d3c785dcc07b3e1632122d9633d203ff1a52715	convert	image -> PNG (metadata stripped)
+evidence/bx510-guest/graphics/ui-hudisc4/pool-320x180.ppm	172815	25cde13200783de7fec7b15b4054891539ec669cc31f599fc12886d3d1616a1d	exclude	regenerable raw capture (PNG is included)
+evidence/bx510-guest/graphics/ui-hudisc4/shot.md	1163	96164a3a7fa9db9b14c53b6cf3189c252b82c35219ca2faa57bee4784ccdd672	scrub	evidence (logs filtered by size below)
 evidence/bx510-guest/graphics/ui-hudpan2/fbdev-320x180.png	247	686b412ef127822d0f9d992a9c452cfb31b5a0cd2a39d706981c40e07ba0c5ac	convert	image -> PNG (metadata stripped)
 evidence/bx510-guest/graphics/ui-hudpan2/fbdev-320x180.ppm	172815	8b329bbf0b37386cd7f8094766a953d89287b83a5a7b3aef400ff2dc364727a2	exclude	regenerable raw capture (PNG is included)
 evidence/bx510-guest/graphics/ui-hudpan2/frames.gif	50274	2cf90b8637d13ba05069e38fd5ec12a067bd916aa7ca4061cc02fc62762dfcf2	include	evidence (logs filtered by size below)
@@ -1561,11 +1590,11 @@ reconstruct/tool/getopt.h	4654	ba9b6f0a07fc2998b73e45061a0096df45818e4544cfedbc2
 reconstruct/tool/getopt1.c	4705	7e95a53ec5722bcb427b52759e24a6c695e8ad68ccb0a58f3833dc91a80972ae	scrub	ours
 reconstruct/tool/hud.c	4734	a12e79bd0ac73e31233ce84c36cc81e6e8fdc8bb281663035c0051dbc35d98f5	scrub	ours
 reconstruct/tool/hud.h	242	9eeb8256de12a5da9a849bd8ca46889fc872762a35669988ce33f85a17ae29e1	scrub	ours
-reconstruct/tool/hud_state.c	1969	d6c66db34f79e2eb758a3f2ce0b5855121ab5257e6ef048b7c0b36be06745bf1	scrub	ours
-reconstruct/tool/hud_state.h	3124	469cb868749f7ec1585767309224e54a7162cae4ee70f2018968d635631ed79c	scrub	ours
+reconstruct/tool/hud_state.c	2674	619ef4d11871731bfc725dd2c02f62fe7f9eae227e574bb82bea488a5a62e7c5	scrub	ours
+reconstruct/tool/hud_state.h	5384	33f5c02e38b86dd55d9a760e67b8a7ae945d0faa366e880dee85565b5d843ce4	scrub	ours
 reconstruct/tool/install.c	2210	7b53d51ebcae5ef5aa375e5445106acec665b37fd9c3226574ff780c1e3af221	scrub	ours
 reconstruct/tool/install.h	419	dba484103fb9d115f6d1c40874ae0e0c97fe07d898f45f277f10e46d554d55e4	scrub	ours
-reconstruct/tool/main.c	27498	754dbbb627a3eb8263dece02c09fbc9170e7de9b4ad3ebd19085dc6dadf6fa56	scrub	ours
+reconstruct/tool/main.c	31843	2d9ccf609e338bd3d54e0063aee93cfadfc90a48bf280f7c045b41fd33cb7d07	scrub	ours
 reconstruct/tool/sacd_extract.sln	1541	c436a341b62bd5ea5ad6b37dccb76cce3daf772b036314a1469a26cfbc94fbba	scrub	ours
 reconstruct/tool/sacd_extract.vcproj	13484	444c66c0b142f9b8760274c40db697a1dac9e5cf3bf56c7fb2f6d7f5b4b34b8d	scrub	ours
 reconstruct/tool/win32/inttypes.h	8004	3a724ca30751c9bd2bacb184b7a9e1fe17a662917b53dba9717ab13f457df33b	scrub	ours
@@ -1621,6 +1650,7 @@ tools/bx510_guest_client.c	18547	3e4cbdf3080a833ef2042463e18d0a0b0fd046a8c7db778
 tools/bx510_hdhost.c	7099	e729c2291038e1f89e46d3a1f420222e1f227df1b765a2461e232681ad6213ec	scrub	ours
 tools/bx510_hdsmoke.sh	4461	56531454d2f4a5c62e6e2257dd6383c19669ed5aaba141177ba971b2c9c5d5f7	scrub	ours
 tools/bx510_hud_diff.py	2698	0b654114ec3e9bd6c410416c32753c6196e114c6cda6c15edf0f626d845b95e7	scrub	ours
+tools/bx510_hud_disc_guest.sh	3456	0795b7811fdd35d5d676ee1d8af168f27deb97612ebe0b72e8c7efc59d0e2227	scrub	ours
 tools/bx510_hud_repro.py	5469	7e4b5fa63cc3d2c3fe6d4c6a7569076c84012781c66ef307ce81504fef113841	scrub	ours
 tools/bx510_hwmon.c	5397	30c9df311b43c94e713f5de2f51e2885146835514e2a870c507c0444d8014247	scrub	ours
 tools/bx510_hwmon_analyze.py	20097	79c5127743f13840940759bf277aa5de1f723e2c0637fe5fd32a0ce784f9ff69	scrub	ours
@@ -1633,7 +1663,7 @@ tools/bx510_osal_stub.c	55147	b9d0b6afc07fa63781aa6efa1d69a724835b9820bdfc367f00
 tools/bx510_pair_repro.py	8600	cfd9c6dc3825f45ba062a2091f4a4cc3b4f7ca6b55b7253a85fef31173e0710f	scrub	ours
 tools/bx510_phase0_probe.py	18668	455d45d8c2485e20fea7a56572be3e8f36cb958e91d6fc2a022584b9b28a10bb	scrub	ours
 tools/bx510_rawdecode.py	9772	9024d29e89ddbe34af873073baea722a9bce724415cea758ba3c5fe5c493bd67	scrub	ours
-tools/bx510_sacd_hud.c	95022	be1c3ba6a1808b1f6e60252234de7f69ae7c6c2714c3c6350afb63775725914a	scrub	ours
+tools/bx510_sacd_hud.c	111518	3752cd76bb0d5192a1fd991a2d32deec6524159d342cb778b2330017e40c1a34	scrub	ours
 tools/bx510_sacdstat.c	1268	93586ea39ee42a281352358a8ac30b572bfcd1263a95a7f5674d863042b784d6	scrub	ours
 tools/bx510_stub_build.sh	2588	70c16262f7e25e756d33c700a332543a4c8b6fc57f102358a47f4b82ea3e807d	scrub	ours
 tools/bx510_tmpredir.c	11625	c35b0cca277be875765bfa7fe753b1e68db2b2ed1f1967c938fd8503aa0f9b21	scrub	ours
@@ -1653,6 +1683,7 @@ tools/fixture_gen.py	8227	5254f0c8877a1516ef79992db33157623ca9ba766d029f57a3cec9
 tools/fn_diff.py	7900	cdf512c50feb1a1ebffd54b6f4db75372ff0f1873ed277ec59996e614cd0633c	scrub	ours
 tools/hud_anim.py	2537	213bb64f6b1a53853a33f846e4acbdb5d93daba7f7916d97efb6c3fb9e465e13	scrub	ours
 tools/hud_build.sh	1659	806cadf67b88b0c59f1cf6aa4102a2e23d2bc6c67ee33264041428ff85b853bf	scrub	ours
+tools/hud_disc_check.py	2745	3df49c27a4c6f2d6d4e331991439c3e5e7e0a9cc1c612e4e97cffb938b9efc65	scrub	ours
 tools/hud_guest_gate.py	2127	2703b72487349a6c88b54e44078036647becd553018e3a7e938d2c4f8f832a32	scrub	ours
 tools/hud_guest_run.sh	1553	c4dd433a7291b079654cb86c8492320c71e305583260bc472e62ae06ffb17436	scrub	ours
 tools/hud_push.py	8360	2772d8d7e2b2134366150b5ca4c0f603a6ff28786a4dbe00e255d646d4359c29	scrub	ours

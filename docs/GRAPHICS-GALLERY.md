@@ -22,6 +22,25 @@ All three programs are proven to run inside Sony's real guest OS.
 
 ## The HUD (`sacd_hud`) — the daemon's UI
 
+### The merged disc console (`HUD_SCENE=disc`)
+
+![The disc console: the sacd_ui layout in the HUD's palette, Mac SIM render at 1920x1080](../evidence/bx510-guest/graphics/gallery/hud-disc-sim.png)
+
+*`hud-disc-sim.png` — the disc-console scene, full resolution. The client-leg
+console's layout (title, status, two area panels with track tables, event
+log) in the HUD's palette with the device fx; the right column is the live
+rip telemetry. Region + palette probes: `make sacd-hud-disc-sim`.*
+
+![The disc console rendered by the daemon itself in the guest, mid-rip](../evidence/bx510-guest/graphics/gallery/hud-disc-guest.png)
+
+*`hud-disc-guest.png` — run hudisc4 (2026-11-16): the SAME scene painted BY
+`sacd_extract_160 --hud=panel HUD_SCENE=disc` inside Sony's real guest OS,
+dumped MID-RIP (the track tables carry the real TOC the daemon parsed; the
+telemetry bar is the live rip). Pool mean luminance 13.54, gated PASS.
+Captured at 320x180 over the UART, 3x upscaled.*
+
+### The retro panel (chunky DOS look)
+
 ![The in-daemon HUD's own frame, rendered inside the daemon process in the guest](../evidence/bx510-guest/graphics/ui-hudpan2/pool-3x.png)
 
 *`ui-hudpan2/pool-3x.png` — the panel mode of the in-daemon HUD: this frame
@@ -47,7 +66,9 @@ non-black (mean luminance 83.84), PASS 3x on 2026-11-16.*
 
 | image | what it shows | provenance |
 |---|---|---|
-| `ui-hudpan2/pool-3x.png` | the in-daemon panel frame: the daemon painting its own telemetry from its live state | run `hudpan2` (2026-11-16), `--hud=panel` in the guest; pool mean luminance 50.49, gated PASS — `evidence/bx510-guest/graphics/ui-hudpan2/` |
+| `hud-disc-sim.png` | the merged disc console, 1920x1080, device-res text | `make sacd-hud-disc-sim` (region + palette probes gate it) |
+| `hud-disc-guest.png` | the disc console painted by the daemon in the guest, mid-rip | run `hudisc4` (2026-11-16); `evidence/bx510-guest/graphics/ui-hudisc4/` |
+| `ui-hudpan2/pool-3x.png` | the retro panel mode: the daemon painting its own telemetry from its live state | run `hudpan2` (2026-11-16), `--hud=panel` in the guest; pool mean luminance 50.49, gated PASS — `evidence/bx510-guest/graphics/ui-hudpan2/` |
 | `hud-sim.png` | Mac SIM render, 1280x720, real Sony font + synthetic telemetry | `make sacd-hud-sim` (the layout-iteration loop, seconds per frame) |
 | `hud-guest-render.png` | the HUD rendered in the real Sony guest, 640x360x3 capture decoded from the UART `FBPIX` hex line | `make sacd-hud-guest` — gate PASS 3x on 2026-11-16 (rc=0, mean luminance 83.84); green since e9dbd8b (pool-mmap render path) |
 | `hud-anim.gif` | the HUD animating: rotating wireframe cube, perspective grid, CRT sweep, cursor blink | `make sacd-hud-anim`; blink period asserted 2 Hz +/-10% by `make ui-anim` |

@@ -478,6 +478,11 @@ sacd-hud-build:
 sacd-hud-sim:
 	cd $(SACD) && cc -O2 -Wall -Wextra -Wno-pragmas -DHUD_SIM -I. -o /tmp/hudsim tools/bx510_sacd_hud.c && HUD_FONT=$(CURDIR)/evidence/bx510/display-payload/sony-font.ttf /tmp/hudsim /tmp/hud_sim.ppm 1 && sips -s format png /tmp/hud_sim.ppm --out /tmp/hud_sim.png >/dev/null && echo "wrote /tmp/hud_sim.png"
 
+## SACD hardware :: sacd-hud-disc-sim :: render the MERGED disc-console HUD scene (sacd_ui layout + HUD vibe, device-res text) at 1920x1080 :: HUD_SCENE=disc + a Firebird-shaped scenario; the pixel-probe check runs after the render
+.PHONY: sacd-hud-disc-sim
+sacd-hud-disc-sim:
+	cd $(SACD) && cc -O2 -Wall -Wextra -Wno-pragmas -DHUD_SIM -I. -o /tmp/hudsim tools/bx510_sacd_hud.c && HUD_FONT=$(CURDIR)/evidence/bx510/display-payload/sony-font.ttf HUD_SCENE=disc HUD_SIM_SCALE=3 /tmp/hudsim /tmp/hud_disc.ppm 1 && sips -s format png /tmp/hud_disc.ppm --out /tmp/hud_disc.png >/dev/null && python3 tools/hud_disc_check.py /tmp/hud_disc.ppm && echo "wrote /tmp/hud_disc.png (1920x1080, checks PASS)"
+
 ## SACD hardware :: sacd-usb-calib :: arm the CALIBRATION pattern on the stick :: sets AutoScript/hudcalib then display mode, so the next player run photographs a known pattern (grid/bars/edges) instead of the HUD
 .PHONY: sacd-usb-calib
 sacd-usb-calib:
@@ -594,13 +599,14 @@ bx510-fire:
 bx510-ui-build:
 	@UI_SRC='$(UI_SRC)' sh tools/bx510_ui_build.sh
 
-## BX510 UI loop :: bx510-ui-fire RUNID=x [SCALE=6] [UI_ARGS='...'] [TIMEOUT=420] :: fire the UI scenario :: renders tools/bx510_ui_guest.sh.in into a staged guest SCRIPT (the guest console truncates long one-liners — measured) plus the 85-byte `tar -xzf …; sh /res/shim/<name>` command, stages the script INTO the payload tgz, and fires through tools/bx510-fire.sh — the FA-latch clear, the CPSA pre-arm, the /tmp tmpfs and fbvirt's own fb node are mandatory invariants (render REFUSES without them: c122f/u1 lessons): daemon + client + UI + both framebuffer dumps — RUNID must be unique per lane: the traces are /tmp/bdpdrv-run<RUNID>.* on the VM and a second lane that reuses one overwrites the transcript you are about to pull
+## BX510 UI loop :: bx510-ui-fire RUNID=x [SCALE=6] [UI_ARGS='...'] [DAEMON_LAUNCH='...'] [TIMEOUT=420] :: fire the UI scenario :: renders tools/bx510_ui_guest.sh.in into a staged guest SCRIPT (the guest console truncates long one-liners — measured) plus the 85-byte `tar -xzf …; sh /res/shim/<name>` command, stages the script INTO the payload tgz, and fires through tools/bx510-fire.sh — the FA-latch clear, the CPSA pre-arm, the /tmp tmpfs and fbvirt's own fb node are mandatory invariants (render REFUSES without them: c122f/u1 lessons): daemon + client + UI + both framebuffer dumps — RUNID must be unique per lane: the traces are /tmp/bdpdrv-run<RUNID>.* on the VM and a second lane that reuses one overwrites the transcript you are about to pull — DAEMON_LAUNCH overrides the rendered daemon line (the HUD-panel legs: 'HUD_SCENE=disc HUD_FONT=/res/shim/sony-font.ttf ./sacd_extract_160 -S --hud=panel'; the payload must already carry the ENABLE_HUD daemon member)
 .PHONY: bx510-ui-fire
 bx510-ui-fire:
 	@test -n "$(RUNID)" || (echo "usage: make bx510-ui-fire RUNID=c124 [SCALE=6] [UI_ARGS='--flag'] [TIMEOUT=420]" && exit 2)
 	@python3 tools/bx510_ui_render.py --runid '$(RUNID)' \
 	    --script /tmp/bx510_ui_guest-$(RUNID).sh --out /tmp/g-$(RUNID).txt \
-	    --scale $(if $(SCALE),$(SCALE),6) --ui-args '$(UI_ARGS)'
+	    --scale $(if $(SCALE),$(SCALE),6) --ui-args '$(UI_ARGS)' \
+	    $(if $(DAEMON_LAUNCH),--daemon-launch '$(DAEMON_LAUNCH)',)
 	@sh tools/bx510_ui_stage.sh /tmp/bx510_ui_guest-$(RUNID).sh
 	@RUNID='$(RUNID)' GCMD_FILE=/tmp/g-$(RUNID).txt TIMEOUT='$(if $(TIMEOUT),$(TIMEOUT),420)' sh tools/bx510-fire.sh
 

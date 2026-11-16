@@ -42,6 +42,38 @@ while the HUD printed
 `HUD disc=sacd 353844/1064208 sectors (33%) reads=4 last=353804+40` — the
 ripping progress is the DAEMON'S OWN counters, not an outside observer's.
 
+## The disc console (`HUD_SCENE=disc`) — the sacd_ui layout merged in
+
+Panel mode's second scene: the client-leg console's proven 640x360 layout
+(title bar, status block, two area panels with track tables, event log,
+summary) drawn at DEVICE resolution (crisp 1:1 text, the sacd_ui convention)
+in this renderer's palette, finished with the device fx. The client-side
+session-summary block is replaced by the live rip telemetry only the daemon
+knows (reads, sectors, encrypted subset, rate, ETA, progress bar). Selected
+with `HUD_SCENE=disc` at launch; the retro scene stays the default until a
+fire flips it deliberately.
+
+The data is the state seam's v2: `hud_state_t` now also publishes the parsed
+TOC snapshot at `DISC_OPEN` (areas, channels, per-track LSN + MSF straight
+out of the scarletbook handle the daemon already parsed for serving), and a
+daemon-side event ring (connect/disconnect, disc open/close) that the
+renderer imports into its log.
+
+Proven in the guest (run hudisc4, fired mid-rip): every region renders with
+LIVE data — the track tables carry the real Firebird TOC the daemon parsed,
+the telemetry panel shows the rip's own progress bar lit. Region ink probes:
+2ch rows 2639 px, multi rows 4457 px, telemetry bar 480 px + lines 2125 px.
+Two lessons codified: the first fire's dump came after the UI session's
+`DISC_CLOSE`, which clears the TOC — the captured frame was the honest
+post-close idle frame (fire the dump MID-SESSION); and per-char stbtt
+rasterization every frame starved the HUD thread on the emulated ARM926
+(run hudisc3 stalled mid-repaint) — the device-res path now caches glyph
+bitmaps keyed (codepoint, size), pixel-identical on the sim.
+
+Also fixed on the way: `fx_aberration` sampled its own output in-place, so
+the left border's blue propagated across the whole row (found by the
+disc-scene pixel probes; the sim never ran fx before).
+
 The two stdout-orientation traps this cost a day to find, both codified:
 stdout is WIDE-oriented (`fwide(stdout,1)` before the server loop), so the
 HUD prints through `fwprintf` — narrow `printf` silently fails; and a

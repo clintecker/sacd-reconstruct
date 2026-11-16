@@ -11,6 +11,7 @@
 #include <pthread.h>
 #include <string.h>
 #include <stdio.h>
+#include <stdarg.h>
 
 static hud_state_t hud_state;
 static pthread_mutex_t hud_state_lock = PTHREAD_MUTEX_INITIALIZER;
@@ -20,6 +21,10 @@ void hud_state_publish(const hud_state_t *snapshot)
 {
     pthread_mutex_lock(&hud_state_lock);
     hud_state = *snapshot;
+    /* a first-publish race (a request path publishing before the first
+       heartbeat) must not store ver=0 — the HUD reader and hud_state_event
+       gate on the version */
+    if (hud_state.ver == 0) hud_state.ver = HUD_STATE_VER;
     hud_state_ready = 1;
     pthread_mutex_unlock(&hud_state_lock);
 }
@@ -35,6 +40,21 @@ int hud_state_copy(hud_state_t *out)
     *out = hud_state;
     pthread_mutex_unlock(&hud_state_lock);
     return 1;
+}
+
+void hud_state_event(hud_state_t *s, const char *fmt, ...)
+{
+    hud_event_t *e;
+    va_list ap;
+    if (!s || s->ver != HUD_STATE_VER) return;
+    e = &s->ev[s->ev_head % HUD_EVENT_MAX];
+    memset(e, 0, sizeof *e);
+    e->at = time(NULL);
+    va_start(ap, fmt);
+    vsnprintf(e->text, sizeof e->text, fmt, ap);
+    va_end(ap);
+    s->ev_head = (uint8_t)((s->ev_head + 1) % HUD_EVENT_MAX);
+    if (s->ev_count < HUD_EVENT_MAX) s->ev_count++;
 }
 
 /* rate window: compare against the previous tick's counters */

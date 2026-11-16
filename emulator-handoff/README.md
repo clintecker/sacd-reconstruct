@@ -4,7 +4,7 @@ This kit adds a `player.local` machine to QEMU 9.2.4. It executes the retail ARM
 
 ## Build and run
 
-For an actual player, start with [the at-home test card](AT-HOME.md). It includes the original-USB Firebird baseline and a reversible screen test. The [optical tools](optical/README.md) verify rig and hardware manifests, compare ISO payloads, and capture a two-frame sample with the real module on a separately instrumented run. The [screen probe](screen/README.md) draws custom pixels on Sony's DirectFB window surface. These additions are host and guest diagnostics. The QEMU machine still lacks emulated optical-controller and HDMI output.
+For an actual player, the hardware-lane runbook lives in `evidence/bx510/PLAYER-SESSION-RUNBOOK.md` (original-USB baseline, reversible screen test). The [optical tools](optical/README.md) verify rig and hardware manifests, compare ISO payloads, and capture a two-frame sample with the real module on a separately instrumented run. The screen probe (`screen/screen.c` + `screen/usb.sh`) draws custom pixels on Sony's DirectFB window surface. These additions are host and guest diagnostics. The QEMU machine still lacks emulated optical-controller and HDMI output.
 
 The Linux x86-64 bundle includes a tested `bin/qemu-system-arm` and the exact QEMU source archive in `upstream/`. On an x86-64 Linux host with glibc 2.38 or newer, GLib, zlib and libfdt (`libfdt1` on Ubuntu), try the included binary first. From the unpacked directory run
 

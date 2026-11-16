@@ -489,7 +489,7 @@ sacd-usb-calib:
 sacd-hud-diff:
 	python3 $(SACD)/tools/bx510_hud_diff.py "$(PHOTO)" "$(RENDER)" --min-ssim $${MIN_SSIM:-0.55}
 
-## SACD hardware :: sacd-hud-guest :: run the HUD in the real Sony guest and GATE it :: asserts rc=0 and a non-black framebuffer (a black screenshot fails instead of being eyeballed); currently red because fbvirt's FBIO_DISPATCHHW is a no-op
+## SACD hardware :: sacd-hud-guest :: run the HUD in the real Sony guest and GATE it :: asserts rc=0 and a non-black framebuffer (a black screenshot fails instead of being eyeballed); green since e9dbd8b (pool-mmap render path); 3x PASS re-run 2026-11-16 mean lum 83.84
 .PHONY: sacd-hud-guest
 sacd-hud-guest:
 	sh $(SACD)/tools/hud_guest_run.sh

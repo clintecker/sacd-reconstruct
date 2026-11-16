@@ -344,7 +344,7 @@ Two rejected alternatives, for the record:
   the tail is 413,696 B, which does not hold daemon + module + helper + gate
   (506,425). Dead end at today's payload size; it would only work if the main
   tar also shrank.
-* **HDHOST** (`docs/large-image-interface.md`) is the right channel for a
+* **HDHOST** (`docs/RIG-ARCHITECTURE.md` HDHOST section) is the right channel for a
   multi-MiB blob, but it costs a whole rig lane (host-image interface plumbed
   into the C-run) for a 350 KB file, and `sacd-gate3` is the only thing that
   proves it. Over-engineering here.

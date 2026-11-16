@@ -19,8 +19,7 @@ this is the same binary whose contract fbvirt already serves.
 Everything below was derived with tools, in this order:
 
 1. `llvm-readelf -r` → the `.rel.plt` table names every GOT slot directly
-   (`0000f1e4 R_ARM_JUMP_SLOT ioctl@GLIBC_2.4` — the slot 0xf1e4 noted in
-   `handoff-graphics-appliance.md` §3 is confirmed as `ioctl`).
+   (`0000f1e4 R_ARM_JUMP_SLOT ioctl@GLIBC_2.4` — the slot 0xf1e4 is confirmed as `ioctl`).
 2. `llvm-objdump -d --no-show-raw-insn` → the PLT entries carry symbol
    annotations (`00001834 <ioctl@plt>` in mtk.so, `00000e28 <ioctl@plt>` in
    mt85.so), so every call site is found by grep for `bl 0x1834` / `bl 0xe28`
@@ -446,6 +445,5 @@ Corrections and additions against the current `tools/bx510_fbvirt.c`
   `mt85-contract-run-string-xrefs-{mtk,mt85}.txt`).
 - Prior art consumed: `evidence/bx510-guest/graphics/MT85-RESULTS.md`
   (rungs a–e; the sys-provider retail numbers, here re-verified
-  independently and extended), `docs/handoff-graphics-appliance.md` §3,
-  `docs/STOCK-LEVERAGE-PLAN.md`, `tools/bx510_fbvirt.c`.
+  independently and extended), `tools/bx510_fbvirt.c`.
 - No VM was used; no live/destructive command was run; nothing committed.

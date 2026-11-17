@@ -239,6 +239,7 @@ cmd_usb_build() {
     cp "$ORIGINAL" "$USB/AutoScript/sacd_extract_160"
     cp -R "$OPTICAL" "$USB/optical"
     cp "$HWMON_DIR/hwmon" "$USB/AutoScript/hwmon"
+    cp "$ORIGINAL/../sacd_read.ko" "$USB/AutoScript/sacd_read.ko"   # the CPSA module: payload-check requires it on the stick (hwmon_restore preloads it on a free compid)
     cp "$HWMON_DIR/inventory" "$USB/AutoScript/inventory"
     cp "$HWMON_DIR/hwmon_restore.sh" "$USB/AutoScript/hwmon_restore.sh"
     cp "$HWMON_DIR/pairlaunch.sh" "$USB/AutoScript/pairlaunch.sh"

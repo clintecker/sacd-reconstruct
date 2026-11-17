@@ -54,7 +54,12 @@ HWMON_DIR="${HWMON_DIR:-$EXP/evidence/bx510/hwmon-payload}"
 DISPLAY_DIR="${DISPLAY_DIR:-$EXP/evidence/bx510/display-payload}"
 
 SHA_ORIG="0fdcefdb84ae818be7385657eaf0960053f6e4452a82f19cbe6777f9c8cddb45"
-SHA_REL="e91720fbbbd592505bde6630843b0495ff82a93e40c0e427aaa70a081ff9ae22"
+SHA_REL="b0848b7359e17db5264e5fab54e942d8a345f21d6bd251423193fd8284013bf7"  # rebuilt 2026-11-16 with the recursive_mkdir EPERM fix (was e91720fb...)
+# the in-daemon HUD build: the release recipe + -DENABLE_HUD (scene_disc),
+# era-toolchain build from reconstruct/Makefile ENABLE_HUD=1 (VM, 2026-11-16).
+# The ONLY builder: that make invocation — never stage an ad-hoc binary.
+HUD_DAEMON="$EXP/evidence/bx510/display-payload/sacd_extract_160_hud"
+SHA_HUD_DAEMON="9c559183e6de1d2831e8c95518016be6375c1cddff945b60bf0d16ffec47ea3d"
 # pair observers: SILENT = the prebuilt optical/bx510_pair.so staged on the
 # 2026-11-04 stick; DBG = bx510_pair_dbg.so (QEMU-proven debug build,
 # evidence/bx510-guest/pair-observer/) staged AS optical/bx510_pair.so for
@@ -189,6 +194,7 @@ cmd_preflight() {
     fi
     check_elf "$ORIGINAL" "$SHA_ORIG"
     check_elf "$RELEASE" "$SHA_REL"
+    check_elf "$HUD_DAEMON" "$SHA_HUD_DAEMON"
     check_elf "$DBG_SO" "$SHA_PAIR_DBG"
     check_elf "$DISPLAY_DIR/cyberdraw" "$SHA_CYBER"
     check_elf "$DISPLAY_DIR/fbmd5" "$SHA_FBMD5"
@@ -461,8 +467,35 @@ cmd_usb_mode() { # $1 = baseline|pair
         echo "          note instant vs slow wake. Write times in notes.txt."
         echo "  THEN: pull the stick, reinsert once more (recover trigger) -> power"
         echo "          off, pull stick -> make sacd-hw-collect"
+    elif [ "$1" = "hud" ]; then
+        # the IN-DAEMON HUD leg: the reconstructed daemon itself paints the
+        # disc console on the real panel (HUD_SCENE=disc, --hud=panel; the
+        # supervisor's hudpanel branch starts it and never starts the
+        # standalone sacd_hud — one painter, the ONE-HUD doctrine).
+        cmd_usb_use "$HUD_DAEMON" "$SHA_HUD_DAEMON" "in-daemon HUD build (disc console)"
+        printf '1\n' > "$USB/AutoScript/hudpanel"
+        printf '1\n' > "$USB/AutoScript/hudrestart"   # fresh supervisor
+        rm -f "$USB/AutoScript/displayanim"           # no cyberdraw fight
+        # PRESERVE the previous run's logs (the 2026-11-05 lesson)
+        for f in displaylaunch.log candlaunch.log cand-recovered.out hwmon-boot.txt; do
+            if [ -f "$USB/AutoScript/$f" ]; then
+                mv -f "$USB/AutoScript/$f" "$USB/AutoScript/$f.prev" 2>/dev/null
+            fi
+        done
+        auto_baseline > "$USB/AutoScript/AutoScript"
+        cmd_payload_check
+        echo "AutoScript set to HUD-PANEL mode (in-daemon HUD, scene disc)."
+        echo "  Stick daemon = $SHA_HUD_DAEMON (ENABLE_HUD build)."
+        echo "  PLAYER: pull the stick, reinsert while idle -> tray opens BY ITSELF"
+        echo "          (= trigger). The daemon paints the disc console on the TV."
+        echo "  PHONE READY BEFORE INSERTING: record video + photo of the panel —"
+        echo "          the scene is the green phosphor console with cyan/magenta"
+        echo "          track tables; unmistakable vs cyberdraw's bars."
+        echo "  THEN: pull the stick, reinsert once more (recover trigger) -> power"
+        echo "          off, pull stick -> make sacd-hw-collect"
     else
         auto_baseline > "$USB/AutoScript/AutoScript"
+        rm -f "$USB/AutoScript/hudpanel"   # a baseline flip must not leave the panel armed
         # restore the SILENT observer so a baseline flip leaves a canonical stick
         if [ -f "$USB/optical/bx510_pair.so" ]; then
             cp "$OPTICAL/bx510_pair.so" "$USB/optical/bx510_pair.so"
@@ -732,6 +765,7 @@ case "${1:-}" in
     usb-baseline-mode) cmd_usb_mode baseline ;;
     usb-pair-mode)   cmd_usb_mode pair ;;
     usb-display-mode) cmd_usb_mode display ;;
+    usb-hud-mode)     cmd_usb_mode hud ;;
     usb-prune)       cmd_usb_prune ;;
     payload-check)   cmd_payload_check ;;
     usb-debug-mode)  cmd_usb_mode debug ;;

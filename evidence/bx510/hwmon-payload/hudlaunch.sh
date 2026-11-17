@@ -73,6 +73,47 @@ listening() {
     return 1
 }
 
+# --- hudpanel: the IN-DAEMON HUD (one painter) ---------------------------
+# The 2026-11-16 reconstruction carries the HUD built in (--hud=panel): the
+# daemon itself paints the panel from its own live state. When the stick arms
+# AutoScript/hudpanel, this branch starts THAT daemon and never starts the
+# standalone sacd_hud — two painters writing the pool would fight on the
+# panel (the ONE-HUD doctrine). Watchdog keeps the daemon alive.
+if [ -f "$D/hudpanel" ]; then
+    if listening; then
+        log "hudpanel: daemon already listening — supervising without restart"
+        DPID=0
+    else
+        HUD_SCENE=${HUD_SCENE:-disc} HUD_FONT=/tmp/sony-font.ttf \
+            /sacd_extract_160 -S --hud=panel >>/tmp/cand.out 2>&1 &
+        DPID=$!
+        log "daemon started pid $DPID (in-daemon HUD, scene ${HUD_SCENE:-disc})"
+    fi
+    i=0
+    while [ "$i" -lt 20 ]; do
+        listening && { log "listener up after ${i}s"; break; }
+        [ "$DPID" = "0" ] || kill -0 "$DPID" 2>/dev/null || { log "daemon EXITED rc=$? after ${i}s"; break; }
+        sleep 1
+        i=$((i + 1))
+    done
+    WD=0
+    while : ; do
+        sleep 5
+        WD=$((WD + 5))
+        if [ "$DPID" != "0" ] && ! kill -0 "$DPID" 2>/dev/null; then
+            log "watchdog: daemon died at ${WD}s"
+            [ -s /tmp/cand.out ] && log "  daemon output: $(tail -n 3 /tmp/cand.out 2>/dev/null)"
+            break
+        fi
+        case "$WD" in
+            30|300|900) log "watchdog ${WD}s: listener=$(listening && echo up || echo down) daemon=$(kill -0 "$DPID" 2>/dev/null && echo alive || echo dead)" ;;
+        esac
+    done
+    log "hudpanel supervisor end (watchdog ran ${WD}s)"
+    log "=== hudlaunch end (uptime $(utime)) ==="
+    exit 0
+fi
+
 if listening; then
     log "daemon already listening — attaching"
     DPID=0

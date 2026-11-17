@@ -539,6 +539,12 @@ sacd-usb-debug-mode:
 sacd-usb-display-mode:
 	DISPLAY_ANIM="$(DISPLAY_ANIM)" sh $(SACD)/tools/sacd_hardware.sh usb-display-mode
 
+## SACD hardware :: sacd-usb-hud-mode :: set the stick to the IN-DAEMON HUD leg :: stages the SHA-pinned ENABLE_HUD daemon (scene_disc) as AutoScript/sacd_extract_160 + writes the hudpanel flag — the supervisor starts the daemon with --hud=panel and never starts the standalone sacd_hud (one painter); TV photo/video is the evidence
+
+.PHONY: sacd-usb-hud-mode
+sacd-usb-hud-mode:
+	sh $(SACD)/tools/sacd_hardware.sh usb-hud-mode
+
 ## SACD hardware :: sacd-usb-original :: put the ORIGINAL ELF on the stick :: SHA-verified 0fdcefdb… — the baseline daemon
 .PHONY: sacd-usb-original
 sacd-usb-original:

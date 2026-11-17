@@ -104,7 +104,7 @@ fi
 # hwmon, no wrapper, no cyberdraw). So the display AutoScript stays at the
 # PROVEN baseline length and the leg is armed by the displayanim flag file,
 # started here (line 4, always executes).
-if [ -f "$D/displayanim" ]; then
+if :; then   # 2026-11-16 hardware: the displayanim-only gate started NO daemon on a baseline stick (the ONE-HUD refactor made the supervisor the only daemon starter and baseline never set the flag; port 2002 never bound). The supervisor is now the unconditional owner; the flag files choose only WHAT it runs.
     # ONE supervisor owns the leg (module preload + daemon + HUD). The player
     # fires this script more than once per insertion, and per-trigger daemon/HUD
     # starts made triggers kill each other (SIGKILL 137, two HUDs flipping on
@@ -206,7 +206,7 @@ esac
 # hwmon, no wrapper, no cyberdraw). So the display AutoScript stays at the
 # PROVEN baseline length and the leg is armed by the displayanim flag file,
 # started here (line 4, always executes).
-if [ -f "$D/displayanim" ]; then
+if :; then   # 2026-11-16 hardware: the displayanim-only gate started NO daemon on a baseline stick (the ONE-HUD refactor made the supervisor the only daemon starter and baseline never set the flag; port 2002 never bound). The supervisor is now the unconditional owner; the flag files choose only WHAT it runs.
     # ONE supervisor owns the leg (module preload + daemon + HUD). The player
     # fires this script more than once per insertion, and per-trigger daemon/HUD
     # starts made triggers kill each other (SIGKILL 137, two HUDs flipping on
@@ -273,6 +273,19 @@ rm -f /tmp/firebird.pair 2>/dev/null
 # reliably present on this busybox (pidof missing, proven). A survivor loses
 # the bind race with the next trigger's daemon and its remove_modules rmmods
 # the module UNDER the winner, after which NOTHING listens (2026-11-05).
+# 2026-11-16: SKIPPED when the supervisor is alive — it owns the daemon
+# (idempotent attach + watchdog); killing here murders the fresh daemon every
+# retrigger (the player fires AutoScript ~every 10 s).
+SUP_ALIVE=0
+SPID=""
+[ -f /tmp/hudlaunch.pid ] && read -r SPID < /tmp/hudlaunch.pid
+case "$(cat /proc/$SPID/cmdline 2>/dev/null)" in
+    *hudlaunch*) SUP_ALIVE=1 ;;
+esac
+if [ "$SUP_ALIVE" = "1" ]; then
+    echo "daemon: owned by supervisor (pid $SPID) — kill loop skipped" >>"$D/hwmon-boot.txt"
+fi
+if [ "$SUP_ALIVE" != "1" ]; then
 killed=""
 for pd in /proc/[0-9]*; do
     pc=$(cat "$pd/cmdline" 2>/dev/null)
@@ -287,6 +300,7 @@ if [ -n "$killed" ]; then
     echo "killed previous daemon(s):$killed" >>"$D/hwmon-boot.txt"
     sleep 2
 fi
+fi   # end SUP_ALIVE != 1 (the daemon kill loop)
 # hwmon instances accumulate one per trigger (2026-11-04 corpus finding:
 # three concurrent writers on one boot) — kill the previous ones
 if pidof hwmon.bin >/dev/null 2>&1; then
